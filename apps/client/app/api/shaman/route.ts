@@ -2,8 +2,10 @@ import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
+import { cookies } from 'next/headers';
 import { getSystemPrompt } from '@/prompts/system';
 import { objectManager } from '@/services/filebase';
+import privy from '@/services/privy';
 
 interface ShamanRequest {
   prompt: string;
@@ -14,9 +16,16 @@ interface ShamanRequest {
 
 export async function POST(req: Request) {
   const { prompt }: ShamanRequest = await req.json();
+  const authToken = (await cookies()).get('privy-token')?.value;
+  if (!authToken) {
+    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  const verifiedClaims = await privy.verifyAuthToken(authToken);
+
   const system = getSystemPrompt();
 
-  const result = await generateObject({
+  const executable = await generateObject({
     model: openai('gpt-4o'),
     system,
     prompt,
@@ -25,13 +34,10 @@ export async function POST(req: Request) {
     }),
   });
 
-  const encodedCode = Buffer.from(result.object.code, 'utf-8').toString(
-    'base64'
-  );
-
   const metadata = {
     prompt,
-    code: encodedCode,
+    creatorId: verifiedClaims.userId,
+    code: Buffer.from(executable.object.code, 'utf-8').toString('base64'),
     createdAt: new Date().toISOString(),
   };
 
@@ -43,7 +49,7 @@ export async function POST(req: Request) {
   );
 
   return Response.json({
-    code: result.object.code,
+    code: executable.object.code,
     ipfs: upload.cid,
     metadata,
   });
