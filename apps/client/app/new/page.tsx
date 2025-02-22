@@ -67,10 +67,11 @@ export default function Page() {
   const [isDeploying, setIsDeploying] = useState(false);
   const [code, setCode] = useState('');
   const [ipfs, setIpfs] = useState('');
+  const [ready, setReady] = useState(false);
   const [balance, setBalance] = useState(1);
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const { ready, user } = usePrivy();
+  const { ready: privyReady, user } = usePrivy();
   const embeddedWallet = user?.linkedAccounts?.find(
     (account) =>
       account.type === 'wallet' && account.connectorType === 'embedded'
@@ -84,14 +85,14 @@ export default function Page() {
 
   useEffect(() => {
     if (
-      ready &&
+      privyReady &&
       !isZugBalanceLoading &&
       !isZugBalanceFetching &&
       zugBalance === 0n
     ) {
       setOpen(true);
     }
-  }, [ready, zugBalance, isZugBalanceLoading, isZugBalanceFetching]);
+  }, [privyReady, zugBalance, isZugBalanceLoading, isZugBalanceFetching]);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -103,6 +104,9 @@ export default function Page() {
 
   const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsLoading(true);
+    setCode('');
+    setIpfs('');
+    setReady(false);
 
     try {
       const response = await fetch('/api/shaman', {
@@ -116,6 +120,7 @@ export default function Page() {
       const json = await response.json();
       setCode(json.code);
       setIpfs(json.ipfs);
+      setReady(json.ready);
 
       toast({
         title: 'Success!',
@@ -307,7 +312,7 @@ export default function Page() {
                   <Button
                     onClick={handleDeploy}
                     className="w-full"
-                    disabled={isDeploying || !code}>
+                    disabled={isDeploying || !code || !ready}>
                     <Webhook />
                     {isDeploying ? 'Deploying...' : 'Deploy Shaman'}
                   </Button>

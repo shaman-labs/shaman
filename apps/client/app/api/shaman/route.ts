@@ -1,8 +1,8 @@
-import { openai } from '@ai-sdk/openai';
 import { generateObject } from 'ai';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { cookies } from 'next/headers';
+import { anthropic } from '@ai-sdk/anthropic';
 import { getSystemPrompt } from '@/prompts/system';
 import { objectManager } from '@/services/filebase';
 import privy from '@/services/privy';
@@ -26,11 +26,16 @@ export async function POST(req: Request) {
   const system = getSystemPrompt();
 
   const executable = await generateObject({
-    model: openai('gpt-4o'),
+    model: anthropic('claude-3-5-sonnet-latest'),
     system,
     prompt,
     schema: z.object({
       code: z.string().describe('The code to be executed.'),
+      ready: z
+        .boolean()
+        .describe(
+          'Whether the code can be executed for the users intent. If the code is not ready, the user will need to provide more information.'
+        ),
     }),
   });
 
@@ -50,6 +55,7 @@ export async function POST(req: Request) {
 
   return Response.json({
     code: executable.object.code,
+    ready: executable.object.ready,
     ipfs: upload.cid,
     metadata,
   });
