@@ -100,7 +100,16 @@ export function DialogTransferAsset(props: DialogProps) {
                 className="text-right"
               />
               <Button
-                onClick={() => setAmount(Number(asset?.balance))}
+                onClick={() =>
+                  setAmount(
+                    Number(
+                      formatUnits(
+                        asset?.balance ?? 0n,
+                        asset?.contract_decimals ?? 18
+                      )
+                    )
+                  )
+                }
                 variant="ghost"
                 size="icon">
                 <CirclePlus className="w-2 h-2" />
