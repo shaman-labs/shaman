@@ -19,6 +19,7 @@ import {
 import { useMUD } from '@/contexts/mud-context';
 import { useEmbeddedWallet } from '@/hooks/use-embedded-wallet';
 import { useZugBalance } from '@/hooks/use-zug-balance';
+
 export function DialogAddBalance(props: DialogProps) {
   const mud = useMUD();
   const [loading, setLoading] = useState(false);

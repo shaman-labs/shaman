@@ -200,6 +200,53 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
+  const transferAsset = async (
+    contractAddress: Hex,
+    address: Hex,
+    amount: bigint
+  ) => {
+    const isNativeToken =
+      contractAddress === '0x0000000000000000000000000000000000000000';
+
+    if (isNativeToken) {
+      const hash = await walletClient.sendTransaction({
+        to: address,
+        value: amount,
+        chain,
+        account: account.address,
+      });
+      return waitForTransaction(hash);
+    } else {
+      const erc20Contract = {
+        abi: [
+          {
+            name: 'transfer',
+            type: 'function',
+            inputs: [{ type: 'address' }, { type: 'uint256' }],
+            outputs: [{ type: 'bool' }],
+          },
+        ],
+        address: contractAddress,
+      };
+
+      await publicClient.simulateContract({
+        ...erc20Contract,
+        functionName: 'transfer',
+        args: [address, amount],
+        account: account.address,
+      });
+
+      const transferHash = await walletClient.writeContract({
+        ...erc20Contract,
+        functionName: 'transfer',
+        args: [address, amount],
+        chain,
+        account: account.address,
+      });
+      return waitForTransaction(transferHash);
+    }
+  };
+
   const getPrice = async (amount: bigint): Promise<bigint> => {
     return (await tokenContract.read.getPrice([amount])) as bigint;
   };
@@ -238,5 +285,6 @@ export function getSystemCalls({
     deleteShaman,
     getMaxSaleSupply,
     getTotalSaleSupply,
+    transferAsset,
   };
 }
