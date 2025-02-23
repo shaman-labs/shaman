@@ -6,6 +6,8 @@ import { themes } from 'prism-react-renderer';
 import { Highlight } from 'prism-react-renderer';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
+import { ColumnDef } from '@tanstack/react-table';
+import { formatDistanceToNow } from 'date-fns';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -34,14 +36,6 @@ import {
 } from '@/components/ui/chart';
 import { Button } from '@/components/ui/button';
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -53,6 +47,7 @@ import { useZugBalance } from '@/hooks/use-zug-balance';
 import { useEmbeddedWallet } from '@/hooks/use-embedded-wallet';
 import { useShamanLogs } from '@/hooks/use-shaman-logs';
 import { ShamanLog, ShamanLogType } from '@/types/shaman';
+import { DataTable } from '@/components/data-table';
 
 type ChartDataPoint = {
   day: string;
@@ -114,6 +109,90 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
+type ShamanLogsTableData = {
+  id: string;
+  logType: string;
+  timestamp: string;
+  logMetadata?: string;
+  success?: boolean;
+  type: ShamanLogType;
+};
+
+const columns: ColumnDef<ShamanLogsTableData>[] = [
+  {
+    accessorKey: 'timestamp',
+    header: 'Age',
+    cell: ({ row }) => {
+      const timestamp = new Date(row.original.timestamp ?? '');
+      return formatDistanceToNow(timestamp, { addSuffix: true });
+    },
+  },
+  {
+    accessorKey: 'logType',
+    header: 'Log Type',
+    cell: ({ row }) => (
+      <div className="flex items-center gap-2">
+        <div
+          className="w-2 h-2 rounded-full"
+          style={{
+            backgroundColor: executionLogTypes[row.original.type]?.color,
+          }}
+        />
+        {executionLogTypes[row.original.type]?.label}
+      </div>
+    ),
+  },
+  {
+    accessorKey: 'success',
+    header: 'Status',
+    cell: ({ row }) => {
+      if (row.original.type === ShamanLogType.Execution) {
+        return (
+          <div className="flex items-center gap-2">
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{
+                backgroundColor: row.original.success ? 'green' : 'red',
+              }}
+            />
+            {row.original.success ? 'Success' : 'Failed'}
+          </div>
+        );
+      }
+      return null;
+    },
+  },
+  {
+    id: 'actions',
+    cell: ({ row }) => {
+      if (row.original.type === ShamanLogType.Execution) {
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => {
+                  window.open(
+                    `https://gateway.shaman.fun/ipfs/${row.original.logMetadata}`,
+                    '_blank'
+                  );
+                }}>
+                View logs
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      }
+      return null;
+    },
+  },
+];
+
 export default function Page() {
   const { shamanId } = useParams();
   const { data: shaman, refetch } = useShaman(shamanId as string);
@@ -142,9 +221,23 @@ export default function Page() {
           logType: log.logType,
           amount: Number(log.amount),
           createdAt: Number(log.createdAt) * 1000,
+          success: log.success,
         })) || []
       ),
     [executionLogs]
+  );
+
+  const tableData: ShamanLogsTableData[] = useMemo(
+    () =>
+      shamanLogs?.map((log) => ({
+        id: log.shamanLogId,
+        logType: executionLogTypes[log.logType]?.label || 'Unknown',
+        timestamp: new Date(Number(log.createdAt) * 1000).toISOString(),
+        logMetadata: log.logMetadata,
+        type: log.logType,
+        success: log.success,
+      })) || [],
+    [shamanLogs]
   );
 
   return (
@@ -245,63 +338,7 @@ export default function Page() {
                   <CardTitle>Shaman Logs</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Log Type</TableHead>
-                        <TableHead>Timestamp</TableHead>
-                        <TableHead className="w-[50px]"></TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {shamanLogs?.map((log) => (
-                        <TableRow key={log.shamanLogId}>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <div
-                                className="w-2 h-2 rounded-full"
-                                style={{
-                                  backgroundColor:
-                                    executionLogTypes[log.logType]?.color,
-                                }}
-                              />
-                              {executionLogTypes[log.logType]?.label}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {new Date(
-                              Number(log.createdAt) * 1000
-                            ).toISOString()}
-                          </TableCell>
-                          <TableCell>
-                            {log.logType === ShamanLogType.Execution && (
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    variant="ghost"
-                                    className="h-8 w-8 p-0">
-                                    <MoreVertical className="h-4 w-4" />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem
-                                    className="cursor-pointer"
-                                    onClick={() => {
-                                      window.open(
-                                        `https://gateway.shaman.fun/ipfs/${log.logMetadata}`,
-                                        '_blank'
-                                      );
-                                    }}>
-                                    View logs
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            )}
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
+                  <DataTable columns={columns} data={tableData} />
                 </CardContent>
               </Card>
             </div>
