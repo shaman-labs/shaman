@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { Hex, formatUnits } from 'viem';
 import { ColumnDef } from '@tanstack/react-table';
@@ -9,6 +9,7 @@ import { Transaction } from '@covalenthq/client-sdk';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
 import { ExternalLinkIcon } from 'lucide-react';
+import { MoreVertical } from 'lucide-react';
 import {
   SidebarInset,
   SidebarProvider,
@@ -34,39 +35,14 @@ import {
 } from '@/components/ui/card';
 import { useWalletTransactions } from '@/hooks/use-wallet-transactions';
 import { trimHash } from '@/lib/utils';
-
-const assetsColumns: ColumnDef<BalanceItem>[] = [
-  {
-    accessorKey: 'contract_display_name',
-    header: 'Name',
-  },
-  {
-    accessorKey: 'balance',
-    header: 'Balance',
-    cell: ({ row }) => {
-      const balance = row.original.balance ?? 0n;
-      const decimals = row.original.contract_decimals ?? 18;
-      const formatted = formatUnits(balance, decimals);
-      return `${Number(formatted).toLocaleString(undefined, {
-        maximumFractionDigits: decimals,
-      })} ${row.original.contract_ticker_symbol}`;
-    },
-  },
-  {
-    accessorKey: 'quote_rate',
-    header: 'Rate',
-    cell: ({ row }) => {
-      const rate = row.original.quote_rate ?? 0;
-      return `${rate.toLocaleString(undefined, {
-        maximumFractionDigits: 2,
-      })} USD`;
-    },
-  },
-  {
-    accessorKey: 'pretty_quote',
-    header: 'USD Value',
-  },
-];
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { useDialogContext } from '@/contexts/dialog-context';
 
 const transactionsColumns: ColumnDef<Transaction>[] = [
   {
@@ -124,6 +100,77 @@ export default function Page() {
   const { data: balances } = useTokenBalances(address as Hex);
   const { data: transactions } = useWalletTransactions(address as Hex);
   const [open, setOpen] = useState(false);
+  const { openTransferAsset } = useDialogContext();
+
+  const assetsColumns: ColumnDef<BalanceItem>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'contract_display_name',
+        header: 'Name',
+      },
+      {
+        accessorKey: 'balance',
+        header: 'Balance',
+        cell: ({ row }) => {
+          const balance = row.original.balance ?? 0n;
+          const decimals = row.original.contract_decimals ?? 18;
+          const formatted = formatUnits(balance, decimals);
+          return `${Number(formatted).toLocaleString(undefined, {
+            maximumFractionDigits: decimals,
+          })} ${row.original.contract_ticker_symbol}`;
+        },
+      },
+      {
+        accessorKey: 'quote_rate',
+        header: 'Rate',
+        cell: ({ row }) => {
+          const rate = row.original.quote_rate ?? 0;
+          return `${rate.toLocaleString(undefined, {
+            maximumFractionDigits: 2,
+          })} USD`;
+        },
+      },
+      {
+        accessorKey: 'pretty_quote',
+        header: 'USD Value',
+      },
+      {
+        id: 'actions',
+        header: '',
+        cell: ({ row }) => {
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <MoreVertical className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => {
+                    openTransferAsset(true, undefined, undefined, row.original);
+                  }}>
+                  Transfer
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="cursor-pointer"
+                  onClick={() => {
+                    window.open(
+                      `https://sepolia.arbiscan.io/address/${row.original.contract_address}`,
+                      '_blank'
+                    );
+                  }}>
+                  View Contract <ExternalLinkIcon className="w-4 h-4" />
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        },
+      },
+    ],
+    [openTransferAsset]
+  );
 
   return (
     <SidebarProvider>
