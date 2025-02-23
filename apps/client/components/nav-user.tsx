@@ -85,7 +85,7 @@ export function NavUser() {
                   <BoringAvatar name={address} variant="beam" />
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Manage Account</span>
+                  <span className="truncate font-semibold">Shaman Wallet</span>
                   <span className="truncate text-xs">{trimHash(address)}</span>
                 </div>
               </div>

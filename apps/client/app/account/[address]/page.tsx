@@ -5,6 +5,10 @@ import { useParams } from 'next/navigation';
 import { Hex, formatUnits } from 'viem';
 import { ColumnDef } from '@tanstack/react-table';
 import { BalanceItem } from '@covalenthq/client-sdk';
+import { Transaction } from '@covalenthq/client-sdk';
+import Link from 'next/link';
+import { formatDistanceToNow } from 'date-fns';
+import { ExternalLinkIcon } from 'lucide-react';
 import {
   SidebarInset,
   SidebarProvider,
@@ -21,12 +25,17 @@ import { AppSidebar } from '@/components/app-sidebar';
 import { AlertDialogPaywall } from '@/components/alert-dialog-paywall';
 import { useTokenBalances } from '@/hooks/use-token-balances';
 import { DataTable } from '@/components/data-table';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { useWalletTransactions } from '@/hooks/use-wallet-transactions';
+import { trimHash } from '@/lib/utils';
 
-const columns: ColumnDef<BalanceItem>[] = [
-  {
-    accessorKey: 'contract_ticker_symbol',
-    header: 'Symbol',
-  },
+const assetsColumns: ColumnDef<BalanceItem>[] = [
   {
     accessorKey: 'contract_display_name',
     header: 'Name',
@@ -44,17 +53,77 @@ const columns: ColumnDef<BalanceItem>[] = [
     },
   },
   {
+    accessorKey: 'quote_rate',
+    header: 'Rate',
+    cell: ({ row }) => {
+      const rate = row.original.quote_rate ?? 0;
+      return `${rate.toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      })} USD`;
+    },
+  },
+  {
     accessorKey: 'pretty_quote',
     header: 'USD Value',
+  },
+];
+
+const transactionsColumns: ColumnDef<Transaction>[] = [
+  {
+    accessorKey: 'block_signed_at',
+    header: 'Age',
+    cell: ({ row }) => {
+      const timestamp = new Date(row.original.block_signed_at ?? '');
+      return formatDistanceToNow(timestamp, { addSuffix: true });
+    },
+  },
+  {
+    accessorKey: 'tx_hash',
+    header: 'Hash',
+    cell: ({ row }) => {
+      return trimHash(row.original.tx_hash ?? undefined);
+    },
+  },
+  {
+    accessorKey: 'to_address',
+    header: 'To',
+    cell: ({ row }) => {
+      return trimHash(row.original.to_address ?? undefined);
+    },
+  },
+  {
+    accessorKey: 'gas_quote',
+    header: 'Gas Spent',
+    cell: ({ row }) => {
+      return `${row.original.gas_quote?.toLocaleString(undefined, {
+        maximumFractionDigits: 2,
+      })} USD`;
+    },
+  },
+  {
+    id: 'external_link',
+    header: '',
+    cell: ({ row }) => {
+      const txHash = row.original.tx_hash;
+      if (!txHash) return null;
+      return (
+        <Link
+          href={`https://sepolia.arbiscan.io/tx/${txHash}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary hover:underline">
+          <ExternalLinkIcon className="w-4 h-4" />
+        </Link>
+      );
+    },
   },
 ];
 
 export default function Page() {
   const { address } = useParams();
   const { data: balances } = useTokenBalances(address as Hex);
+  const { data: transactions } = useWalletTransactions(address as Hex);
   const [open, setOpen] = useState(false);
-
-  console.log(balances);
 
   return (
     <SidebarProvider>
@@ -67,16 +136,46 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbPage>Account</BreadcrumbPage>
+                  <BreadcrumbPage>{address}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="flex flex-col gap-4">
-            <h1 className="text-2xl font-bold">Assets</h1>
-            <DataTable columns={columns} data={balances?.items ?? []} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div className="flex flex-col gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Assets</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={assetsColumns}
+                    data={balances?.items ?? []}
+                  />
+                </CardContent>
+                <CardFooter className="flex-col items-start gap-2 text-sm">
+                  <div className="leading-none text-muted-foreground">
+                    To make a deposit, use <b>{address}</b> as the recipient on
+                    Arbitrum Sepolia Network.
+                  </div>
+                </CardFooter>
+              </Card>
+            </div>
+            <div className="flex flex-col gap-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Transactions</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={transactionsColumns}
+                    data={transactions ?? []}
+                  />
+                </CardContent>
+              </Card>
+            </div>
           </div>
         </div>
       </SidebarInset>
