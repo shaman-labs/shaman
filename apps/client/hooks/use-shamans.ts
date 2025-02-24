@@ -46,7 +46,7 @@ export const useShamans = () => {
         };
       });
 
-      return shamans;
+      return shamans.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
     },
     refetchInterval: 2500,
     enabled: !!mud?.components?.Shamans,

@@ -34,6 +34,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -345,37 +346,71 @@ export default function Page() {
             <div className="flex flex-col gap-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Shaman Code</CardTitle>
+                  <CardTitle>Shaman</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 min-h-0 max-w-full w-full">
-                  {shaman?.code && (
-                    <div className="flex flex-col h-full w-full">
-                      <Highlight
-                        theme={themes.nightOwl}
-                        code={shaman?.code}
-                        language="tsx">
-                        {({ style, tokens, getLineProps, getTokenProps }) => (
-                          <pre
-                            className="overflow-x-auto w-full p-4 text-sm whitespace-pre"
-                            style={{ ...style, maxWidth: '100%' }}>
-                            {tokens.map((line, i) => (
-                              <div
-                                key={i}
-                                {...getLineProps({ line })}
-                                className="whitespace-pre">
-                                {line.map((token, key) => (
-                                  <span
-                                    key={key}
-                                    {...getTokenProps({ token })}
-                                  />
-                                ))}
-                              </div>
-                            ))}
-                          </pre>
-                        )}
-                      </Highlight>
-                    </div>
-                  )}
+                  <Tabs defaultValue="prompt" className="w-full">
+                    <TabsList className="grid w-full grid-cols-2">
+                      <TabsTrigger value="prompt">Prompt</TabsTrigger>
+                      <TabsTrigger value="code">Code</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="prompt">
+                      <div className="flex flex-col h-full w-full">
+                        <Highlight
+                          theme={themes.nightOwl}
+                          code={shaman?.prompt || ''}
+                          language="markdown">
+                          {({ style, tokens, getLineProps, getTokenProps }) => (
+                            <pre
+                              className="w-full p-4 text-sm whitespace-pre-wrap"
+                              style={{ ...style, maxWidth: '100%' }}>
+                              {tokens.map((line, i) => (
+                                <div
+                                  key={i}
+                                  {...getLineProps({ line })}
+                                  className="whitespace-pre-wrap">
+                                  {line.map((token, key) => (
+                                    <span
+                                      key={key}
+                                      {...getTokenProps({ token })}
+                                    />
+                                  ))}
+                                </div>
+                              ))}
+                            </pre>
+                          )}
+                        </Highlight>
+                      </div>
+                    </TabsContent>
+                    <TabsContent value="code">
+                      <div className="flex flex-col h-full w-full">
+                        <Highlight
+                          theme={themes.nightOwl}
+                          code={shaman?.code || ''}
+                          language="tsx">
+                          {({ style, tokens, getLineProps, getTokenProps }) => (
+                            <pre
+                              className="overflow-x-auto w-full p-4 text-sm whitespace-pre"
+                              style={{ ...style, maxWidth: '100%' }}>
+                              {tokens.map((line, i) => (
+                                <div
+                                  key={i}
+                                  {...getLineProps({ line })}
+                                  className="whitespace-pre">
+                                  {line.map((token, key) => (
+                                    <span
+                                      key={key}
+                                      {...getTokenProps({ token })}
+                                    />
+                                  ))}
+                                </div>
+                              ))}
+                            </pre>
+                          )}
+                        </Highlight>
+                      </div>
+                    </TabsContent>
+                  </Tabs>
                 </CardContent>
                 <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
                   <Button
