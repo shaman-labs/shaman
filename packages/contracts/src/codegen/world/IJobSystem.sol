@@ -13,9 +13,9 @@ import { JobState } from "../common.sol";
 interface IJobSystem {
   function enqueueJob(bytes32 shamanId, uint256 cost) external;
 
-  function startJob(bytes32 jobId, uint256 cost) external;
+  function startJob(bytes32 jobId) external;
 
-  function completeJob(bytes32 jobId, uint256 cost, bool success, string memory logMetadata) external;
+  function completeJob(bytes32 jobId, bool success, string memory logMetadata) external;
 
   function getJobState(bytes32 jobId) external view returns (JobState);
 

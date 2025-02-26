@@ -14,6 +14,10 @@ contract JobSystem is BaseSystem {
       Shamans.getBalance(shamanId) >= cost,
       "Insufficient balance for execution"
     );
+    require(
+      _token().balanceOf(address(this)) >= cost,
+      "Insufficient balance for execution"
+    );
 
     bytes32 jobId = keccak256(
       abi.encodePacked(shamanId, block.timestamp, block.prevrandao)
@@ -23,10 +27,15 @@ contract JobSystem is BaseSystem {
     Job.setState(jobId, JobState.Pending);
     Job.setCreatedAt(jobId, block.timestamp);
 
+    ShamanLogsLib.logOperation(shamanId, cost, true, LogType.Queue, "");
+
+    // burn ZUG tokens
+    _token().burn(cost);
+
     emit JobEnqueued(jobId, shamanId);
   }
 
-  function startJob(bytes32 jobId, uint256 cost) public onlyOperator {
+  function startJob(bytes32 jobId) public onlyOperator {
     bytes32 shamanId = Job.getShamanId(jobId);
 
     require(
@@ -34,24 +43,14 @@ contract JobSystem is BaseSystem {
       "Job is not in pending state"
     );
     require(Shamans.getActive(shamanId), "Shaman is not active");
-    require(
-      Shamans.getBalance(shamanId) >= cost,
-      "Insufficient balance for execution"
-    );
-    require(
-      _token().balanceOf(address(this)) >= cost,
-      "Insufficient balance for execution"
-    );
+
+    ShamanLogsLib.logOperation(shamanId, 0, true, LogType.Start, "");
 
     Job.setState(jobId, JobState.InProgress);
-
-    // burn ZUG tokens
-    _token().burn(cost);
   }
 
   function completeJob(
     bytes32 jobId,
-    uint256 cost,
     bool success,
     string memory logMetadata
   ) public onlyOperator {
@@ -66,9 +65,9 @@ contract JobSystem is BaseSystem {
 
     ShamanLogsLib.logOperation(
       shamanId,
-      cost,
+      0,
       success,
-      LogType.Execution,
+      LogType.Completion,
       logMetadata
     );
   }
