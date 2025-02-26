@@ -29,6 +29,9 @@ contract JobSystem is BaseSystem {
 
     ShamanLogsLib.logOperation(shamanId, cost, true, LogType.Queue, "");
 
+    // reduce shaman balance
+    Shamans.setBalance(shamanId, Shamans.getBalance(shamanId) - cost);
+
     // burn ZUG tokens
     _token().burn(cost);
 
