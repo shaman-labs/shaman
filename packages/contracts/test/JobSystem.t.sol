@@ -4,16 +4,13 @@ pragma solidity >=0.8.24;
 import "forge-std/console.sol";
 import "forge-std/Vm.sol";
 import { BaseTest } from "./BaseTest.t.sol";
-import { Shamans, Job, Roles } from "../src/codegen/index.sol";
-import { JobState, RoleType } from "../src/codegen/common.sol";
+import { Shamans, Job, Roles, ShamanLogs } from "../src/codegen/index.sol";
+import { JobState, RoleType, LogType } from "../src/codegen/common.sol";
 
 contract JobSystemTest is BaseTest {
   string constant SHAMAN_METADATA = "QmTest1";
   string constant LOG_METADATA = "QmTestLog1";
-
-  function setUp() public override {
-    super.setUp();
-  }
+  uint256 constant JOB_COST = 10;
 
   function testEnqueueJob() public {
     // Setup
@@ -21,9 +18,13 @@ contract JobSystemTest is BaseTest {
     _increaseAllowance(creatorAlice, 10000);
     bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
 
-    // Operator enqueues a job (to be changed)
-    vm.prank(signerAddress);
-    bytes32 jobId = world.enqueueJob(shamanId);
+    // Operator enqueues a job
+    vm.startPrank(signerAddress);
+    world.enqueueJob(shamanId, JOB_COST);
+
+    // Get the job ID from the emitted event
+    bytes32 jobId = _getLastJobId();
+    vm.stopPrank();
 
     // Verify job was created
     assertEq(Job.getShamanId(jobId), shamanId);
@@ -31,23 +32,146 @@ contract JobSystemTest is BaseTest {
     assertEq(Job.getCreatedAt(jobId), block.timestamp);
   }
 
-  function testClaimJob() public {
+  function testEnqueueJobInactiveShaman() public {
+    // Setup
+    _mintTokens(creatorAlice, 10000);
+    _increaseAllowance(creatorAlice, 10000);
+    bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
+
+    // Deactivate the shaman
+    vm.prank(creatorAlice);
+    world.cancelShaman(shamanId);
+
+    // Try to enqueue a job for inactive shaman
+    vm.prank(signerAddress);
+    vm.expectRevert("Shaman is not active");
+    world.enqueueJob(shamanId, JOB_COST);
+  }
+
+  function testEnqueueJobInsufficientBalance() public {
+    // Setup
+    _mintTokens(creatorAlice, 10000);
+    _increaseAllowance(creatorAlice, 10000);
+    bytes32 shamanId = _createShaman(creatorAlice, 5, SHAMAN_METADATA); // Only 5 tokens
+
+    // Try to enqueue a job with cost higher than balance
+    vm.prank(signerAddress);
+    vm.expectRevert("Insufficient balance for execution");
+    world.enqueueJob(shamanId, 10); // Cost is 10
+  }
+
+  function testOnlyOperatorCanEnqueueJob() public {
+    // Setup
+    _mintTokens(creatorAlice, 10000);
+    _increaseAllowance(creatorAlice, 10000);
+    bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
+
+    // Non-operator tries to enqueue a job
+    vm.prank(creatorBob);
+    vm.expectRevert("Not operator");
+    world.enqueueJob(shamanId, JOB_COST);
+  }
+
+  function testStartJob() public {
     // Setup
     _mintTokens(creatorAlice, 10000);
     _increaseAllowance(creatorAlice, 10000);
     bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
 
     // Operator enqueues a job
-    vm.prank(signerAddress);
-    bytes32 jobId = world.enqueueJob(shamanId);
+    vm.startPrank(signerAddress);
+    world.enqueueJob(shamanId, JOB_COST);
+    bytes32 jobId = _getLastJobId();
 
-    // Operator claims the job
-    vm.prank(signerAddress);
-    bool claimed = world.claimJob(jobId);
+    // Operator starts the job
+    world.startJob(jobId, JOB_COST);
+    vm.stopPrank();
 
-    // Verify claim was successful
-    assertTrue(claimed);
+    // Verify job state was updated
     assertEq(uint256(Job.getState(jobId)), uint256(JobState.InProgress));
+  }
+
+  function testStartJobNotPending() public {
+    // Setup
+    _mintTokens(creatorAlice, 10000);
+    _increaseAllowance(creatorAlice, 10000);
+    bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
+
+    // Operator enqueues a job
+    vm.startPrank(signerAddress);
+    world.enqueueJob(shamanId, JOB_COST);
+    bytes32 jobId = _getLastJobId();
+
+    // Start the job
+    world.startJob(jobId, JOB_COST);
+
+    // Try to start the job again
+    vm.expectRevert("Job is not in pending state");
+    world.startJob(jobId, JOB_COST);
+    vm.stopPrank();
+  }
+
+  function testStartJobInactiveShaman() public {
+    // Setup
+    _mintTokens(creatorAlice, 10000);
+    _increaseAllowance(creatorAlice, 10000);
+    bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
+
+    // Operator enqueues a job
+    vm.startPrank(signerAddress);
+    world.enqueueJob(shamanId, JOB_COST);
+    bytes32 jobId = _getLastJobId();
+    vm.stopPrank();
+
+    // Deactivate the shaman
+    vm.prank(creatorAlice);
+    world.cancelShaman(shamanId);
+
+    // Try to start the job
+    vm.prank(signerAddress);
+    vm.expectRevert("Shaman is not active");
+    world.startJob(jobId, JOB_COST);
+  }
+
+  function testStartJobInsufficientBalance() public {
+    // Setup
+    _mintTokens(creatorAlice, 10000);
+    _increaseAllowance(creatorAlice, 10000);
+    bytes32 shamanId = _createShaman(creatorAlice, 10, SHAMAN_METADATA); // Create with only 10 tokens
+
+    // Operator enqueues a job
+    vm.startPrank(signerAddress);
+    world.enqueueJob(shamanId, 10); // Enqueue a job that costs 10 tokens
+    bytes32 jobId = _getLastJobId();
+
+    // Reduce the shaman's balance to simulate insufficient funds
+    // This is done by having the creator withdraw some tokens
+    vm.stopPrank();
+    vm.prank(creatorAlice);
+    world.withdrawShaman(shamanId, 5); // Withdraw 5 tokens, leaving only 5
+
+    // Try to start the job with a cost higher than the remaining balance
+    vm.prank(signerAddress);
+    vm.expectRevert("Insufficient balance for execution");
+    world.startJob(jobId, 10); // Try to use 10 tokens when only 5 are left
+  }
+
+  function testOnlyOperatorCanStartJob() public {
+    // Setup
+    _mintTokens(creatorAlice, 10000);
+    _increaseAllowance(creatorAlice, 10000);
+    bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
+
+    // Operator enqueues a job
+    vm.startPrank(signerAddress);
+    world.enqueueJob(shamanId, JOB_COST);
+    bytes32 jobId = _getLastJobId();
+    vm.stopPrank();
+
+    // Non-operator tries to start the job
+    vm.prank(creatorBob);
+    vm.expectRevert("Not operator");
+    world.startJob(jobId, JOB_COST);
   }
 
   function testCompleteJob() public {
@@ -56,26 +180,28 @@ contract JobSystemTest is BaseTest {
     _increaseAllowance(creatorAlice, 10000);
     bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
 
-    // Operator enqueues a job
-    vm.prank(signerAddress);
-    bytes32 jobId = world.enqueueJob(shamanId);
-
-    // Operator claims and completes the job
+    // Operator enqueues and starts a job
     vm.startPrank(signerAddress);
-    world.claimJob(jobId);
-
-    // Get balance before completion
-    uint256 balanceBefore = Shamans.getBalance(shamanId);
+    world.enqueueJob(shamanId, JOB_COST);
+    bytes32 jobId = _getLastJobId();
+    world.startJob(jobId, JOB_COST);
 
     // Complete the job
-    world.completeJob(jobId, true, LOG_METADATA);
+    world.completeJob(jobId, JOB_COST, true, LOG_METADATA);
     vm.stopPrank();
 
     // Verify job was completed
     assertEq(uint256(Job.getState(jobId)), uint256(JobState.Completed));
 
-    // Verify balance was decremented
-    assertEq(Shamans.getBalance(shamanId), balanceBefore - 1);
+    // Verify the operation was logged
+    bytes32 logId = keccak256(
+      abi.encodePacked(shamanId, block.timestamp, block.prevrandao)
+    );
+    assertEq(ShamanLogs.getShamanId(logId), shamanId);
+    assertEq(uint256(ShamanLogs.getLogType(logId)), uint256(LogType.Execution));
+    assertEq(ShamanLogs.getAmount(logId), JOB_COST);
+    assertEq(ShamanLogs.getSuccess(logId), true);
+    assertEq(ShamanLogs.getLogMetadata(logId), LOG_METADATA);
   }
 
   function testCompleteJobWithFailure() public {
@@ -84,42 +210,64 @@ contract JobSystemTest is BaseTest {
     _increaseAllowance(creatorAlice, 10000);
     bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
 
-    // Operator enqueues a job
-    vm.prank(signerAddress);
-    bytes32 jobId = world.enqueueJob(shamanId);
-
-    // Operator claims and completes the job with failure
+    // Operator enqueues and starts a job
     vm.startPrank(signerAddress);
-    world.claimJob(jobId);
-
-    // Get balance before completion
-    uint256 balanceBefore = Shamans.getBalance(shamanId);
+    world.enqueueJob(shamanId, JOB_COST);
+    bytes32 jobId = _getLastJobId();
+    world.startJob(jobId, JOB_COST);
 
     // Complete the job with failure
-    world.completeJob(jobId, false, LOG_METADATA);
+    world.completeJob(jobId, JOB_COST, false, LOG_METADATA);
     vm.stopPrank();
 
     // Verify job was completed (even though execution failed)
     assertEq(uint256(Job.getState(jobId)), uint256(JobState.Completed));
 
-    // Verify balance was still decremented
-    assertEq(Shamans.getBalance(shamanId), balanceBefore - 1);
+    // Verify the operation was logged with failure
+    bytes32 logId = keccak256(
+      abi.encodePacked(shamanId, block.timestamp, block.prevrandao)
+    );
+    assertEq(ShamanLogs.getShamanId(logId), shamanId);
+    assertEq(uint256(ShamanLogs.getLogType(logId)), uint256(LogType.Execution));
+    assertEq(ShamanLogs.getAmount(logId), JOB_COST);
+    assertEq(ShamanLogs.getSuccess(logId), false);
+    assertEq(ShamanLogs.getLogMetadata(logId), LOG_METADATA);
   }
 
-  function testOnlyOperatorCanClaimJob() public {
+  function testCompleteJobNotInProgress() public {
     // Setup
     _mintTokens(creatorAlice, 10000);
     _increaseAllowance(creatorAlice, 10000);
     bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
 
-    // Operator enqueues a job
-    vm.prank(signerAddress);
-    bytes32 jobId = world.enqueueJob(shamanId);
+    // Operator enqueues a job but doesn't start it
+    vm.startPrank(signerAddress);
+    world.enqueueJob(shamanId, JOB_COST);
+    bytes32 jobId = _getLastJobId();
+    vm.stopPrank();
 
-    // Non-operator tries to claim the job
-    vm.prank(creatorBob);
-    vm.expectRevert("Not operator");
-    world.claimJob(jobId);
+    // Try to complete the job
+    vm.prank(signerAddress);
+    vm.expectRevert("Job is not in progress");
+    world.completeJob(jobId, JOB_COST, true, LOG_METADATA);
+  }
+
+  function testCompleteJobWithEmptyMetadata() public {
+    // Setup
+    _mintTokens(creatorAlice, 10000);
+    _increaseAllowance(creatorAlice, 10000);
+    bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
+
+    // Operator enqueues and starts a job
+    vm.startPrank(signerAddress);
+    world.enqueueJob(shamanId, JOB_COST);
+    bytes32 jobId = _getLastJobId();
+    world.startJob(jobId, JOB_COST);
+
+    // Try to complete the job with empty metadata
+    vm.expectRevert("Log metadata cannot be empty");
+    world.completeJob(jobId, JOB_COST, true, "");
+    vm.stopPrank();
   }
 
   function testOnlyOperatorCanCompleteJob() public {
@@ -128,52 +276,81 @@ contract JobSystemTest is BaseTest {
     _increaseAllowance(creatorAlice, 10000);
     bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
 
-    // Operator enqueues a job
-    vm.prank(signerAddress);
-    bytes32 jobId = world.enqueueJob(shamanId);
-
-    // Operator claims the job
-    vm.prank(signerAddress);
-    world.claimJob(jobId);
+    // Operator enqueues and starts a job
+    vm.startPrank(signerAddress);
+    world.enqueueJob(shamanId, JOB_COST);
+    bytes32 jobId = _getLastJobId();
+    world.startJob(jobId, JOB_COST);
+    vm.stopPrank();
 
     // Non-operator tries to complete the job
     vm.prank(creatorBob);
     vm.expectRevert("Not operator");
-    world.completeJob(jobId, true, LOG_METADATA);
+    world.completeJob(jobId, JOB_COST, true, LOG_METADATA);
   }
 
-  // Helper function to create a shaman
-  function _createShaman(
-    address creator,
-    uint256 initialDeposit,
-    string memory metadata
-  ) internal override returns (bytes32) {
-    vm.recordLogs();
+  function testGetJobState() public {
+    // Setup
+    _mintTokens(creatorAlice, 10000);
+    _increaseAllowance(creatorAlice, 10000);
+    bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
 
-    vm.prank(creator);
-    world.createShaman(initialDeposit, metadata);
+    // Operator enqueues a job
+    vm.startPrank(signerAddress);
+    world.enqueueJob(shamanId, JOB_COST);
+    bytes32 jobId = _getLastJobId();
+
+    // Check initial state
+    assertEq(uint256(world.getJobState(jobId)), uint256(JobState.Pending));
+
+    // Start the job
+    world.startJob(jobId, JOB_COST);
+
+    // Check updated state
+    assertEq(uint256(world.getJobState(jobId)), uint256(JobState.InProgress));
+
+    // Complete the job
+    world.completeJob(jobId, JOB_COST, true, LOG_METADATA);
+
+    // Check final state
+    assertEq(uint256(world.getJobState(jobId)), uint256(JobState.Completed));
+    vm.stopPrank();
+  }
+
+  function testGetJobShamanId() public {
+    // Setup
+    _mintTokens(creatorAlice, 10000);
+    _increaseAllowance(creatorAlice, 10000);
+    bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
+
+    // Operator enqueues a job
+    vm.startPrank(signerAddress);
+    world.enqueueJob(shamanId, JOB_COST);
+    bytes32 jobId = _getLastJobId();
     vm.stopPrank();
 
-    // Get logs and find the ShamanCreated event
+    // Check that the job is associated with the correct shaman
+    assertEq(world.getJobShamanId(jobId), shamanId);
+  }
+
+  // Helper function to get the last job ID from emitted events
+  function _getLastJobId() internal returns (bytes32) {
     Vm.Log[] memory entries = vm.getRecordedLogs();
-    bytes32 newShamanId;
+    bytes32 jobId;
+
+    // Look for the JobEnqueued event
+    bytes32 eventSignature = keccak256("JobEnqueued(bytes32,bytes32)");
+
     for (uint256 i = 0; i < entries.length; i++) {
-      // Check if this is our event
-      if (entries[i].topics[0] == keccak256("ShamanCreated(bytes32,address)")) {
-        // For indexed parameters, they appear in topics
-        // topics[0] is the event signature
-        // topics[1] is the first indexed parameter (shamanId)
-        newShamanId = bytes32(entries[i].topics[1]);
+      if (entries[i].topics[0] == eventSignature) {
+        // The first indexed parameter (jobId) is in topics[1]
+        jobId = bytes32(entries[i].topics[1]);
         break;
       }
     }
-    require(newShamanId != bytes32(0), "Shaman creation failed");
-    return newShamanId;
-  }
 
-  // Helper function to increase allowance
-  function _increaseAllowance(address owner, uint256 amount) internal override {
-    vm.prank(owner);
-    token.approve(address(world), amount);
+    // Make sure we found a valid jobId
+    require(jobId != bytes32(0), "Job creation failed");
+    return jobId;
   }
 }

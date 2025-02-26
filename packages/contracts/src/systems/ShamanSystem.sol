@@ -58,7 +58,13 @@ contract ShamanSystem is BaseSystem {
       Shamans.setBalance(shamanId, 0);
       _token().transfer(creator, remainingBalance);
 
-      ShamanLogsLib.logOperation(shamanId, 0, true, LogType.Refund, "");
+      ShamanLogsLib.logOperation(
+        shamanId,
+        remainingBalance,
+        true,
+        LogType.Refund,
+        ""
+      );
     }
   }
 
@@ -69,7 +75,7 @@ contract ShamanSystem is BaseSystem {
 
     Shamans.setBalance(shamanId, Shamans.getBalance(shamanId) + amount);
 
-    ShamanLogsLib.logOperation(shamanId, 0, true, LogType.Deposit, "");
+    ShamanLogsLib.logOperation(shamanId, amount, true, LogType.Deposit, "");
   }
 
   function withdrawShaman(bytes32 shamanId, uint256 amount) public {
@@ -80,7 +86,7 @@ contract ShamanSystem is BaseSystem {
     Shamans.setBalance(shamanId, Shamans.getBalance(shamanId) - amount);
     _token().transfer(_msgSender(), amount);
 
-    ShamanLogsLib.logOperation(shamanId, 0, true, LogType.Withdraw, "");
+    ShamanLogsLib.logOperation(shamanId, amount, true, LogType.Withdraw, "");
   }
 
   function getShamanMetadata(
