@@ -21,7 +21,7 @@ contract JobSystemTest is BaseTest {
     _increaseAllowance(creatorAlice, 10000);
     bytes32 shamanId = _createShaman(creatorAlice, 100, SHAMAN_METADATA);
 
-    // Operator enqueues a job
+    // Operator enqueues a job (to be changed)
     vm.prank(signerAddress);
     bytes32 jobId = world.enqueueJob(shamanId);
 
