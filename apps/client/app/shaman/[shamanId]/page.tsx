@@ -1,10 +1,10 @@
 'use client';
 
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
-import { Minus, MoreVertical, Plus, Trash2, Zap } from 'lucide-react';
+import { Minus, MoreVertical, Plus, Trash2, Zap, Pencil } from 'lucide-react';
 import { themes } from 'prism-react-renderer';
 import { Highlight } from 'prism-react-renderer';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNow } from 'date-fns';
@@ -196,6 +196,7 @@ const columns: ColumnDef<ShamanLogsTableData>[] = [
 
 export default function Page() {
   const { shamanId } = useParams();
+  const router = useRouter();
   const { data: shaman, refetch } = useShaman(shamanId as string);
   const { data: shamanLogs } = useShamanLogs(shamanId as string);
   const executionLogs = shamanLogs?.filter(
@@ -345,8 +346,15 @@ export default function Page() {
             </div>
             <div className="flex flex-col gap-4">
               <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Shaman</CardTitle>
+                  <Button
+                    onClick={() => router.push(`/edit/${shamanId}`)}
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
                 </CardHeader>
                 <CardContent className="flex-1 min-h-0 max-w-full w-full">
                   <Tabs defaultValue="prompt" className="w-full">
