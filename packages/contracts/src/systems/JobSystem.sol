@@ -64,6 +64,9 @@ contract JobSystem is BaseSystem {
       "Job is not in progress"
     );
 
+    // Add validation for empty metadata
+    require(bytes(logMetadata).length > 0, "Log metadata cannot be empty");
+
     Job.setState(jobId, JobState.Completed);
 
     ShamanLogsLib.logOperation(

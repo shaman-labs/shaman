@@ -84,7 +84,7 @@ contract JobSystemTest is BaseTest {
     bytes32 jobId = _getLastJobId();
 
     // Operator starts the job
-    world.startJob(jobId, JOB_COST);
+    world.startJob(jobId);
     vm.stopPrank();
 
     // Verify job state was updated
@@ -103,11 +103,11 @@ contract JobSystemTest is BaseTest {
     bytes32 jobId = _getLastJobId();
 
     // Start the job
-    world.startJob(jobId, JOB_COST);
+    world.startJob(jobId);
 
     // Try to start the job again
     vm.expectRevert("Job is not in pending state");
-    world.startJob(jobId, JOB_COST);
+    world.startJob(jobId);
     vm.stopPrank();
   }
 
@@ -130,30 +130,7 @@ contract JobSystemTest is BaseTest {
     // Try to start the job
     vm.prank(signerAddress);
     vm.expectRevert("Shaman is not active");
-    world.startJob(jobId, JOB_COST);
-  }
-
-  function testStartJobInsufficientBalance() public {
-    // Setup
-    _mintTokens(creatorAlice, 10000);
-    _increaseAllowance(creatorAlice, 10000);
-    bytes32 shamanId = _createShaman(creatorAlice, 10, SHAMAN_METADATA); // Create with only 10 tokens
-
-    // Operator enqueues a job
-    vm.startPrank(signerAddress);
-    world.enqueueJob(shamanId, 10); // Enqueue a job that costs 10 tokens
-    bytes32 jobId = _getLastJobId();
-
-    // Reduce the shaman's balance to simulate insufficient funds
-    // This is done by having the creator withdraw some tokens
-    vm.stopPrank();
-    vm.prank(creatorAlice);
-    world.withdrawShaman(shamanId, 5); // Withdraw 5 tokens, leaving only 5
-
-    // Try to start the job with a cost higher than the remaining balance
-    vm.prank(signerAddress);
-    vm.expectRevert("Insufficient balance for execution");
-    world.startJob(jobId, 10); // Try to use 10 tokens when only 5 are left
+    world.startJob(jobId);
   }
 
   function testOnlyOperatorCanStartJob() public {
@@ -171,7 +148,7 @@ contract JobSystemTest is BaseTest {
     // Non-operator tries to start the job
     vm.prank(creatorBob);
     vm.expectRevert("Not operator");
-    world.startJob(jobId, JOB_COST);
+    world.startJob(jobId);
   }
 
   function testCompleteJob() public {
@@ -184,10 +161,10 @@ contract JobSystemTest is BaseTest {
     vm.startPrank(signerAddress);
     world.enqueueJob(shamanId, JOB_COST);
     bytes32 jobId = _getLastJobId();
-    world.startJob(jobId, JOB_COST);
+    world.startJob(jobId);
 
     // Complete the job
-    world.completeJob(jobId, JOB_COST, true, LOG_METADATA);
+    world.completeJob(jobId, true, LOG_METADATA);
     vm.stopPrank();
 
     // Verify job was completed
@@ -198,8 +175,11 @@ contract JobSystemTest is BaseTest {
       abi.encodePacked(shamanId, block.timestamp, block.prevrandao)
     );
     assertEq(ShamanLogs.getShamanId(logId), shamanId);
-    assertEq(uint256(ShamanLogs.getLogType(logId)), uint256(LogType.Execution));
-    assertEq(ShamanLogs.getAmount(logId), JOB_COST);
+    assertEq(
+      uint256(ShamanLogs.getLogType(logId)),
+      uint256(LogType.Completion)
+    );
+    assertEq(ShamanLogs.getAmount(logId), 0);
     assertEq(ShamanLogs.getSuccess(logId), true);
     assertEq(ShamanLogs.getLogMetadata(logId), LOG_METADATA);
   }
@@ -214,10 +194,10 @@ contract JobSystemTest is BaseTest {
     vm.startPrank(signerAddress);
     world.enqueueJob(shamanId, JOB_COST);
     bytes32 jobId = _getLastJobId();
-    world.startJob(jobId, JOB_COST);
+    world.startJob(jobId);
 
     // Complete the job with failure
-    world.completeJob(jobId, JOB_COST, false, LOG_METADATA);
+    world.completeJob(jobId, false, LOG_METADATA);
     vm.stopPrank();
 
     // Verify job was completed (even though execution failed)
@@ -228,8 +208,11 @@ contract JobSystemTest is BaseTest {
       abi.encodePacked(shamanId, block.timestamp, block.prevrandao)
     );
     assertEq(ShamanLogs.getShamanId(logId), shamanId);
-    assertEq(uint256(ShamanLogs.getLogType(logId)), uint256(LogType.Execution));
-    assertEq(ShamanLogs.getAmount(logId), JOB_COST);
+    assertEq(
+      uint256(ShamanLogs.getLogType(logId)),
+      uint256(LogType.Completion)
+    );
+    assertEq(ShamanLogs.getAmount(logId), 0);
     assertEq(ShamanLogs.getSuccess(logId), false);
     assertEq(ShamanLogs.getLogMetadata(logId), LOG_METADATA);
   }
@@ -249,7 +232,7 @@ contract JobSystemTest is BaseTest {
     // Try to complete the job
     vm.prank(signerAddress);
     vm.expectRevert("Job is not in progress");
-    world.completeJob(jobId, JOB_COST, true, LOG_METADATA);
+    world.completeJob(jobId, true, LOG_METADATA);
   }
 
   function testCompleteJobWithEmptyMetadata() public {
@@ -262,11 +245,11 @@ contract JobSystemTest is BaseTest {
     vm.startPrank(signerAddress);
     world.enqueueJob(shamanId, JOB_COST);
     bytes32 jobId = _getLastJobId();
-    world.startJob(jobId, JOB_COST);
+    world.startJob(jobId);
 
     // Try to complete the job with empty metadata
     vm.expectRevert("Log metadata cannot be empty");
-    world.completeJob(jobId, JOB_COST, true, "");
+    world.completeJob(jobId, true, "");
     vm.stopPrank();
   }
 
@@ -280,13 +263,13 @@ contract JobSystemTest is BaseTest {
     vm.startPrank(signerAddress);
     world.enqueueJob(shamanId, JOB_COST);
     bytes32 jobId = _getLastJobId();
-    world.startJob(jobId, JOB_COST);
+    world.startJob(jobId);
     vm.stopPrank();
 
     // Non-operator tries to complete the job
     vm.prank(creatorBob);
     vm.expectRevert("Not operator");
-    world.completeJob(jobId, JOB_COST, true, LOG_METADATA);
+    world.completeJob(jobId, true, LOG_METADATA);
   }
 
   function testGetJobState() public {
@@ -304,13 +287,13 @@ contract JobSystemTest is BaseTest {
     assertEq(uint256(world.getJobState(jobId)), uint256(JobState.Pending));
 
     // Start the job
-    world.startJob(jobId, JOB_COST);
+    world.startJob(jobId);
 
     // Check updated state
     assertEq(uint256(world.getJobState(jobId)), uint256(JobState.InProgress));
 
     // Complete the job
-    world.completeJob(jobId, JOB_COST, true, LOG_METADATA);
+    world.completeJob(jobId, true, LOG_METADATA);
 
     // Check final state
     assertEq(uint256(world.getJobState(jobId)), uint256(JobState.Completed));
