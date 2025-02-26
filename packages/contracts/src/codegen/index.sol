@@ -7,3 +7,4 @@ import { ShamanConfig } from "./tables/ShamanConfig.sol";
 import { Shamans } from "./tables/Shamans.sol";
 import { ShamanLogs } from "./tables/ShamanLogs.sol";
 import { Roles } from "./tables/Roles.sol";
+import { Job } from "./tables/Job.sol";

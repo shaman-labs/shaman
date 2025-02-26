@@ -14,3 +14,9 @@ enum RoleType {
   None,
   Operator
 }
+
+enum JobState {
+  Pending,
+  InProgress,
+  Completed
+}

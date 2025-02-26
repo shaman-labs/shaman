@@ -4,6 +4,7 @@ export default defineWorld({
   enums: {
     LogType: ["Execution", "Deposit", "Withdraw", "Refund"],
     RoleType: ["None", "Operator"],
+    JobState: ["Pending", "InProgress", "Completed"],
   },
   tables: {
     ShamanConfig: {
@@ -50,6 +51,18 @@ export default defineWorld({
         role: "RoleType",
       },
       key: ["sender"],
+    },
+    Job: {
+      codegen: {
+        dataStruct: false,
+      },
+      schema: {
+        jobId: "bytes32",
+        shamanId: "bytes32",
+        state: "JobState",
+        createdAt: "uint256",
+      },
+      key: ["jobId"],
     },
   },
 });

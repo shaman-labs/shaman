@@ -1,0 +1,29 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.8.24;
+
+import { ShamanLogs } from "../codegen/index.sol";
+import { LogType } from "../codegen/common.sol";
+import { IZugToken } from "../IZugToken.sol";
+
+library ShamanLogsLib {
+  function logOperation(
+    bytes32 shamanId,
+    uint256 cost,
+    bool success,
+    LogType logType,
+    string memory logMetadata
+  ) internal returns (bytes32) {
+    bytes32 logId = keccak256(
+      abi.encodePacked(shamanId, block.timestamp, block.prevrandao)
+    );
+
+    ShamanLogs.setShamanId(logId, shamanId);
+    ShamanLogs.setCreatedAt(logId, block.timestamp);
+    ShamanLogs.setLogType(logId, logType);
+    ShamanLogs.setSuccess(logId, success);
+    ShamanLogs.setAmount(logId, cost);
+    ShamanLogs.setLogMetadata(logId, logMetadata);
+
+    return logId;
+  }
+}

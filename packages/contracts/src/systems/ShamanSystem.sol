@@ -3,6 +3,7 @@ pragma solidity >=0.8.24;
 import { BaseSystem } from "./BaseSystem.sol";
 import { Shamans, ShamanConfig, ShamanLogs, Roles } from "../codegen/index.sol";
 import { LogType, RoleType } from "../codegen/common.sol";
+import { ShamanLogsLib } from "../lib/ShamanLogsLib.sol";
 
 contract ShamanSystem is BaseSystem {
   event ShamanCreated(bytes32 indexed shamanId, address indexed creator);
@@ -21,15 +22,13 @@ contract ShamanSystem is BaseSystem {
 
     if (initialDeposit > 0) {
       _token().transferFrom(_msgSender(), address(this), initialDeposit);
-
-      bytes32 logId = keccak256(
-        abi.encodePacked(shamanId, block.timestamp, block.prevrandao)
+      ShamanLogsLib.logOperation(
+        shamanId,
+        initialDeposit,
+        true,
+        LogType.Deposit,
+        ""
       );
-      ShamanLogs.setShamanId(logId, shamanId);
-      ShamanLogs.setLogType(logId, LogType.Deposit);
-      ShamanLogs.setAmount(logId, initialDeposit);
-      ShamanLogs.setSuccess(logId, true);
-      ShamanLogs.setCreatedAt(logId, block.timestamp);
     }
 
     emit ShamanCreated(shamanId, _msgSender());
@@ -59,53 +58,10 @@ contract ShamanSystem is BaseSystem {
       Shamans.setBalance(shamanId, 0);
       _token().transfer(creator, remainingBalance);
 
-      // Log the refund
-      bytes32 logId = keccak256(
-        abi.encodePacked(shamanId, block.timestamp, block.prevrandao)
-      );
-      ShamanLogs.setShamanId(logId, shamanId);
-      ShamanLogs.setLogType(logId, LogType.Refund);
-      ShamanLogs.setAmount(logId, remainingBalance);
-      ShamanLogs.setSuccess(logId, true);
-      ShamanLogs.setCreatedAt(logId, block.timestamp);
+      ShamanLogsLib.logOperation(shamanId, 0, true, LogType.Refund, "");
     }
   }
 
-  function logShamanOperation(
-    bytes32 shamanId,
-    uint256 cost,
-    string memory logMetadata,
-    bool success
-  ) public onlyOperator {
-    require(Shamans.getActive(shamanId), "Shaman is not active");
-    require(
-      Shamans.getBalance(shamanId) >= cost,
-      "Insufficient balance in shaman"
-    );
-    require(
-      _token().balanceOf(address(this)) >= cost,
-      "Insufficient balance in contract"
-    );
-    require(bytes(logMetadata).length > 0, "Log metadata cannot be empty");
-
-    bytes32 logId = keccak256(
-      abi.encodePacked(shamanId, block.timestamp, block.prevrandao)
-    );
-
-    Shamans.setBalance(shamanId, Shamans.getBalance(shamanId) - cost);
-
-    ShamanLogs.setShamanId(logId, shamanId);
-    ShamanLogs.setLogType(logId, LogType.Execution);
-    ShamanLogs.setAmount(logId, cost);
-    ShamanLogs.setCreatedAt(logId, block.timestamp);
-    ShamanLogs.setSuccess(logId, success);
-    ShamanLogs.setLogMetadata(logId, logMetadata);
-
-    // burn $ZUG
-    _token().burn(cost);
-  }
-
-  // add deposit and withdraw functions
   function depositShaman(bytes32 shamanId, uint256 amount) public {
     require(Shamans.getActive(shamanId), "Shaman is not active");
     require(amount > 0, "Amount must be greater than 0");
@@ -113,13 +69,7 @@ contract ShamanSystem is BaseSystem {
 
     Shamans.setBalance(shamanId, Shamans.getBalance(shamanId) + amount);
 
-    bytes32 logId = keccak256(abi.encodePacked(shamanId, block.timestamp));
-
-    ShamanLogs.setShamanId(logId, shamanId);
-    ShamanLogs.setLogType(logId, LogType.Deposit);
-    ShamanLogs.setAmount(logId, amount);
-    ShamanLogs.setSuccess(logId, true);
-    ShamanLogs.setCreatedAt(logId, block.timestamp);
+    ShamanLogsLib.logOperation(shamanId, 0, true, LogType.Deposit, "");
   }
 
   function withdrawShaman(bytes32 shamanId, uint256 amount) public {
@@ -130,13 +80,7 @@ contract ShamanSystem is BaseSystem {
     Shamans.setBalance(shamanId, Shamans.getBalance(shamanId) - amount);
     _token().transfer(_msgSender(), amount);
 
-    bytes32 logId = keccak256(abi.encodePacked(shamanId, block.timestamp));
-
-    ShamanLogs.setShamanId(logId, shamanId);
-    ShamanLogs.setLogType(logId, LogType.Withdraw);
-    ShamanLogs.setAmount(logId, amount);
-    ShamanLogs.setSuccess(logId, true);
-    ShamanLogs.setCreatedAt(logId, block.timestamp);
+    ShamanLogsLib.logOperation(shamanId, 0, true, LogType.Withdraw, "");
   }
 
   function getShamanMetadata(
