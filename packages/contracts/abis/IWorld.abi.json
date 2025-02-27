@@ -203,6 +203,24 @@
   },
   {
     "type": "function",
+    "name": "createSource",
+    "inputs": [
+      {
+        "name": "name",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "metadata",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "createWorkflow",
     "inputs": [
       {
@@ -813,6 +831,44 @@
   },
   {
     "type": "function",
+    "name": "getWorkflowIdsByShamanId",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getWorkflowIdsBySourceId",
+    "inputs": [
+      {
+        "name": "sourceId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getWorkflowMetadata",
     "inputs": [
       {
@@ -826,6 +882,44 @@
         "name": "",
         "type": "string",
         "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getWorkflowShamanIds",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getWorkflowSourceIds",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
       }
     ],
     "stateMutability": "view"

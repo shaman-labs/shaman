@@ -165,6 +165,11 @@ declare const abi: [
         "internalType": "bytes32"
       },
       {
+        "name": "cost",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
         "name": "success",
         "type": "bool",
         "internalType": "bool"
@@ -173,19 +178,6 @@ declare const abi: [
         "name": "metadata",
         "type": "string",
         "internalType": "string"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "createJob",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
       }
     ],
     "outputs": [],
@@ -252,19 +244,6 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "deactivateWorkflow",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "deleteRecord",
     "inputs": [
       {
@@ -276,6 +255,24 @@ declare const abi: [
         "name": "keyTuple",
         "type": "bytes32[]",
         "internalType": "bytes32[]"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "enqueueJob",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "cost",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [],
@@ -816,6 +813,44 @@ declare const abi: [
   },
   {
     "type": "function",
+    "name": "getWorkflowIdsByShamanId",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getWorkflowIdsBySourceId",
+    "inputs": [
+      {
+        "name": "sourceId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getWorkflowMetadata",
     "inputs": [
       {
@@ -829,6 +864,44 @@ declare const abi: [
         "name": "",
         "type": "string",
         "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getWorkflowShamanIds",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getWorkflowSourceIds",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
       }
     ],
     "stateMutability": "view"
@@ -1665,6 +1738,24 @@ declare const abi: [
         "name": "metadata",
         "type": "string",
         "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "updateWorkflowStatus",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "active",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "outputs": [],

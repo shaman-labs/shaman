@@ -21,12 +21,12 @@ library Sources {
   ResourceId constant _tableId = ResourceId.wrap(0x74620000000000000000000000000000536f7572636573000000000000000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0034020214200000000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0038030214200400000000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (address, uint256, string, string)
-  Schema constant _valueSchema = Schema.wrap(0x00340202611fc5c5000000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (address, uint256, uint32, string, string)
+  Schema constant _valueSchema = Schema.wrap(0x00380302611f03c5c50000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -42,11 +42,12 @@ library Sources {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](4);
+    fieldNames = new string[](5);
     fieldNames[0] = "creator";
     fieldNames[1] = "createdAt";
-    fieldNames[2] = "name";
-    fieldNames[3] = "metadata";
+    fieldNames[2] = "workflowCount";
+    fieldNames[3] = "name";
+    fieldNames[4] = "metadata";
   }
 
   /**
@@ -145,6 +146,48 @@ library Sources {
     _keyTuple[0] = sourceId;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((createdAt)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get workflowCount.
+   */
+  function getWorkflowCount(bytes32 sourceId) internal view returns (uint32 workflowCount) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    return (uint32(bytes4(_blob)));
+  }
+
+  /**
+   * @notice Get workflowCount.
+   */
+  function _getWorkflowCount(bytes32 sourceId) internal view returns (uint32 workflowCount) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    return (uint32(bytes4(_blob)));
+  }
+
+  /**
+   * @notice Set workflowCount.
+   */
+  function setWorkflowCount(bytes32 sourceId, uint32 workflowCount) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((workflowCount)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set workflowCount.
+   */
+  function _setWorkflowCount(bytes32 sourceId, uint32 workflowCount) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((workflowCount)), _fieldLayout);
   }
 
   /**
@@ -476,7 +519,11 @@ library Sources {
    */
   function get(
     bytes32 sourceId
-  ) internal view returns (address creator, uint256 createdAt, string memory name, string memory metadata) {
+  )
+    internal
+    view
+    returns (address creator, uint256 createdAt, uint32 workflowCount, string memory name, string memory metadata)
+  {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
@@ -493,7 +540,11 @@ library Sources {
    */
   function _get(
     bytes32 sourceId
-  ) internal view returns (address creator, uint256 createdAt, string memory name, string memory metadata) {
+  )
+    internal
+    view
+    returns (address creator, uint256 createdAt, uint32 workflowCount, string memory name, string memory metadata)
+  {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
@@ -512,10 +563,11 @@ library Sources {
     bytes32 sourceId,
     address creator,
     uint256 createdAt,
+    uint32 workflowCount,
     string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(creator, createdAt);
+    bytes memory _staticData = encodeStatic(creator, createdAt, workflowCount);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
@@ -533,10 +585,11 @@ library Sources {
     bytes32 sourceId,
     address creator,
     uint256 createdAt,
+    uint32 workflowCount,
     string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(creator, createdAt);
+    bytes memory _staticData = encodeStatic(creator, createdAt, workflowCount);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
@@ -550,10 +603,14 @@ library Sources {
   /**
    * @notice Decode the tightly packed blob of static data using this table's field layout.
    */
-  function decodeStatic(bytes memory _blob) internal pure returns (address creator, uint256 createdAt) {
+  function decodeStatic(
+    bytes memory _blob
+  ) internal pure returns (address creator, uint256 createdAt, uint32 workflowCount) {
     creator = (address(Bytes.getBytes20(_blob, 0)));
 
     createdAt = (uint256(Bytes.getBytes32(_blob, 20)));
+
+    workflowCount = (uint32(Bytes.getBytes4(_blob, 52)));
   }
 
   /**
@@ -587,8 +644,12 @@ library Sources {
     bytes memory _staticData,
     EncodedLengths _encodedLengths,
     bytes memory _dynamicData
-  ) internal pure returns (address creator, uint256 createdAt, string memory name, string memory metadata) {
-    (creator, createdAt) = decodeStatic(_staticData);
+  )
+    internal
+    pure
+    returns (address creator, uint256 createdAt, uint32 workflowCount, string memory name, string memory metadata)
+  {
+    (creator, createdAt, workflowCount) = decodeStatic(_staticData);
 
     (name, metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
@@ -617,8 +678,8 @@ library Sources {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(address creator, uint256 createdAt) internal pure returns (bytes memory) {
-    return abi.encodePacked(creator, createdAt);
+  function encodeStatic(address creator, uint256 createdAt, uint32 workflowCount) internal pure returns (bytes memory) {
+    return abi.encodePacked(creator, createdAt, workflowCount);
   }
 
   /**
@@ -652,10 +713,11 @@ library Sources {
   function encode(
     address creator,
     uint256 createdAt,
+    uint32 workflowCount,
     string memory name,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(creator, createdAt);
+    bytes memory _staticData = encodeStatic(creator, createdAt, workflowCount);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);

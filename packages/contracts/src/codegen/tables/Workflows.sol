@@ -24,12 +24,12 @@ library Workflows {
   ResourceId constant _tableId = ResourceId.wrap(0x74620000000000000000000000000000576f726b666c6f777300000000000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0056050101142001200000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x005e070101142001200404000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (uint8, address, uint256, bool, uint256, string)
-  Schema constant _valueSchema = Schema.wrap(0x0056050100611f601fc500000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (uint8, address, uint256, bool, uint256, uint32, uint32, string)
+  Schema constant _valueSchema = Schema.wrap(0x005e070100611f601f0303c50000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -45,13 +45,15 @@ library Workflows {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](6);
+    fieldNames = new string[](8);
     fieldNames[0] = "state";
     fieldNames[1] = "creator";
     fieldNames[2] = "createdAt";
     fieldNames[3] = "active";
     fieldNames[4] = "balance";
-    fieldNames[5] = "metadata";
+    fieldNames[5] = "shamanCount";
+    fieldNames[6] = "sourceCount";
+    fieldNames[7] = "metadata";
   }
 
   /**
@@ -279,6 +281,90 @@ library Workflows {
   }
 
   /**
+   * @notice Get shamanCount.
+   */
+  function getShamanCount(bytes32 workflowId) internal view returns (uint32 shamanCount) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = workflowId;
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
+    return (uint32(bytes4(_blob)));
+  }
+
+  /**
+   * @notice Get shamanCount.
+   */
+  function _getShamanCount(bytes32 workflowId) internal view returns (uint32 shamanCount) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = workflowId;
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
+    return (uint32(bytes4(_blob)));
+  }
+
+  /**
+   * @notice Set shamanCount.
+   */
+  function setShamanCount(bytes32 workflowId, uint32 shamanCount) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = workflowId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((shamanCount)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set shamanCount.
+   */
+  function _setShamanCount(bytes32 workflowId, uint32 shamanCount) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = workflowId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((shamanCount)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get sourceCount.
+   */
+  function getSourceCount(bytes32 workflowId) internal view returns (uint32 sourceCount) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = workflowId;
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 6, _fieldLayout);
+    return (uint32(bytes4(_blob)));
+  }
+
+  /**
+   * @notice Get sourceCount.
+   */
+  function _getSourceCount(bytes32 workflowId) internal view returns (uint32 sourceCount) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = workflowId;
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 6, _fieldLayout);
+    return (uint32(bytes4(_blob)));
+  }
+
+  /**
+   * @notice Set sourceCount.
+   */
+  function setSourceCount(bytes32 workflowId, uint32 sourceCount) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = workflowId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 6, abi.encodePacked((sourceCount)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set sourceCount.
+   */
+  function _setSourceCount(bytes32 workflowId, uint32 sourceCount) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = workflowId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 6, abi.encodePacked((sourceCount)), _fieldLayout);
+  }
+
+  /**
    * @notice Get metadata.
    */
   function getMetadata(bytes32 workflowId) internal view returns (string memory metadata) {
@@ -454,6 +540,8 @@ library Workflows {
       uint256 createdAt,
       bool active,
       uint256 balance,
+      uint32 shamanCount,
+      uint32 sourceCount,
       string memory metadata
     )
   {
@@ -482,6 +570,8 @@ library Workflows {
       uint256 createdAt,
       bool active,
       uint256 balance,
+      uint32 shamanCount,
+      uint32 sourceCount,
       string memory metadata
     )
   {
@@ -506,9 +596,11 @@ library Workflows {
     uint256 createdAt,
     bool active,
     uint256 balance,
+    uint32 shamanCount,
+    uint32 sourceCount,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance);
+    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance, shamanCount, sourceCount);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);
@@ -529,9 +621,11 @@ library Workflows {
     uint256 createdAt,
     bool active,
     uint256 balance,
+    uint32 shamanCount,
+    uint32 sourceCount,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance);
+    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance, shamanCount, sourceCount);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);
@@ -547,7 +641,19 @@ library Workflows {
    */
   function decodeStatic(
     bytes memory _blob
-  ) internal pure returns (WorkflowState state, address creator, uint256 createdAt, bool active, uint256 balance) {
+  )
+    internal
+    pure
+    returns (
+      WorkflowState state,
+      address creator,
+      uint256 createdAt,
+      bool active,
+      uint256 balance,
+      uint32 shamanCount,
+      uint32 sourceCount
+    )
+  {
     state = WorkflowState(uint8(Bytes.getBytes1(_blob, 0)));
 
     creator = (address(Bytes.getBytes20(_blob, 1)));
@@ -557,6 +663,10 @@ library Workflows {
     active = (_toBool(uint8(Bytes.getBytes1(_blob, 53))));
 
     balance = (uint256(Bytes.getBytes32(_blob, 54)));
+
+    shamanCount = (uint32(Bytes.getBytes4(_blob, 86)));
+
+    sourceCount = (uint32(Bytes.getBytes4(_blob, 90)));
   }
 
   /**
@@ -593,10 +703,12 @@ library Workflows {
       uint256 createdAt,
       bool active,
       uint256 balance,
+      uint32 shamanCount,
+      uint32 sourceCount,
       string memory metadata
     )
   {
-    (state, creator, createdAt, active, balance) = decodeStatic(_staticData);
+    (state, creator, createdAt, active, balance, shamanCount, sourceCount) = decodeStatic(_staticData);
 
     (metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
@@ -630,9 +742,11 @@ library Workflows {
     address creator,
     uint256 createdAt,
     bool active,
-    uint256 balance
+    uint256 balance,
+    uint32 shamanCount,
+    uint32 sourceCount
   ) internal pure returns (bytes memory) {
-    return abi.encodePacked(state, creator, createdAt, active, balance);
+    return abi.encodePacked(state, creator, createdAt, active, balance, shamanCount, sourceCount);
   }
 
   /**
@@ -666,9 +780,11 @@ library Workflows {
     uint256 createdAt,
     bool active,
     uint256 balance,
+    uint32 shamanCount,
+    uint32 sourceCount,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance);
+    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance, shamanCount, sourceCount);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);

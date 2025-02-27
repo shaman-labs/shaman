@@ -45,4 +45,12 @@ interface IWorkflowSystem {
   function getWorkflowActive(bytes32 workflowId) external view returns (bool);
 
   function getWorkflowCreator(bytes32 workflowId) external view returns (address);
+
+  function getWorkflowShamanIds(bytes32 workflowId) external view returns (bytes32[] memory);
+
+  function getWorkflowSourceIds(bytes32 workflowId) external view returns (bytes32[] memory);
+
+  function getWorkflowIdsBySourceId(bytes32 sourceId) external view returns (bytes32[] memory);
+
+  function getWorkflowIdsByShamanId(bytes32 shamanId) external view returns (bytes32[] memory);
 }
