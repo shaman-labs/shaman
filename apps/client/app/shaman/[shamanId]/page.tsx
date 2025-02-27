@@ -262,36 +262,6 @@ export default function Page() {
             <div className="flex flex-col gap-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>$ZUG Balance</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-center text-5xl font-bold">
-                    {Number(shaman?.balance || 0)}
-                  </p>
-                </CardContent>
-                <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
-                  <Button
-                    className="w-full"
-                    variant="default"
-                    onClick={() =>
-                      openAddBalance(true, undefined, handleRefetch)
-                    }>
-                    <Plus />
-                    Add Balance
-                  </Button>
-                  <Button
-                    className="w-full"
-                    variant="outline"
-                    onClick={() =>
-                      openWithdrawBalance(true, undefined, handleRefetch)
-                    }>
-                    <Minus />
-                    Withdraw Balance
-                  </Button>
-                </CardFooter>
-              </Card>
-              <Card>
-                <CardHeader>
                   <CardTitle>Executions</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -342,10 +312,40 @@ export default function Page() {
             </div>
             <div className="flex flex-col gap-4">
               <Card>
+                <CardHeader>
+                  <CardTitle>$ZUG Balance</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-center text-5xl font-bold">
+                    {Number(shaman?.balance || 0)}
+                  </p>
+                </CardContent>
+                <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
+                  <Button
+                    className="w-full"
+                    variant="default"
+                    onClick={() =>
+                      openAddBalance(true, undefined, handleRefetch)
+                    }>
+                    <Plus />
+                    Add Balance
+                  </Button>
+                  <Button
+                    className="w-full"
+                    variant="outline"
+                    onClick={() =>
+                      openWithdrawBalance(true, undefined, handleRefetch)
+                    }>
+                    <Minus />
+                    Withdraw Balance
+                  </Button>
+                </CardFooter>
+              </Card>
+              <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Shaman</CardTitle>
                   <Button
-                    onClick={() => router.push(`/edit/${shamanId}`)}
+                    onClick={() => router.push(`/update/${shamanId}`)}
                     variant="ghost"
                     size="icon"
                     className="h-8 w-8">
