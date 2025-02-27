@@ -203,6 +203,24 @@ declare const abi: [
   },
   {
     "type": "function",
+    "name": "createSource",
+    "inputs": [
+      {
+        "name": "name",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "metadata",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "createWorkflow",
     "inputs": [
       {
