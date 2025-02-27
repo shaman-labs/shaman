@@ -69,7 +69,7 @@ export function DialogViewLog(props: DialogProps) {
           <DialogTitle>Shaman Log</DialogTitle>
           <DialogDescription>
             Viewing log details for Shaman ID:{' '}
-            {trimHash(shamanLogMetadata?.shamanMetadata.shamanId)}
+            {trimHash(shamanLog?.shamanMetadata?.shamanId)}
           </DialogDescription>
         </DialogHeader>
 
@@ -101,26 +101,26 @@ export function DialogViewLog(props: DialogProps) {
               <TableRow>
                 <TableCell className="font-medium">Shaman ID</TableCell>
                 <TableCell className="break-all">
-                  {shamanLogMetadata?.shamanMetadata.shamanId}
+                  {shamanLogMetadata?.shamanMetadata?.shamanId}
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Prompt</TableCell>
                 <TableCell>
-                  {shamanLogMetadata?.shamanMetadata.prompt}
+                  {shamanLogMetadata?.shamanMetadata?.prompt}
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Creator</TableCell>
                 <TableCell className="break-all">
-                  {shamanLogMetadata?.shamanMetadata.shamanCreator}
+                  {shamanLogMetadata?.shamanMetadata?.shamanCreator}
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Created At</TableCell>
                 <TableCell>
                   {new Date(
-                    shamanLogMetadata?.shamanMetadata.shamanCreatedAt ?? ''
+                    shamanLogMetadata?.shamanMetadata?.shamanCreatedAt ?? ''
                   ).toLocaleString()}
                 </TableCell>
               </TableRow>
