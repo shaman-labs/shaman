@@ -1,6 +1,42 @@
 export const IWorld = [
   {
     "type": "function",
+    "name": "addShamanToWorkflow",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "addSourceToWorkflow",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "sourceId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "batchCall",
     "inputs": [
       {
@@ -121,23 +157,10 @@ export const IWorld = [
   },
   {
     "type": "function",
-    "name": "cancelShaman",
-    "inputs": [
-      {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "completeJob",
     "inputs": [
       {
-        "name": "jobId",
+        "name": "workflowId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -152,7 +175,7 @@ export const IWorld = [
         "internalType": "bool"
       },
       {
-        "name": "logMetadata",
+        "name": "metadata",
         "type": "string",
         "internalType": "string"
       }
@@ -165,7 +188,25 @@ export const IWorld = [
     "name": "createShaman",
     "inputs": [
       {
-        "name": "initialDeposit",
+        "name": "name",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "metadata",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "createWorkflow",
+    "inputs": [
+      {
+        "name": "initialBalance",
         "type": "uint256",
         "internalType": "uint256"
       },
@@ -173,6 +214,16 @@ export const IWorld = [
         "name": "metadata",
         "type": "string",
         "internalType": "string"
+      },
+      {
+        "name": "initialShamans",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      },
+      {
+        "name": "initialSources",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
       }
     ],
     "outputs": [],
@@ -211,28 +262,10 @@ export const IWorld = [
   },
   {
     "type": "function",
-    "name": "depositShaman",
-    "inputs": [
-      {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "amount",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "enqueueJob",
     "inputs": [
       {
-        "name": "shamanId",
+        "name": "workflowId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -489,44 +522,6 @@ export const IWorld = [
   },
   {
     "type": "function",
-    "name": "getJobShamanId",
-    "inputs": [
-      {
-        "name": "jobId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getJobState",
-    "inputs": [
-      {
-        "name": "jobId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint8",
-        "internalType": "enum JobState"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "getKeySchema",
     "inputs": [
       {
@@ -619,44 +614,6 @@ export const IWorld = [
   },
   {
     "type": "function",
-    "name": "getShamanActive",
-    "inputs": [
-      {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getShamanBalance",
-    "inputs": [
-      {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "getShamanCreator",
     "inputs": [
       {
@@ -676,7 +633,45 @@ export const IWorld = [
   },
   {
     "type": "function",
+    "name": "getShamanIdByName",
+    "inputs": [
+      {
+        "name": "name",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getShamanMetadata",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getShamanName",
     "inputs": [
       {
         "name": "shamanId",
@@ -755,6 +750,101 @@ export const IWorld = [
         "name": "valueSchema",
         "type": "bytes32",
         "internalType": "Schema"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getWorkflowActive",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getWorkflowBalance",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getWorkflowCreator",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getWorkflowMetadata",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getWorkflowState",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "enum WorkflowState"
       }
     ],
     "stateMutability": "view"
@@ -1103,6 +1193,42 @@ export const IWorld = [
   },
   {
     "type": "function",
+    "name": "removeShamanFromWorkflow",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "removeSourceFromWorkflow",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "sourceId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "renounceOwnership",
     "inputs": [
       {
@@ -1358,14 +1484,9 @@ export const IWorld = [
     "name": "startJob",
     "inputs": [
       {
-        "name": "jobId",
+        "name": "workflowId",
         "type": "bytes32",
         "internalType": "bytes32"
-      },
-      {
-        "name": "cost",
-        "type": "uint256",
-        "internalType": "uint256"
       }
     ],
     "outputs": [],
@@ -1530,17 +1651,35 @@ export const IWorld = [
   },
   {
     "type": "function",
-    "name": "withdrawShaman",
+    "name": "updateWorkflowMetadata",
     "inputs": [
       {
-        "name": "shamanId",
+        "name": "workflowId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
       {
-        "name": "amount",
-        "type": "uint256",
-        "internalType": "uint256"
+        "name": "metadata",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "updateWorkflowStatus",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "active",
+        "type": "bool",
+        "internalType": "bool"
       }
     ],
     "outputs": [],

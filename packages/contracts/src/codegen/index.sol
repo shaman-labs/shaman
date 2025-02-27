@@ -5,6 +5,11 @@ pragma solidity >=0.8.24;
 
 import { ShamanConfig } from "./tables/ShamanConfig.sol";
 import { Shamans } from "./tables/Shamans.sol";
-import { ShamanLogs } from "./tables/ShamanLogs.sol";
+import { Workflows } from "./tables/Workflows.sol";
+import { WorkflowLogs } from "./tables/WorkflowLogs.sol";
+import { Sources } from "./tables/Sources.sol";
 import { Roles } from "./tables/Roles.sol";
-import { Job } from "./tables/Job.sol";
+import { WorkflowShaman } from "./tables/WorkflowShaman.sol";
+import { WorkflowSource } from "./tables/WorkflowSource.sol";
+import { SourceNames } from "./tables/SourceNames.sol";
+import { ShamanNames } from "./tables/ShamanNames.sol";

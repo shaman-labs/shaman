@@ -21,12 +21,12 @@ library Shamans {
   ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e73000000000000000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0055040114200120000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0034020214200000000000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (address, uint256, bool, uint256, string)
-  Schema constant _valueSchema = Schema.wrap(0x00550401611f601fc50000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (address, uint256, string, string)
+  Schema constant _valueSchema = Schema.wrap(0x00340202611fc5c5000000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -42,12 +42,11 @@ library Shamans {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](5);
+    fieldNames = new string[](4);
     fieldNames[0] = "creator";
     fieldNames[1] = "createdAt";
-    fieldNames[2] = "active";
-    fieldNames[3] = "balance";
-    fieldNames[4] = "metadata";
+    fieldNames[2] = "name";
+    fieldNames[3] = "metadata";
   }
 
   /**
@@ -149,87 +148,165 @@ library Shamans {
   }
 
   /**
-   * @notice Get active.
+   * @notice Get name.
    */
-  function getActive(bytes32 shamanId) internal view returns (bool active) {
+  function getName(bytes32 shamanId) internal view returns (string memory name) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
-    return (_toBool(uint8(bytes1(_blob))));
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
   }
 
   /**
-   * @notice Get active.
+   * @notice Get name.
    */
-  function _getActive(bytes32 shamanId) internal view returns (bool active) {
+  function _getName(bytes32 shamanId) internal view returns (string memory name) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
-    return (_toBool(uint8(bytes1(_blob))));
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
   }
 
   /**
-   * @notice Set active.
+   * @notice Set name.
    */
-  function setActive(bytes32 shamanId, bool active) internal {
+  function setName(bytes32 shamanId, string memory name) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((active)), _fieldLayout);
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((name)));
   }
 
   /**
-   * @notice Set active.
+   * @notice Set name.
    */
-  function _setActive(bytes32 shamanId, bool active) internal {
+  function _setName(bytes32 shamanId, string memory name) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((active)), _fieldLayout);
+    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((name)));
   }
 
   /**
-   * @notice Get balance.
+   * @notice Get the length of name.
    */
-  function getBalance(bytes32 shamanId) internal view returns (uint256 balance) {
+  function lengthName(bytes32 shamanId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
-    return (uint256(bytes32(_blob)));
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
   }
 
   /**
-   * @notice Get balance.
+   * @notice Get the length of name.
    */
-  function _getBalance(bytes32 shamanId) internal view returns (uint256 balance) {
+  function _lengthName(bytes32 shamanId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
-    return (uint256(bytes32(_blob)));
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
   }
 
   /**
-   * @notice Set balance.
+   * @notice Get an item of name.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function setBalance(bytes32 shamanId, uint256 balance) internal {
+  function getItemName(bytes32 shamanId, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((balance)), _fieldLayout);
+    unchecked {
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
   }
 
   /**
-   * @notice Set balance.
+   * @notice Get an item of name.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _setBalance(bytes32 shamanId, uint256 balance) internal {
+  function _getItemName(bytes32 shamanId, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((balance)), _fieldLayout);
+    unchecked {
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Push a slice to name.
+   */
+  function pushName(bytes32 shamanId, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanId;
+
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Push a slice to name.
+   */
+  function _pushName(bytes32 shamanId, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanId;
+
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Pop a slice from name.
+   */
+  function popName(bytes32 shamanId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanId;
+
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Pop a slice from name.
+   */
+  function _popName(bytes32 shamanId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanId;
+
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Update a slice of name at `_index`.
+   */
+  function updateName(bytes32 shamanId, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanId;
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Update a slice of name at `_index`.
+   */
+  function _updateName(bytes32 shamanId, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanId;
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
   }
 
   /**
@@ -239,7 +316,7 @@ library Shamans {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
   }
 
@@ -250,7 +327,7 @@ library Shamans {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
   }
 
@@ -261,7 +338,7 @@ library Shamans {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((metadata)));
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 1, bytes((metadata)));
   }
 
   /**
@@ -271,7 +348,7 @@ library Shamans {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((metadata)));
+    StoreCore.setDynamicField(_tableId, _keyTuple, 1, bytes((metadata)));
   }
 
   /**
@@ -281,7 +358,7 @@ library Shamans {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
       return _byteLength / 1;
     }
@@ -294,7 +371,7 @@ library Shamans {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
       return _byteLength / 1;
     }
@@ -309,7 +386,7 @@ library Shamans {
     _keyTuple[0] = shamanId;
 
     unchecked {
-      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
       return (string(_blob));
     }
   }
@@ -323,7 +400,7 @@ library Shamans {
     _keyTuple[0] = shamanId;
 
     unchecked {
-      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
       return (string(_blob));
     }
   }
@@ -335,7 +412,7 @@ library Shamans {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
 
   /**
@@ -345,7 +422,7 @@ library Shamans {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
 
   /**
@@ -355,7 +432,7 @@ library Shamans {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
 
   /**
@@ -365,7 +442,7 @@ library Shamans {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
 
   /**
@@ -377,7 +454,7 @@ library Shamans {
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
-      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
     }
   }
 
@@ -390,7 +467,7 @@ library Shamans {
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
-      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
     }
   }
 
@@ -399,7 +476,7 @@ library Shamans {
    */
   function get(
     bytes32 shamanId
-  ) internal view returns (address creator, uint256 createdAt, bool active, uint256 balance, string memory metadata) {
+  ) internal view returns (address creator, uint256 createdAt, string memory name, string memory metadata) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -416,7 +493,7 @@ library Shamans {
    */
   function _get(
     bytes32 shamanId
-  ) internal view returns (address creator, uint256 createdAt, bool active, uint256 balance, string memory metadata) {
+  ) internal view returns (address creator, uint256 createdAt, string memory name, string memory metadata) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -435,14 +512,13 @@ library Shamans {
     bytes32 shamanId,
     address creator,
     uint256 createdAt,
-    bool active,
-    uint256 balance,
+    string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(creator, createdAt, active, balance);
+    bytes memory _staticData = encodeStatic(creator, createdAt);
 
-    EncodedLengths _encodedLengths = encodeLengths(metadata);
-    bytes memory _dynamicData = encodeDynamic(metadata);
+    EncodedLengths _encodedLengths = encodeLengths(name, metadata);
+    bytes memory _dynamicData = encodeDynamic(name, metadata);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
@@ -457,14 +533,13 @@ library Shamans {
     bytes32 shamanId,
     address creator,
     uint256 createdAt,
-    bool active,
-    uint256 balance,
+    string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(creator, createdAt, active, balance);
+    bytes memory _staticData = encodeStatic(creator, createdAt);
 
-    EncodedLengths _encodedLengths = encodeLengths(metadata);
-    bytes memory _dynamicData = encodeDynamic(metadata);
+    EncodedLengths _encodedLengths = encodeLengths(name, metadata);
+    bytes memory _dynamicData = encodeDynamic(name, metadata);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
@@ -475,16 +550,10 @@ library Shamans {
   /**
    * @notice Decode the tightly packed blob of static data using this table's field layout.
    */
-  function decodeStatic(
-    bytes memory _blob
-  ) internal pure returns (address creator, uint256 createdAt, bool active, uint256 balance) {
+  function decodeStatic(bytes memory _blob) internal pure returns (address creator, uint256 createdAt) {
     creator = (address(Bytes.getBytes20(_blob, 0)));
 
     createdAt = (uint256(Bytes.getBytes32(_blob, 20)));
-
-    active = (_toBool(uint8(Bytes.getBytes1(_blob, 52))));
-
-    balance = (uint256(Bytes.getBytes32(_blob, 53)));
   }
 
   /**
@@ -493,11 +562,17 @@ library Shamans {
   function decodeDynamic(
     EncodedLengths _encodedLengths,
     bytes memory _blob
-  ) internal pure returns (string memory metadata) {
+  ) internal pure returns (string memory name, string memory metadata) {
     uint256 _start;
     uint256 _end;
     unchecked {
       _end = _encodedLengths.atIndex(0);
+    }
+    name = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
+
+    _start = _end;
+    unchecked {
+      _end += _encodedLengths.atIndex(1);
     }
     metadata = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
   }
@@ -512,10 +587,10 @@ library Shamans {
     bytes memory _staticData,
     EncodedLengths _encodedLengths,
     bytes memory _dynamicData
-  ) internal pure returns (address creator, uint256 createdAt, bool active, uint256 balance, string memory metadata) {
-    (creator, createdAt, active, balance) = decodeStatic(_staticData);
+  ) internal pure returns (address creator, uint256 createdAt, string memory name, string memory metadata) {
+    (creator, createdAt) = decodeStatic(_staticData);
 
-    (metadata) = decodeDynamic(_encodedLengths, _dynamicData);
+    (name, metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
 
   /**
@@ -542,23 +617,21 @@ library Shamans {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(
-    address creator,
-    uint256 createdAt,
-    bool active,
-    uint256 balance
-  ) internal pure returns (bytes memory) {
-    return abi.encodePacked(creator, createdAt, active, balance);
+  function encodeStatic(address creator, uint256 createdAt) internal pure returns (bytes memory) {
+    return abi.encodePacked(creator, createdAt);
   }
 
   /**
    * @notice Tightly pack dynamic data lengths using this table's schema.
    * @return _encodedLengths The lengths of the dynamic fields (packed into a single bytes32 value).
    */
-  function encodeLengths(string memory metadata) internal pure returns (EncodedLengths _encodedLengths) {
+  function encodeLengths(
+    string memory name,
+    string memory metadata
+  ) internal pure returns (EncodedLengths _encodedLengths) {
     // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
     unchecked {
-      _encodedLengths = EncodedLengthsLib.pack(bytes(metadata).length);
+      _encodedLengths = EncodedLengthsLib.pack(bytes(name).length, bytes(metadata).length);
     }
   }
 
@@ -566,8 +639,8 @@ library Shamans {
    * @notice Tightly pack dynamic (variable length) data using this table's schema.
    * @return The dynamic data, encoded into a sequence of bytes.
    */
-  function encodeDynamic(string memory metadata) internal pure returns (bytes memory) {
-    return abi.encodePacked(bytes((metadata)));
+  function encodeDynamic(string memory name, string memory metadata) internal pure returns (bytes memory) {
+    return abi.encodePacked(bytes((name)), bytes((metadata)));
   }
 
   /**
@@ -579,14 +652,13 @@ library Shamans {
   function encode(
     address creator,
     uint256 createdAt,
-    bool active,
-    uint256 balance,
+    string memory name,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(creator, createdAt, active, balance);
+    bytes memory _staticData = encodeStatic(creator, createdAt);
 
-    EncodedLengths _encodedLengths = encodeLengths(metadata);
-    bytes memory _dynamicData = encodeDynamic(metadata);
+    EncodedLengths _encodedLengths = encodeLengths(name, metadata);
+    bytes memory _dynamicData = encodeDynamic(name, metadata);
 
     return (_staticData, _encodedLengths, _dynamicData);
   }
@@ -599,17 +671,5 @@ library Shamans {
     _keyTuple[0] = shamanId;
 
     return _keyTuple;
-  }
-}
-
-/**
- * @notice Cast a value to a bool.
- * @dev Boolean values are encoded as uint8 (1 = true, 0 = false), but Solidity doesn't allow casting between uint8 and bool.
- * @param value The uint8 value to convert.
- * @return result The boolean value.
- */
-function _toBool(uint8 value) pure returns (bool result) {
-  assembly {
-    result := value
   }
 }

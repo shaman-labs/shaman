@@ -17,8 +17,9 @@ enum RoleType {
   Operator
 }
 
-enum JobState {
-  Pending,
+enum WorkflowState {
+  Idle,
+  Queue,
   InProgress,
   Completed
 }

@@ -4,7 +4,7 @@ export default defineWorld({
   enums: {
     LogType: ["Queue", "Start", "Completion", "Deposit", "Withdraw", "Refund"],
     RoleType: ["None", "Operator"],
-    WorkflowState: ["Pending", "InProgress", "Completed"],
+    WorkflowState: ["Idle", "Queue", "InProgress", "Completed"],
   },
   tables: {
     ShamanConfig: {
