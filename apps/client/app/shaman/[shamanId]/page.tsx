@@ -5,7 +5,7 @@ import { Minus, MoreVertical, Plus, Trash2, Zap, Pencil } from 'lucide-react';
 import { themes } from 'prism-react-renderer';
 import { Highlight } from 'prism-react-renderer';
 import { useParams, useRouter } from 'next/navigation';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNow } from 'date-fns';
 import { AppSidebar } from '@/components/app-sidebar';
@@ -47,7 +47,7 @@ import { useDialogContext } from '@/contexts/dialog-context';
 import { useZugBalance } from '@/hooks/use-zug-balance';
 import { useEmbeddedWallet } from '@/hooks/use-embedded-wallet';
 import { useShamanLogs } from '@/hooks/use-shaman-logs';
-import { ShamanLog, ShamanLogType } from '@/types/shaman';
+import { ShamanLog, ShamanLogsTableData, ShamanLogType } from '@/types/shaman';
 import { DataTable } from '@/components/data-table';
 
 type ChartDataPoint = {
@@ -110,90 +110,6 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-type ShamanLogsTableData = {
-  id: string;
-  logType: string;
-  timestamp: string;
-  logMetadata?: string;
-  success?: boolean;
-  type: ShamanLogType;
-};
-
-const columns: ColumnDef<ShamanLogsTableData>[] = [
-  {
-    accessorKey: 'timestamp',
-    header: 'Age',
-    cell: ({ row }) => {
-      const timestamp = new Date(row.original.timestamp ?? '');
-      return formatDistanceToNow(timestamp, { addSuffix: true });
-    },
-  },
-  {
-    accessorKey: 'logType',
-    header: 'Log Type',
-    cell: ({ row }) => (
-      <div className="flex items-center gap-2">
-        <div
-          className="w-2 h-2 rounded-full"
-          style={{
-            backgroundColor: executionLogTypes[row.original.type]?.color,
-          }}
-        />
-        {executionLogTypes[row.original.type]?.label}
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'success',
-    header: 'Status',
-    cell: ({ row }) => {
-      if (row.original.type === ShamanLogType.Execution) {
-        return (
-          <div className="flex items-center gap-2">
-            <div
-              className="w-2 h-2 rounded-full"
-              style={{
-                backgroundColor: row.original.success ? 'green' : 'red',
-              }}
-            />
-            {row.original.success ? 'Success' : 'Failed'}
-          </div>
-        );
-      }
-      return null;
-    },
-  },
-  {
-    id: 'actions',
-    cell: ({ row }) => {
-      if (row.original.type === ShamanLogType.Execution) {
-        return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => {
-                  window.open(
-                    `https://gateway.shaman.fun/ipfs/${row.original.logMetadata}`,
-                    '_blank'
-                  );
-                }}>
-                View logs
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        );
-      }
-      return null;
-    },
-  },
-];
-
 export default function Page() {
   const { shamanId } = useParams();
   const router = useRouter();
@@ -206,13 +122,18 @@ export default function Page() {
   const { refetch: refetchZugBalance } = useZugBalance(
     embeddedWallet?.address as `0x${string}`
   );
-  const { openAddBalance, openWithdrawBalance, openTrigger, openDelete } =
-    useDialogContext();
+  const {
+    openAddBalance,
+    openWithdrawBalance,
+    openTrigger,
+    openDelete,
+    openViewLog,
+  } = useDialogContext();
 
-  const handleRefetch = () => {
+  const handleRefetch = useCallback(() => {
     refetch();
     refetchZugBalance();
-  };
+  }, [refetch, refetchZugBalance]);
 
   const chartData: ChartDataPoint[] = useMemo(
     () =>
@@ -240,6 +161,81 @@ export default function Page() {
         success: log.success,
       })) || [],
     [shamanLogs]
+  );
+
+  const columns: ColumnDef<ShamanLogsTableData>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'timestamp',
+        header: 'Age',
+        cell: ({ row }) => {
+          const timestamp = new Date(row.original.timestamp ?? '');
+          return formatDistanceToNow(timestamp, { addSuffix: true });
+        },
+      },
+      {
+        accessorKey: 'logType',
+        header: 'Log Type',
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2">
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{
+                backgroundColor: executionLogTypes[row.original.type]?.color,
+              }}
+            />
+            {executionLogTypes[row.original.type]?.label}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'success',
+        header: 'Status',
+        cell: ({ row }) => {
+          if (row.original.type === ShamanLogType.Execution) {
+            return (
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    row.original.success ? 'bg-green-500' : 'bg-red-500'
+                  }`}
+                />
+                {row.original.success ? 'Success' : 'Failed'}
+              </div>
+            );
+          }
+          return null;
+        },
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => {
+          if (row.original.type === ShamanLogType.Execution) {
+            return (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() =>
+                      openViewLog(true, undefined, handleRefetch, row.original)
+                    }>
+                    View logs
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            );
+          }
+          return null;
+        },
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [openViewLog]
   );
 
   return (

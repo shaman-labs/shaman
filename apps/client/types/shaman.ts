@@ -23,3 +23,24 @@ export type ShamanLog = {
   amount: number;
   createdAt: number;
 };
+
+export type ShamanLogsTableData = {
+  id: string;
+  logType: string;
+  timestamp: string;
+  logMetadata?: string;
+  success?: boolean;
+  type: ShamanLogType;
+};
+
+export type ShamanLogMetadata = {
+  success: boolean;
+  result: Record<string, string | number>;
+  timestamp: number;
+  shamanMetadata: {
+    shamanId: string;
+    prompt: string;
+    shamanCreator: string;
+    shamanCreatedAt: string;
+  };
+};

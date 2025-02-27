@@ -9,6 +9,8 @@ import { DialogWithdrawBalance } from '@/components/dialog-withdraw-balance';
 import { DialogDelete } from '@/components/dialog-delete';
 import { DialogTrigger } from '@/components/dialog-trigger';
 import { DialogTransferAsset } from '@/components/dialog-transfer-asset';
+import { ShamanLogsTableData } from '@/types/shaman';
+import { DialogViewLog } from '@/components/dialog-view-log';
 
 export interface DialogProps {
   open: boolean;
@@ -17,6 +19,7 @@ export interface DialogProps {
   onSuccess?: () => void;
   shamanId?: string;
   asset?: BalanceItem;
+  shamanLog?: ShamanLogsTableData;
 }
 
 export type Dialogs = {
@@ -26,6 +29,7 @@ export type Dialogs = {
   transferAsset: boolean;
   delete: boolean;
   trigger: boolean;
+  viewLog: boolean;
   openBuyZug: (
     open: boolean,
     redirect?: string,
@@ -62,6 +66,12 @@ export type Dialogs = {
     onSuccess?: () => void,
     asset?: BalanceItem
   ) => void;
+  openViewLog: (
+    open: boolean,
+    redirect?: string,
+    onSuccess?: () => void,
+    shamanLog?: ShamanLogsTableData
+  ) => void;
 };
 
 const DialogContext = createContext<Dialogs>({
@@ -71,12 +81,14 @@ const DialogContext = createContext<Dialogs>({
   transferAsset: false,
   delete: false,
   trigger: false,
+  viewLog: false,
   openBuyZug: () => {},
   openAddBalance: () => {},
   openWithdrawBalance: () => {},
   openDelete: () => {},
   openTrigger: () => {},
   openTransferAsset: () => {},
+  openViewLog: () => {},
 });
 
 type Props = {
@@ -89,11 +101,15 @@ export const DialogContextProvider = ({ children }: Props) => {
   const [withdrawBalance, setWithdrawBalance] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [transferAsset, setTransferAsset] = useState(false);
+  const [viewLog, setViewLog] = useState(false);
   const [redirect, setRedirect] = useState<string | undefined>(undefined);
   const [onSuccess, setOnSuccess] = useState<() => void | undefined>();
   const [triggerDialog, setTriggerDialog] = useState(false);
   const [shamanId, setShamanId] = useState<string | undefined>(undefined);
   const [asset, setAsset] = useState<BalanceItem | undefined>(undefined);
+  const [shamanLog, setShamanLog] = useState<ShamanLogsTableData | undefined>(
+    undefined
+  );
   const router = useRouter();
 
   const handleDialogClose = (open: boolean) => {
@@ -193,6 +209,21 @@ export const DialogContextProvider = ({ children }: Props) => {
     setTransferAsset(open);
   };
 
+  const openViewLog = (
+    open: boolean,
+    redirectOnClose?: string,
+    onSuccess?: () => void,
+    shamanLog?: ShamanLogsTableData
+  ) => {
+    if (open) {
+      setRedirect(redirectOnClose);
+      setOnSuccess(onSuccess);
+      setShamanLog(shamanLog);
+    }
+    handleDialogClose(open);
+    setViewLog(open);
+  };
+
   return (
     <DialogContext.Provider
       value={{
@@ -202,12 +233,14 @@ export const DialogContextProvider = ({ children }: Props) => {
         transferAsset,
         delete: deleteDialog,
         trigger: triggerDialog,
+        viewLog,
         openBuyZug,
         openAddBalance,
         openWithdrawBalance,
         openDelete,
         openTrigger,
         openTransferAsset,
+        openViewLog,
       }}>
       {children}
       <DialogBuyZug
@@ -244,6 +277,12 @@ export const DialogContextProvider = ({ children }: Props) => {
         onOpenChange={openTransferAsset}
         onSuccess={onSuccess}
         asset={asset}
+      />
+      <DialogViewLog
+        open={viewLog}
+        onOpenChange={openViewLog}
+        onSuccess={onSuccess}
+        shamanLog={shamanLog}
       />
     </DialogContext.Provider>
   );
