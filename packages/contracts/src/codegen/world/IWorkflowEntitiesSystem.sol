@@ -16,4 +16,12 @@ interface IWorkflowEntitiesSystem {
   function addSourceToWorkflow(bytes32 workflowId, bytes32 sourceId) external;
 
   function removeSourceFromWorkflow(bytes32 workflowId, bytes32 sourceId) external;
+
+  function getWorkflowShamanIds(bytes32 workflowId) external view returns (bytes32[] memory);
+
+  function getWorkflowSourceIds(bytes32 workflowId) external view returns (bytes32[] memory);
+
+  function getWorkflowIdsBySourceId(bytes32 sourceId) external view returns (bytes32[] memory);
+
+  function getWorkflowIdsByShamanId(bytes32 shamanId) external view returns (bytes32[] memory);
 }
