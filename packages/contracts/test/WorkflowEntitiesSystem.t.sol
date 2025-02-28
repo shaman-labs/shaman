@@ -600,4 +600,222 @@ contract WorkflowEntitiesSystemTest is BaseTest {
     assertEq(WorkflowSource.getCreatedAt(workflowId, sourceId1) > 0, true);
     assertEq(WorkflowSource.getCreatedAt(workflowId, sourceId2), 0);
   }
+
+  function testGetWorkflowShamanIds() public {
+    _setupOperator(creatorAlice);
+    (bytes32 shamanId1, bytes32 shamanId2) = _createTestShamans(
+      creatorAlice,
+      "GetTest1"
+    );
+    (bytes32 sourceId1, ) = _createTestSources(creatorAlice, "GetTest1");
+
+    // Create a workflow with two shamans
+    bytes32[] memory initialShamanIds = new bytes32[](2);
+    initialShamanIds[0] = shamanId1;
+    initialShamanIds[1] = shamanId2;
+
+    bytes32[] memory sourceIds = new bytes32[](1);
+    sourceIds[0] = sourceId1;
+
+    bytes32 workflowId = _createTestWorkflow(
+      creatorAlice,
+      initialShamanIds,
+      sourceIds
+    );
+
+    // Get the shaman IDs from the workflow
+    bytes32[] memory retrievedShamanIds = world.getWorkflowShamanIds(
+      workflowId
+    );
+
+    // Verify the retrieved shaman IDs match the ones we added
+    assertEq(retrievedShamanIds.length, 2);
+
+    // Check that both shamans are in the returned array
+    bool foundShaman1 = false;
+    bool foundShaman2 = false;
+
+    for (uint i = 0; i < retrievedShamanIds.length; i++) {
+      if (retrievedShamanIds[i] == shamanId1) {
+        foundShaman1 = true;
+      }
+      if (retrievedShamanIds[i] == shamanId2) {
+        foundShaman2 = true;
+      }
+    }
+
+    assertTrue(foundShaman1, "Shaman 1 not found in returned array");
+    assertTrue(foundShaman2, "Shaman 2 not found in returned array");
+  }
+
+  function testGetWorkflowSourceIds() public {
+    _setupOperator(creatorAlice);
+    (bytes32 shamanId1, ) = _createTestShamans(creatorAlice, "GetTest2");
+    (bytes32 sourceId1, bytes32 sourceId2) = _createTestSources(
+      creatorAlice,
+      "GetTest2"
+    );
+
+    // Create a workflow with two sources
+    bytes32[] memory shamanIds = new bytes32[](1);
+    shamanIds[0] = shamanId1;
+
+    bytes32[] memory initialSourceIds = new bytes32[](2);
+    initialSourceIds[0] = sourceId1;
+    initialSourceIds[1] = sourceId2;
+
+    bytes32 workflowId = _createTestWorkflow(
+      creatorAlice,
+      shamanIds,
+      initialSourceIds
+    );
+
+    // Get the source IDs from the workflow
+    bytes32[] memory retrievedSourceIds = world.getWorkflowSourceIds(
+      workflowId
+    );
+
+    // Verify the retrieved source IDs match the ones we added
+    assertEq(retrievedSourceIds.length, 2);
+
+    // Check that both sources are in the returned array
+    bool foundSource1 = false;
+    bool foundSource2 = false;
+
+    for (uint i = 0; i < retrievedSourceIds.length; i++) {
+      if (retrievedSourceIds[i] == sourceId1) {
+        foundSource1 = true;
+      }
+      if (retrievedSourceIds[i] == sourceId2) {
+        foundSource2 = true;
+      }
+    }
+
+    assertTrue(foundSource1, "Source 1 not found in returned array");
+    assertTrue(foundSource2, "Source 2 not found in returned array");
+  }
+
+  function testGetWorkflowIdsByShamanId() public {
+    _setupOperator(creatorAlice);
+    (bytes32 shamanId1, ) = _createTestShamans(creatorAlice, "GetTest3");
+    (bytes32 sourceId1, ) = _createTestSources(creatorAlice, "GetTest3");
+
+    // Create two workflows with the same shaman
+    bytes32[] memory shamanIds = new bytes32[](1);
+    shamanIds[0] = shamanId1;
+
+    bytes32[] memory sourceIds = new bytes32[](1);
+    sourceIds[0] = sourceId1;
+
+    // Create first workflow
+    bytes32 workflowId1 = _createTestWorkflow(
+      creatorAlice,
+      shamanIds,
+      sourceIds
+    );
+
+    // Create a second shaman for the second workflow
+    (bytes32 shamanId2, ) = _createTestShamans(creatorAlice, "GetTest3_2");
+
+    // Create second workflow with different shaman
+    bytes32[] memory shamanIds2 = new bytes32[](1);
+    shamanIds2[0] = shamanId2;
+
+    bytes32 workflowId2 = _createTestWorkflow(
+      creatorAlice,
+      shamanIds2,
+      sourceIds
+    );
+
+    // Add shamanId1 to the second workflow
+    vm.prank(creatorAlice);
+    world.addShamanToWorkflow(workflowId2, shamanId1);
+    vm.stopPrank();
+
+    // Get the workflow IDs for shamanId1
+    bytes32[] memory retrievedWorkflowIds = world.getWorkflowIdsByShamanId(
+      shamanId1
+    );
+
+    // Verify the retrieved workflow IDs match the ones we created
+    assertEq(retrievedWorkflowIds.length, 2);
+
+    // Check that both workflows are in the returned array
+    bool foundWorkflow1 = false;
+    bool foundWorkflow2 = false;
+
+    for (uint i = 0; i < retrievedWorkflowIds.length; i++) {
+      if (retrievedWorkflowIds[i] == workflowId1) {
+        foundWorkflow1 = true;
+      }
+      if (retrievedWorkflowIds[i] == workflowId2) {
+        foundWorkflow2 = true;
+      }
+    }
+
+    assertTrue(foundWorkflow1, "Workflow 1 not found in returned array");
+    assertTrue(foundWorkflow2, "Workflow 2 not found in returned array");
+  }
+
+  function testGetWorkflowIdsBySourceId() public {
+    _setupOperator(creatorAlice);
+    (bytes32 shamanId1, ) = _createTestShamans(creatorAlice, "GetTest4");
+    (bytes32 sourceId1, ) = _createTestSources(creatorAlice, "GetTest4");
+
+    // Create two workflows with the same source
+    bytes32[] memory shamanIds = new bytes32[](1);
+    shamanIds[0] = shamanId1;
+
+    bytes32[] memory sourceIds = new bytes32[](1);
+    sourceIds[0] = sourceId1;
+
+    // Create first workflow
+    bytes32 workflowId1 = _createTestWorkflow(
+      creatorAlice,
+      shamanIds,
+      sourceIds
+    );
+
+    // Create a second source for the second workflow
+    (bytes32 sourceId2, ) = _createTestSources(creatorAlice, "GetTest4_2");
+
+    // Create second workflow with different source
+    bytes32[] memory sourceIds2 = new bytes32[](1);
+    sourceIds2[0] = sourceId2;
+
+    bytes32 workflowId2 = _createTestWorkflow(
+      creatorAlice,
+      shamanIds,
+      sourceIds2
+    );
+
+    // Add sourceId1 to the second workflow
+    vm.prank(creatorAlice);
+    world.addSourceToWorkflow(workflowId2, sourceId1);
+    vm.stopPrank();
+
+    // Get the workflow IDs for the source
+    bytes32[] memory retrievedWorkflowIds = world.getWorkflowIdsBySourceId(
+      sourceId1
+    );
+
+    // Verify the retrieved workflow IDs match the ones we created
+    assertEq(retrievedWorkflowIds.length, 2);
+
+    // Check that both workflows are in the returned array
+    bool foundWorkflow1 = false;
+    bool foundWorkflow2 = false;
+
+    for (uint i = 0; i < retrievedWorkflowIds.length; i++) {
+      if (retrievedWorkflowIds[i] == workflowId1) {
+        foundWorkflow1 = true;
+      }
+      if (retrievedWorkflowIds[i] == workflowId2) {
+        foundWorkflow2 = true;
+      }
+    }
+
+    assertTrue(foundWorkflow1, "Workflow 1 not found in returned array");
+    assertTrue(foundWorkflow2, "Workflow 2 not found in returned array");
+  }
 }
