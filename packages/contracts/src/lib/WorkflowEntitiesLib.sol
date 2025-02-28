@@ -6,6 +6,9 @@ import { LogType } from "../codegen/common.sol";
 
 library WorkflowEntitiesLib {
   function addShaman(bytes32 workflowId, bytes32 shamanId) internal {
+    // Check if the shaman already exists in the workflow
+    require(WorkflowShaman.getCreatedAt(workflowId, shamanId) == 0, "Shaman already exists in workflow");
+    
     WorkflowShaman.set(workflowId, shamanId, block.timestamp);
 
     uint32 workflowShamanCount = Workflows.getShamanCount(workflowId);
@@ -18,6 +21,9 @@ library WorkflowEntitiesLib {
   }
 
   function removeShaman(bytes32 workflowId, bytes32 shamanId) internal {
+    // Check if the shaman exists in the workflow
+    require(WorkflowShaman.getCreatedAt(workflowId, shamanId) > 0, "Shaman does not exist in workflow");
+    
     WorkflowShaman.deleteRecord(workflowId, shamanId);
 
     uint32 workflowShamanCount = Workflows.getShamanCount(workflowId);
@@ -52,6 +58,9 @@ library WorkflowEntitiesLib {
   }
 
   function addSource(bytes32 workflowId, bytes32 sourceId) internal {
+    // Check if the source already exists in the workflow
+    require(WorkflowSource.getCreatedAt(workflowId, sourceId) == 0, "Source already exists in workflow");
+    
     WorkflowSource.set(workflowId, sourceId, block.timestamp);
 
     uint32 workflowSourceCount = Workflows.getSourceCount(workflowId);
@@ -64,6 +73,9 @@ library WorkflowEntitiesLib {
   }
 
   function removeSource(bytes32 workflowId, bytes32 sourceId) internal {
+    // Check if the source exists in the workflow
+    require(WorkflowSource.getCreatedAt(workflowId, sourceId) > 0, "Source does not exist in workflow");
+    
     WorkflowSource.deleteRecord(workflowId, sourceId);
 
     uint32 workflowSourceCount = Workflows.getSourceCount(workflowId);
