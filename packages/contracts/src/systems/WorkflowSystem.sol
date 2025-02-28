@@ -71,4 +71,44 @@ contract WorkflowSystem is BaseSystem {
     require(bytes(metadata).length > 0, "Metadata cannot be empty");
     Workflows.setMetadata(workflowId, metadata);
   }
+
+  function updateWorkflowStatus(
+    bytes32 workflowId,
+    bool active
+  )
+    public
+    onlyWorkflowCreator(workflowId)
+    onlyActiveWorkflow(workflowId)
+    onlyIdleWorkflow(workflowId)
+  {
+    Workflows.setActive(workflowId, active);
+  }
+
+  function getWorkflowState(
+    bytes32 workflowId
+  ) public view returns (WorkflowState) {
+    return Workflows.getState(workflowId);
+  }
+
+  function getWorkflowMetadata(
+    bytes32 workflowId
+  ) public view returns (string memory) {
+    return Workflows.getMetadata(workflowId);
+  }
+
+  function getWorkflowBalance(
+    bytes32 workflowId
+  ) public view returns (uint256) {
+    return Workflows.getBalance(workflowId);
+  }
+
+  function getWorkflowActive(bytes32 workflowId) public view returns (bool) {
+    return Workflows.getActive(workflowId);
+  }
+
+  function getWorkflowCreator(
+    bytes32 workflowId
+  ) public view returns (address) {
+    return Workflows.getCreator(workflowId);
+  }
 }
