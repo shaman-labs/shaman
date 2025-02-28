@@ -36,31 +36,39 @@ contract WorkflowSystemTest is BaseTest {
     vm.prank(creator);
     world.createWorkflow(balance, shamanIds, sourceIds, metadata);
     vm.stopPrank();
-    
+
     // Get the workflow ID from the logs
     Vm.Log[] memory entries = vm.getRecordedLogs();
     for (uint256 i = 0; i < entries.length; i++) {
-      if (entries[i].topics[0] == keccak256("WorkflowCreated(bytes32,address)")) {
+      if (
+        entries[i].topics[0] == keccak256("WorkflowCreated(bytes32,address)")
+      ) {
         workflowId = bytes32(entries[i].topics[1]);
         break;
       }
     }
-    
+
     require(workflowId != bytes32(0), "Workflow creation failed");
   }
 
   function testCreateWorkflow() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](1);
     shamanIds[0] = SHAMAN_ID;
-    
+
     bytes32[] memory sourceIds = new bytes32[](1);
     sourceIds[0] = SOURCE_ID;
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Verify workflow state
     assertEq(uint8(Workflows.getState(workflowId)), uint8(WorkflowState.Idle));
     assertEq(Workflows.getCreator(workflowId), creatorAlice);
@@ -73,15 +81,21 @@ contract WorkflowSystemTest is BaseTest {
 
   function testCreateWorkflowWithoutBalance() public {
     _setupOperator(creatorAlice);
-    
+
     bytes32[] memory shamanIds = new bytes32[](1);
     shamanIds[0] = SHAMAN_ID;
-    
+
     bytes32[] memory sourceIds = new bytes32[](1);
     sourceIds[0] = SOURCE_ID;
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, 0, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      0,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Verify workflow state
     assertEq(Workflows.getBalance(workflowId), 0);
   }
@@ -89,14 +103,20 @@ contract WorkflowSystemTest is BaseTest {
   function testCreateWorkflowWithoutShamans() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](0);
-    
+
     bytes32[] memory sourceIds = new bytes32[](1);
     sourceIds[0] = SOURCE_ID;
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Verify workflow state
     assertEq(Workflows.getShamanCount(workflowId), 0);
   }
@@ -104,14 +124,20 @@ contract WorkflowSystemTest is BaseTest {
   function testCreateWorkflowWithoutSources() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](1);
     shamanIds[0] = SHAMAN_ID;
-    
+
     bytes32[] memory sourceIds = new bytes32[](0);
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Verify workflow state
     assertEq(Workflows.getSourceCount(workflowId), 0);
   }
@@ -119,17 +145,23 @@ contract WorkflowSystemTest is BaseTest {
   function testUpdateWorkflowMetadata() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](0);
     bytes32[] memory sourceIds = new bytes32[](0);
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Update metadata
     vm.prank(creatorAlice);
     world.updateWorkflowMetadata(workflowId, UPDATED_METADATA);
     vm.stopPrank();
-    
+
     // Verify metadata was updated
     assertEq(Workflows.getMetadata(workflowId), UPDATED_METADATA);
   }
@@ -137,18 +169,24 @@ contract WorkflowSystemTest is BaseTest {
   function testUpdateWorkflowMetadataNotCreator() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](0);
     bytes32[] memory sourceIds = new bytes32[](0);
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Try to update metadata as non-creator
     vm.prank(creatorBob);
-    vm.expectRevert("Not the workflow creator");
+    vm.expectRevert("Not workflow creator");
     world.updateWorkflowMetadata(workflowId, UPDATED_METADATA);
     vm.stopPrank();
-    
+
     // Verify metadata was not updated
     assertEq(Workflows.getMetadata(workflowId), INITIAL_METADATA);
   }
@@ -156,18 +194,24 @@ contract WorkflowSystemTest is BaseTest {
   function testUpdateWorkflowMetadataEmptyMetadata() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](0);
     bytes32[] memory sourceIds = new bytes32[](0);
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Try to update metadata with empty string
     vm.prank(creatorAlice);
     vm.expectRevert("Metadata cannot be empty");
     world.updateWorkflowMetadata(workflowId, "");
     vm.stopPrank();
-    
+
     // Verify metadata was not updated
     assertEq(Workflows.getMetadata(workflowId), INITIAL_METADATA);
   }
@@ -175,25 +219,31 @@ contract WorkflowSystemTest is BaseTest {
   function testUpdateWorkflowStatus() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](0);
     bytes32[] memory sourceIds = new bytes32[](0);
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Update status to inactive
     vm.prank(creatorAlice);
     world.updateWorkflowStatus(workflowId, false);
     vm.stopPrank();
-    
+
     // Verify status was updated
     assertEq(Workflows.getActive(workflowId), false);
-    
+
     // Update status back to active
     vm.prank(creatorAlice);
     world.updateWorkflowStatus(workflowId, true);
     vm.stopPrank();
-    
+
     // Verify status was updated
     assertEq(Workflows.getActive(workflowId), true);
   }
@@ -201,18 +251,24 @@ contract WorkflowSystemTest is BaseTest {
   function testUpdateWorkflowStatusNotCreator() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](0);
     bytes32[] memory sourceIds = new bytes32[](0);
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Try to update status as non-creator
     vm.prank(creatorBob);
-    vm.expectRevert("Not the workflow creator");
+    vm.expectRevert("Not workflow creator");
     world.updateWorkflowStatus(workflowId, false);
     vm.stopPrank();
-    
+
     // Verify status was not updated
     assertEq(Workflows.getActive(workflowId), true);
   }
@@ -220,25 +276,40 @@ contract WorkflowSystemTest is BaseTest {
   function testGetWorkflowState() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](0);
     bytes32[] memory sourceIds = new bytes32[](0);
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Verify state getter
-    assertEq(uint8(world.getWorkflowState(workflowId)), uint8(WorkflowState.Idle));
+    assertEq(
+      uint8(world.getWorkflowState(workflowId)),
+      uint8(WorkflowState.Idle)
+    );
   }
 
   function testGetWorkflowMetadata() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](0);
     bytes32[] memory sourceIds = new bytes32[](0);
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Verify metadata getter
     assertEq(world.getWorkflowMetadata(workflowId), INITIAL_METADATA);
   }
@@ -246,12 +317,18 @@ contract WorkflowSystemTest is BaseTest {
   function testGetWorkflowBalance() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](0);
     bytes32[] memory sourceIds = new bytes32[](0);
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Verify balance getter
     assertEq(world.getWorkflowBalance(workflowId), INITIAL_BALANCE);
   }
@@ -259,12 +336,18 @@ contract WorkflowSystemTest is BaseTest {
   function testGetWorkflowActive() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](0);
     bytes32[] memory sourceIds = new bytes32[](0);
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Verify active getter
     assertEq(world.getWorkflowActive(workflowId), true);
   }
@@ -272,13 +355,19 @@ contract WorkflowSystemTest is BaseTest {
   function testGetWorkflowCreator() public {
     _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
-    
+
     bytes32[] memory shamanIds = new bytes32[](0);
     bytes32[] memory sourceIds = new bytes32[](0);
-    
-    bytes32 workflowId = _createWorkflow(creatorAlice, INITIAL_BALANCE, shamanIds, sourceIds, INITIAL_METADATA);
-    
+
+    bytes32 workflowId = _createWorkflow(
+      creatorAlice,
+      INITIAL_BALANCE,
+      shamanIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
     // Verify creator getter
     assertEq(world.getWorkflowCreator(workflowId), creatorAlice);
   }
-} 
+}

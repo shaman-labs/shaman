@@ -9,8 +9,8 @@ contract ConfigSystemTest is BaseTest {
   function testGetTokenAddress() public {
     // Get the token address from the ConfigSystem
     address tokenAddress = world.getTokenAddress();
-    
+
     // Verify it matches the expected token address
     assertEq(tokenAddress, address(token));
   }
-} 
+}

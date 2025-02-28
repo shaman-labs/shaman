@@ -24,7 +24,7 @@ contract SourceSystemTest is BaseTest {
   ) internal returns (bytes32 sourceId) {
     // Make sure creator is an operator
     _setupOperator(creator);
-    
+
     vm.recordLogs();
 
     vm.prank(creator);
@@ -71,7 +71,7 @@ contract SourceSystemTest is BaseTest {
 
   function testCreateSourceWithEmptyName() public {
     _setupOperator(creatorAlice);
-    
+
     vm.prank(creatorAlice);
     vm.expectRevert("Source name cannot be empty");
     world.createSource("", INITIAL_METADATA);
@@ -80,9 +80,9 @@ contract SourceSystemTest is BaseTest {
 
   function testCreateSourceWithLongName() public {
     _setupOperator(creatorAlice);
-    
+
     string memory longName = "ThisNameIsTooLongForASource";
-    
+
     vm.prank(creatorAlice);
     vm.expectRevert("Source name too long");
     world.createSource(longName, INITIAL_METADATA);
@@ -91,7 +91,7 @@ contract SourceSystemTest is BaseTest {
 
   function testCreateSourceWithEmptyMetadata() public {
     _setupOperator(creatorAlice);
-    
+
     vm.prank(creatorAlice);
     vm.expectRevert("Metadata cannot be empty");
     world.createSource(INITIAL_NAME, "");
@@ -101,11 +101,11 @@ contract SourceSystemTest is BaseTest {
   function testCreateSourceWithDuplicateName() public {
     // Create first source
     _createSource(creatorAlice, INITIAL_NAME, INITIAL_METADATA);
-    
+
     // Try to create another source with the same name
     vm.prank(creatorAlice);
     vm.expectRevert("Source name already taken");
     world.createSource(INITIAL_NAME, INITIAL_METADATA);
     vm.stopPrank();
   }
-} 
+}

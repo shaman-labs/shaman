@@ -75,12 +75,7 @@ contract WorkflowSystem is BaseSystem {
   function updateWorkflowStatus(
     bytes32 workflowId,
     bool active
-  )
-    public
-    onlyWorkflowCreator(workflowId)
-    onlyActiveWorkflow(workflowId)
-    onlyIdleWorkflow(workflowId)
-  {
+  ) public onlyWorkflowCreator(workflowId) onlyIdleWorkflow(workflowId) {
     Workflows.setActive(workflowId, active);
   }
 
