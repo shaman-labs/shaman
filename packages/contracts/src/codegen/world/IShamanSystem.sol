@@ -20,6 +20,4 @@ interface IShamanSystem {
   function getShamanName(bytes32 shamanId) external view returns (string memory);
 
   function getShamanCreator(bytes32 shamanId) external view returns (address);
-
-  function getTokenAddress() external view returns (address);
 }

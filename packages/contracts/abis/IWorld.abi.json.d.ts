@@ -157,7 +157,7 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "completeJob",
+    "name": "completeWorkflowJob",
     "inputs": [
       {
         "name": "workflowId",
@@ -224,24 +224,24 @@ declare const abi: [
     "name": "createWorkflow",
     "inputs": [
       {
-        "name": "initialBalance",
+        "name": "balance",
         "type": "uint256",
         "internalType": "uint256"
+      },
+      {
+        "name": "shamanIds",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      },
+      {
+        "name": "sourceIds",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
       },
       {
         "name": "metadata",
         "type": "string",
         "internalType": "string"
-      },
-      {
-        "name": "initialShamans",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      },
-      {
-        "name": "initialSources",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
       }
     ],
     "outputs": [],
@@ -280,7 +280,25 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "enqueueJob",
+    "name": "depositWorkflowBalance",
+    "inputs": [
+      {
+        "name": "workflowId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "enqueueWorkflowJob",
     "inputs": [
       {
         "name": "workflowId",
@@ -768,177 +786,6 @@ declare const abi: [
         "name": "valueSchema",
         "type": "bytes32",
         "internalType": "Schema"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowActive",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowBalance",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowCreator",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowIdsByShamanId",
-    "inputs": [
-      {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowIdsBySourceId",
-    "inputs": [
-      {
-        "name": "sourceId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowMetadata",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowShamanIds",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowSourceIds",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowState",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint8",
-        "internalType": "enum WorkflowState"
       }
     ],
     "stateMutability": "view"
@@ -1575,7 +1422,7 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "startJob",
+    "name": "startWorkflowJob",
     "inputs": [
       {
         "name": "workflowId",
@@ -1763,7 +1610,7 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "updateWorkflowStatus",
+    "name": "withdrawWorkflowBalance",
     "inputs": [
       {
         "name": "workflowId",
@@ -1771,9 +1618,9 @@ declare const abi: [
         "internalType": "bytes32"
       },
       {
-        "name": "active",
-        "type": "bool",
-        "internalType": "bool"
+        "name": "amount",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [],

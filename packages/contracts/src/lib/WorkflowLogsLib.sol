@@ -3,7 +3,6 @@ pragma solidity >=0.8.24;
 
 import { WorkflowLogs } from "../codegen/index.sol";
 import { LogType } from "../codegen/common.sol";
-import { IZugToken } from "../IZugToken.sol";
 
 library WorkflowLogsLib {
   function logOperation(

@@ -2,7 +2,6 @@
 pragma solidity >=0.8.24;
 import { BaseSystem } from "./BaseSystem.sol";
 import { Shamans, ShamanNames } from "../codegen/index.sol";
-import { LogType, RoleType } from "../codegen/common.sol";
 
 contract ShamanSystem is BaseSystem {
   event ShamanCreated(bytes32 indexed shamanId, address indexed creator);
@@ -59,9 +58,5 @@ contract ShamanSystem is BaseSystem {
 
   function getShamanCreator(bytes32 shamanId) public view returns (address) {
     return Shamans.getCreator(shamanId);
-  }
-
-  function getTokenAddress() public view returns (address) {
-    return address(_token());
   }
 }
