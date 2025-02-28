@@ -33,6 +33,9 @@ contract WorkflowEntitiesSystemTest is BaseTest {
     string memory name1 = string(abi.encodePacked("A", suffix));
     bytes32 shamanId1 = _createShaman(creator, name1, "QmTest1");
 
+    // simulate sleep to avoid same shamanId
+    vm.warp(block.timestamp + 5 seconds);
+
     string memory name2 = string(abi.encodePacked("B", suffix));
     bytes32 shamanId2 = _createShaman(creator, name2, "QmTest2");
 
@@ -54,6 +57,9 @@ contract WorkflowEntitiesSystemTest is BaseTest {
     // Use single-character names to avoid "Source name too long" error
     string memory name1 = string(abi.encodePacked("X", suffix));
     bytes32 sourceId1 = _createSource(creator, name1, "QmTest1");
+
+    // simulate sleep to avoid same sourceId
+    vm.warp(block.timestamp + 5 seconds);
 
     string memory name2 = string(abi.encodePacked("Y", suffix));
     bytes32 sourceId2 = _createSource(creator, name2, "QmTest2");
