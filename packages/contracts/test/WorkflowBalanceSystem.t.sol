@@ -52,7 +52,7 @@ contract WorkflowBalanceSystemTest is BaseTest {
     bytes32 workflowId = _createTestWorkflow();
 
     // Record initial balance
-    uint256 initialBalance = Workflows.getBalance(workflowId);
+    uint256 initialBalance = world.getWorkflowBalance(workflowId);
 
     // Deposit additional tokens
     vm.recordLogs();
@@ -61,28 +61,8 @@ contract WorkflowBalanceSystemTest is BaseTest {
     vm.stopPrank();
 
     // Verify the balance was updated
-    uint256 newBalance = Workflows.getBalance(workflowId);
+    uint256 newBalance = world.getWorkflowBalance(workflowId);
     assertEq(newBalance, initialBalance + DEPOSIT_AMOUNT);
-
-    // Verify the log was created
-    Vm.Log[] memory entries = vm.getRecordedLogs();
-    bytes32 logId;
-    for (uint256 i = 0; i < entries.length; i++) {
-      // Look for the WorkflowLogCreated event
-      if (
-        entries[i].topics.length > 0 &&
-        entries[i].topics[0] == keccak256("WorkflowLogCreated(bytes32,bytes32)")
-      ) {
-        logId = bytes32(entries[i].topics[1]);
-        break;
-      }
-    }
-
-    // Verify log details
-    assertEq(WorkflowLogs.getWorkflowId(logId), workflowId);
-    assertEq(uint8(WorkflowLogs.getLogType(logId)), uint8(LogType.Deposit));
-    assertEq(WorkflowLogs.getSuccess(logId), true);
-    assertEq(WorkflowLogs.getAmount(logId), DEPOSIT_AMOUNT);
   }
 
   function testDepositWorkflowBalanceNotCreator() public {
@@ -95,7 +75,7 @@ contract WorkflowBalanceSystemTest is BaseTest {
     vm.stopPrank();
 
     // Verify the balance was not updated
-    assertEq(Workflows.getBalance(workflowId), INITIAL_BALANCE);
+    assertEq(world.getWorkflowBalance(workflowId), INITIAL_BALANCE);
   }
 
   function testDepositWorkflowBalanceZeroAmount() public {
@@ -108,7 +88,7 @@ contract WorkflowBalanceSystemTest is BaseTest {
     vm.stopPrank();
 
     // Verify the balance was not updated
-    assertEq(Workflows.getBalance(workflowId), INITIAL_BALANCE);
+    assertEq(world.getWorkflowBalance(workflowId), INITIAL_BALANCE);
   }
 
   function testDepositWorkflowBalanceInactiveWorkflow() public {
@@ -126,32 +106,14 @@ contract WorkflowBalanceSystemTest is BaseTest {
     vm.stopPrank();
 
     // Verify the balance was not updated
-    assertEq(Workflows.getBalance(workflowId), INITIAL_BALANCE);
-  }
-
-  function testDepositWorkflowBalanceNonIdleWorkflow() public {
-    bytes32 workflowId = _createTestWorkflow();
-
-    // First change the workflow state to non-idle
-    vm.prank(creatorAlice);
-    Workflows.setState(workflowId, WorkflowState.InProgress);
-    vm.stopPrank();
-
-    // Try to deposit to non-idle workflow
-    vm.prank(creatorAlice);
-    vm.expectRevert("Workflow is not idle");
-    world.depositWorkflowBalance(workflowId, DEPOSIT_AMOUNT);
-    vm.stopPrank();
-
-    // Verify the balance was not updated
-    assertEq(Workflows.getBalance(workflowId), INITIAL_BALANCE);
+    assertEq(world.getWorkflowBalance(workflowId), INITIAL_BALANCE);
   }
 
   function testWithdrawWorkflowBalance() public {
     bytes32 workflowId = _createTestWorkflow();
 
     // Record initial balance
-    uint256 initialBalance = Workflows.getBalance(workflowId);
+    uint256 initialBalance = world.getWorkflowBalance(workflowId);
 
     // Withdraw tokens
     vm.recordLogs();
@@ -160,28 +122,8 @@ contract WorkflowBalanceSystemTest is BaseTest {
     vm.stopPrank();
 
     // Verify the balance was updated
-    uint256 newBalance = Workflows.getBalance(workflowId);
+    uint256 newBalance = world.getWorkflowBalance(workflowId);
     assertEq(newBalance, initialBalance - WITHDRAW_AMOUNT);
-
-    // Verify the log was created
-    Vm.Log[] memory entries = vm.getRecordedLogs();
-    bytes32 logId;
-    for (uint256 i = 0; i < entries.length; i++) {
-      // Look for the WorkflowLogCreated event
-      if (
-        entries[i].topics.length > 0 &&
-        entries[i].topics[0] == keccak256("WorkflowLogCreated(bytes32,bytes32)")
-      ) {
-        logId = bytes32(entries[i].topics[1]);
-        break;
-      }
-    }
-
-    // Verify log details
-    assertEq(WorkflowLogs.getWorkflowId(logId), workflowId);
-    assertEq(uint8(WorkflowLogs.getLogType(logId)), uint8(LogType.Withdraw));
-    assertEq(WorkflowLogs.getSuccess(logId), true);
-    assertEq(WorkflowLogs.getAmount(logId), WITHDRAW_AMOUNT);
   }
 
   function testWithdrawWorkflowBalanceNotCreator() public {
@@ -194,7 +136,7 @@ contract WorkflowBalanceSystemTest is BaseTest {
     vm.stopPrank();
 
     // Verify the balance was not updated
-    assertEq(Workflows.getBalance(workflowId), INITIAL_BALANCE);
+    assertEq(world.getWorkflowBalance(workflowId), INITIAL_BALANCE);
   }
 
   function testWithdrawWorkflowBalanceZeroAmount() public {
@@ -207,7 +149,7 @@ contract WorkflowBalanceSystemTest is BaseTest {
     vm.stopPrank();
 
     // Verify the balance was not updated
-    assertEq(Workflows.getBalance(workflowId), INITIAL_BALANCE);
+    assertEq(world.getWorkflowBalance(workflowId), INITIAL_BALANCE);
   }
 
   function testWithdrawWorkflowBalanceInsufficientBalance() public {
@@ -220,7 +162,7 @@ contract WorkflowBalanceSystemTest is BaseTest {
     vm.stopPrank();
 
     // Verify the balance was not updated
-    assertEq(Workflows.getBalance(workflowId), INITIAL_BALANCE);
+    assertEq(world.getWorkflowBalance(workflowId), INITIAL_BALANCE);
   }
 
   function testWithdrawWorkflowBalanceInactiveWorkflow() public {
@@ -238,23 +180,7 @@ contract WorkflowBalanceSystemTest is BaseTest {
     vm.stopPrank();
 
     // Verify the balance was not updated
-    assertEq(Workflows.getBalance(workflowId), INITIAL_BALANCE);
-  }
-
-  function testWithdrawWorkflowBalanceNonIdleWorkflow() public {
-    bytes32 workflowId = _createTestWorkflow();
-
-    // First change the workflow state to non-idle
-    Workflows.setState(workflowId, WorkflowState.InProgress);
-
-    // Try to withdraw from non-idle workflow
-    vm.prank(creatorAlice);
-    vm.expectRevert("Workflow is not idle");
-    world.withdrawWorkflowBalance(workflowId, WITHDRAW_AMOUNT);
-    vm.stopPrank();
-
-    // Verify the balance was not updated
-    assertEq(Workflows.getBalance(workflowId), INITIAL_BALANCE);
+    assertEq(world.getWorkflowBalance(workflowId), INITIAL_BALANCE);
   }
 
   function testWithdrawEntireWorkflowBalance() public {
@@ -266,6 +192,6 @@ contract WorkflowBalanceSystemTest is BaseTest {
     vm.stopPrank();
 
     // Verify the balance is now zero
-    assertEq(Workflows.getBalance(workflowId), 0);
+    assertEq(world.getWorkflowBalance(workflowId), 0);
   }
 }

@@ -29,35 +29,12 @@ contract WorkflowEntitiesSystemTest is BaseTest {
   ) internal returns (bytes32, bytes32) {
     vm.recordLogs();
 
-    vm.prank(creator);
     // Use single-character names to avoid "Shaman name too long" error
     string memory name1 = string(abi.encodePacked("A", suffix));
-    world.createShaman(name1, "QmTest1");
-    vm.stopPrank();
+    bytes32 shamanId1 = _createShaman(creator, name1, "QmTest1");
 
-    vm.prank(creator);
     string memory name2 = string(abi.encodePacked("B", suffix));
-    world.createShaman(name2, "QmTest2");
-    vm.stopPrank();
-
-    Vm.Log[] memory entries = vm.getRecordedLogs();
-
-    bytes32 shamanId1;
-    bytes32 shamanId2;
-
-    for (uint i = 0; i < entries.length; i++) {
-      // Check for ShamanCreated(bytes32,address) event
-      if (entries[i].topics[0] == keccak256("ShamanCreated(bytes32,address)")) {
-        if (shamanId1 == 0) {
-          shamanId1 = bytes32(entries[i].topics[1]);
-        } else {
-          shamanId2 = bytes32(entries[i].topics[1]);
-        }
-      }
-    }
-
-    require(shamanId1 != 0, "Failed to create first shaman");
-    require(shamanId2 != 0, "Failed to create second shaman");
+    bytes32 shamanId2 = _createShaman(creator, name2, "QmTest2");
 
     return (shamanId1, shamanId2);
   }
@@ -74,35 +51,12 @@ contract WorkflowEntitiesSystemTest is BaseTest {
   ) internal returns (bytes32, bytes32) {
     vm.recordLogs();
 
-    vm.prank(creator);
     // Use single-character names to avoid "Source name too long" error
     string memory name1 = string(abi.encodePacked("X", suffix));
-    world.createSource(name1, "QmTest1");
-    vm.stopPrank();
+    bytes32 sourceId1 = _createSource(creator, name1, "QmTest1");
 
-    vm.prank(creator);
     string memory name2 = string(abi.encodePacked("Y", suffix));
-    world.createSource(name2, "QmTest2");
-    vm.stopPrank();
-
-    Vm.Log[] memory entries = vm.getRecordedLogs();
-
-    bytes32 sourceId1;
-    bytes32 sourceId2;
-
-    for (uint i = 0; i < entries.length; i++) {
-      // Check for SourceCreated(bytes32,address) event
-      if (entries[i].topics[0] == keccak256("SourceCreated(bytes32,address)")) {
-        if (sourceId1 == 0) {
-          sourceId1 = bytes32(entries[i].topics[1]);
-        } else {
-          sourceId2 = bytes32(entries[i].topics[1]);
-        }
-      }
-    }
-
-    require(sourceId1 != 0, "Failed to create first source");
-    require(sourceId2 != 0, "Failed to create second source");
+    bytes32 sourceId2 = _createSource(creator, name2, "QmTest2");
 
     return (sourceId1, sourceId2);
   }

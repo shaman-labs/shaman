@@ -9,12 +9,7 @@ contract WorkflowBalanceSystem is BaseSystem {
   function depositWorkflowBalance(
     bytes32 workflowId,
     uint256 amount
-  )
-    public
-    onlyWorkflowCreator(workflowId)
-    onlyActiveWorkflow(workflowId)
-    onlyIdleWorkflow(workflowId)
-  {
+  ) public onlyWorkflowCreator(workflowId) onlyActiveWorkflow(workflowId) {
     require(amount > 0, "Amount must be greater than 0");
 
     Workflows.setBalance(workflowId, Workflows.getBalance(workflowId) + amount);
@@ -26,12 +21,7 @@ contract WorkflowBalanceSystem is BaseSystem {
   function withdrawWorkflowBalance(
     bytes32 workflowId,
     uint256 amount
-  )
-    public
-    onlyWorkflowCreator(workflowId)
-    onlyActiveWorkflow(workflowId)
-    onlyIdleWorkflow(workflowId)
-  {
+  ) public onlyWorkflowCreator(workflowId) onlyActiveWorkflow(workflowId) {
     require(amount > 0, "Amount must be greater than 0");
     require(Workflows.getBalance(workflowId) >= amount, "Insufficient balance");
 

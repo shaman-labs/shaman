@@ -17,39 +17,8 @@ contract SourceSystemTest is BaseTest {
     vm.stopPrank();
   }
 
-  function _createSource(
-    address creator,
-    string memory name,
-    string memory metadata
-  ) internal returns (bytes32 sourceId) {
-    // Make sure creator is an operator
-    _setupOperator(creator);
-
-    vm.recordLogs();
-
-    vm.prank(creator);
-    world.createSource(name, metadata);
-    vm.stopPrank();
-
-    // Get logs and find the SourceCreated event
-    Vm.Log[] memory entries = vm.getRecordedLogs();
-    for (uint256 i = 0; i < entries.length; i++) {
-      // Check if this is our event
-      if (entries[i].topics[0] == keccak256("SourceCreated(bytes32,address)")) {
-        // For indexed parameters, they appear in topics
-        // topics[0] is the event signature
-        // topics[1] is the first indexed parameter (sourceId)
-        sourceId = bytes32(entries[i].topics[1]);
-        break;
-      }
-    }
-    require(sourceId != bytes32(0), "Source creation failed");
-
-    // Optional: Add debug logging
-    console.log("Created source with ID:", uint256(sourceId));
-  }
-
   function testCreateSource() public {
+    _setupOperator(creatorAlice);
     bytes32 sourceId = _createSource(
       creatorAlice,
       INITIAL_NAME,
@@ -99,6 +68,7 @@ contract SourceSystemTest is BaseTest {
   }
 
   function testCreateSourceWithDuplicateName() public {
+    _setupOperator(creatorAlice);
     // Create first source
     _createSource(creatorAlice, INITIAL_NAME, INITIAL_METADATA);
 

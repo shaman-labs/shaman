@@ -33,6 +33,8 @@ contract SourceSystem is BaseSystem {
       metadata
     );
 
+    SourceNames.set(encodedName, sourceId);
+
     emit SourceCreated(sourceId, _msgSender());
   }
 }
