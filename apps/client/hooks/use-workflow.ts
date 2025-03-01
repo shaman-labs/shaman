@@ -30,15 +30,15 @@ export const useWorkflow = (workflowId: string) => {
       );
 
       const metadataJson = (await metadata.json()) as {
-        code: string;
-        prompt: string;
+        name: string;
+        description: string;
       };
 
       return {
         ...workflowData,
         workflowId,
-        code: atob(metadataJson.code),
-        prompt: metadataJson.prompt,
+        name: metadataJson.name,
+        description: metadataJson.description,
       };
     },
     refetchInterval: 2500,

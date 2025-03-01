@@ -1,5 +1,6 @@
 'use client';
 
+import axios from 'axios';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -84,9 +85,11 @@ export default function Page() {
     setIsCreating(true);
 
     try {
-      const metadata = JSON.stringify({
-        name: values.name,
-        description: values.description,
+      const { data } = await axios.post<{ ipfs: string }>('/api/ipfs', {
+        data: {
+          name: values.name,
+          description: values.description,
+        },
       });
 
       const shamanIds = [values.shamanId as `0x${string}`];
@@ -96,7 +99,7 @@ export default function Page() {
         BigInt(balance),
         shamanIds,
         sourceIds,
-        metadata
+        data.ipfs
       );
 
       toast({

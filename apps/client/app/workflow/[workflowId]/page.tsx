@@ -59,8 +59,28 @@ type DayExecutions = {
 
 const logTypes = [
   {
-    label: 'Execution',
+    label: 'Queued',
+    color: 'hsl(var(--chart-2))',
+  },
+  {
+    label: 'Started',
+    color: 'hsl(var(--chart-3))',
+  },
+  {
+    label: 'Executed',
     color: 'hsl(var(--chart-1))',
+  },
+  {
+    label: 'Deposit ZUG',
+    color: 'hsl(var(--chart-4))',
+  },
+  {
+    label: 'Withdraw ZUG',
+    color: 'hsl(var(--chart-5))',
+  },
+  {
+    label: 'Refunded ZUG',
+    color: 'hsl(var(--chart-6))',
   },
 ];
 
@@ -150,14 +170,6 @@ export default function Page() {
   const columns: ColumnDef<WorkflowLogsTableData>[] = useMemo(
     () => [
       {
-        accessorKey: 'timestamp',
-        header: 'Age',
-        cell: ({ row }) => {
-          const timestamp = new Date(row.original.timestamp ?? '');
-          return formatDistanceToNow(timestamp, { addSuffix: true });
-        },
-      },
-      {
         accessorKey: 'logType',
         header: 'Log Type',
         cell: ({ row }) => (
@@ -173,10 +185,11 @@ export default function Page() {
         ),
       },
       {
-        accessorKey: 'amount',
-        header: 'Amount',
+        accessorKey: 'timestamp',
+        header: 'Age',
         cell: ({ row }) => {
-          return row.original.amount !== undefined ? row.original.amount : '-';
+          const timestamp = new Date(row.original.timestamp ?? '');
+          return formatDistanceToNow(timestamp, { addSuffix: true });
         },
       },
       {
