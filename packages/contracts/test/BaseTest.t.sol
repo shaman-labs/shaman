@@ -60,13 +60,13 @@ contract BaseTest is MudTest, GasReporter {
 
   function _createShaman(
     address creator,
-    uint256 initialDeposit,
-    string memory metadataURI
+    string memory name,
+    string memory metadata
   ) internal returns (bytes32 shamanId) {
     vm.recordLogs();
 
     vm.prank(creator);
-    world.createShaman(initialDeposit, metadataURI);
+    world.createShaman(name, metadata);
     vm.stopPrank();
 
     // Get logs and find the ShamanCreated event
@@ -87,13 +87,32 @@ contract BaseTest is MudTest, GasReporter {
     console.log("Created shaman with ID:", uint256(shamanId));
   }
 
-  function _depositShaman(
+  function _createSource(
     address creator,
-    bytes32 shamanId,
-    uint256 amount
-  ) internal {
+    string memory name,
+    string memory metadata
+  ) internal returns (bytes32 sourceId) {
+    vm.recordLogs();
+
     vm.prank(creator);
-    world.depositShaman(shamanId, amount);
+    world.createSource(name, metadata);
     vm.stopPrank();
+
+    // Get logs and find the ShamanCreated event
+    Vm.Log[] memory entries = vm.getRecordedLogs();
+    for (uint256 i = 0; i < entries.length; i++) {
+      // Check if this is our event
+      if (entries[i].topics[0] == keccak256("SourceCreated(bytes32,address)")) {
+        // For indexed parameters, they appear in topics
+        // topics[0] is the event signature
+        // topics[1] is the first indexed parameter (shamanId)
+        sourceId = bytes32(entries[i].topics[1]);
+        break;
+      }
+    }
+    require(sourceId != bytes32(0), "Source creation failed");
+
+    // Optional: Add debug logging
+    console.log("Created source with ID:", uint256(sourceId));
   }
 }

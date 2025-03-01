@@ -9,25 +9,15 @@ pragma solidity >=0.8.24;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IShamanSystem {
-  function createShaman(uint256 initialDeposit, string memory metadata) external;
+  function createShaman(string calldata name, string memory metadata) external;
 
   function updateShamanMetadata(bytes32 shamanId, string memory metadata) external;
 
-  function cancelShaman(bytes32 shamanId) external;
-
-  function logShamanOperation(bytes32 shamanId, uint256 cost, string memory logMetadata, bool success) external;
-
-  function depositShaman(bytes32 shamanId, uint256 amount) external;
-
-  function withdrawShaman(bytes32 shamanId, uint256 amount) external;
-
   function getShamanMetadata(bytes32 shamanId) external view returns (string memory);
 
-  function getShamanBalance(bytes32 shamanId) external view returns (uint256);
+  function getShamanIdByName(string calldata name) external view returns (bytes32);
 
-  function getShamanActive(bytes32 shamanId) external view returns (bool);
+  function getShamanName(bytes32 shamanId) external view returns (string memory);
 
   function getShamanCreator(bytes32 shamanId) external view returns (address);
-
-  function getTokenAddress() external view returns (address);
 }
