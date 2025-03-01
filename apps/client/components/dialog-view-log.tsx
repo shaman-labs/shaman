@@ -31,7 +31,7 @@ interface WorkflowLog {
 export function DialogViewLog(props: DialogProps) {
   const { workflowLog } = props as DialogProps & { workflowLog?: WorkflowLog };
   const { data: workflowLogMetadata } = useWorkflowLogMetadata(
-    workflowLog?.logMetadata
+    workflowLog?.metadata
   );
   const [, setIsOpen] = useState(true);
 
@@ -40,7 +40,7 @@ export function DialogViewLog(props: DialogProps) {
     props.onOpenChange?.(false);
   };
 
-  if (!shamanLog) {
+  if (!workflowLogMetadata) {
     return (
       <Dialog {...props}>
         <DialogContent className="sm:max-w-[600px]">

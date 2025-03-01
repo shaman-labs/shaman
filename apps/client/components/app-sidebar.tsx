@@ -4,6 +4,7 @@ import * as React from 'react';
 import { Book, X, Webhook } from 'lucide-react';
 
 import Link from 'next/link';
+import { NavWorkflows } from './nav-workflows';
 import { NavShamans } from '@/components/nav-shamans';
 import { NavSecondary } from '@/components/nav-secondary';
 import { NavUser } from '@/components/nav-user';
@@ -53,6 +54,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        <NavWorkflows />
         <NavShamans />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>

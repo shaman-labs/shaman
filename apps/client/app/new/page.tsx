@@ -143,7 +143,7 @@ export default function Page() {
 
     try {
       await mud?.calls?.embedded?.systemCalls?.createShaman(
-        BigInt(balance || 0),
+        balance.toString(),
         ipfs
       );
 
