@@ -11,7 +11,7 @@ import {
 
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, usePathname, useRouter } from 'next/navigation';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,6 +39,7 @@ export function NavWorkflows() {
   const { data: workflows } = useWorkflows();
   const { workflowId } = useParams();
   const { openTrigger, openDelete } = useDialogContext();
+  const pathname = usePathname();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -99,6 +100,7 @@ export function NavWorkflows() {
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton
+            isActive={pathname === '/workflow'}
             onClick={() => (user ? router.push('/workflow') : login())}>
             <Plus />
             <span>New Workflow</span>
