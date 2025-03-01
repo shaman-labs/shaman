@@ -46,7 +46,7 @@ import { useShaman } from '@/hooks/use-shaman';
 import { useDialogContext } from '@/contexts/dialog-context';
 import { useZugBalance } from '@/hooks/use-zug-balance';
 import { useEmbeddedWallet } from '@/hooks/use-embedded-wallet';
-import { useShamanLogs } from '@/hooks/use-shaman-logs';
+import { useShamanLogs } from '@/hooks/use-workflow-logs';
 import { ShamanLog, ShamanLogsTableData, ShamanLogType } from '@/types/shaman';
 import { DataTable } from '@/components/data-table';
 

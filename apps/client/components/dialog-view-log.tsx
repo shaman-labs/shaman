@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { useShamanLogMetadata } from '@/hooks/use-shaman-log-metadata';
+import { useShamanLogMetadata } from '@/hooks/use-workflow-log-metadata';
 import { trimHash } from '@/lib/utils';
 
 interface ShamanLogMetadata {
