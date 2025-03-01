@@ -148,3 +148,14 @@ export type WorkflowLogsTableData = {
   timestamp: string;
   metadata: string;
 };
+
+export type WorkflowTriggerResponse = {
+  success: boolean;
+  decodedCode: string;
+  result: string;
+  timestamp: number;
+  logMetadataHash: string;
+  txHash: string;
+  logs: string[];
+  error?: string;
+};

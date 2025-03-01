@@ -17,21 +17,21 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useMUD } from '@/contexts/mud-context';
-import { useShaman } from '@/hooks/use-shaman';
+import { useWorkflow } from '@/hooks/use-workflow';
 
 export function DialogWithdrawBalance(props: DialogProps) {
   const mud = useMUD();
   const [loading, setLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
-  const { shamanId: shamanIdParam } = useParams();
-  const shamanId = props.shamanId || shamanIdParam;
-  const { data: shaman } = useShaman(shamanId as string);
+  const { workflowId: workflowIdParam } = useParams();
+  const workflowId = props.workflowId || workflowIdParam;
+  const { data: workflow } = useWorkflow(workflowId as string);
 
   const handleWithdraw = async () => {
     setLoading(true);
     try {
-      await mud?.calls.embedded?.systemCalls?.withdrawBalance(
-        shamanId as Hex,
+      await mud?.calls.embedded?.systemCalls?.withdrawWorkflowBalance(
+        workflowId as Hex,
         BigInt(quantity)
       );
 
@@ -64,7 +64,7 @@ export function DialogWithdrawBalance(props: DialogProps) {
               Withdraw $ZUG tokens from your Shaman Balance.
             </span>
             <span className="block text-sm text-muted-foreground">
-              Your Shaman&apos;s $ZUG Balance: {Number(shaman?.balance)}
+              Your Workflow&apos;s $ZUG Balance: {Number(workflow?.balance)}
             </span>
           </DialogDescription>
         </DialogHeader>

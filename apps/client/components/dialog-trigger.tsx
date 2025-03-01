@@ -13,15 +13,17 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { triggerShaman } from '@/services/api';
-import { ShamanLogType, ShamanTriggerResponse } from '@/types/shaman';
+import { triggerWorkflow } from '@/services/api';
+import { WorkflowLogType, WorkflowTriggerResponse } from '@/types/workflow';
 
 export function DialogTrigger(props: DialogProps) {
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState<ShamanTriggerResponse | null>(null);
-  const { shamanId: shamanIdParam } = useParams();
+  const [response, setResponse] = useState<WorkflowTriggerResponse | null>(
+    null
+  );
+  const { workflowId: workflowIdParam } = useParams();
   const { openViewLog } = useDialogContext();
-  const shamanId = props.shamanId || shamanIdParam;
+  const workflowId = props.workflowId || workflowIdParam;
 
   useEffect(() => {
     if (props.open) {
@@ -32,7 +34,7 @@ export function DialogTrigger(props: DialogProps) {
   const handleTrigger = async () => {
     setLoading(true);
     try {
-      const response = await triggerShaman(shamanId as string);
+      const response = await triggerWorkflow(workflowId as string);
       setResponse(response);
 
       toast({
@@ -90,10 +92,11 @@ export function DialogTrigger(props: DialogProps) {
                     openViewLog(true, undefined, undefined, {
                       success: response.success,
                       timestamp: response.timestamp.toString(),
-                      logMetadata: response.logMetadataHash,
-                      type: ShamanLogType.Execution,
-                      id: shamanId as string,
-                      logType: 'Execution',
+                      metadata: response.logMetadataHash,
+                      id: workflowId as string,
+                      logType: WorkflowLogType.QUEUE,
+                      shamanId: workflowId as string,
+                      amount: BigInt(1),
                     })
                   }>
                   View Logs
