@@ -64,7 +64,9 @@ export function NavShamans() {
                 side={isMobile ? 'bottom' : 'right'}
                 align={isMobile ? 'end' : 'start'}>
                 <DropdownMenuItem
-                  onClick={() => router.push(`/update/${item.shamanId}`)}>
+                  onClick={() =>
+                    router.push(`/shaman/${item.shamanId}/update`)
+                  }>
                   <Pencil className="text-muted-foreground" />
                   <span>Update</span>
                 </DropdownMenuItem>
@@ -95,7 +97,7 @@ export function NavShamans() {
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton
-            onClick={() => (user ? router.push('/new') : login())}>
+            onClick={() => (user ? router.push('/shaman') : login())}>
             <Plus />
             <span>New Shaman</span>
           </SidebarMenuButton>
