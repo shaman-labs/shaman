@@ -53,9 +53,14 @@ import { AlertDialogPaywall } from '@/components/alert-dialog-paywall';
 import { useZugBalance } from '@/hooks/use-zug-balance';
 
 const formSchema = z.object({
-  name: z.string().min(1, {
-    message: 'Name is required',
-  }),
+  name: z
+    .string()
+    .min(1, {
+      message: 'Name is required',
+    })
+    .regex(/^[a-zA-Z0-9-]+$/, {
+      message: 'Name can only contain letters, numbers, and dashes',
+    }),
   prompt: z.string().min(16, {
     message: 'Prompt must be at least 16 characters.',
   }),
@@ -203,9 +208,9 @@ export default function Page() {
                         name="name"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>Name (unique slug)</FormLabel>
                             <FormControl>
-                              <Input {...field} />
+                              <Input placeholder="unique-name" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>

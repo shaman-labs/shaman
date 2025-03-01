@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { ArrowRight } from 'lucide-react';
+import { Loader2, Webhook } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
@@ -128,9 +128,7 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbPage className="text-xs">
-                    New Workflow
-                  </BreadcrumbPage>
+                  <BreadcrumbPage>New Workflow</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -172,7 +170,7 @@ export default function Page() {
                             <FormLabel>Description</FormLabel>
                             <FormControl>
                               <Textarea
-                                placeholder="Describe your workflow"
+                                placeholder="Notes about your workflow"
                                 rows={5}
                                 {...field}
                               />
@@ -183,24 +181,25 @@ export default function Page() {
                       />
                       <FormField
                         control={form.control}
-                        name="shamanId"
+                        name="sourceId"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Select Shamans</FormLabel>
+                            <FormLabel>Select Source</FormLabel>
                             <FormControl>
                               <Select
                                 value={field.value}
                                 onValueChange={field.onChange}
-                                disabled={shamansLoading}>
+                                disabled={sourcesLoading}>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select shamans" />
+                                  <SelectValue placeholder="Select a source" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {shamans.map((shaman) => (
+                                  {sources.map((source) => (
                                     <SelectItem
-                                      key={shaman.shamanId}
-                                      value={shaman.shamanId}>
-                                      {shaman.name}
+                                      key={source.sourceId}
+                                      value={source.sourceId}>
+                                      {source.name ||
+                                        `Source ${source.sourceId.substring(0, 6)}`}
                                     </SelectItem>
                                   ))}
                                 </SelectContent>
@@ -212,25 +211,24 @@ export default function Page() {
                       />
                       <FormField
                         control={form.control}
-                        name="sourceId"
+                        name="shamanId"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Select Sources</FormLabel>
+                            <FormLabel>Select Shaman</FormLabel>
                             <FormControl>
                               <Select
                                 value={field.value}
                                 onValueChange={field.onChange}
-                                disabled={sourcesLoading}>
+                                disabled={shamansLoading}>
                                 <SelectTrigger>
-                                  <SelectValue placeholder="Select sources" />
+                                  <SelectValue placeholder="Select a shaman" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {sources.map((source) => (
+                                  {shamans.map((shaman) => (
                                     <SelectItem
-                                      key={source.sourceId}
-                                      value={source.sourceId}>
-                                      {source.name ||
-                                        `Source ${source.sourceId.substring(0, 6)}`}
+                                      key={shaman.shamanId}
+                                      value={shaman.shamanId}>
+                                      {shaman.name}
                                     </SelectItem>
                                   ))}
                                 </SelectContent>
@@ -284,8 +282,12 @@ export default function Page() {
                         disabled={
                           isCreating || shamansLoading || sourcesLoading
                         }>
+                        {isCreating ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Webhook className="ml-2" />
+                        )}
                         {isCreating ? 'Creating...' : 'Create Workflow'}
-                        <ArrowRight className="ml-2" />
                       </Button>
                     </form>
                   </Form>
