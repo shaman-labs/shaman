@@ -1,11 +1,24 @@
 import { Hex } from 'viem';
 
-/**
- * Status of a workflow
- */
 export enum WorkflowStatus {
   INACTIVE = 0,
   ACTIVE = 1,
+}
+
+export enum WorkflowLogType {
+  QUEUE = 0,
+  START = 1,
+  COMPLETION = 2,
+  DEPOSIT = 3,
+  WITHDRAW = 4,
+  REFUND = 5,
+}
+
+export enum WorkflowState {
+  IDLE = 0,
+  QUEUE = 1,
+  IN_PROGRESS = 2,
+  COMPLETED = 3,
 }
 
 /**
@@ -124,4 +137,14 @@ export type WorkflowLogMetadata = {
     shamanCreator: string;
     shamanCreatedAt: string;
   };
+};
+
+export type WorkflowLogsTableData = {
+  id: string;
+  logType: WorkflowLogType;
+  shamanId: string;
+  amount: bigint;
+  success: boolean;
+  timestamp: string;
+  metadata: string;
 };

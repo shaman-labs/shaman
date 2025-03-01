@@ -40,12 +40,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useShaman } from '@/hooks/use-shaman';
 import { useDialogContext } from '@/contexts/dialog-context';
 import { useZugBalance } from '@/hooks/use-zug-balance';
 import { useEmbeddedWallet } from '@/hooks/use-embedded-wallet';
-import { useShamanLogs } from '@/hooks/use-workflow-logs';
-import { ShamanLog, ShamanLogsTableData, ShamanLogType } from '@/types/shaman';
+import { useWorkflow } from '@/hooks/use-workflow';
+import { useWorkflowLogs } from '@/hooks/use-workflow-logs';
+import { WorkflowLogType, WorkflowLogsTableData } from '@/types/workflow';
 import { DataTable } from '@/components/data-table';
 
 type ChartDataPoint = {
@@ -57,28 +57,16 @@ type DayExecutions = {
   [key: string]: number;
 };
 
-const executionLogTypes = [
+const logTypes = [
   {
     label: 'Execution',
     color: 'hsl(var(--chart-1))',
   },
-  {
-    label: 'Deposit',
-    color: 'hsl(var(--chart-2))',
-  },
-  {
-    label: 'Withdraw',
-    color: 'hsl(var(--chart-3))',
-  },
-  {
-    label: 'Refund',
-    color: 'hsl(var(--chart-4))',
-  },
 ];
 
-const getChartData = (logs: ShamanLog[]): ChartDataPoint[] => {
+const getChartData = (logs: WorkflowLogsTableData[]): ChartDataPoint[] => {
   const groupedByDay: DayExecutions = logs.reduce((acc, log) => {
-    const date = new Date(log.createdAt);
+    const date = new Date(log.timestamp);
     const day = date.toLocaleDateString('en-US', { weekday: 'long' });
     acc[day] = (acc[day] || 0) + 1;
     return acc;
@@ -109,11 +97,11 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function Page() {
-  const { shamanId } = useParams();
-  const { data: shaman, refetch } = useShaman(shamanId as string);
-  const { data: shamanLogs } = useShamanLogs(shamanId as string);
-  const executionLogs = shamanLogs?.filter(
-    (log) => log.logType === ShamanLogType.Execution
+  const { workflowId } = useParams();
+  const { data: workflow, refetch } = useWorkflow(workflowId as string);
+  const { data: workflowLogs } = useWorkflowLogs(workflowId as string);
+  const executionLogs = workflowLogs?.filter(
+    (log) => log.logType === WorkflowLogType.COMPLETION
   );
   const embeddedWallet = useEmbeddedWallet();
   const { refetch: refetchZugBalance } = useZugBalance(
@@ -131,31 +119,35 @@ export default function Page() {
     () =>
       getChartData(
         executionLogs?.map((log) => ({
-          shamanLogId: log.shamanLogId,
-          shamanId: log.shamanId,
+          id: log.workflowLogId,
+          workflowId: log.workflowId,
           logType: log.logType,
-          amount: Number(log.amount),
-          createdAt: Number(log.createdAt) * 1000,
+          shamanId: log.shamanId,
+          timestamp: new Date(Number(log.createdAt) * 1000).toISOString(),
+          metadata: log.metadata,
+          amount: log.amount,
           success: log.success,
         })) || []
       ),
     [executionLogs]
   );
 
-  const tableData: ShamanLogsTableData[] = useMemo(
+  const tableData: WorkflowLogsTableData[] = useMemo(
     () =>
-      shamanLogs?.map((log) => ({
-        id: log.shamanLogId,
-        logType: executionLogTypes[log.logType]?.label || 'Unknown',
+      workflowLogs?.map((log) => ({
+        id: log.workflowLogId,
+        logType: log.logType as WorkflowLogType,
         timestamp: new Date(Number(log.createdAt) * 1000).toISOString(),
-        logMetadata: log.logMetadata,
-        type: log.logType,
+        logMetadata: log.metadata,
+        shamanId: log.shamanId,
+        metadata: log.metadata,
         success: log.success,
+        amount: log.amount,
       })) || [],
-    [shamanLogs]
+    [workflowLogs]
   );
 
-  const columns: ColumnDef<ShamanLogsTableData>[] = useMemo(
+  const columns: ColumnDef<WorkflowLogsTableData>[] = useMemo(
     () => [
       {
         accessorKey: 'timestamp',
@@ -173,18 +165,25 @@ export default function Page() {
             <div
               className="w-2 h-2 rounded-full"
               style={{
-                backgroundColor: executionLogTypes[row.original.type]?.color,
+                backgroundColor: logTypes[row.original.logType]?.color,
               }}
             />
-            {executionLogTypes[row.original.type]?.label}
+            {logTypes[row.original.logType]?.label}
           </div>
         ),
+      },
+      {
+        accessorKey: 'amount',
+        header: 'Amount',
+        cell: ({ row }) => {
+          return row.original.amount !== undefined ? row.original.amount : '-';
+        },
       },
       {
         accessorKey: 'success',
         header: 'Status',
         cell: ({ row }) => {
-          if (row.original.type === ShamanLogType.Execution) {
+          if (row.original.logType === WorkflowLogType.COMPLETION) {
             return (
               <div className="flex items-center gap-2">
                 <div
@@ -202,7 +201,7 @@ export default function Page() {
       {
         id: 'actions',
         cell: ({ row }) => {
-          if (row.original.type === ShamanLogType.Execution) {
+          if (row.original.logType === WorkflowLogType.COMPLETION) {
             return (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -242,7 +241,7 @@ export default function Page() {
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbPage className="text-xs">
-                    {shamanId}
+                    {workflowId}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -253,7 +252,7 @@ export default function Page() {
           <Tabs defaultValue="workflow" className="w-full">
             <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="workflow">Workflow</TabsTrigger>
-              <TabsTrigger value="sources">Sources</TabsTrigger>
+              <TabsTrigger value="shamans">Shamans</TabsTrigger>
               <TabsTrigger value="executions">Executions</TabsTrigger>
             </TabsList>
             <TabsContent value="workflow">
@@ -265,7 +264,7 @@ export default function Page() {
                     </CardHeader>
                     <CardContent>
                       <p className="text-center text-5xl font-bold">
-                        {Number(shaman?.balance || 0)}
+                        {Number(workflow?.balance || 0)}
                       </p>
                     </CardContent>
                     <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
@@ -273,7 +272,11 @@ export default function Page() {
                         className="w-full"
                         variant="default"
                         onClick={() =>
-                          openAddBalance(true, undefined, handleRefetch)
+                          openAddBalance(
+                            true,
+                            workflowId as string,
+                            handleRefetch
+                          )
                         }>
                         <Plus />
                         Add Balance
@@ -282,7 +285,11 @@ export default function Page() {
                         className="w-full"
                         variant="outline"
                         onClick={() =>
-                          openWithdrawBalance(true, undefined, handleRefetch)
+                          openWithdrawBalance(
+                            true,
+                            workflowId as string,
+                            handleRefetch
+                          )
                         }>
                         <Minus />
                         Withdraw Balance
@@ -342,6 +349,39 @@ export default function Page() {
                   </Card>
                 </div>
               </div>
+            </TabsContent>
+            <TabsContent value="shamans">
+              {/* {workflow?.shamanIds && workflow.shamanIds.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {workflow.shamanIds.map((shamanId) => (
+                    <Card key={shamanId}>
+                      <CardHeader>
+                        <CardTitle>{shamanId}</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p>Shaman details will go here</p>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-center p-4">No shamans in this workflow</p>
+              )} */}
+            </TabsContent>
+            <TabsContent value="executions">
+              <Card>
+                <CardHeader>
+                  <CardTitle>All Execution Logs</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <DataTable
+                    columns={columns}
+                    data={tableData.filter(
+                      (log) => log.logType === WorkflowLogType.COMPLETION
+                    )}
+                  />
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </div>
