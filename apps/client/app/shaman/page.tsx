@@ -53,6 +53,14 @@ import { AlertDialogPaywall } from '@/components/alert-dialog-paywall';
 import { useZugBalance } from '@/hooks/use-zug-balance';
 
 const formSchema = z.object({
+  name: z
+    .string()
+    .min(1, {
+      message: 'Name is required',
+    })
+    .regex(/^[a-zA-Z0-9-]+$/, {
+      message: 'Name can only contain letters, numbers, and dashes',
+    }),
   prompt: z.string().min(16, {
     message: 'Prompt must be at least 16 characters.',
   }),
@@ -97,6 +105,7 @@ export default function Page() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      name: '',
       prompt: '',
       network: 'arbitrumSepolia',
     },
@@ -143,7 +152,7 @@ export default function Page() {
 
     try {
       await mud?.calls?.embedded?.systemCalls?.createShaman(
-        BigInt(balance || 0),
+        form.getValues('name'),
         ipfs
       );
 
@@ -194,6 +203,19 @@ export default function Page() {
                     <form
                       onSubmit={form.handleSubmit(handleSubmit)}
                       className="space-y-4">
+                      <FormField
+                        control={form.control}
+                        name="name"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Name (unique slug)</FormLabel>
+                            <FormControl>
+                              <Input placeholder="unique-name" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                       <FormField
                         control={form.control}
                         name="prompt"

@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  MoreHorizontal,
-  Pencil,
-  Plus,
-  Trash2,
-  Webhook,
-  Zap,
-} from 'lucide-react';
+import { MoreHorizontal, Pencil, Plus, Webhook } from 'lucide-react';
 
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
@@ -16,7 +9,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -30,7 +22,6 @@ import {
 } from '@/components/ui/sidebar';
 import { useShamans } from '@/hooks/use-shamans';
 import { trimHash } from '@/lib/utils';
-import { useDialogContext } from '@/contexts/dialog-context';
 
 export function NavShamans() {
   const { user, login } = usePrivy();
@@ -38,7 +29,6 @@ export function NavShamans() {
   const { isMobile } = useSidebar();
   const { data: shamans } = useShamans();
   const { shamanId } = useParams();
-  const { openTrigger, openDelete } = useDialogContext();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
@@ -64,30 +54,11 @@ export function NavShamans() {
                 side={isMobile ? 'bottom' : 'right'}
                 align={isMobile ? 'end' : 'start'}>
                 <DropdownMenuItem
-                  onClick={() => router.push(`/update/${item.shamanId}`)}>
+                  onClick={() =>
+                    router.push(`/shaman/${item.shamanId}/update`)
+                  }>
                   <Pencil className="text-muted-foreground" />
                   <span>Update</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() =>
-                    openTrigger(
-                      true,
-                      `/shaman/${item.shamanId}`,
-                      undefined,
-                      item.shamanId
-                    )
-                  }>
-                  <Zap className="text-muted-foreground" />
-                  <span>Trigger</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={() =>
-                    openDelete(true, `/`, undefined, item.shamanId)
-                  }
-                  className="text-red-500">
-                  <Trash2 className="text-red-500" />
-                  <span>Delete</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -95,7 +66,7 @@ export function NavShamans() {
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton
-            onClick={() => (user ? router.push('/new') : login())}>
+            onClick={() => (user ? router.push('/shaman') : login())}>
             <Plus />
             <span>New Shaman</span>
           </SidebarMenuButton>
