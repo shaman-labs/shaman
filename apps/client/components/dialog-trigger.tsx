@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import { DialogProps } from '@/contexts/dialog-context';
+import { DialogProps, useDialogContext } from '@/contexts/dialog-context';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import {
@@ -14,12 +14,13 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { triggerShaman } from '@/services/api';
-import { ShamanTriggerResponse } from '@/types/shaman';
+import { ShamanLogType, ShamanTriggerResponse } from '@/types/shaman';
 
 export function DialogTrigger(props: DialogProps) {
   const [loading, setLoading] = useState(false);
   const [response, setResponse] = useState<ShamanTriggerResponse | null>(null);
   const { shamanId: shamanIdParam } = useParams();
+  const { openViewLog } = useDialogContext();
   const shamanId = props.shamanId || shamanIdParam;
 
   useEffect(() => {
@@ -83,12 +84,20 @@ export function DialogTrigger(props: DialogProps) {
             </p>
             {response.success && (
               <p className="text-sm text-muted-foreground underline">
-                <a
-                  href={`https://gateway.shaman.fun/ipfs/${response.logMetadataHash}`}
-                  target="_blank"
-                  rel="noopener noreferrer">
+                <Button
+                  variant="link"
+                  onClick={() =>
+                    openViewLog(true, undefined, undefined, {
+                      success: response.success,
+                      timestamp: response.timestamp.toString(),
+                      logMetadata: response.logMetadataHash,
+                      type: ShamanLogType.Execution,
+                      id: shamanId as string,
+                      logType: 'Execution',
+                    })
+                  }>
                   View Logs
-                </a>
+                </Button>
               </p>
             )}
           </div>

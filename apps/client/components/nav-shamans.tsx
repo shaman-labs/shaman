@@ -1,6 +1,13 @@
 'use client';
 
-import { MoreHorizontal, Plus, Trash2, Webhook, Zap } from 'lucide-react';
+import {
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Trash2,
+  Webhook,
+  Zap,
+} from 'lucide-react';
 
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
@@ -56,6 +63,11 @@ export function NavShamans() {
                 className="w-48"
                 side={isMobile ? 'bottom' : 'right'}
                 align={isMobile ? 'end' : 'start'}>
+                <DropdownMenuItem
+                  onClick={() => router.push(`/update/${item.shamanId}`)}>
+                  <Pencil className="text-muted-foreground" />
+                  <span>Update</span>
+                </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() =>
                     openTrigger(
