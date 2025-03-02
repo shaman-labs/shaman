@@ -12,27 +12,25 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { useWorkflowLogMetadata } from '@/hooks/use-workflow-log-metadata';
+import { useShamanLogMetadata } from '@/hooks/use-shaman-log-metadata';
 import { trimHash } from '@/lib/utils';
-import { WorkflowLogMetadata } from '@/types/workflow';
+import { ShamanLogMetadata } from '@/types/shaman';
 
-interface WorkflowLogResult {
+interface ShamanLogResult {
   type: string;
   status: number;
 }
 
-interface WorkflowLog {
+interface ShamanLog {
   success: boolean;
-  result: WorkflowLogResult;
+  result: ShamanLogResult;
   timestamp: number;
-  workflowMetadata: WorkflowLogMetadata;
+  shamanMetadata: ShamanLogMetadata;
 }
 
 export function DialogViewLog(props: DialogProps) {
-  const { workflowLog } = props as DialogProps & { workflowLog?: WorkflowLog };
-  const { data: workflowLogMetadata } = useWorkflowLogMetadata(
-    workflowLog?.metadata
-  );
+  const { shamanLog } = props as DialogProps & { shamanLog?: ShamanLog };
+  const { data: shamanLogMetadata } = useShamanLogMetadata(shamanLog?.metadata);
   const [, setIsOpen] = useState(true);
 
   const handleClose = () => {
@@ -40,7 +38,7 @@ export function DialogViewLog(props: DialogProps) {
     props.onOpenChange?.(false);
   };
 
-  if (!workflowLogMetadata) {
+  if (!shamanLogMetadata) {
     return (
       <Dialog {...props}>
         <DialogContent className="sm:max-w-[600px]">
@@ -60,10 +58,10 @@ export function DialogViewLog(props: DialogProps) {
     <Dialog {...props}>
       <DialogContent className="sm:max-w-[700px]">
         <DialogHeader>
-          <DialogTitle>Workflow Log</DialogTitle>
+          <DialogTitle>Shaman Log</DialogTitle>
           <DialogDescription>
-            Viewing log details for Workflow ID:{' '}
-            {trimHash(workflowLogMetadata?.shamanMetadata?.shamanId)}
+            Viewing log details for Shaman ID:{' '}
+            {trimHash(shamanLogMetadata?.shamanMetadata?.shamanId)}
           </DialogDescription>
         </DialogHeader>
 
@@ -75,15 +73,15 @@ export function DialogViewLog(props: DialogProps) {
                 <TableCell className="font-medium">Status</TableCell>
                 <TableCell>
                   <span
-                    className={`px-2 py-1 rounded-full text-xs ${workflowLogMetadata?.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                    {workflowLogMetadata?.success ? 'Success' : 'Failed'}
+                    className={`px-2 py-1 rounded-full text-xs ${shamanLogMetadata?.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                    {shamanLogMetadata?.success ? 'Success' : 'Failed'}
                   </span>
                 </TableCell>
               </TableRow>
-              {Object.keys(workflowLogMetadata?.result || {}).map((key) => (
+              {Object.keys(shamanLogMetadata?.result || {}).map((key) => (
                 <TableRow key={key}>
                   <TableCell className="font-medium">{key}</TableCell>
-                  <TableCell>{workflowLogMetadata?.result[key]}</TableCell>
+                  <TableCell>{shamanLogMetadata?.result[key]}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -95,26 +93,26 @@ export function DialogViewLog(props: DialogProps) {
               <TableRow>
                 <TableCell className="font-medium">Shaman ID</TableCell>
                 <TableCell className="break-all">
-                  {workflowLogMetadata?.shamanMetadata?.shamanId}
+                  {shamanLogMetadata?.shamanMetadata?.shamanId}
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Prompt</TableCell>
                 <TableCell>
-                  {workflowLogMetadata?.shamanMetadata?.prompt}
+                  {shamanLogMetadata?.shamanMetadata?.prompt}
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Creator</TableCell>
                 <TableCell className="break-all">
-                  {workflowLogMetadata?.shamanMetadata?.shamanCreator}
+                  {shamanLogMetadata?.shamanMetadata?.shamanCreator}
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Created At</TableCell>
                 <TableCell>
                   {new Date(
-                    workflowLogMetadata?.shamanMetadata?.shamanCreatedAt ?? ''
+                    shamanLogMetadata?.shamanMetadata?.shamanCreatedAt ?? ''
                   ).toLocaleString()}
                 </TableCell>
               </TableRow>

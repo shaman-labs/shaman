@@ -10,16 +10,16 @@ import { DialogDelete } from '@/components/dialog-delete';
 import { DialogTrigger } from '@/components/dialog-trigger';
 import { DialogTransferAsset } from '@/components/dialog-transfer-asset';
 import { DialogViewLog } from '@/components/dialog-view-log';
-import { WorkflowLogsTableData } from '@/types/workflow';
+import { ShamanLogsTableData } from '@/types/shaman';
 
 export interface DialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   redirectOnClose?: string;
   onSuccess?: () => void;
-  workflowId?: string;
+  shamanId?: string;
   asset?: BalanceItem;
-  workflowLog?: WorkflowLogsTableData;
+  shamanLog?: ShamanLogsTableData;
 }
 
 export type Dialogs = {
@@ -70,7 +70,7 @@ export type Dialogs = {
     open: boolean,
     redirect?: string,
     onSuccess?: () => void,
-    workflowLog?: WorkflowLogsTableData
+    shamanLog?: ShamanLogsTableData
   ) => void;
 };
 
@@ -105,11 +105,11 @@ export const DialogContextProvider = ({ children }: Props) => {
   const [redirect, setRedirect] = useState<string | undefined>(undefined);
   const [onSuccess, setOnSuccess] = useState<() => void | undefined>();
   const [triggerDialog, setTriggerDialog] = useState(false);
-  const [workflowId, setWorkflowId] = useState<string | undefined>(undefined);
+  const [shamanId, setShamanId] = useState<string | undefined>(undefined);
   const [asset, setAsset] = useState<BalanceItem | undefined>(undefined);
-  const [workflowLog, setWorkflowLog] = useState<
-    WorkflowLogsTableData | undefined
-  >(undefined);
+  const [shamanLog, setShamanLog] = useState<ShamanLogsTableData | undefined>(
+    undefined
+  );
   const router = useRouter();
 
   const handleDialogClose = (open: boolean) => {
@@ -123,12 +123,12 @@ export const DialogContextProvider = ({ children }: Props) => {
     open: boolean,
     redirectOnClose?: string,
     onSuccess?: () => void,
-    workflowId?: string
+    shamanId?: string
   ) => {
     if (open) {
       setRedirect(redirectOnClose);
       setOnSuccess(onSuccess);
-      setWorkflowId(workflowId);
+      setShamanId(shamanId);
     }
     handleDialogClose(open);
     setBuyZug(open);
@@ -138,12 +138,12 @@ export const DialogContextProvider = ({ children }: Props) => {
     open: boolean,
     redirectOnClose?: string,
     onSuccess?: () => void,
-    workflowId?: string
+    shamanId?: string
   ) => {
     if (open) {
       setRedirect(redirectOnClose);
       setOnSuccess(onSuccess);
-      setWorkflowId(workflowId);
+      setShamanId(shamanId);
     }
     handleDialogClose(open);
     setAddBalance(open);
@@ -153,12 +153,12 @@ export const DialogContextProvider = ({ children }: Props) => {
     open: boolean,
     redirectOnClose?: string,
     onSuccess?: () => void,
-    workflowId?: string
+    shamanId?: string
   ) => {
     if (open) {
       setRedirect(redirectOnClose);
       setOnSuccess(onSuccess);
-      setWorkflowId(workflowId);
+      setShamanId(shamanId);
     }
     handleDialogClose(open);
     setWithdrawBalance(open);
@@ -168,12 +168,12 @@ export const DialogContextProvider = ({ children }: Props) => {
     open: boolean,
     redirectOnClose?: string,
     onSuccess?: () => void,
-    workflowId?: string
+    shamanId?: string
   ) => {
     if (open) {
       setRedirect(redirectOnClose);
       setOnSuccess(onSuccess);
-      setWorkflowId(workflowId);
+      setShamanId(shamanId);
     }
     handleDialogClose(open);
     setDeleteDialog(open);
@@ -183,12 +183,12 @@ export const DialogContextProvider = ({ children }: Props) => {
     open: boolean,
     redirectOnClose?: string,
     onSuccess?: () => void,
-    workflowId?: string
+    shamanId?: string
   ) => {
     if (open) {
       setRedirect(redirectOnClose);
       setOnSuccess(onSuccess);
-      setWorkflowId(workflowId);
+      setShamanId(shamanId);
     }
     handleDialogClose(open);
     setTriggerDialog(open);
@@ -213,12 +213,12 @@ export const DialogContextProvider = ({ children }: Props) => {
     open: boolean,
     redirectOnClose?: string,
     onSuccess?: () => void,
-    workflowLog?: WorkflowLogsTableData
+    shamanLog?: ShamanLogsTableData
   ) => {
     if (open) {
       setRedirect(redirectOnClose);
       setOnSuccess(onSuccess);
-      setWorkflowLog(workflowLog);
+      setShamanLog(shamanLog);
     }
     handleDialogClose(open);
     setViewLog(open);
@@ -252,25 +252,25 @@ export const DialogContextProvider = ({ children }: Props) => {
         open={addBalance}
         onOpenChange={openAddBalance}
         onSuccess={onSuccess}
-        workflowId={workflowId}
+        shamanId={shamanId}
       />
       <DialogWithdrawBalance
         open={withdrawBalance}
         onOpenChange={openWithdrawBalance}
         onSuccess={onSuccess}
-        workflowId={workflowId}
+        shamanId={shamanId}
       />
       <DialogDelete
         open={deleteDialog}
         onOpenChange={openDelete}
         onSuccess={onSuccess}
-        workflowId={workflowId}
+        shamanId={shamanId}
       />
       <DialogTrigger
         open={triggerDialog}
         onOpenChange={openTrigger}
         onSuccess={onSuccess}
-        workflowId={workflowId}
+        shamanId={shamanId}
       />
       <DialogTransferAsset
         open={transferAsset}
@@ -282,7 +282,7 @@ export const DialogContextProvider = ({ children }: Props) => {
         open={viewLog}
         onOpenChange={openViewLog}
         onSuccess={onSuccess}
-        workflowLog={workflowLog}
+        shamanLog={shamanLog}
       />
     </DialogContext.Provider>
   );

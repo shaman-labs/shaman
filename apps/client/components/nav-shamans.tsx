@@ -1,38 +1,99 @@
 'use client';
 
-import { Plus, Webhook } from 'lucide-react';
+import {
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Trash2,
+  Webhook,
+  Zap,
+} from 'lucide-react';
 
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
   SidebarGroup,
   SidebarGroupLabel,
   SidebarMenu,
+  SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar';
+import { trimHash } from '@/lib/utils';
+import { useDialogContext } from '@/contexts/dialog-context';
 import { useShamans } from '@/hooks/use-shamans';
 
 export function NavShamans() {
   const { user, login } = usePrivy();
   const router = useRouter();
+  const { isMobile } = useSidebar();
   const { data: shamans } = useShamans();
   const { shamanId } = useParams();
+  const { openTrigger, openDelete } = useDialogContext();
   const pathname = usePathname();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Abilities</SidebarGroupLabel>
+      <SidebarGroupLabel>Shamans</SidebarGroupLabel>
       <SidebarMenu>
         {shamans.map((item) => (
           <SidebarMenuItem key={item.shamanId}>
             <SidebarMenuButton asChild isActive={shamanId === item.shamanId}>
               <Link href={`/shaman/${item.shamanId}`}>
                 <Webhook />
-                <span>{item.name}</span>
+                <span>{trimHash(item.shamanId, 4)}</span>
               </Link>
             </SidebarMenuButton>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <SidebarMenuAction showOnHover>
+                  <MoreHorizontal />
+                  <span className="sr-only">More</span>
+                </SidebarMenuAction>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                className="w-48"
+                side={isMobile ? 'bottom' : 'right'}
+                align={isMobile ? 'end' : 'start'}>
+                <DropdownMenuItem
+                  onClick={() =>
+                    router.push(`/shaman/${item.shamanId}/update`)
+                  }>
+                  <Pencil className="text-muted-foreground" />
+                  <span>Update</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    openTrigger(
+                      true,
+                      `/shaman/${item.shamanId}`,
+                      undefined,
+                      item.shamanId
+                    )
+                  }>
+                  <Zap className="text-muted-foreground" />
+                  <span>Trigger</span>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() =>
+                    openDelete(true, `/shaman/${item.shamanId}`, undefined)
+                  }
+                  className="text-red-500">
+                  <Trash2 className="text-red-500" />
+                  <span>Delete</span>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </SidebarMenuItem>
         ))}
         <SidebarMenuItem>
@@ -40,7 +101,7 @@ export function NavShamans() {
             isActive={pathname === '/shaman'}
             onClick={() => (user ? router.push('/shaman') : login())}>
             <Plus />
-            <span>New Ability</span>
+            <span>New Shaman</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

@@ -30,15 +30,15 @@ export const useShaman = (shamanId: string) => {
       );
 
       const metadataJson = (await metadata.json()) as {
-        code: string;
-        prompt: string;
+        name: string;
+        description: string;
       };
 
       return {
         ...shamanData,
         shamanId,
-        code: atob(metadataJson.code),
-        prompt: metadataJson.prompt,
+        name: metadataJson.name,
+        description: metadataJson.description,
       };
     },
     refetchInterval: 2500,

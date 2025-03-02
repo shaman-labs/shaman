@@ -34,15 +34,27 @@ export function getSystemCalls({
   const client = publicClient as PublicClient;
 
   // shaman functions
-  const createShaman = async (name: string, metadata: string): Promise<Hex> => {
-    await worldContract.simulate.createShaman([name, metadata], {
-      account: account.address,
-    });
+  const createShaman = async (
+    balance: bigint,
+    name: string,
+    abilityIds: Hex[],
+    sourceIds: Hex[],
+    metadata: string
+  ): Promise<Hex> => {
+    await worldContract.simulate.createShaman(
+      [balance, name, abilityIds, sourceIds, metadata],
+      {
+        account: account.address,
+      }
+    );
 
-    const hash = await worldContract.write.createShaman([name, metadata], {
-      chain,
-      account,
-    });
+    const hash = await worldContract.write.createShaman(
+      [balance, name, abilityIds, sourceIds, metadata],
+      {
+        chain,
+        account,
+      }
+    );
 
     const receipt = await client.getTransactionReceipt({
       hash: hash,
@@ -88,49 +100,8 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
-  // Workflow functions
-  const createWorkflow = async (
-    balance: bigint,
-    shamanIds: Hex[],
-    sourceIds: Hex[],
-    metadata: string
-  ) => {
-    if (balance > 0n) {
-      await tokenContract.simulate.approve([worldContract.address, balance], {
-        chain,
-        account: account.address,
-      });
-
-      const approveTx = await tokenContract.write.approve(
-        [worldContract.address, balance],
-        {
-          chain,
-          account: account.address,
-        }
-      );
-
-      await waitForTransaction(approveTx);
-    }
-
-    await worldContract.simulate.createWorkflow(
-      [balance, shamanIds, sourceIds, metadata],
-      {
-        account: account.address,
-      }
-    );
-
-    const hash = await worldContract.write.createWorkflow(
-      [balance, shamanIds, sourceIds, metadata],
-      {
-        chain,
-        account,
-      }
-    );
-
-    return waitForTransaction(hash);
-  };
-
-  const depositWorkflowBalance = async (workflowId: Hex, amount: bigint) => {
+  // Shaman balance management
+  const depositShamanBalance = async (shamanId: Hex, amount: bigint) => {
     await tokenContract.simulate.approve([worldContract.address, amount], {
       chain,
       account: account.address,
@@ -146,12 +117,12 @@ export function getSystemCalls({
 
     await waitForTransaction(approveTx);
 
-    await worldContract.simulate.depositWorkflowBalance([workflowId, amount], {
+    await worldContract.simulate.depositShamanBalance([shamanId, amount], {
       account: account.address,
     });
 
-    const hash = await worldContract.write.depositWorkflowBalance(
-      [workflowId, amount],
+    const hash = await worldContract.write.depositShamanBalance(
+      [shamanId, amount],
       {
         chain,
         account,
@@ -161,13 +132,13 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
-  const withdrawWorkflowBalance = async (workflowId: Hex, amount: bigint) => {
-    await worldContract.simulate.withdrawWorkflowBalance([workflowId, amount], {
+  const withdrawShamanBalance = async (shamanId: Hex, amount: bigint) => {
+    await worldContract.simulate.withdrawShamanBalance([shamanId, amount], {
       account: account.address,
     });
 
-    const hash = await worldContract.write.withdrawWorkflowBalance(
-      [workflowId, amount],
+    const hash = await worldContract.write.withdrawShamanBalance(
+      [shamanId, amount],
       {
         chain,
         account,
@@ -177,13 +148,14 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
-  const updateWorkflowStatus = async (workflowId: Hex, active: boolean) => {
-    await worldContract.simulate.updateWorkflowStatus([workflowId, active], {
+  // Shaman status management
+  const updateShamanStatus = async (shamanId: Hex, active: boolean) => {
+    await worldContract.simulate.updateShamanStatus([shamanId, active], {
       account: account.address,
     });
 
-    const hash = await worldContract.write.updateWorkflowStatus(
-      [workflowId, active],
+    const hash = await worldContract.write.updateShamanStatus(
+      [shamanId, active],
       {
         chain,
         account,
@@ -193,14 +165,14 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
-  // Shaman workflow management functions
-  const addShamanToWorkflow = async (workflowId: Hex, shamanId: Hex) => {
-    await worldContract.simulate.addShamanToWorkflow([workflowId, shamanId], {
+  // Shaman ability management
+  const addAbilityToShaman = async (shamanId: Hex, abilityId: Hex) => {
+    await worldContract.simulate.addAbilityToShaman([shamanId, abilityId], {
       account: account.address,
     });
 
-    const hash = await worldContract.write.addShamanToWorkflow(
-      [workflowId, shamanId],
+    const hash = await worldContract.write.addAbilityToShaman(
+      [shamanId, abilityId],
       {
         chain,
         account,
@@ -210,21 +182,114 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
-  const removeShamanFromWorkflow = async (workflowId: Hex, shamanId: Hex) => {
-    await worldContract.simulate.removeShamanFromWorkflow(
-      [workflowId, shamanId],
+  const removeAbilityFromShaman = async (shamanId: Hex, abilityId: Hex) => {
+    await worldContract.simulate.removeAbilityFromShaman(
+      [shamanId, abilityId],
       {
         account: account.address,
       }
     );
 
-    const hash = await worldContract.write.removeShamanFromWorkflow(
-      [workflowId, shamanId],
+    const hash = await worldContract.write.removeAbilityFromShaman(
+      [shamanId, abilityId],
       {
         chain,
         account,
       }
     );
+
+    return waitForTransaction(hash);
+  };
+
+  // Shaman source management
+  const addSourceToShaman = async (shamanId: Hex, sourceId: Hex) => {
+    await worldContract.simulate.addSourceToShaman([shamanId, sourceId], {
+      account: account.address,
+    });
+
+    const hash = await worldContract.write.addSourceToShaman(
+      [shamanId, sourceId],
+      {
+        chain,
+        account,
+      }
+    );
+
+    return waitForTransaction(hash);
+  };
+
+  const removeSourceFromShaman = async (shamanId: Hex, sourceId: Hex) => {
+    await worldContract.simulate.removeSourceFromShaman([shamanId, sourceId], {
+      account: account.address,
+    });
+
+    const hash = await worldContract.write.removeSourceFromShaman(
+      [shamanId, sourceId],
+      {
+        chain,
+        account,
+      }
+    );
+
+    return waitForTransaction(hash);
+  };
+
+  // Ability management
+  const createAbility = async (name: string, metadata: string) => {
+    await worldContract.simulate.createAbility([name, metadata], {
+      account: account.address,
+    });
+
+    const hash = await worldContract.write.createAbility([name, metadata], {
+      chain,
+      account,
+    });
+
+    return waitForTransaction(hash);
+  };
+
+  const updateAbilityMetadata = async (abilityId: Hex, metadata: string) => {
+    await worldContract.simulate.updateAbilityMetadata([abilityId, metadata], {
+      account: account.address,
+    });
+
+    const hash = await worldContract.write.updateAbilityMetadata(
+      [abilityId, metadata],
+      {
+        chain,
+        account,
+      }
+    );
+
+    return waitForTransaction(hash);
+  };
+
+  const updateAbilityName = async (abilityId: Hex, name: string) => {
+    await worldContract.simulate.updateAbilityName([abilityId, name], {
+      account: account.address,
+    });
+
+    const hash = await worldContract.write.updateAbilityName(
+      [abilityId, name],
+      {
+        chain,
+        account,
+      }
+    );
+
+    return waitForTransaction(hash);
+  };
+
+  // Source management
+  const createSource = async (name: string, metadata: string) => {
+    await worldContract.simulate.createSource([name, metadata], {
+      account: account.address,
+    });
+
+    const hash = await worldContract.write.createSource([name, metadata], {
+      chain,
+      account,
+    });
 
     return waitForTransaction(hash);
   };
@@ -318,7 +383,7 @@ export function getSystemCalls({
     return (await worldContract.read.getTokenAddress()) as Hex;
   };
 
-  // Getter functions for shaman and workflow
+  // Getter functions for shaman data
   const getShamanMetadata = async (shamanId: Hex): Promise<string> => {
     return (await worldContract.read.getShamanMetadata([shamanId])) as string;
   };
@@ -331,44 +396,70 @@ export function getSystemCalls({
     return (await worldContract.read.getShamanCreator([shamanId])) as Hex;
   };
 
-  const getWorkflowBalance = async (workflowId: Hex): Promise<bigint> => {
-    return (await worldContract.read.getWorkflowBalance([
-      workflowId,
-    ])) as bigint;
+  const getShamanBalance = async (shamanId: Hex): Promise<bigint> => {
+    return (await worldContract.read.getShamanBalance([shamanId])) as bigint;
   };
 
-  const getWorkflowActive = async (workflowId: Hex): Promise<boolean> => {
-    return (await worldContract.read.getWorkflowActive([
-      workflowId,
-    ])) as boolean;
+  const getShamanActive = async (shamanId: Hex): Promise<boolean> => {
+    return (await worldContract.read.getShamanActive([shamanId])) as boolean;
   };
 
-  const getWorkflowCreator = async (workflowId: Hex): Promise<Hex> => {
-    return (await worldContract.read.getWorkflowCreator([workflowId])) as Hex;
+  const getShamanState = async (shamanId: Hex): Promise<number> => {
+    return (await worldContract.read.getShamanState([shamanId])) as number;
+  };
+
+  const getShamanAbilityIds = async (shamanId: Hex): Promise<Hex[]> => {
+    return (await worldContract.read.getShamanAbilityIds([shamanId])) as Hex[];
+  };
+
+  const getShamanSourceIds = async (shamanId: Hex): Promise<Hex[]> => {
+    return (await worldContract.read.getShamanSourceIds([shamanId])) as Hex[];
+  };
+
+  const getAbilityName = async (abilityId: Hex): Promise<string> => {
+    return (await worldContract.read.getAbilityName([abilityId])) as string;
+  };
+
+  const getAbilityMetadata = async (abilityId: Hex): Promise<string> => {
+    return (await worldContract.read.getAbilityMetadata([abilityId])) as string;
+  };
+
+  const getAbilityCreator = async (abilityId: Hex): Promise<Hex> => {
+    return (await worldContract.read.getAbilityCreator([abilityId])) as Hex;
   };
 
   return {
     createShaman,
     updateShamanMetadata,
-    createWorkflow,
-    depositWorkflowBalance,
-    withdrawWorkflowBalance,
-    updateWorkflowStatus,
-    addShamanToWorkflow,
-    removeShamanFromWorkflow,
+    updateShamanStatus,
+    depositShamanBalance,
+    withdrawShamanBalance,
+    addAbilityToShaman,
+    removeAbilityFromShaman,
+    addSourceToShaman,
+    removeSourceFromShaman,
+    createAbility,
+    updateAbilityMetadata,
+    updateAbilityName,
+    createSource,
     purchase,
+    transferAsset,
     getBalanceOf,
     getPrice,
     getTokenAddress,
     getTokenSupply,
     getMaxSaleSupply,
     getTotalSaleSupply,
-    transferAsset,
     getShamanMetadata,
     getShamanName,
     getShamanCreator,
-    getWorkflowBalance,
-    getWorkflowActive,
-    getWorkflowCreator,
+    getShamanBalance,
+    getShamanActive,
+    getShamanState,
+    getShamanAbilityIds,
+    getShamanSourceIds,
+    getAbilityName,
+    getAbilityMetadata,
+    getAbilityCreator,
   };
 }

@@ -13,17 +13,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { triggerWorkflow } from '@/services/api';
-import { WorkflowLogType, WorkflowTriggerResponse } from '@/types/workflow';
+import { triggerShaman } from '@/services/api';
+import { ShamanLogType, ShamanTriggerResponse } from '@/types/shaman';
 
 export function DialogTrigger(props: DialogProps) {
   const [loading, setLoading] = useState(false);
-  const [response, setResponse] = useState<WorkflowTriggerResponse | null>(
-    null
-  );
-  const { workflowId: workflowIdParam } = useParams();
+  const [response, setResponse] = useState<ShamanTriggerResponse | null>(null);
+  const { shamanId: shamanIdParam } = useParams();
   const { openViewLog } = useDialogContext();
-  const workflowId = props.workflowId || workflowIdParam;
+  const shamanId = props.shamanId || shamanIdParam;
 
   useEffect(() => {
     if (props.open) {
@@ -34,7 +32,7 @@ export function DialogTrigger(props: DialogProps) {
   const handleTrigger = async () => {
     setLoading(true);
     try {
-      const response = await triggerWorkflow(workflowId as string);
+      const response = await triggerShaman(shamanId as string);
       setResponse(response);
 
       toast({
@@ -93,9 +91,9 @@ export function DialogTrigger(props: DialogProps) {
                       success: response.success,
                       timestamp: response.timestamp.toString(),
                       metadata: response.logMetadataHash,
-                      id: workflowId as string,
-                      logType: WorkflowLogType.QUEUE,
-                      shamanId: workflowId as string,
+                      id: shamanId as string,
+                      logType: ShamanLogType.QUEUE,
+                      shamanId: shamanId as string,
                       amount: BigInt(1),
                     })
                   }>

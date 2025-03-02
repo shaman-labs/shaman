@@ -7,7 +7,7 @@ import { getSystemPrompt } from '@/prompts/system';
 import { objectManager } from '@/services/filebase';
 import privy from '@/services/privy';
 
-interface ShamanRequest {
+interface AbilityRequest {
   prompt: string;
   network: string;
   frequency: string;
@@ -15,7 +15,7 @@ interface ShamanRequest {
 }
 
 export async function POST(req: Request) {
-  const { prompt }: ShamanRequest = await req.json();
+  const { prompt }: AbilityRequest = await req.json();
   const authToken = (await cookies()).get('privy-token')?.value;
   if (!authToken) {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });

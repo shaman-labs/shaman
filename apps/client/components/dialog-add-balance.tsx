@@ -28,14 +28,14 @@ export function DialogAddBalance(props: DialogProps) {
   const { data: zugBalance } = useZugBalance(
     embeddedWallet?.address as `0x${string}`
   );
-  const { workflowId: workflowIdParam } = useParams();
-  const workflowId = props.workflowId || workflowIdParam;
+  const { shamanId: shamanIdParam } = useParams();
+  const shamanId = props.shamanId || shamanIdParam;
 
   const handleAddBalance = async () => {
     setLoading(true);
     try {
-      await mud?.calls.embedded?.systemCalls?.depositWorkflowBalance(
-        workflowId as Hex,
+      await mud?.calls.embedded?.systemCalls?.depositShamanBalance(
+        shamanId as Hex,
         BigInt(quantity)
       );
 

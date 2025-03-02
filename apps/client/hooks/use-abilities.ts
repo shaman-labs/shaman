@@ -4,38 +4,38 @@ import { decodeEntity } from '@latticexyz/store-sync/recs';
 import { useQuery } from '@tanstack/react-query';
 import { useMUD } from '@/contexts/mud-context';
 
-export const useWorkflows = () => {
+export const useAbilities = () => {
   const mud = useMUD();
 
   return useQuery({
-    queryKey: ['workflows'],
+    queryKey: ['abilities'],
     initialData: [],
     queryFn: () => {
-      if (!mud?.components?.Workflows) return [];
+      if (!mud?.components?.Abilities) return [];
 
-      const entities = runQuery([Has(mud.components.Workflows)]);
-      const workflows = Array.from(entities).map((entity) => {
-        const { workflowId } = decodeEntity(
+      const entities = runQuery([Has(mud.components.Abilities)]);
+      const abilities = Array.from(entities).map((entity) => {
+        const { abilityId } = decodeEntity(
           {
-            workflowId: 'bytes32',
+            abilityId: 'bytes32',
           },
           entity
         );
-        const workflowData = getComponentValueStrict(
-          mud.components.Workflows,
+        const abilityData = getComponentValueStrict(
+          mud.components.Abilities,
           entity
         );
         return {
-          ...workflowData,
-          workflowId,
+          ...abilityData,
+          abilityId,
         };
       });
 
-      return workflows.sort(
+      return abilities.sort(
         (a, b) => Number(b.createdAt) - Number(a.createdAt)
       );
     },
     refetchInterval: 2500,
-    enabled: !!mud?.components?.Workflows,
+    enabled: !!mud?.components?.Abilities,
   });
 };
