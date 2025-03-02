@@ -20,11 +20,11 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { useWorkflows } from '@/hooks/use-workflows';
+import { useShamans } from '@/hooks/use-shamans';
 import { trimHash } from '@/lib/utils';
 
 export default function Page() {
-  const { data: workflows } = useWorkflows();
+  const { data: shamans } = useShamans();
   const { user, login } = usePrivy();
   const asciiTextRef = useAsciiText({
     font: alligator,
@@ -53,20 +53,20 @@ export default function Page() {
                 </CardContent>
                 <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
                   <Button asChild className="w-full" variant="default">
-                    <Link href="/workflow">
+                    <Link href="/shaman">
                       <Plus />
-                      Create Workflow
+                      Create Shaman
                     </Link>
                   </Button>
                 </CardFooter>
               </Card>
-              {workflows.map((workflow) => (
+              {shamans.map((shaman) => (
                 <Card
-                  key={workflow.workflowId}
+                  key={shaman.shamanId}
                   className="mb-4 flex flex-col min-h-[200px]">
                   <CardHeader>
                     <CardTitle>
-                      Workflow: {trimHash(workflow.workflowId, 4)}
+                      Shaman: {trimHash(shaman.shamanId, 4)}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="flex-grow">
@@ -75,9 +75,7 @@ export default function Page() {
                         <span className="text-sm font-medium">Balance:</span>
                         <span className="text-sm">
                           <code className="rounded-md bg-muted px-1 py-0.5 text-sm overflow-y-auto">
-                            <span className="font-mono">
-                              {workflow.balance}
-                            </span>
+                            <span className="font-mono">{shaman.balance}</span>
                           </code>
                         </span>
                       </div>
@@ -85,7 +83,7 @@ export default function Page() {
                         <span className="text-sm font-medium">
                           Created{' '}
                           {formatDistance(
-                            new Date(Number(workflow.createdAt) * 1000),
+                            new Date(Number(shaman.createdAt) * 1000),
                             new Date(),
                             {
                               addSuffix: true,
@@ -97,7 +95,7 @@ export default function Page() {
                   </CardContent>
                   <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
                     <Button asChild className="w-full" variant="outline">
-                      <Link href={`/workflow/${workflow.workflowId}`}>
+                      <Link href={`/shaman/${shaman.shamanId}`}>
                         <Eye />
                         View Details
                       </Link>

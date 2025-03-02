@@ -1,14 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
-import { WorkflowLogMetadata } from '@/types/workflow';
+import { ShamanLogMetadata } from '@/types/shaman';
 
-export const useWorkflowLogMetadata = (metadata?: string) => {
+export const useShamanLogMetadata = (metadata?: string) => {
   return useQuery({
-    queryKey: ['workflowLogMetadata', metadata],
+    queryKey: ['shamanLogMetadata', metadata],
     initialData: null,
     queryFn: async () => {
       const result = await fetch(`https://gateway.shaman.fun/ipfs/${metadata}`);
 
-      const metadataJson = (await result.json()) as WorkflowLogMetadata;
+      const metadataJson = (await result.json()) as ShamanLogMetadata;
 
       return metadataJson;
     },
