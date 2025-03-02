@@ -28,7 +28,7 @@ contract SourceSystem is BaseSystem {
       sourceId,
       _msgSender(),
       block.timestamp,
-      0, // workflowCount
+      0, // shamanCount
       name,
       metadata
     );

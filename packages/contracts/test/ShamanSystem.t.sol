@@ -2,152 +2,247 @@
 pragma solidity >=0.8.24;
 
 import "forge-std/console.sol";
+import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
-import { Shamans, ShamanNames } from "../src/codegen/index.sol";
+import { Shamans, Roles } from "../src/codegen/index.sol";
+import { ShamanState, RoleType } from "../src/codegen/common.sol";
 
 contract ShamanSystemTest is BaseTest {
-  string constant INITIAL_METADATA = "QmTest1";
-  string constant UPDATED_METADATA = "QmTest2";
-  string constant INITIAL_NAME = "Test Shaman";
+  string constant INITIAL_METADATA = "QmShamanTest1";
+  string constant UPDATED_METADATA = "QmShamanTest2";
+  bytes32 constant ABILITY_ID = bytes32(uint256(1));
+  bytes32 constant SOURCE_ID = bytes32(uint256(2));
+  uint256 constant INITIAL_BALANCE = 1000;
+
+  function _setupOperator(address operator) private {
+    vm.prank(signerAddress);
+    Roles.setRole(operator, RoleType.Operator);
+    vm.stopPrank();
+  }
+
+  function _prepareTokens(address user, uint256 amount) private {
+    _mintTokens(user, amount);
+    _increaseAllowance(user, amount);
+  }
+
+  function _createShaman(
+    address creator,
+    uint256 balance,
+    bytes32[] memory abilityIds,
+    bytes32[] memory sourceIds,
+    string memory metadata
+  ) private returns (bytes32 shamanId) {
+    vm.recordLogs();
+    vm.prank(creator);
+    world.createShaman(balance, "TestShaman", abilityIds, sourceIds, metadata);
+    vm.stopPrank();
+
+    // Get the shaman ID from the logs
+    Vm.Log[] memory entries = vm.getRecordedLogs();
+    for (uint256 i = 0; i < entries.length; i++) {
+      if (entries[i].topics[0] == keccak256("ShamanCreated(bytes32,address)")) {
+        shamanId = bytes32(entries[i].topics[1]);
+        break;
+      }
+    }
+
+    require(shamanId != bytes32(0), "Shaman creation failed");
+  }
 
   function testCreateShaman() public {
+    _setupOperator(creatorAlice);
+    _prepareTokens(creatorAlice, INITIAL_BALANCE);
+
+    bytes32[] memory abilityIds = new bytes32[](1);
+    abilityIds[0] = ABILITY_ID;
+
+    bytes32[] memory sourceIds = new bytes32[](1);
+    sourceIds[0] = SOURCE_ID;
+
     bytes32 shamanId = _createShaman(
       creatorAlice,
-      INITIAL_NAME,
+      INITIAL_BALANCE,
+      abilityIds,
+      sourceIds,
       INITIAL_METADATA
     );
 
-    // Verify the shaman was created
+    // Verify shaman state
+    assertEq(uint8(Shamans.getState(shamanId)), uint8(ShamanState.Idle));
     assertEq(Shamans.getCreator(shamanId), creatorAlice);
+    assertEq(Shamans.getActive(shamanId), true);
+    assertEq(Shamans.getBalance(shamanId), INITIAL_BALANCE);
+    assertEq(Shamans.getAbilityCount(shamanId), 1);
+    assertEq(Shamans.getSourceCount(shamanId), 1);
     assertEq(Shamans.getMetadata(shamanId), INITIAL_METADATA);
   }
 
-  function testCreateShamanWithEmptyName() public {
-    vm.prank(creatorAlice);
-    vm.expectRevert("Shaman name cannot be empty");
-    world.createShaman("", INITIAL_METADATA);
-    vm.stopPrank();
-  }
+  function testCreateShamanWithoutBalance() public {
+    _setupOperator(creatorAlice);
 
-  function testCreateShamanWithLongName() public {
-    string memory longName = "ThisNameIsTooLongForAShaman";
+    bytes32[] memory abilityIds = new bytes32[](1);
+    abilityIds[0] = ABILITY_ID;
 
-    vm.prank(creatorAlice);
-    vm.expectRevert("Shaman name too long");
-    world.createShaman(longName, INITIAL_METADATA);
-    vm.stopPrank();
-  }
+    bytes32[] memory sourceIds = new bytes32[](1);
+    sourceIds[0] = SOURCE_ID;
 
-  function testCreateShamanWithEmptyMetadata() public {
-    vm.prank(creatorAlice);
-    vm.expectRevert("Metadata cannot be empty");
-    world.createShaman(INITIAL_NAME, "");
-    vm.stopPrank();
-  }
-
-  function testCreateShamanWithDuplicateName() public {
-    // Create first shaman
-    _createShaman(creatorAlice, INITIAL_NAME, INITIAL_METADATA);
-
-    // Try to create another shaman with the same name
-    vm.prank(creatorBob);
-    vm.expectRevert("Shaman name already taken");
-    world.createShaman(INITIAL_NAME, INITIAL_METADATA);
-    vm.stopPrank();
-  }
-
-  function testUpdateShamanMetadata() public {
     bytes32 shamanId = _createShaman(
       creatorAlice,
-      INITIAL_NAME,
+      0,
+      abilityIds,
+      sourceIds,
       INITIAL_METADATA
     );
 
+    // Verify shaman state
+    assertEq(Shamans.getBalance(shamanId), 0);
+  }
+
+  function testCreateShamanWithoutAbilities() public {
+    _setupOperator(creatorAlice);
+    _prepareTokens(creatorAlice, INITIAL_BALANCE);
+
+    bytes32[] memory abilityIds = new bytes32[](0);
+
+    bytes32[] memory sourceIds = new bytes32[](1);
+    sourceIds[0] = SOURCE_ID;
+
+    bytes32 shamanId = _createShaman(
+      creatorAlice,
+      INITIAL_BALANCE,
+      abilityIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
+    // Verify shaman state
+    assertEq(Shamans.getAbilityCount(shamanId), 0);
+  }
+
+  function testCreateShamanWithoutSources() public {
+    _setupOperator(creatorAlice);
+    _prepareTokens(creatorAlice, INITIAL_BALANCE);
+
+    bytes32[] memory abilityIds = new bytes32[](1);
+    abilityIds[0] = ABILITY_ID;
+
+    bytes32[] memory sourceIds = new bytes32[](0);
+
+    bytes32 shamanId = _createShaman(
+      creatorAlice,
+      INITIAL_BALANCE,
+      abilityIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
+    // Verify shaman state
+    assertEq(Shamans.getSourceCount(shamanId), 0);
+  }
+
+  function testUpdateShamanMetadata() public {
+    _setupOperator(creatorAlice);
+    _prepareTokens(creatorAlice, INITIAL_BALANCE);
+
+    bytes32[] memory abilityIds = new bytes32[](0);
+    bytes32[] memory sourceIds = new bytes32[](0);
+
+    bytes32 shamanId = _createShaman(
+      creatorAlice,
+      INITIAL_BALANCE,
+      abilityIds,
+      sourceIds,
+      INITIAL_METADATA
+    );
+
+    // Update metadata
     vm.prank(creatorAlice);
     world.updateShamanMetadata(shamanId, UPDATED_METADATA);
     vm.stopPrank();
 
+    // Verify metadata was updated
     assertEq(Shamans.getMetadata(shamanId), UPDATED_METADATA);
   }
 
   function testUpdateShamanMetadataNotCreator() public {
+    _setupOperator(creatorAlice);
+    _prepareTokens(creatorAlice, INITIAL_BALANCE);
+
+    bytes32[] memory abilityIds = new bytes32[](0);
+    bytes32[] memory sourceIds = new bytes32[](0);
+
     bytes32 shamanId = _createShaman(
       creatorAlice,
-      INITIAL_NAME,
+      INITIAL_BALANCE,
+      abilityIds,
+      sourceIds,
       INITIAL_METADATA
     );
 
+    // Try to update metadata as non-creator
     vm.prank(creatorBob);
     vm.expectRevert("Not shaman creator");
     world.updateShamanMetadata(shamanId, UPDATED_METADATA);
     vm.stopPrank();
 
-    // Metadata should remain unchanged
+    // Verify metadata was not updated
     assertEq(Shamans.getMetadata(shamanId), INITIAL_METADATA);
   }
 
   function testUpdateShamanMetadataEmptyMetadata() public {
+    _setupOperator(creatorAlice);
+    _prepareTokens(creatorAlice, INITIAL_BALANCE);
+
+    bytes32[] memory abilityIds = new bytes32[](0);
+    bytes32[] memory sourceIds = new bytes32[](0);
+
     bytes32 shamanId = _createShaman(
       creatorAlice,
-      INITIAL_NAME,
+      INITIAL_BALANCE,
+      abilityIds,
+      sourceIds,
       INITIAL_METADATA
     );
 
+    // Try to update metadata with empty string
     vm.prank(creatorAlice);
     vm.expectRevert("Metadata cannot be empty");
     world.updateShamanMetadata(shamanId, "");
     vm.stopPrank();
 
-    // Metadata should remain unchanged
+    // Verify metadata was not updated
     assertEq(Shamans.getMetadata(shamanId), INITIAL_METADATA);
   }
 
-  function testGetShamanMetadata() public {
+  function testUpdateShamanStatus() public {
+    _setupOperator(creatorAlice);
+    _prepareTokens(creatorAlice, INITIAL_BALANCE);
+
+    bytes32[] memory abilityIds = new bytes32[](0);
+    bytes32[] memory sourceIds = new bytes32[](0);
+
     bytes32 shamanId = _createShaman(
       creatorAlice,
-      INITIAL_NAME,
+      INITIAL_BALANCE,
+      abilityIds,
+      sourceIds,
       INITIAL_METADATA
     );
 
-    string memory metadata = world.getShamanMetadata(shamanId);
-    assertEq(metadata, INITIAL_METADATA);
-  }
+    // Update status to inactive
+    vm.prank(creatorAlice);
+    world.updateShamanStatus(shamanId, false);
+    vm.stopPrank();
 
-  function testGetShamanIdByName() public {
-    bytes32 shamanId = _createShaman(
-      creatorAlice,
-      INITIAL_NAME,
-      INITIAL_METADATA
-    );
+    // Verify status was updated
+    assertEq(Shamans.getActive(shamanId), false);
 
-    bytes32 retrievedId = world.getShamanIdByName(INITIAL_NAME);
-    assertEq(retrievedId, shamanId);
-  }
+    // Update status back to active
+    vm.prank(creatorAlice);
+    world.updateShamanStatus(shamanId, true);
+    vm.stopPrank();
 
-  function testGetShamanIdByNameNonExistent() public {
-    bytes32 retrievedId = world.getShamanIdByName("NonExistentName");
-    assertEq(retrievedId, bytes32(0));
-  }
-
-  function testGetShamanName() public {
-    bytes32 shamanId = _createShaman(
-      creatorAlice,
-      INITIAL_NAME,
-      INITIAL_METADATA
-    );
-
-    string memory name = world.getShamanName(shamanId);
-    assertEq(name, INITIAL_NAME);
-  }
-
-  function testGetShamanCreator() public {
-    bytes32 shamanId = _createShaman(
-      creatorAlice,
-      INITIAL_NAME,
-      INITIAL_METADATA
-    );
-
-    address creator = world.getShamanCreator(shamanId);
-    assertEq(creator, creatorAlice);
+    // Verify status was updated
+    assertEq(Shamans.getActive(shamanId), true);
   }
 }

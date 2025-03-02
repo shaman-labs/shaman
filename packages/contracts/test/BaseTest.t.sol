@@ -60,13 +60,12 @@ contract BaseTest is MudTest, GasReporter {
 
   function _createShaman(
     address creator,
-    string memory name,
     string memory metadata
   ) internal returns (bytes32 shamanId) {
     vm.recordLogs();
 
     vm.prank(creator);
-    world.createShaman(name, metadata);
+    world.createShaman(0, "TestShaman", new bytes32[](0), new bytes32[](0), metadata);
     vm.stopPrank();
 
     // Get logs and find the ShamanCreated event
@@ -87,32 +86,64 @@ contract BaseTest is MudTest, GasReporter {
     console.log("Created shaman with ID:", uint256(shamanId));
   }
 
+  function _createAbility(
+    address creator,
+    string memory name,
+    string memory metadata
+  ) internal returns (bytes32 abilityId) {
+    vm.recordLogs();
+    vm.prank(creator);
+    world.createAbility(name, metadata);
+    vm.stopPrank();
+
+    // Get the ability ID from the logs
+    Vm.Log[] memory entries = vm.getRecordedLogs();
+    for (uint256 i = 0; i < entries.length; i++) {
+      if (entries[i].topics[0] == keccak256("AbilityCreated(bytes32,address)")) {
+        abilityId = bytes32(entries[i].topics[1]);
+        break;
+      }
+    }
+
+    require(abilityId != bytes32(0), "Ability creation failed");
+  }
+
   function _createSource(
     address creator,
     string memory name,
     string memory metadata
   ) internal returns (bytes32 sourceId) {
     vm.recordLogs();
-
     vm.prank(creator);
     world.createSource(name, metadata);
     vm.stopPrank();
 
-    // Get logs and find the ShamanCreated event
+    // Get the source ID from the logs
     Vm.Log[] memory entries = vm.getRecordedLogs();
     for (uint256 i = 0; i < entries.length; i++) {
-      // Check if this is our event
       if (entries[i].topics[0] == keccak256("SourceCreated(bytes32,address)")) {
-        // For indexed parameters, they appear in topics
-        // topics[0] is the event signature
-        // topics[1] is the first indexed parameter (shamanId)
         sourceId = bytes32(entries[i].topics[1]);
         break;
       }
     }
-    require(sourceId != bytes32(0), "Source creation failed");
 
-    // Optional: Add debug logging
-    console.log("Created source with ID:", uint256(sourceId));
+    require(sourceId != bytes32(0), "Source creation failed");
+  }
+
+  function _createTestShaman(string memory metadata) internal returns (bytes32) {
+    vm.recordLogs();
+    vm.prank(creatorAlice);
+    world.createShaman(0, "TestShaman", new bytes32[](0), new bytes32[](0), metadata);
+    vm.stopPrank();
+
+    // Get the shaman ID from the logs
+    Vm.Log[] memory entries = vm.getRecordedLogs();
+    for (uint256 i = 0; i < entries.length; i++) {
+      if (entries[i].topics[0] == keccak256("ShamanCreated(bytes32,address)")) {
+        return bytes32(entries[i].topics[1]);
+      }
+    }
+
+    revert("Shaman creation failed");
   }
 }

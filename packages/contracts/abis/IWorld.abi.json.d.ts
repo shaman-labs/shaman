@@ -1,15 +1,15 @@
 declare const abi: [
   {
     "type": "function",
-    "name": "addShamanToWorkflow",
+    "name": "addAbilityToShaman",
     "inputs": [
       {
-        "name": "workflowId",
+        "name": "shamanId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
       {
-        "name": "shamanId",
+        "name": "abilityId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -19,10 +19,10 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "addSourceToWorkflow",
+    "name": "addSourceToShaman",
     "inputs": [
       {
-        "name": "workflowId",
+        "name": "shamanId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -157,10 +157,10 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "completeWorkflowJob",
+    "name": "completeShamanJob",
     "inputs": [
       {
-        "name": "workflowId",
+        "name": "shamanId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -185,12 +185,45 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "createShaman",
+    "name": "createAbility",
     "inputs": [
       {
         "name": "name",
         "type": "string",
         "internalType": "string"
+      },
+      {
+        "name": "metadata",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "createShaman",
+    "inputs": [
+      {
+        "name": "balance",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "abilityIds",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      },
+      {
+        "name": "sourceIds",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
       },
       {
         "name": "metadata",
@@ -209,34 +242,6 @@ declare const abi: [
         "name": "name",
         "type": "string",
         "internalType": "string"
-      },
-      {
-        "name": "metadata",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "createWorkflow",
-    "inputs": [
-      {
-        "name": "balance",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "shamanIds",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      },
-      {
-        "name": "sourceIds",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
       },
       {
         "name": "metadata",
@@ -280,10 +285,10 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "depositWorkflowBalance",
+    "name": "depositShamanBalance",
     "inputs": [
       {
-        "name": "workflowId",
+        "name": "shamanId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -298,10 +303,10 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "enqueueWorkflowJob",
+    "name": "enqueueShamanJob",
     "inputs": [
       {
-        "name": "workflowId",
+        "name": "shamanId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -313,6 +318,63 @@ declare const abi: [
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "getAbilityCreator",
+    "inputs": [
+      {
+        "name": "abilityId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getAbilityMetadata",
+    "inputs": [
+      {
+        "name": "abilityId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getAbilityName",
+    "inputs": [
+      {
+        "name": "abilityId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -650,6 +712,63 @@ declare const abi: [
   },
   {
     "type": "function",
+    "name": "getShamanAbilityIds",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getShamanActive",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getShamanBalance",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getShamanCreator",
     "inputs": [
       {
@@ -669,19 +788,38 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "getShamanIdByName",
+    "name": "getShamanIdsByAbilityId",
     "inputs": [
       {
-        "name": "name",
-        "type": "string",
-        "internalType": "string"
+        "name": "abilityId",
+        "type": "bytes32",
+        "internalType": "bytes32"
       }
     ],
     "outputs": [
       {
         "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getShamanIdsBySourceId",
+    "inputs": [
+      {
+        "name": "sourceId",
         "type": "bytes32",
         "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
       }
     ],
     "stateMutability": "view"
@@ -720,6 +858,44 @@ declare const abi: [
         "name": "",
         "type": "string",
         "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getShamanSourceIds",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getShamanState",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "enum ShamanState"
       }
     ],
     "stateMutability": "view"
@@ -786,177 +962,6 @@ declare const abi: [
         "name": "valueSchema",
         "type": "bytes32",
         "internalType": "Schema"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowActive",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool",
-        "internalType": "bool"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowBalance",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowCreator",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowIdsByShamanId",
-    "inputs": [
-      {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowIdsBySourceId",
-    "inputs": [
-      {
-        "name": "sourceId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowMetadata",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowShamanIds",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowSourceIds",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getWorkflowState",
-    "inputs": [
-      {
-        "name": "workflowId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint8",
-        "internalType": "enum WorkflowState"
       }
     ],
     "stateMutability": "view"
@@ -1305,15 +1310,15 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "removeShamanFromWorkflow",
+    "name": "removeAbilityFromShaman",
     "inputs": [
       {
-        "name": "workflowId",
+        "name": "shamanId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
       {
-        "name": "shamanId",
+        "name": "abilityId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -1323,10 +1328,10 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "removeSourceFromWorkflow",
+    "name": "removeSourceFromShaman",
     "inputs": [
       {
-        "name": "workflowId",
+        "name": "shamanId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -1593,10 +1598,10 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "startWorkflowJob",
+    "name": "startShamanJob",
     "inputs": [
       {
-        "name": "workflowId",
+        "name": "shamanId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -1745,6 +1750,42 @@ declare const abi: [
   },
   {
     "type": "function",
+    "name": "updateAbilityMetadata",
+    "inputs": [
+      {
+        "name": "abilityId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "metadata",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "updateAbilityName",
+    "inputs": [
+      {
+        "name": "abilityId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "updateShamanMetadata",
     "inputs": [
       {
@@ -1763,15 +1804,15 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "updateWorkflowMetadata",
+    "name": "updateShamanName",
     "inputs": [
       {
-        "name": "workflowId",
+        "name": "shamanId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
       {
-        "name": "metadata",
+        "name": "name",
         "type": "string",
         "internalType": "string"
       }
@@ -1781,10 +1822,10 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "updateWorkflowStatus",
+    "name": "updateShamanStatus",
     "inputs": [
       {
-        "name": "workflowId",
+        "name": "shamanId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -1799,10 +1840,10 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "withdrawWorkflowBalance",
+    "name": "withdrawShamanBalance",
     "inputs": [
       {
-        "name": "workflowId",
+        "name": "shamanId",
         "type": "bytes32",
         "internalType": "bytes32"
       },

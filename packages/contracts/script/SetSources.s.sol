@@ -22,7 +22,7 @@ contract SetSources is Script {
       keccak256("interval-hourly"),
       signerAddress,
       block.timestamp,
-      0, // workflowCount
+      0, // shamanCount
       "interval-hourly",
       ""
     );
@@ -31,7 +31,7 @@ contract SetSources is Script {
       keccak256("interval-daily"),
       signerAddress,
       block.timestamp,
-      0, // workflowCount
+      0, // shamanCount
       "interval-daily",
       ""
     );
@@ -40,7 +40,7 @@ contract SetSources is Script {
       keccak256("interval-quarter-hourly"),
       signerAddress,
       block.timestamp,
-      0, // workflowCount
+      0, // shamanCount
       "interval-quarter-hourly",
       ""
     );
