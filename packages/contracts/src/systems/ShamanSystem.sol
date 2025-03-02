@@ -1,31 +1,54 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
+import { Shamans } from "../codegen/index.sol";
+import { ShamanState } from "../codegen/common.sol";
 import { BaseSystem } from "./BaseSystem.sol";
-import { Shamans, ShamanNames } from "../codegen/index.sol";
+import { LogType } from "../codegen/common.sol";
+import { ShamanLogsLib } from "../lib/ShamanLogsLib.sol";
+import { ShamanEntitiesLib } from "../lib/ShamanEntitiesLib.sol";
 
 contract ShamanSystem is BaseSystem {
   event ShamanCreated(bytes32 indexed shamanId, address indexed creator);
 
-  function createShaman(string calldata name, string memory metadata) public {
-    bytes memory nameBytes = bytes(name);
-    require(nameBytes.length > 0, "Shaman name cannot be empty");
-    require(nameBytes.length <= 20, "Shaman name too long");
-    require(bytes(metadata).length > 0, "Metadata cannot be empty");
-    bytes32 encodedName = keccak256(nameBytes);
-    require(
-      ShamanNames.get(encodedName) == bytes32(0),
-      "Shaman name already taken"
-    );
-
+  function createShaman(
+    uint256 balance,
+    bytes32[] memory abilityIds,
+    bytes32[] memory sourceIds,
+    string memory metadata
+  ) public {
     bytes32 shamanId = keccak256(
       abi.encodePacked(_msgSender(), block.timestamp, block.prevrandao)
     );
-    Shamans.setCreator(shamanId, _msgSender());
-    Shamans.setCreatedAt(shamanId, block.timestamp);
-    Shamans.setMetadata(shamanId, metadata);
-    Shamans.setName(shamanId, name);
 
-    ShamanNames.set(encodedName, shamanId);
+    Shamans.set(
+      shamanId,
+      ShamanState.Idle,
+      _msgSender(),
+      block.timestamp,
+      true,
+      balance,
+      0, // abilityCount
+      0, // sourceCount
+      metadata
+    );
+
+    // add initial abilities if provided
+    for (uint256 i = 0; i < abilityIds.length; i++) {
+      ShamanEntitiesLib.addAbility(shamanId, abilityIds[i]);
+    }
+
+    // add initial sources if provided
+    for (uint256 i = 0; i < sourceIds.length; i++) {
+      ShamanEntitiesLib.addSource(shamanId, sourceIds[i]);
+    }
+
+    // log initial deposit if balance provided
+    if (balance > 0) {
+      ShamanLogsLib.logOperation(shamanId, balance, true, LogType.Deposit, "");
+
+      // get funds tokens
+      _token().transferFrom(_msgSender(), address(this), balance);
+    }
 
     emit ShamanCreated(shamanId, _msgSender());
   }
@@ -33,10 +56,25 @@ contract ShamanSystem is BaseSystem {
   function updateShamanMetadata(
     bytes32 shamanId,
     string memory metadata
-  ) public onlyShamanCreator(shamanId) {
+  )
+    public
+    onlyShamanCreator(shamanId)
+    onlyActiveShaman(shamanId)
+    onlyIdleShaman(shamanId)
+  {
     require(bytes(metadata).length > 0, "Metadata cannot be empty");
-
     Shamans.setMetadata(shamanId, metadata);
+  }
+
+  function updateShamanStatus(
+    bytes32 shamanId,
+    bool active
+  ) public onlyShamanCreator(shamanId) onlyIdleShaman(shamanId) {
+    Shamans.setActive(shamanId, active);
+  }
+
+  function getShamanState(bytes32 shamanId) public view returns (ShamanState) {
+    return Shamans.getState(shamanId);
   }
 
   function getShamanMetadata(
@@ -45,15 +83,12 @@ contract ShamanSystem is BaseSystem {
     return Shamans.getMetadata(shamanId);
   }
 
-  function getShamanIdByName(
-    string calldata name
-  ) public view returns (bytes32) {
-    bytes32 encodedName = keccak256(bytes(name));
-    return ShamanNames.get(encodedName);
+  function getShamanBalance(bytes32 shamanId) public view returns (uint256) {
+    return Shamans.getBalance(shamanId);
   }
 
-  function getShamanName(bytes32 shamanId) public view returns (string memory) {
-    return Shamans.getName(shamanId);
+  function getShamanActive(bytes32 shamanId) public view returns (bool) {
+    return Shamans.getActive(shamanId);
   }
 
   function getShamanCreator(bytes32 shamanId) public view returns (address) {

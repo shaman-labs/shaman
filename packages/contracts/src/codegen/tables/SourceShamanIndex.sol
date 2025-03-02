@@ -16,17 +16,17 @@ import { Schema } from "@latticexyz/store/src/Schema.sol";
 import { EncodedLengths, EncodedLengthsLib } from "@latticexyz/store/src/EncodedLengths.sol";
 import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 
-library WorkflowShaman {
-  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "WorkflowShaman", typeId: RESOURCE_TABLE });`
-  ResourceId constant _tableId = ResourceId.wrap(0x74620000000000000000000000000000576f726b666c6f775368616d616e0000);
+library SourceShamanIndex {
+  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "SourceShamanInde", typeId: RESOURCE_TABLE });`
+  ResourceId constant _tableId = ResourceId.wrap(0x74620000000000000000000000000000536f757263655368616d616e496e6465);
 
   FieldLayout constant _fieldLayout =
     FieldLayout.wrap(0x0020010020000000000000000000000000000000000000000000000000000000);
 
-  // Hex-encoded key schema of (bytes32, bytes32)
-  Schema constant _keySchema = Schema.wrap(0x004002005f5f0000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (uint256)
-  Schema constant _valueSchema = Schema.wrap(0x002001001f000000000000000000000000000000000000000000000000000000);
+  // Hex-encoded key schema of (bytes32, uint32)
+  Schema constant _keySchema = Schema.wrap(0x002402005f030000000000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (bytes32)
+  Schema constant _valueSchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -34,8 +34,8 @@ library WorkflowShaman {
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
     keyNames = new string[](2);
-    keyNames[0] = "workflowId";
-    keyNames[1] = "shamanId";
+    keyNames[0] = "sourceId";
+    keyNames[1] = "index";
   }
 
   /**
@@ -44,7 +44,7 @@ library WorkflowShaman {
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](1);
-    fieldNames[0] = "createdAt";
+    fieldNames[0] = "shamanId";
   }
 
   /**
@@ -62,104 +62,104 @@ library WorkflowShaman {
   }
 
   /**
-   * @notice Get createdAt.
+   * @notice Get shamanId.
    */
-  function getCreatedAt(bytes32 workflowId, bytes32 shamanId) internal view returns (uint256 createdAt) {
+  function getShamanId(bytes32 sourceId, uint32 index) internal view returns (bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = workflowId;
-    _keyTuple[1] = shamanId;
+    _keyTuple[0] = sourceId;
+    _keyTuple[1] = bytes32(uint256(index));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint256(bytes32(_blob)));
+    return (bytes32(_blob));
   }
 
   /**
-   * @notice Get createdAt.
+   * @notice Get shamanId.
    */
-  function _getCreatedAt(bytes32 workflowId, bytes32 shamanId) internal view returns (uint256 createdAt) {
+  function _getShamanId(bytes32 sourceId, uint32 index) internal view returns (bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = workflowId;
-    _keyTuple[1] = shamanId;
+    _keyTuple[0] = sourceId;
+    _keyTuple[1] = bytes32(uint256(index));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint256(bytes32(_blob)));
+    return (bytes32(_blob));
   }
 
   /**
-   * @notice Get createdAt.
+   * @notice Get shamanId.
    */
-  function get(bytes32 workflowId, bytes32 shamanId) internal view returns (uint256 createdAt) {
+  function get(bytes32 sourceId, uint32 index) internal view returns (bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = workflowId;
-    _keyTuple[1] = shamanId;
+    _keyTuple[0] = sourceId;
+    _keyTuple[1] = bytes32(uint256(index));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint256(bytes32(_blob)));
+    return (bytes32(_blob));
   }
 
   /**
-   * @notice Get createdAt.
+   * @notice Get shamanId.
    */
-  function _get(bytes32 workflowId, bytes32 shamanId) internal view returns (uint256 createdAt) {
+  function _get(bytes32 sourceId, uint32 index) internal view returns (bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = workflowId;
-    _keyTuple[1] = shamanId;
+    _keyTuple[0] = sourceId;
+    _keyTuple[1] = bytes32(uint256(index));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint256(bytes32(_blob)));
+    return (bytes32(_blob));
   }
 
   /**
-   * @notice Set createdAt.
+   * @notice Set shamanId.
    */
-  function setCreatedAt(bytes32 workflowId, bytes32 shamanId, uint256 createdAt) internal {
+  function setShamanId(bytes32 sourceId, uint32 index, bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = workflowId;
-    _keyTuple[1] = shamanId;
+    _keyTuple[0] = sourceId;
+    _keyTuple[1] = bytes32(uint256(index));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((createdAt)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((shamanId)), _fieldLayout);
   }
 
   /**
-   * @notice Set createdAt.
+   * @notice Set shamanId.
    */
-  function _setCreatedAt(bytes32 workflowId, bytes32 shamanId, uint256 createdAt) internal {
+  function _setShamanId(bytes32 sourceId, uint32 index, bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = workflowId;
-    _keyTuple[1] = shamanId;
+    _keyTuple[0] = sourceId;
+    _keyTuple[1] = bytes32(uint256(index));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((createdAt)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((shamanId)), _fieldLayout);
   }
 
   /**
-   * @notice Set createdAt.
+   * @notice Set shamanId.
    */
-  function set(bytes32 workflowId, bytes32 shamanId, uint256 createdAt) internal {
+  function set(bytes32 sourceId, uint32 index, bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = workflowId;
-    _keyTuple[1] = shamanId;
+    _keyTuple[0] = sourceId;
+    _keyTuple[1] = bytes32(uint256(index));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((createdAt)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((shamanId)), _fieldLayout);
   }
 
   /**
-   * @notice Set createdAt.
+   * @notice Set shamanId.
    */
-  function _set(bytes32 workflowId, bytes32 shamanId, uint256 createdAt) internal {
+  function _set(bytes32 sourceId, uint32 index, bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = workflowId;
-    _keyTuple[1] = shamanId;
+    _keyTuple[0] = sourceId;
+    _keyTuple[1] = bytes32(uint256(index));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((createdAt)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((shamanId)), _fieldLayout);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(bytes32 workflowId, bytes32 shamanId) internal {
+  function deleteRecord(bytes32 sourceId, uint32 index) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = workflowId;
-    _keyTuple[1] = shamanId;
+    _keyTuple[0] = sourceId;
+    _keyTuple[1] = bytes32(uint256(index));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -167,10 +167,10 @@ library WorkflowShaman {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(bytes32 workflowId, bytes32 shamanId) internal {
+  function _deleteRecord(bytes32 sourceId, uint32 index) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = workflowId;
-    _keyTuple[1] = shamanId;
+    _keyTuple[0] = sourceId;
+    _keyTuple[1] = bytes32(uint256(index));
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -179,8 +179,8 @@ library WorkflowShaman {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(uint256 createdAt) internal pure returns (bytes memory) {
-    return abi.encodePacked(createdAt);
+  function encodeStatic(bytes32 shamanId) internal pure returns (bytes memory) {
+    return abi.encodePacked(shamanId);
   }
 
   /**
@@ -189,8 +189,8 @@ library WorkflowShaman {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(uint256 createdAt) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(createdAt);
+  function encode(bytes32 shamanId) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
+    bytes memory _staticData = encodeStatic(shamanId);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;
@@ -201,10 +201,10 @@ library WorkflowShaman {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(bytes32 workflowId, bytes32 shamanId) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(bytes32 sourceId, uint32 index) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = workflowId;
-    _keyTuple[1] = shamanId;
+    _keyTuple[0] = sourceId;
+    _keyTuple[1] = bytes32(uint256(index));
 
     return _keyTuple;
   }

@@ -60,13 +60,12 @@ contract BaseTest is MudTest, GasReporter {
 
   function _createShaman(
     address creator,
-    string memory name,
     string memory metadata
   ) internal returns (bytes32 shamanId) {
     vm.recordLogs();
 
     vm.prank(creator);
-    world.createShaman(name, metadata);
+    world.createShaman(0, new bytes32[](0), new bytes32[](0), metadata);
     vm.stopPrank();
 
     // Get logs and find the ShamanCreated event
@@ -87,6 +86,37 @@ contract BaseTest is MudTest, GasReporter {
     console.log("Created shaman with ID:", uint256(shamanId));
   }
 
+  function _createAbility(
+    address creator,
+    string memory name,
+    string memory metadata
+  ) internal returns (bytes32 abilityId) {
+    vm.recordLogs();
+
+    vm.prank(creator);
+    world.createAbility(name, metadata);
+    vm.stopPrank();
+
+    // Get logs and find the AbilityCreated event
+    Vm.Log[] memory entries = vm.getRecordedLogs();
+    for (uint256 i = 0; i < entries.length; i++) {
+      // Check if this is our event
+      if (
+        entries[i].topics[0] == keccak256("AbilityCreated(bytes32,address)")
+      ) {
+        // For indexed parameters, they appear in topics
+        // topics[0] is the event signature
+        // topics[1] is the first indexed parameter (abilityId)
+        abilityId = bytes32(entries[i].topics[1]);
+        break;
+      }
+    }
+    require(abilityId != bytes32(0), "Ability creation failed");
+
+    // Optional: Add debug logging
+    console.log("Created ability with ID:", uint256(abilityId));
+  }
+
   function _createSource(
     address creator,
     string memory name,
@@ -98,14 +128,14 @@ contract BaseTest is MudTest, GasReporter {
     world.createSource(name, metadata);
     vm.stopPrank();
 
-    // Get logs and find the ShamanCreated event
+    // Get logs and find the SourceCreated event
     Vm.Log[] memory entries = vm.getRecordedLogs();
     for (uint256 i = 0; i < entries.length; i++) {
       // Check if this is our event
       if (entries[i].topics[0] == keccak256("SourceCreated(bytes32,address)")) {
         // For indexed parameters, they appear in topics
         // topics[0] is the event signature
-        // topics[1] is the first indexed parameter (shamanId)
+        // topics[1] is the first indexed parameter (sourceId)
         sourceId = bytes32(entries[i].topics[1]);
         break;
       }

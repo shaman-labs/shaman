@@ -17,7 +17,7 @@ enum RoleType {
   Operator
 }
 
-enum WorkflowState {
+enum ShamanState {
   Idle,
   Queue,
   InProgress,

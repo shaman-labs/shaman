@@ -19,9 +19,9 @@ import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 // Import user types
 import { LogType } from "../common.sol";
 
-library WorkflowLogs {
-  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "WorkflowLogs", typeId: RESOURCE_TABLE });`
-  ResourceId constant _tableId = ResourceId.wrap(0x74620000000000000000000000000000576f726b666c6f774c6f677300000000);
+library ShamanLogs {
+  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "ShamanLogs", typeId: RESOURCE_TABLE });`
+  ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e4c6f6773000000000000);
 
   FieldLayout constant _fieldLayout =
     FieldLayout.wrap(0x0082060101202020012000000000000000000000000000000000000000000000);
@@ -47,8 +47,8 @@ library WorkflowLogs {
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](7);
     fieldNames[0] = "logType";
-    fieldNames[1] = "workflowId";
-    fieldNames[2] = "shamanId";
+    fieldNames[1] = "shamanId";
+    fieldNames[2] = "abilityId";
     fieldNames[3] = "amount";
     fieldNames[4] = "success";
     fieldNames[5] = "createdAt";
@@ -112,55 +112,13 @@ library WorkflowLogs {
   }
 
   /**
-   * @notice Get workflowId.
-   */
-  function getWorkflowId(bytes32 logId) internal view returns (bytes32 workflowId) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = logId;
-
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
-    return (bytes32(_blob));
-  }
-
-  /**
-   * @notice Get workflowId.
-   */
-  function _getWorkflowId(bytes32 logId) internal view returns (bytes32 workflowId) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = logId;
-
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
-    return (bytes32(_blob));
-  }
-
-  /**
-   * @notice Set workflowId.
-   */
-  function setWorkflowId(bytes32 logId, bytes32 workflowId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = logId;
-
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((workflowId)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set workflowId.
-   */
-  function _setWorkflowId(bytes32 logId, bytes32 workflowId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = logId;
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((workflowId)), _fieldLayout);
-  }
-
-  /**
    * @notice Get shamanId.
    */
   function getShamanId(bytes32 logId) internal view returns (bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = logId;
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
     return (bytes32(_blob));
   }
 
@@ -171,7 +129,7 @@ library WorkflowLogs {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = logId;
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
     return (bytes32(_blob));
   }
 
@@ -182,7 +140,7 @@ library WorkflowLogs {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = logId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((shamanId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((shamanId)), _fieldLayout);
   }
 
   /**
@@ -192,7 +150,49 @@ library WorkflowLogs {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = logId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((shamanId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((shamanId)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get abilityId.
+   */
+  function getAbilityId(bytes32 logId) internal view returns (bytes32 abilityId) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = logId;
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    return (bytes32(_blob));
+  }
+
+  /**
+   * @notice Get abilityId.
+   */
+  function _getAbilityId(bytes32 logId) internal view returns (bytes32 abilityId) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = logId;
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    return (bytes32(_blob));
+  }
+
+  /**
+   * @notice Set abilityId.
+   */
+  function setAbilityId(bytes32 logId, bytes32 abilityId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = logId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((abilityId)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set abilityId.
+   */
+  function _setAbilityId(bytes32 logId, bytes32 abilityId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = logId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((abilityId)), _fieldLayout);
   }
 
   /**
@@ -493,8 +493,8 @@ library WorkflowLogs {
     view
     returns (
       LogType logType,
-      bytes32 workflowId,
       bytes32 shamanId,
+      bytes32 abilityId,
       uint256 amount,
       bool success,
       uint256 createdAt,
@@ -522,8 +522,8 @@ library WorkflowLogs {
     view
     returns (
       LogType logType,
-      bytes32 workflowId,
       bytes32 shamanId,
+      bytes32 abilityId,
       uint256 amount,
       bool success,
       uint256 createdAt,
@@ -547,14 +547,14 @@ library WorkflowLogs {
   function set(
     bytes32 logId,
     LogType logType,
-    bytes32 workflowId,
     bytes32 shamanId,
+    bytes32 abilityId,
     uint256 amount,
     bool success,
     uint256 createdAt,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(logType, workflowId, shamanId, amount, success, createdAt);
+    bytes memory _staticData = encodeStatic(logType, shamanId, abilityId, amount, success, createdAt);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);
@@ -571,14 +571,14 @@ library WorkflowLogs {
   function _set(
     bytes32 logId,
     LogType logType,
-    bytes32 workflowId,
     bytes32 shamanId,
+    bytes32 abilityId,
     uint256 amount,
     bool success,
     uint256 createdAt,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(logType, workflowId, shamanId, amount, success, createdAt);
+    bytes memory _staticData = encodeStatic(logType, shamanId, abilityId, amount, success, createdAt);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);
@@ -597,13 +597,13 @@ library WorkflowLogs {
   )
     internal
     pure
-    returns (LogType logType, bytes32 workflowId, bytes32 shamanId, uint256 amount, bool success, uint256 createdAt)
+    returns (LogType logType, bytes32 shamanId, bytes32 abilityId, uint256 amount, bool success, uint256 createdAt)
   {
     logType = LogType(uint8(Bytes.getBytes1(_blob, 0)));
 
-    workflowId = (Bytes.getBytes32(_blob, 1));
+    shamanId = (Bytes.getBytes32(_blob, 1));
 
-    shamanId = (Bytes.getBytes32(_blob, 33));
+    abilityId = (Bytes.getBytes32(_blob, 33));
 
     amount = (uint256(Bytes.getBytes32(_blob, 65)));
 
@@ -642,15 +642,15 @@ library WorkflowLogs {
     pure
     returns (
       LogType logType,
-      bytes32 workflowId,
       bytes32 shamanId,
+      bytes32 abilityId,
       uint256 amount,
       bool success,
       uint256 createdAt,
       string memory metadata
     )
   {
-    (logType, workflowId, shamanId, amount, success, createdAt) = decodeStatic(_staticData);
+    (logType, shamanId, abilityId, amount, success, createdAt) = decodeStatic(_staticData);
 
     (metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
@@ -681,13 +681,13 @@ library WorkflowLogs {
    */
   function encodeStatic(
     LogType logType,
-    bytes32 workflowId,
     bytes32 shamanId,
+    bytes32 abilityId,
     uint256 amount,
     bool success,
     uint256 createdAt
   ) internal pure returns (bytes memory) {
-    return abi.encodePacked(logType, workflowId, shamanId, amount, success, createdAt);
+    return abi.encodePacked(logType, shamanId, abilityId, amount, success, createdAt);
   }
 
   /**
@@ -717,14 +717,14 @@ library WorkflowLogs {
    */
   function encode(
     LogType logType,
-    bytes32 workflowId,
     bytes32 shamanId,
+    bytes32 abilityId,
     uint256 amount,
     bool success,
     uint256 createdAt,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(logType, workflowId, shamanId, amount, success, createdAt);
+    bytes memory _staticData = encodeStatic(logType, shamanId, abilityId, amount, success, createdAt);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);

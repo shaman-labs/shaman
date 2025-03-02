@@ -4,7 +4,7 @@ export default defineWorld({
   enums: {
     LogType: ["Queue", "Start", "Completion", "Deposit", "Withdraw", "Refund"],
     RoleType: ["None", "Operator"],
-    WorkflowState: ["Idle", "Queue", "InProgress", "Completed"],
+    ShamanState: ["Idle", "Queue", "InProgress", "Completed"],
   },
   tables: {
     ShamanConfig: {
@@ -16,46 +16,46 @@ export default defineWorld({
       },
       key: [],
     },
+    Abilities: {
+      codegen: {
+        dataStruct: false,
+      },
+      schema: {
+        abilityId: "bytes32",
+        creator: "address",
+        createdAt: "uint256",
+        shamanCount: "uint32",
+        name: "string",
+        metadata: "string",
+      },
+      key: ["abilityId"],
+    },
     Shamans: {
       codegen: {
         dataStruct: false,
       },
       schema: {
         shamanId: "bytes32",
-        creator: "address",
-        createdAt: "uint256",
-        workflowCount: "uint32",
-        name: "string",
-        metadata: "string",
-      },
-      key: ["shamanId"],
-    },
-    Workflows: {
-      codegen: {
-        dataStruct: false,
-      },
-      schema: {
-        workflowId: "bytes32",
-        state: "WorkflowState",
+        state: "ShamanState",
         creator: "address",
         createdAt: "uint256",
         active: "bool",
         balance: "uint256",
-        shamanCount: "uint32",
+        abilityCount: "uint32",
         sourceCount: "uint32",
         metadata: "string",
       },
-      key: ["workflowId"],
+      key: ["shamanId"],
     },
-    WorkflowLogs: {
+    ShamanLogs: {
       codegen: {
         dataStruct: false,
       },
       schema: {
         logId: "bytes32",
         logType: "LogType",
-        workflowId: "bytes32",
         shamanId: "bytes32",
+        abilityId: "bytes32",
         amount: "uint256",
         success: "bool",
         createdAt: "uint256",
@@ -71,7 +71,7 @@ export default defineWorld({
         sourceId: "bytes32",
         creator: "address",
         createdAt: "uint256",
-        workflowCount: "uint32",
+        shamanCount: "uint32",
         name: "string",
         metadata: "string",
       },
@@ -88,70 +88,70 @@ export default defineWorld({
       key: ["sender"],
     },
     // pivot tables
-    WorkflowShaman: {
+    ShamanAbility: {
       codegen: {
         dataStruct: false,
       },
       schema: {
-        workflowId: "bytes32",
         shamanId: "bytes32",
+        abilityId: "bytes32",
         createdAt: "uint256",
       },
-      key: ["workflowId", "shamanId"],
+      key: ["shamanId", "abilityId"],
     },
-    WorkflowSource: {
+    ShamanSource: {
       codegen: {
         dataStruct: false,
       },
       schema: {
-        workflowId: "bytes32",
+        shamanId: "bytes32",
         sourceId: "bytes32",
         createdAt: "uint256",
       },
-      key: ["workflowId", "sourceId"],
+      key: ["shamanId", "sourceId"],
     },
     // index tables for efficient querying
-    WorkflowShamanIndex: {
-      codegen: {
-        dataStruct: false,
-      },
-      schema: {
-        workflowId: "bytes32",
-        index: "uint32",
-        shamanId: "bytes32",
-      },
-      key: ["workflowId", "index"],
-    },
-    WorkflowSourceIndex: {
-      codegen: {
-        dataStruct: false,
-      },
-      schema: {
-        workflowId: "bytes32",
-        index: "uint32",
-        sourceId: "bytes32",
-      },
-      key: ["workflowId", "index"],
-    },
-    ShamanWorkflowIndex: {
+    ShamanAbilityIndex: {
       codegen: {
         dataStruct: false,
       },
       schema: {
         shamanId: "bytes32",
         index: "uint32",
-        workflowId: "bytes32",
+        abilityId: "bytes32",
       },
       key: ["shamanId", "index"],
     },
-    SourceWorkflowIndex: {
+    ShamanSourceIndex: {
+      codegen: {
+        dataStruct: false,
+      },
+      schema: {
+        shamanId: "bytes32",
+        index: "uint32",
+        sourceId: "bytes32",
+      },
+      key: ["shamanId", "index"],
+    },
+    AbilityShamanIndex: {
+      codegen: {
+        dataStruct: false,
+      },
+      schema: {
+        abilityId: "bytes32",
+        index: "uint32",
+        shamanId: "bytes32",
+      },
+      key: ["abilityId", "index"],
+    },
+    SourceShamanIndex: {
       codegen: {
         dataStruct: false,
       },
       schema: {
         sourceId: "bytes32",
         index: "uint32",
-        workflowId: "bytes32",
+        shamanId: "bytes32",
       },
       key: ["sourceId", "index"],
     },
@@ -166,13 +166,13 @@ export default defineWorld({
       },
       key: ["name"],
     },
-    ShamanNames: {
+    AbilityNames: {
       codegen: {
         dataStruct: false,
       },
       schema: {
         name: "bytes32",
-        shamanId: "bytes32",
+        abilityId: "bytes32",
       },
       key: ["name"],
     },
