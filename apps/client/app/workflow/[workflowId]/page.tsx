@@ -263,8 +263,9 @@ export default function Page() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Tabs defaultValue="workflow" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="workflow">Workflow</TabsTrigger>
+              <TabsTrigger value="sources">Sources</TabsTrigger>
               <TabsTrigger value="shamans">Shamans</TabsTrigger>
               <TabsTrigger value="executions">Executions</TabsTrigger>
             </TabsList>
