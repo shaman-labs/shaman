@@ -1,11 +1,12 @@
 'use client';
 
-import { CartesianGrid, Line, LineChart, XAxis } from 'recharts';
-import { Minus, MoreVertical, Plus } from 'lucide-react';
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
+import { Clock, FileCode, Minus, MoreVertical, Plus, User } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useMemo, useCallback } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow, format } from 'date-fns';
+import Link from 'next/link';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -47,6 +48,7 @@ import { useWorkflow } from '@/hooks/use-workflow';
 import { useWorkflowLogs } from '@/hooks/use-workflow-logs';
 import { WorkflowLogType, WorkflowLogsTableData } from '@/types/workflow';
 import { DataTable } from '@/components/data-table';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type ChartDataPoint = {
   day: string;
@@ -118,8 +120,14 @@ const chartConfig = {
 
 export default function Page() {
   const { workflowId } = useParams();
-  const { data: workflow, refetch } = useWorkflow(workflowId as string);
-  const { data: workflowLogs } = useWorkflowLogs(workflowId as string);
+  const {
+    data: workflow,
+    isLoading: workflowLoading,
+    refetch,
+  } = useWorkflow(workflowId as string);
+  const { data: workflowLogs, isLoading: logsLoading } = useWorkflowLogs(
+    workflowId as string
+  );
   const executionLogs = workflowLogs?.filter(
     (log) => log.logType === WorkflowLogType.COMPLETION
   );
@@ -252,14 +260,27 @@ export default function Page() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
+                <BreadcrumbItem>
+                  <Link href="/workflow" className="text-muted-foreground">
+                    Workflows
+                  </Link>
+                </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbPage className="text-xs">
-                    {workflowId}
+                    {workflowLoading
+                      ? 'Loading...'
+                      : workflow?.name || workflowId}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+          {!workflowLoading && workflow?.active !== undefined && (
+            <div
+              className={`ml-auto mr-4 inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors ${workflow.active ? 'border-transparent bg-green-500 text-white' : 'border-transparent bg-red-500 text-white'}`}>
+              {workflow.active ? 'Active' : 'Inactive'}
+            </div>
+          )}
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Tabs defaultValue="workflow" className="w-full">
@@ -267,19 +288,97 @@ export default function Page() {
               <TabsTrigger value="workflow">Workflow</TabsTrigger>
               <TabsTrigger value="sources">Sources</TabsTrigger>
               <TabsTrigger value="shamans">Shamans</TabsTrigger>
-              <TabsTrigger value="executions">Executions</TabsTrigger>
+              <TabsTrigger value="logs">Logs</TabsTrigger>
             </TabsList>
             <TabsContent value="workflow">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-4">
+                  <Card className="pt-6">
+                    <CardContent className="flex-grow space-y-4">
+                      <div className="grid gap-6 divide-y divide-border">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-primary/10 p-2 rounded-md">
+                            <FileCode className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xs font-medium text-muted-foreground">
+                              Name
+                            </h3>
+                            {workflowLoading ? (
+                              <Skeleton className="h-5 w-32" />
+                            ) : (
+                              <p className="text-base font-semibold">
+                                {workflow?.name}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 pt-4">
+                          <div className="bg-primary/10 p-2 rounded-md">
+                            <User className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xs font-medium text-muted-foreground">
+                              Creator
+                            </h3>
+                            {workflowLoading ? (
+                              <Skeleton className="h-5 w-40" />
+                            ) : (
+                              <p className="font-mono text-sm truncate">
+                                {workflow?.creator}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {workflow?.description && (
+                          <div className="flex items-start gap-3 pt-4">
+                            <div className="bg-primary/10 p-2 rounded-md mt-1">
+                              <FileCode className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-xs font-medium text-muted-foreground">
+                                Description
+                              </h3>
+                              <p className="text-sm">{workflow.description}</p>
+                            </div>
+                          </div>
+                        )}
+
+                        {workflow?.createdAt && (
+                          <div className="flex items-center gap-3 pt-4">
+                            <div className="bg-primary/10 p-2 rounded-md">
+                              <Clock className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-xs font-medium text-muted-foreground">
+                                Created
+                              </h3>
+                              <p className="text-sm">
+                                {format(
+                                  Number(workflow.createdAt) * 1000,
+                                  'PPpp'
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
                   <Card>
                     <CardHeader>
                       <CardTitle>ZUG Balance</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-center text-5xl font-bold">
-                        {Number(workflow?.balance || 0)}
-                      </p>
+                      {workflowLoading ? (
+                        <Skeleton className="h-14 w-32 mx-auto" />
+                      ) : (
+                        <p className="text-center text-5xl font-bold">
+                          {Number(workflow?.balance || 0)}
+                        </p>
+                      )}
                     </CardContent>
                     <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
                       <Button
@@ -292,7 +391,7 @@ export default function Page() {
                             handleRefetch
                           )
                         }>
-                        <Plus />
+                        <Plus className="mr-2 h-4 w-4" />
                         Add Balance
                       </Button>
                       <Button
@@ -305,7 +404,7 @@ export default function Page() {
                             handleRefetch
                           )
                         }>
-                        <Minus />
+                        <Minus className="mr-2 h-4 w-4" />
                         Withdraw Balance
                       </Button>
                     </CardFooter>
@@ -330,6 +429,11 @@ export default function Page() {
                             axisLine={false}
                             tickMargin={8}
                             tickFormatter={(value) => value.slice(0, 3)}
+                          />
+                          <YAxis
+                            tickLine={false}
+                            axisLine={false}
+                            tickMargin={8}
                           />
                           <ChartTooltip
                             cursor={false}
@@ -358,42 +462,120 @@ export default function Page() {
                       <CardTitle>Recent Logs</CardTitle>
                     </CardHeader>
                     <CardContent>
-                      <DataTable columns={columns} data={tableData} />
+                      {logsLoading ? (
+                        <div className="space-y-2">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <Skeleton key={i} className="h-10 w-full" />
+                          ))}
+                        </div>
+                      ) : tableData.length > 0 ? (
+                        <DataTable
+                          columns={columns}
+                          data={tableData.slice(0, 5)}
+                        />
+                      ) : (
+                        <p className="text-center py-8 text-muted-foreground">
+                          No logs found for this workflow
+                        </p>
+                      )}
                     </CardContent>
                   </Card>
+
+                  {workflow && (
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Stats</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <div className="flex flex-col gap-2 p-4 rounded-lg border">
+                            <p className="text-sm text-muted-foreground">
+                              Total Executions
+                            </p>
+                            <p className="text-2xl font-bold">
+                              {executionLogs?.length || 0}
+                            </p>
+                          </div>
+                          <div className="flex flex-col gap-2 p-4 rounded-lg border">
+                            <p className="text-sm text-muted-foreground">
+                              Success Rate
+                            </p>
+                            <p className="text-2xl font-bold">
+                              {executionLogs?.length
+                                ? Math.round(
+                                    (executionLogs.filter((log) => log.success)
+                                      .length /
+                                      executionLogs.length) *
+                                      100
+                                  )
+                                : 0}
+                              %
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
                 </div>
               </div>
             </TabsContent>
-            <TabsContent value="shamans">
-              {/* {workflow?.shamanIds && workflow.shamanIds.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {workflow.shamanIds.map((shamanId) => (
-                    <Card key={shamanId}>
-                      <CardHeader>
-                        <CardTitle>{shamanId}</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p>Shaman details will go here</p>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center p-4">No shamans in this workflow</p>
-              )} */}
-            </TabsContent>
-            <TabsContent value="executions">
+            <TabsContent value="sources">
               <Card>
                 <CardHeader>
-                  <CardTitle>All Execution Logs</CardTitle>
+                  <CardTitle>Workflow Sources</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <DataTable
-                    columns={columns}
-                    data={tableData.filter(
-                      (log) => log.logType === WorkflowLogType.COMPLETION
-                    )}
-                  />
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">
+                      Sources tab functionality will be implemented in a future
+                      update.
+                    </p>
+                    <p className="text-muted-foreground mt-2">
+                      This workflow has {workflow?.sourceCount || 0} sources.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="shamans">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Workflow Shamans</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-center py-8">
+                    <p className="text-muted-foreground">
+                      Shamans tab functionality will be implemented in a future
+                      update.
+                    </p>
+                    <p className="text-muted-foreground mt-2">
+                      This workflow has {workflow?.shamanCount || 0} shamans.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            </TabsContent>
+            <TabsContent value="logs">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Workflow Logs</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {logsLoading ? (
+                    <div className="space-y-2">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Skeleton key={i} className="h-10 w-full" />
+                      ))}
+                    </div>
+                  ) : tableData.length > 0 ? (
+                    <DataTable columns={columns} data={tableData} />
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-muted-foreground">
+                        No logs found for this workflow
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </TabsContent>
