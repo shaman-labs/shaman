@@ -41,13 +41,6 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { useMUD } from '@/contexts/mud-context';
 import { AlertDialogPaywall } from '@/components/alert-dialog-paywall';
 import { useZugBalance } from '@/hooks/use-zug-balance';
@@ -64,9 +57,6 @@ const formSchema = z.object({
   prompt: z.string().min(16, {
     message: 'Prompt must be at least 16 characters.',
   }),
-  network: z.enum(['arbitrumSepolia'], {
-    required_error: 'Please select a network',
-  }),
 });
 
 export default function Page() {
@@ -76,7 +66,6 @@ export default function Page() {
   const [code, setCode] = useState('');
   const [ipfs, setIpfs] = useState('');
   const [ready, setReady] = useState(false);
-  const [balance, setBalance] = useState(1);
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const { ready: privyReady, user } = usePrivy();
@@ -107,7 +96,6 @@ export default function Page() {
     defaultValues: {
       name: '',
       prompt: '',
-      network: 'arbitrumSepolia',
     },
   });
 
@@ -233,44 +221,6 @@ export default function Page() {
                           </FormItem>
                         )}
                       />
-                      <FormField
-                        control={form.control}
-                        name="network"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Network</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select network" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="arbitrumSepolia">
-                                  Arbitrum Sepolia (Testnet)
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormItem>
-                        <FormLabel>$ZUG Balance</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            min="1"
-                            value={balance}
-                            onChange={(e) =>
-                              setBalance(parseInt(e.target.value))
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
                       <Button
                         className="w-full"
                         type="submit"
