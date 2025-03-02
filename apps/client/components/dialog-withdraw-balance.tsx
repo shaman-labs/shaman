@@ -61,10 +61,10 @@ export function DialogWithdrawBalance(props: DialogProps) {
           <DialogTitle>Withdraw Balance</DialogTitle>
           <DialogDescription>
             <span className="block text-sm text-muted-foreground mb-2">
-              Withdraw $ZUG tokens from your Shaman Balance.
+              Withdraw ZUG tokens from your Shaman Balance.
             </span>
             <span className="block text-sm text-muted-foreground">
-              Your Workflow&apos;s $ZUG Balance: {Number(workflow?.balance)}
+              Your Workflow&apos;s ZUG Balance: {Number(workflow?.balance)}
             </span>
           </DialogDescription>
         </DialogHeader>

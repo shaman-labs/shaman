@@ -409,6 +409,65 @@ export default function Page() {
                       </Button>
                     </CardFooter>
                   </Card>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Recent Logs</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {logsLoading ? (
+                        <div className="space-y-2">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <Skeleton key={i} className="h-10 w-full" />
+                          ))}
+                        </div>
+                      ) : tableData.length > 0 ? (
+                        <DataTable
+                          columns={columns}
+                          data={tableData.slice(0, 5)}
+                        />
+                      ) : (
+                        <p className="text-center py-8 text-muted-foreground">
+                          No logs found for this workflow
+                        </p>
+                      )}
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Stats</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="flex flex-col gap-2 p-4 rounded-lg border">
+                          <p className="text-sm text-muted-foreground">
+                            Total Executions
+                          </p>
+                          <p className="text-2xl font-bold">
+                            {executionLogs?.length || 0}
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-2 p-4 rounded-lg border">
+                          <p className="text-sm text-muted-foreground">
+                            Success Rate
+                          </p>
+                          <p className="text-2xl font-bold">
+                            {executionLogs?.length
+                              ? Math.round(
+                                  (executionLogs.filter((log) => log.success)
+                                    .length /
+                                    executionLogs.length) *
+                                    100
+                                )
+                              : 0}
+                            %
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                   <Card>
                     <CardHeader>
                       <CardTitle>Executions</CardTitle>
@@ -455,67 +514,6 @@ export default function Page() {
                       </div>
                     </CardFooter>
                   </Card>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Recent Logs</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {logsLoading ? (
-                        <div className="space-y-2">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <Skeleton key={i} className="h-10 w-full" />
-                          ))}
-                        </div>
-                      ) : tableData.length > 0 ? (
-                        <DataTable
-                          columns={columns}
-                          data={tableData.slice(0, 5)}
-                        />
-                      ) : (
-                        <p className="text-center py-8 text-muted-foreground">
-                          No logs found for this workflow
-                        </p>
-                      )}
-                    </CardContent>
-                  </Card>
-
-                  {workflow && (
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>Stats</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                          <div className="flex flex-col gap-2 p-4 rounded-lg border">
-                            <p className="text-sm text-muted-foreground">
-                              Total Executions
-                            </p>
-                            <p className="text-2xl font-bold">
-                              {executionLogs?.length || 0}
-                            </p>
-                          </div>
-                          <div className="flex flex-col gap-2 p-4 rounded-lg border">
-                            <p className="text-sm text-muted-foreground">
-                              Success Rate
-                            </p>
-                            <p className="text-2xl font-bold">
-                              {executionLogs?.length
-                                ? Math.round(
-                                    (executionLogs.filter((log) => log.success)
-                                      .length /
-                                      executionLogs.length) *
-                                      100
-                                  )
-                                : 0}
-                              %
-                            </p>
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  )}
                 </div>
               </div>
             </TabsContent>

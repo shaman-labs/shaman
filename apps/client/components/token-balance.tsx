@@ -16,7 +16,7 @@ export function TokenBalance() {
   return (
     <Card className="bg-sidebar-accent">
       <CardContent className="p-2 text-center">
-        <p className="text-2xl">{balance} $ZUG</p>
+        <p className="text-2xl">{balance} ZUG</p>
       </CardContent>
       <CardFooter className="p-2 pt-0">
         <Button onClick={addBalance} className="w-full">

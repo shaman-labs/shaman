@@ -65,10 +65,10 @@ export function DialogAddBalance(props: DialogProps) {
           <DialogTitle>Add Balance</DialogTitle>
           <DialogDescription>
             <span className="block text-sm text-muted-foreground mb-2">
-              Add $ZUG tokens to your Shaman Balance.
+              Add ZUG tokens to your Shaman Balance.
             </span>
             <span className="block text-sm text-muted-foreground">
-              Your $ZUG Balance: {Number(zugBalance)}
+              Your ZUG Balance: {Number(zugBalance)}
             </span>
           </DialogDescription>
         </DialogHeader>

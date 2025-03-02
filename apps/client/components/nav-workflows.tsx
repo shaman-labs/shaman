@@ -43,7 +43,7 @@ export function NavWorkflows() {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Workflows</SidebarGroupLabel>
+      <SidebarGroupLabel>Shamans</SidebarGroupLabel>
       <SidebarMenu>
         {workflows.map((item) => (
           <SidebarMenuItem key={item.workflowId}>
@@ -103,7 +103,7 @@ export function NavWorkflows() {
             isActive={pathname === '/workflow'}
             onClick={() => (user ? router.push('/workflow') : login())}>
             <Plus />
-            <span>New Workflow</span>
+            <span>New Shaman</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

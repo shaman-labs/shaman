@@ -266,7 +266,7 @@ export default function Page() {
                         )}
                       />
                       <FormItem>
-                        <FormLabel>$ZUG Balance</FormLabel>
+                        <FormLabel>ZUG Balance</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -352,7 +352,7 @@ export default function Page() {
                     <div>
                       <h3 className="text-sm font-medium">Balance</h3>
                       <p className="text-sm text-muted-foreground">
-                        {balance} $ZUG
+                        {balance} ZUG
                       </p>
                     </div>
                   </div>

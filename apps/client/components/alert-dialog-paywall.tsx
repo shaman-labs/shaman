@@ -30,11 +30,11 @@ export function AlertDialogPaywall(props: AlertDialogProps) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {hasBalance ? '$ZUG balance is required' : 'Fund wallet'}
+            {hasBalance ? 'ZUG balance is required' : 'Fund wallet'}
           </AlertDialogTitle>
           <AlertDialogDescription>
             {hasBalance
-              ? 'You need to have a $ZUG balance to create a shaman.'
+              ? 'You need to have a ZUG balance to create a shaman.'
               : 'Your shaman will require balance to execute transactions. You need to fund your shaman wallet to create a shaman.'}
           </AlertDialogDescription>
         </AlertDialogHeader>
@@ -46,7 +46,7 @@ export function AlertDialogPaywall(props: AlertDialogProps) {
 
                 openBuyZug(true, '/');
               }}>
-              Buy $ZUG
+              Buy ZUG
             </AlertDialogAction>
           ) : (
             <AlertDialogAction
