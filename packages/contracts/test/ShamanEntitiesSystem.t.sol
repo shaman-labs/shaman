@@ -84,6 +84,7 @@ contract ShamanEntitiesSystemTest is BaseTest {
     vm.prank(creator);
     world.createShaman(
       INITIAL_BALANCE,
+      "TestShaman",
       abilityIds,
       sourceIds,
       INITIAL_METADATA

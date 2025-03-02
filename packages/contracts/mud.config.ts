@@ -43,6 +43,7 @@ export default defineWorld({
         balance: "uint256",
         abilityCount: "uint32",
         sourceCount: "uint32",
+        name: "string",
         metadata: "string",
       },
       key: ["shamanId"],
@@ -173,6 +174,16 @@ export default defineWorld({
       schema: {
         name: "bytes32",
         abilityId: "bytes32",
+      },
+      key: ["name"],
+    },
+    ShamanNames: {
+      codegen: {
+        dataStruct: false,
+      },
+      schema: {
+        name: "bytes32",
+        shamanId: "bytes32",
       },
       key: ["name"],
     },

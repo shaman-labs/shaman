@@ -6,22 +6,11 @@ pragma solidity >=0.8.24;
 import { ShamanState } from "../common.sol";
 
 /**
- * @title IShamanSystem
+ * @title IShamanInfoSystem
  * @author MUD (https://mud.dev) by Lattice (https://lattice.xyz)
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
-interface IShamanSystem {
-  function createShaman(
-    uint256 balance,
-    bytes32[] memory abilityIds,
-    bytes32[] memory sourceIds,
-    string memory metadata
-  ) external;
-
-  function updateShamanMetadata(bytes32 shamanId, string memory metadata) external;
-
-  function updateShamanStatus(bytes32 shamanId, bool active) external;
-
+interface IShamanInfoSystem {
   function getShamanState(bytes32 shamanId) external view returns (ShamanState);
 
   function getShamanMetadata(bytes32 shamanId) external view returns (string memory);
@@ -31,4 +20,6 @@ interface IShamanSystem {
   function getShamanActive(bytes32 shamanId) external view returns (bool);
 
   function getShamanCreator(bytes32 shamanId) external view returns (address);
+
+  function getShamanName(bytes32 shamanId) external view returns (string memory);
 }

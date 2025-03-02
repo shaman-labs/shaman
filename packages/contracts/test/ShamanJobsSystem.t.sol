@@ -34,6 +34,7 @@ contract ShamanJobsSystemTest is BaseTest {
     vm.prank(creator);
     world.createShaman(
       balance,
+      "TestShaman",
       new bytes32[](0),
       new bytes32[](0),
       INITIAL_METADATA
@@ -43,9 +44,7 @@ contract ShamanJobsSystemTest is BaseTest {
     // Get the shaman ID from the logs
     Vm.Log[] memory entries = vm.getRecordedLogs();
     for (uint256 i = 0; i < entries.length; i++) {
-      if (
-        entries[i].topics[0] == keccak256("ShamanCreated(bytes32,address)")
-      ) {
+      if (entries[i].topics[0] == keccak256("ShamanCreated(bytes32,address)")) {
         shamanId = bytes32(entries[i].topics[1]);
         break;
       }
@@ -144,7 +143,7 @@ contract ShamanJobsSystemTest is BaseTest {
       uint8(ShamanState.Idle),
       "State should be Idle after completion"
     );
-    
+
     // Verify the balance was updated
     assertEq(
       Shamans.getBalance(shamanId),

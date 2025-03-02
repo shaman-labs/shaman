@@ -17,3 +17,4 @@ import { AbilityShamanIndex } from "./tables/AbilityShamanIndex.sol";
 import { SourceShamanIndex } from "./tables/SourceShamanIndex.sol";
 import { SourceNames } from "./tables/SourceNames.sol";
 import { AbilityNames } from "./tables/AbilityNames.sol";
+import { ShamanNames } from "./tables/ShamanNames.sol";

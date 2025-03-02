@@ -10,4 +10,14 @@ pragma solidity >=0.8.24;
  */
 interface IAbilitySystem {
   function createAbility(string memory name, string memory metadata) external;
+
+  function updateAbilityMetadata(bytes32 abilityId, string memory metadata) external;
+
+  function updateAbilityName(bytes32 abilityId, string memory name) external;
+
+  function getAbilityName(bytes32 abilityId) external view returns (string memory);
+
+  function getAbilityMetadata(bytes32 abilityId) external view returns (string memory);
+
+  function getAbilityCreator(bytes32 abilityId) external view returns (address);
 }

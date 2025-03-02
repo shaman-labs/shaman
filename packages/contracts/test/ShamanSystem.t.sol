@@ -34,7 +34,7 @@ contract ShamanSystemTest is BaseTest {
   ) private returns (bytes32 shamanId) {
     vm.recordLogs();
     vm.prank(creator);
-    world.createShaman(balance, abilityIds, sourceIds, metadata);
+    world.createShaman(balance, "TestShaman", abilityIds, sourceIds, metadata);
     vm.stopPrank();
 
     // Get the shaman ID from the logs

@@ -37,4 +37,40 @@ contract AbilitySystem is BaseSystem {
 
     emit AbilityCreated(abilityId, _msgSender());
   }
+
+  function updateAbilityMetadata(
+    bytes32 abilityId,
+    string memory metadata
+  ) public onlyAbilityCreator(abilityId) {
+    require(bytes(metadata).length > 0, "Metadata cannot be empty");
+    Abilities.setMetadata(abilityId, metadata);
+  }
+
+  function updateAbilityName(
+    bytes32 abilityId,
+    string memory name
+  ) public onlyAbilityCreator(abilityId) {
+    require(bytes(name).length > 0, "Name cannot be empty");
+    require(bytes(name).length <= 20, "Name too long");
+    bytes32 encodedName = keccak256(bytes(name));
+    require(AbilityNames.get(encodedName) == bytes32(0), "Name already taken");
+    Abilities.setName(abilityId, name);
+    AbilityNames.set(encodedName, abilityId);
+  }
+
+  function getAbilityName(
+    bytes32 abilityId
+  ) public view returns (string memory) {
+    return Abilities.getName(abilityId);
+  }
+
+  function getAbilityMetadata(
+    bytes32 abilityId
+  ) public view returns (string memory) {
+    return Abilities.getMetadata(abilityId);
+  }
+
+  function getAbilityCreator(bytes32 abilityId) public view returns (address) {
+    return Abilities.getCreator(abilityId);
+  }
 }

@@ -8,9 +8,11 @@ import { IAbilitySystem } from "./IAbilitySystem.sol";
 import { IBaseSystem } from "./IBaseSystem.sol";
 import { IConfigSystem } from "./IConfigSystem.sol";
 import { IShamanBalanceSystem } from "./IShamanBalanceSystem.sol";
+import { IShamanCreationSystem } from "./IShamanCreationSystem.sol";
 import { IShamanEntitiesSystem } from "./IShamanEntitiesSystem.sol";
+import { IShamanInfoSystem } from "./IShamanInfoSystem.sol";
 import { IShamanJobsSystem } from "./IShamanJobsSystem.sol";
-import { IShamanSystem } from "./IShamanSystem.sol";
+import { IShamanOperationsSystem } from "./IShamanOperationsSystem.sol";
 import { ISourceSystem } from "./ISourceSystem.sol";
 
 /**
@@ -26,8 +28,10 @@ interface IWorld is
   IBaseSystem,
   IConfigSystem,
   IShamanBalanceSystem,
+  IShamanCreationSystem,
   IShamanEntitiesSystem,
+  IShamanInfoSystem,
   IShamanJobsSystem,
-  IShamanSystem,
+  IShamanOperationsSystem,
   ISourceSystem
 {}

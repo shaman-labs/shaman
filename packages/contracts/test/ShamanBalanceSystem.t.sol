@@ -28,6 +28,7 @@ contract ShamanBalanceSystemTest is BaseTest {
     vm.prank(creatorAlice);
     world.createShaman(
       INITIAL_BALANCE,
+      "TestShaman",
       abilityIds,
       sourceIds,
       INITIAL_METADATA
