@@ -106,7 +106,7 @@ export function NavUser() {
                 className="cursor-pointer"
                 onClick={() => openBuyZug(true)}>
                 <Sparkles />
-                Buy $ZUG
+                Buy ZUG
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

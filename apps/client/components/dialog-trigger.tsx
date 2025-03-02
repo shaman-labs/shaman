@@ -69,7 +69,7 @@ export function DialogTrigger(props: DialogProps) {
               execute the Shaman&apos;s task.
             </span>
             <span className="block text-sm text-muted-foreground">
-              This action will cost you 1 $ZUG.
+              This action will cost you 1 ZUG.
             </span>
           </DialogDescription>
         </DialogHeader>

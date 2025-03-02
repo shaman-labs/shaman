@@ -23,7 +23,7 @@ export function NavShamans() {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Shamans</SidebarGroupLabel>
+      <SidebarGroupLabel>Abilities</SidebarGroupLabel>
       <SidebarMenu>
         {shamans.map((item) => (
           <SidebarMenuItem key={item.shamanId}>
@@ -40,7 +40,7 @@ export function NavShamans() {
             isActive={pathname === '/shaman'}
             onClick={() => (user ? router.push('/shaman') : login())}>
             <Plus />
-            <span>New Shaman</span>
+            <span>New Ability</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

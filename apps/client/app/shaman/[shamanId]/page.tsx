@@ -1,9 +1,17 @@
 'use client';
 
-import { User, Calendar, Hash, FileCode, Link, DollarSign } from 'lucide-react';
+import {
+  User,
+  Calendar,
+  Hash,
+  FileCode,
+  Link as LinkIcon,
+  DollarSign,
+} from 'lucide-react';
 import { themes } from 'prism-react-renderer';
 import { Highlight } from 'prism-react-renderer';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,9 +43,14 @@ export default function Page() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
+                <BreadcrumbItem>
+                  <Link href="/shaman" className="text-muted-foreground">
+                    Shamans
+                  </Link>
+                </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbPage className="text-xs">
-                    {shamanId}
+                    {shaman?.name || shamanId}
                   </BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
@@ -115,7 +128,7 @@ export default function Page() {
 
                     <div className="flex items-center gap-3 pt-4">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Link className="h-5 w-5 text-primary" />
+                        <LinkIcon className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1 overflow-hidden">
                         <h3 className="text-xs font-medium text-muted-foreground">
