@@ -49,9 +49,7 @@ export default function Page() {
                   </Link>
                 </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbPage className="text-xs">
-                    {shaman?.name || shamanId}
-                  </BreadcrumbPage>
+                  <BreadcrumbPage>{shaman?.name || shamanId}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -74,6 +72,56 @@ export default function Page() {
                         <p className="text-base font-semibold">
                           {shaman?.name}
                         </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-4">
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        <Hash className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xs font-medium text-muted-foreground">
+                          Workflows Count
+                        </h3>
+                        <p className="text-sm font-medium">
+                          {shaman?.workflowCount}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-4">
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        <DollarSign className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xs font-medium text-muted-foreground">
+                          Commission Revenue
+                        </h3>
+                        <p className="text-sm font-medium">0 ZUG</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-4">
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        <LinkIcon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1 overflow-hidden">
+                        <h3 className="text-xs font-medium text-muted-foreground">
+                          IPFS Link
+                        </h3>
+                        {shaman?.metadata ? (
+                          <a
+                            href={`https://gateway.shaman.fun/ipfs/${shaman.metadata}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
+                            ipfs://{shaman.metadata}
+                          </a>
+                        ) : (
+                          <p className="text-sm text-muted-foreground">
+                            No IPFS link available
+                          </p>
+                        )}
                       </div>
                     </div>
 
@@ -109,56 +157,6 @@ export default function Page() {
                               })
                             : ''}
                         </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 pt-4">
-                      <div className="bg-primary/10 p-2 rounded-md">
-                        <Hash className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xs font-medium text-muted-foreground">
-                          Workflow Count
-                        </h3>
-                        <p className="text-sm font-medium">
-                          {shaman?.workflowCount}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 pt-4">
-                      <div className="bg-primary/10 p-2 rounded-md">
-                        <LinkIcon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1 overflow-hidden">
-                        <h3 className="text-xs font-medium text-muted-foreground">
-                          IPFS Link
-                        </h3>
-                        {shaman?.metadata ? (
-                          <a
-                            href={`https://gateway.shaman.fun/ipfs/${shaman.metadata}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
-                            ipfs://{shaman.metadata}
-                          </a>
-                        ) : (
-                          <p className="text-sm text-muted-foreground">
-                            No IPFS link available
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 pt-4">
-                      <div className="bg-primary/10 p-2 rounded-md">
-                        <DollarSign className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xs font-medium text-muted-foreground">
-                          Commission Revenue
-                        </h3>
-                        <p className="text-sm font-medium">0 ZUG</p>
                       </div>
                     </div>
                   </div>

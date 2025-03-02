@@ -193,14 +193,6 @@ export default function Page() {
         ),
       },
       {
-        accessorKey: 'timestamp',
-        header: 'Age',
-        cell: ({ row }) => {
-          const timestamp = new Date(row.original.timestamp ?? '');
-          return formatDistanceToNow(timestamp, { addSuffix: true });
-        },
-      },
-      {
         accessorKey: 'success',
         header: 'Status',
         cell: ({ row }) => {
@@ -217,6 +209,14 @@ export default function Page() {
             );
           }
           return null;
+        },
+      },
+      {
+        accessorKey: 'timestamp',
+        header: 'Age',
+        cell: ({ row }) => {
+          const timestamp = new Date(row.original.timestamp ?? '');
+          return formatDistanceToNow(timestamp, { addSuffix: true });
         },
       },
       {
@@ -266,7 +266,7 @@ export default function Page() {
                   </Link>
                 </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbPage className="text-xs">
+                  <BreadcrumbPage>
                     {workflowLoading
                       ? 'Loading...'
                       : workflow?.name || workflowId}
@@ -293,80 +293,6 @@ export default function Page() {
             <TabsContent value="workflow">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-4">
-                  <Card className="pt-6">
-                    <CardContent className="flex-grow space-y-4">
-                      <div className="grid gap-6 divide-y divide-border">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-primary/10 p-2 rounded-md">
-                            <FileCode className="h-5 w-5 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-xs font-medium text-muted-foreground">
-                              Name
-                            </h3>
-                            {workflowLoading ? (
-                              <Skeleton className="h-5 w-32" />
-                            ) : (
-                              <p className="text-base font-semibold">
-                                {workflow?.name}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-3 pt-4">
-                          <div className="bg-primary/10 p-2 rounded-md">
-                            <User className="h-5 w-5 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-xs font-medium text-muted-foreground">
-                              Creator
-                            </h3>
-                            {workflowLoading ? (
-                              <Skeleton className="h-5 w-40" />
-                            ) : (
-                              <p className="font-mono text-sm truncate">
-                                {workflow?.creator}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        {workflow?.description && (
-                          <div className="flex items-start gap-3 pt-4">
-                            <div className="bg-primary/10 p-2 rounded-md mt-1">
-                              <FileCode className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-xs font-medium text-muted-foreground">
-                                Description
-                              </h3>
-                              <p className="text-sm">{workflow.description}</p>
-                            </div>
-                          </div>
-                        )}
-
-                        {workflow?.createdAt && (
-                          <div className="flex items-center gap-3 pt-4">
-                            <div className="bg-primary/10 p-2 rounded-md">
-                              <Clock className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-xs font-medium text-muted-foreground">
-                                Created
-                              </h3>
-                              <p className="text-sm">
-                                {format(
-                                  Number(workflow.createdAt) * 1000,
-                                  'PPpp'
-                                )}
-                              </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
                   <Card>
                     <CardHeader>
                       <CardTitle>ZUG Balance</CardTitle>
@@ -409,32 +335,82 @@ export default function Page() {
                       </Button>
                     </CardFooter>
                   </Card>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Recent Logs</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {logsLoading ? (
-                        <div className="space-y-2">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <Skeleton key={i} className="h-10 w-full" />
-                          ))}
+                  <Card className="pt-6">
+                    <CardContent className="flex-grow space-y-4">
+                      <div className="grid gap-6 divide-y divide-border">
+                        <div className="flex items-center gap-3">
+                          <div className="bg-primary/10 p-2 rounded-md">
+                            <FileCode className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xs font-medium text-muted-foreground">
+                              Name
+                            </h3>
+                            {workflowLoading ? (
+                              <Skeleton className="h-5 w-32" />
+                            ) : (
+                              <p className="text-base font-semibold">
+                                {workflow?.name}
+                              </p>
+                            )}
+                          </div>
                         </div>
-                      ) : tableData.length > 0 ? (
-                        <DataTable
-                          columns={columns}
-                          data={tableData.slice(0, 5)}
-                        />
-                      ) : (
-                        <p className="text-center py-8 text-muted-foreground">
-                          No logs found for this workflow
-                        </p>
-                      )}
+
+                        {workflow?.description && (
+                          <div className="flex items-start gap-3 pt-4">
+                            <div className="bg-primary/10 p-2 rounded-md mt-1">
+                              <FileCode className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-xs font-medium text-muted-foreground">
+                                Description
+                              </h3>
+                              <p className="text-sm">{workflow.description}</p>
+                            </div>
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-3 pt-4">
+                          <div className="bg-primary/10 p-2 rounded-md">
+                            <User className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-xs font-medium text-muted-foreground">
+                              Creator
+                            </h3>
+                            {workflowLoading ? (
+                              <Skeleton className="h-5 w-40" />
+                            ) : (
+                              <p className="font-mono text-sm truncate">
+                                {workflow?.creator}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        {workflow?.createdAt && (
+                          <div className="flex items-center gap-3 pt-4">
+                            <div className="bg-primary/10 p-2 rounded-md">
+                              <Clock className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-xs font-medium text-muted-foreground">
+                                Created
+                              </h3>
+                              <p className="text-sm">
+                                {format(
+                                  Number(workflow.createdAt) * 1000,
+                                  'PPpp'
+                                )}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
-
+                </div>
+                <div className="flex flex-col gap-4">
                   <Card>
                     <CardHeader>
                       <CardTitle>Stats</CardTitle>
@@ -513,6 +489,29 @@ export default function Page() {
                         Showing executions for the last 7 days
                       </div>
                     </CardFooter>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Recent Logs</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {logsLoading ? (
+                        <div className="space-y-2">
+                          {[1, 2, 3, 4, 5].map((i) => (
+                            <Skeleton key={i} className="h-10 w-full" />
+                          ))}
+                        </div>
+                      ) : tableData.length > 0 ? (
+                        <DataTable
+                          columns={columns}
+                          data={tableData.slice(0, 5)}
+                        />
+                      ) : (
+                        <p className="text-center py-8 text-muted-foreground">
+                          No logs found for this workflow
+                        </p>
+                      )}
+                    </CardContent>
                   </Card>
                 </div>
               </div>
