@@ -1,6 +1,6 @@
 'use client';
 
-import { User, Calendar, Hash, FileCode, Link } from 'lucide-react';
+import { User, Calendar, Hash, FileCode, Link, DollarSign } from 'lucide-react';
 import { themes } from 'prism-react-renderer';
 import { Highlight } from 'prism-react-renderer';
 import { useParams } from 'next/navigation';
@@ -134,6 +134,18 @@ export default function Page() {
                             No IPFS link available
                           </p>
                         )}
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-4">
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        <DollarSign className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xs font-medium text-muted-foreground">
+                          Commission Revenue
+                        </h3>
+                        <p className="text-sm font-medium">0 ZUG</p>
                       </div>
                     </div>
                   </div>
