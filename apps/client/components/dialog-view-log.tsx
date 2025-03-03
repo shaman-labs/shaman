@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { DialogProps } from '@/contexts/dialog-context';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,7 +14,7 @@ import {
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import { useShamanLogMetadata } from '@/hooks/use-shaman-log-metadata';
 import { trimHash } from '@/lib/utils';
-import { ShamanLogMetadata } from '@/types/shaman';
+import { useShaman } from '@/hooks/use-shaman';
 
 interface ShamanLogResult {
   type: string;
@@ -25,12 +25,16 @@ interface ShamanLog {
   success: boolean;
   result: ShamanLogResult;
   timestamp: number;
-  shamanMetadata: ShamanLogMetadata;
+  logMetadata: string;
+  metadata: string;
+  shamanId: string;
 }
 
 export function DialogViewLog(props: DialogProps) {
   const { shamanLog } = props as DialogProps & { shamanLog?: ShamanLog };
   const { data: shamanLogMetadata } = useShamanLogMetadata(shamanLog?.metadata);
+  const { data: shaman } = useShaman(shamanLog?.shamanId ?? '');
+
   const [, setIsOpen] = useState(true);
 
   const handleClose = () => {
@@ -60,8 +64,7 @@ export function DialogViewLog(props: DialogProps) {
         <DialogHeader>
           <DialogTitle>Shaman Log</DialogTitle>
           <DialogDescription>
-            Viewing log details for Shaman ID:{' '}
-            {trimHash(shamanLogMetadata?.shamanMetadata?.shamanId)}
+            Viewing log details for Shaman ID: {trimHash(shaman?.shamanId)}
           </DialogDescription>
         </DialogHeader>
 
@@ -78,11 +81,20 @@ export function DialogViewLog(props: DialogProps) {
                   </span>
                 </TableCell>
               </TableRow>
-              {Object.keys(shamanLogMetadata?.result || {}).map((key) => (
-                <TableRow key={key}>
-                  <TableCell className="font-medium">{key}</TableCell>
-                  <TableCell>{shamanLogMetadata?.result[key]}</TableCell>
-                </TableRow>
+              {shamanLogMetadata?.results.map((result, index) => (
+                <Fragment key={index}>
+                  <TableRow>
+                    <TableCell colSpan={2} className="font-semibold">
+                      Result {index + 1}
+                    </TableCell>
+                  </TableRow>
+                  {Object.entries(result.result).map(([key, value]) => (
+                    <TableRow key={`${index}-${key}`}>
+                      <TableCell className="font-medium">{key}</TableCell>
+                      <TableCell>{String(value ?? 'N/A')}</TableCell>
+                    </TableRow>
+                  ))}
+                </Fragment>
               ))}
             </TableBody>
           </Table>
@@ -92,28 +104,16 @@ export function DialogViewLog(props: DialogProps) {
             <TableBody>
               <TableRow>
                 <TableCell className="font-medium">Shaman ID</TableCell>
-                <TableCell className="break-all">
-                  {shamanLogMetadata?.shamanMetadata?.shamanId}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="font-medium">Prompt</TableCell>
-                <TableCell>
-                  {shamanLogMetadata?.shamanMetadata?.prompt}
-                </TableCell>
+                <TableCell className="break-all">{shaman?.shamanId}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Creator</TableCell>
-                <TableCell className="break-all">
-                  {shamanLogMetadata?.shamanMetadata?.shamanCreator}
-                </TableCell>
+                <TableCell className="break-all">{shaman?.creator}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Created At</TableCell>
                 <TableCell>
-                  {new Date(
-                    shamanLogMetadata?.shamanMetadata?.shamanCreatedAt ?? ''
-                  ).toLocaleString()}
+                  {new Date(Number(shaman?.createdAt) * 1000).toLocaleString()}
                 </TableCell>
               </TableRow>
             </TableBody>

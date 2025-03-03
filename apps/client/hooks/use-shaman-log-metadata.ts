@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { ShamanLogMetadata } from '@/types/shaman';
 
 export const useShamanLogMetadata = (metadata?: string) => {
@@ -6,9 +7,11 @@ export const useShamanLogMetadata = (metadata?: string) => {
     queryKey: ['shamanLogMetadata', metadata],
     initialData: null,
     queryFn: async () => {
-      const result = await fetch(`https://gateway.shaman.fun/ipfs/${metadata}`);
+      const result = await axios.get(
+        `https://gateway.shaman.fun/ipfs/${metadata}`
+      );
 
-      const metadataJson = (await result.json()) as ShamanLogMetadata;
+      const metadataJson = result.data as ShamanLogMetadata;
 
       return metadataJson;
     },
