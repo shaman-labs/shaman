@@ -28,7 +28,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { trimHash } from '@/lib/utils';
 import { useDialogContext } from '@/contexts/dialog-context';
 import { useShamans } from '@/hooks/use-shamans';
 
@@ -50,7 +49,7 @@ export function NavShamans() {
             <SidebarMenuButton asChild isActive={shamanId === item.shamanId}>
               <Link href={`/shaman/${item.shamanId}`}>
                 <Webhook />
-                <span>{trimHash(item.shamanId, 4)}</span>
+                <span>{item.name}</span>
               </Link>
             </SidebarMenuButton>
             <DropdownMenu>

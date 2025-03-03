@@ -531,7 +531,7 @@ export default function Page() {
                 </CardContent>
               </Card>
             </TabsContent>
-            <TabsContent value="shamans">
+            <TabsContent value="abilities">
               <Card>
                 <CardHeader>
                   <CardTitle>Shaman Abilities</CardTitle>
