@@ -3,7 +3,7 @@ export type AbilityTriggerResponse = {
   decodedCode: string;
   result: string;
   timestamp: number;
-  logMetadataHash: string;
+  metadataHash: string;
   txHash: string;
   logs: string[];
   error?: string;
@@ -28,7 +28,7 @@ export type AbilityLogsTableData = {
   id: string;
   logType: string;
   timestamp: string;
-  logMetadata?: string;
+  metadata?: string;
   success?: boolean;
   type: AbilityLogType;
 };
