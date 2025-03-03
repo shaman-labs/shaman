@@ -6,10 +6,7 @@ import { Abilities, AbilityNames } from "../codegen/index.sol";
 contract AbilitySystem is BaseSystem {
   event AbilityCreated(bytes32 indexed abilityId, address indexed creator);
 
-  function createAbility(
-    string memory name,
-    string memory metadata
-  ) public onlyOperator {
+  function createAbility(string memory name, string memory metadata) public {
     bytes memory nameBytes = bytes(name);
     require(nameBytes.length > 0, "Ability name cannot be empty");
     require(nameBytes.length <= 20, "Ability name too long");
