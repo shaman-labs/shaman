@@ -41,6 +41,21 @@ export function getSystemCalls({
     sourceIds: Hex[],
     metadata: string
   ): Promise<Hex> => {
+    await tokenContract.simulate.approve([worldContract.address, balance], {
+      chain,
+      account: account.address,
+    });
+
+    const approveTx = await tokenContract.write.approve(
+      [worldContract.address, balance],
+      {
+        chain,
+        account: account.address,
+      }
+    );
+
+    await waitForTransaction(approveTx);
+
     await worldContract.simulate.createShaman(
       [balance, name, abilityIds, sourceIds, metadata],
       {
