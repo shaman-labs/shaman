@@ -146,7 +146,7 @@ export type ShamanTriggerResponse = {
   decodedCode: string;
   result: string;
   timestamp: number;
-  logMetadataHash: string;
+  metadataHash: string;
   txHash: string;
   logs: string[];
   error?: string;

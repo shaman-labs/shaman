@@ -25,7 +25,6 @@ interface ShamanLog {
   success: boolean;
   result: ShamanLogResult;
   timestamp: number;
-  logMetadata: string;
   metadata: string;
   shamanId: string;
 }

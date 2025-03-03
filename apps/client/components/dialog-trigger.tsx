@@ -90,7 +90,7 @@ export function DialogTrigger(props: DialogProps) {
                     openViewLog(true, undefined, undefined, {
                       success: response.success,
                       timestamp: response.timestamp.toString(),
-                      metadata: response.logMetadataHash,
+                      metadata: response.metadataHash,
                       id: shamanId as string,
                       logType: ShamanLogType.QUEUE,
                       shamanId: shamanId as string,
