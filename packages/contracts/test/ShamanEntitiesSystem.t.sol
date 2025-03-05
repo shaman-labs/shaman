@@ -4,7 +4,7 @@ pragma solidity >=0.8.24;
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
-import { Shamans, Abilities, Sources, Roles, ShamanAbility, ShamanSource } from "../src/codegen/index.sol";
+import { Shamans, Spells, Sources, Roles, ShamanSpell, ShamanSource } from "../src/codegen/index.sol";
 import { ShamanState, RoleType } from "../src/codegen/common.sol";
 
 contract ShamanEntitiesSystemTest is BaseTest {
@@ -23,29 +23,29 @@ contract ShamanEntitiesSystemTest is BaseTest {
     _increaseAllowance(user, amount);
   }
 
-  function _createTestAbilities(
+  function _createTestSpells(
     address creator,
     string memory suffix
   ) internal returns (bytes32, bytes32) {
     vm.recordLogs();
 
-    // Use single-character names to avoid "Ability name too long" error
+    // Use single-character names to avoid "Spell name too long" error
     string memory name1 = string(abi.encodePacked("A", suffix));
-    bytes32 abilityId1 = _createAbility(creator, name1, "QmTest1");
+    bytes32 spellId1 = _createSpell(creator, name1, "QmTest1");
 
-    // simulate sleep to avoid same abilityId
+    // simulate sleep to avoid same spellId
     vm.warp(block.timestamp + 5 seconds);
 
     string memory name2 = string(abi.encodePacked("B", suffix));
-    bytes32 abilityId2 = _createAbility(creator, name2, "QmTest2");
+    bytes32 spellId2 = _createSpell(creator, name2, "QmTest2");
 
-    return (abilityId1, abilityId2);
+    return (spellId1, spellId2);
   }
 
-  function _createTestAbilities(
+  function _createTestSpells(
     address creator
-  ) private returns (bytes32 abilityId1, bytes32 abilityId2) {
-    return _createTestAbilities(creator, "");
+  ) private returns (bytes32 spellId1, bytes32 spellId2) {
+    return _createTestSpells(creator, "");
   }
 
   function _createTestSources(
@@ -75,7 +75,7 @@ contract ShamanEntitiesSystemTest is BaseTest {
 
   function _createTestShaman(
     address creator,
-    bytes32[] memory abilityIds,
+    bytes32[] memory spellIds,
     bytes32[] memory sourceIds
   ) private returns (bytes32 shamanId) {
     _prepareTokens(creator, INITIAL_BALANCE);
@@ -85,7 +85,7 @@ contract ShamanEntitiesSystemTest is BaseTest {
     world.createShaman(
       INITIAL_BALANCE,
       "TestShaman",
-      abilityIds,
+      spellIds,
       sourceIds,
       INITIAL_METADATA
     );
@@ -122,170 +122,170 @@ contract ShamanEntitiesSystemTest is BaseTest {
     return shamanId;
   }
 
-  function testAddAbility() public {
+  function testAddSpell() public {
     _setupOperator(creatorAlice);
-    (bytes32 abilityId1, bytes32 abilityId2) = _createTestAbilities(
+    (bytes32 spellId1, bytes32 spellId2) = _createTestSpells(
       creatorAlice,
       "AddTest1"
     );
     (bytes32 sourceId1, ) = _createTestSources(creatorAlice, "AddTest1");
 
-    // Create a shaman with no abilities initially
-    bytes32[] memory initialAbilityIds = new bytes32[](0);
+    // Create a shaman with no spells initially
+    bytes32[] memory initialSpellIds = new bytes32[](0);
 
     bytes32[] memory sourceIds = new bytes32[](1);
     sourceIds[0] = sourceId1;
 
     bytes32 shamanId = _createTestShaman(
       creatorAlice,
-      initialAbilityIds,
+      initialSpellIds,
       sourceIds
     );
 
     // Verify initial state
-    assertEq(Shamans.getAbilityCount(shamanId), 0);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId1), 0);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId2), 0);
+    assertEq(Shamans.getSpellCount(shamanId), 0);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId1), 0);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId2), 0);
 
-    // Add first ability to the shaman
+    // Add first spell to the shaman
     vm.prank(creatorAlice);
-    world.addAbilityToShaman(shamanId, abilityId1);
+    world.addSpellToShaman(shamanId, spellId1);
     vm.stopPrank();
 
-    // Verify the first ability was added
-    assertEq(Shamans.getAbilityCount(shamanId), 1);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId1) > 0, true);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId2), 0);
+    // Verify the first spell was added
+    assertEq(Shamans.getSpellCount(shamanId), 1);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId1) > 0, true);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId2), 0);
 
-    // Add second ability to the shaman
+    // Add second spell to the shaman
     vm.prank(creatorAlice);
-    world.addAbilityToShaman(shamanId, abilityId2);
+    world.addSpellToShaman(shamanId, spellId2);
     vm.stopPrank();
 
-    // Verify the second ability was added
-    assertEq(Shamans.getAbilityCount(shamanId), 2);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId1) > 0, true);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId2) > 0, true);
+    // Verify the second spell was added
+    assertEq(Shamans.getSpellCount(shamanId), 2);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId1) > 0, true);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId2) > 0, true);
   }
 
-  function testAddAbilityNotCreator() public {
+  function testAddSpellNotCreator() public {
     _setupOperator(creatorAlice);
-    (bytes32 abilityId1, bytes32 abilityId2) = _createTestAbilities(
+    (bytes32 spellId1, bytes32 spellId2) = _createTestSpells(
       creatorAlice,
       "AddTest3"
     );
     (bytes32 sourceId1, ) = _createTestSources(creatorAlice, "AddTest3");
 
-    // Create a shaman with no abilities initially
-    bytes32[] memory initialAbilityIds = new bytes32[](0);
+    // Create a shaman with no spells initially
+    bytes32[] memory initialSpellIds = new bytes32[](0);
 
     bytes32[] memory sourceIds = new bytes32[](1);
     sourceIds[0] = sourceId1;
 
     bytes32 shamanId = _createTestShaman(
       creatorAlice,
-      initialAbilityIds,
+      initialSpellIds,
       sourceIds
     );
 
-    // Add first ability to the shaman
+    // Add first spell to the shaman
     vm.prank(creatorAlice);
-    world.addAbilityToShaman(shamanId, abilityId1);
+    world.addSpellToShaman(shamanId, spellId1);
     vm.stopPrank();
 
-    // Verify the first ability was added
-    assertEq(Shamans.getAbilityCount(shamanId), 1);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId1) > 0, true);
+    // Verify the first spell was added
+    assertEq(Shamans.getSpellCount(shamanId), 1);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId1) > 0, true);
 
-    // Try to add an ability as non-creator
+    // Try to add a spell as non-creator
     vm.prank(creatorBob);
     vm.expectRevert("Not shaman creator");
-    world.addAbilityToShaman(shamanId, abilityId2);
+    world.addSpellToShaman(shamanId, spellId2);
     vm.stopPrank();
 
-    // Verify the ability was not added
-    assertEq(Shamans.getAbilityCount(shamanId), 1);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId2), 0);
+    // Verify the spell was not added
+    assertEq(Shamans.getSpellCount(shamanId), 1);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId2), 0);
   }
 
-  function testAddAbilityAlreadyExists() public {
+  function testAddSpellAlreadyExists() public {
     _setupOperator(creatorAlice);
-    (bytes32 abilityId1, ) = _createTestAbilities(creatorAlice, "3");
+    (bytes32 spellId1, ) = _createTestSpells(creatorAlice, "3");
     (bytes32 sourceId1, ) = _createTestSources(creatorAlice, "3");
 
-    // Create a shaman with one ability initially
-    bytes32[] memory abilityIds = new bytes32[](1);
-    abilityIds[0] = abilityId1;
+    // Create a shaman with one spell initially
+    bytes32[] memory spellIds = new bytes32[](1);
+    spellIds[0] = spellId1;
 
     bytes32[] memory initialSourceIds = new bytes32[](1);
     initialSourceIds[0] = sourceId1;
 
     bytes32 shamanId = _createTestShaman(
       creatorAlice,
-      abilityIds,
+      spellIds,
       initialSourceIds
     );
 
-    // Verify the ability was added
-    assertEq(Shamans.getAbilityCount(shamanId), 1);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId1) > 0, true);
+    // Verify the spell was added
+    assertEq(Shamans.getSpellCount(shamanId), 1);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId1) > 0, true);
 
-    // Try to add the same ability again
+    // Try to add the same spell again
     vm.prank(creatorAlice);
-    vm.expectRevert("Ability already exists in shaman");
-    world.addAbilityToShaman(shamanId, abilityId1);
+    vm.expectRevert("Spell already exists in shaman");
+    world.addSpellToShaman(shamanId, spellId1);
     vm.stopPrank();
 
-    // Verify the ability count is still 1
-    assertEq(Shamans.getAbilityCount(shamanId), 1);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId1) > 0, true);
+    // Verify the spell count is still 1
+    assertEq(Shamans.getSpellCount(shamanId), 1);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId1) > 0, true);
   }
 
-  function testRemoveAbility() public {
+  function testRemoveSpell() public {
     _setupOperator(creatorAlice);
-    (bytes32 abilityId1, bytes32 abilityId2) = _createTestAbilities(
+    (bytes32 spellId1, bytes32 spellId2) = _createTestSpells(
       creatorAlice,
       "RemoveTest1"
     );
     (bytes32 sourceId1, ) = _createTestSources(creatorAlice, "RemoveTest1");
 
-    // Create a shaman with two abilities initially
-    bytes32[] memory initialAbilityIds = new bytes32[](2);
-    initialAbilityIds[0] = abilityId1;
-    initialAbilityIds[1] = abilityId2;
+    // Create a shaman with two spells initially
+    bytes32[] memory initialSpellIds = new bytes32[](2);
+    initialSpellIds[0] = spellId1;
+    initialSpellIds[1] = spellId2;
 
     bytes32[] memory sourceIds = new bytes32[](1);
     sourceIds[0] = sourceId1;
 
     bytes32 shamanId = _createTestShaman(
       creatorAlice,
-      initialAbilityIds,
+      initialSpellIds,
       sourceIds
     );
 
     // Verify initial state
-    assertEq(Shamans.getAbilityCount(shamanId), 2);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId1) > 0, true);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId2) > 0, true);
+    assertEq(Shamans.getSpellCount(shamanId), 2);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId1) > 0, true);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId2) > 0, true);
 
-    // Remove first ability from the shaman
+    // Remove first spell from the shaman
     vm.prank(creatorAlice);
-    world.removeAbilityFromShaman(shamanId, abilityId1);
+    world.removeSpellFromShaman(shamanId, spellId1);
     vm.stopPrank();
 
-    // Verify the first ability was removed
-    assertEq(Shamans.getAbilityCount(shamanId), 1);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId1), 0);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId2) > 0, true);
+    // Verify the first spell was removed
+    assertEq(Shamans.getSpellCount(shamanId), 1);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId1), 0);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId2) > 0, true);
 
-    // Remove second ability from the shaman
+    // Remove second spell from the shaman
     vm.prank(creatorAlice);
-    world.removeAbilityFromShaman(shamanId, abilityId2);
+    world.removeSpellFromShaman(shamanId, spellId2);
     vm.stopPrank();
 
-    // Verify the second ability was removed
-    assertEq(Shamans.getAbilityCount(shamanId), 0);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId1), 0);
-    assertEq(ShamanAbility.getCreatedAt(shamanId, abilityId2), 0);
+    // Verify the second spell was removed
+    assertEq(Shamans.getSpellCount(shamanId), 0);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId1), 0);
+    assertEq(ShamanSpell.getCreatedAt(shamanId, spellId2), 0);
   }
 }

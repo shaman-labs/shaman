@@ -3,7 +3,7 @@ pragma solidity >=0.8.24;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import { IZugToken } from "../IZugToken.sol";
-import { Abilities, ShamanConfig, Roles, Shamans } from "../codegen/index.sol";
+import { Spells, ShamanConfig, Roles, Shamans } from "../codegen/index.sol";
 import { RoleType, ShamanState } from "../codegen/common.sol";
 
 contract BaseSystem is System {
@@ -12,11 +12,8 @@ contract BaseSystem is System {
     _;
   }
 
-  modifier onlyAbilityCreator(bytes32 abilityId) {
-    require(
-      Abilities.getCreator(abilityId) == _msgSender(),
-      "Not ability creator"
-    );
+  modifier onlySpellCreator(bytes32 spellId) {
+    require(Spells.getCreator(spellId) == _msgSender(), "Not spell creator");
     _;
   }
 

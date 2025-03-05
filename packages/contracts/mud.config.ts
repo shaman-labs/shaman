@@ -16,19 +16,19 @@ export default defineWorld({
       },
       key: [],
     },
-    Abilities: {
+    Spells: {
       codegen: {
         dataStruct: false,
       },
       schema: {
-        abilityId: "bytes32",
+        spellId: "bytes32",
         creator: "address",
         createdAt: "uint256",
         shamanCount: "uint32",
         name: "string",
         metadata: "string",
       },
-      key: ["abilityId"],
+      key: ["spellId"],
     },
     Shamans: {
       codegen: {
@@ -41,7 +41,7 @@ export default defineWorld({
         createdAt: "uint256",
         active: "bool",
         balance: "uint256",
-        abilityCount: "uint32",
+        spellCount: "uint32",
         sourceCount: "uint32",
         name: "string",
         metadata: "string",
@@ -56,7 +56,7 @@ export default defineWorld({
         logId: "bytes32",
         logType: "LogType",
         shamanId: "bytes32",
-        abilityId: "bytes32",
+        spellId: "bytes32",
         amount: "uint256",
         success: "bool",
         createdAt: "uint256",
@@ -89,16 +89,16 @@ export default defineWorld({
       key: ["sender"],
     },
     // pivot tables
-    ShamanAbility: {
+    ShamanSpell: {
       codegen: {
         dataStruct: false,
       },
       schema: {
         shamanId: "bytes32",
-        abilityId: "bytes32",
+        spellId: "bytes32",
         createdAt: "uint256",
       },
-      key: ["shamanId", "abilityId"],
+      key: ["shamanId", "spellId"],
     },
     ShamanSource: {
       codegen: {
@@ -112,14 +112,14 @@ export default defineWorld({
       key: ["shamanId", "sourceId"],
     },
     // index tables for efficient querying
-    ShamanAbilityIndex: {
+    ShamanSpellIndex: {
       codegen: {
         dataStruct: false,
       },
       schema: {
         shamanId: "bytes32",
         index: "uint32",
-        abilityId: "bytes32",
+        spellId: "bytes32",
       },
       key: ["shamanId", "index"],
     },
@@ -134,16 +134,16 @@ export default defineWorld({
       },
       key: ["shamanId", "index"],
     },
-    AbilityShamanIndex: {
+    SpellShamanIndex: {
       codegen: {
         dataStruct: false,
       },
       schema: {
-        abilityId: "bytes32",
+        spellId: "bytes32",
         index: "uint32",
         shamanId: "bytes32",
       },
-      key: ["abilityId", "index"],
+      key: ["spellId", "index"],
     },
     SourceShamanIndex: {
       codegen: {
@@ -167,13 +167,13 @@ export default defineWorld({
       },
       key: ["name"],
     },
-    AbilityNames: {
+    SpellNames: {
       codegen: {
         dataStruct: false,
       },
       schema: {
         name: "bytes32",
-        abilityId: "bytes32",
+        spellId: "bytes32",
       },
       key: ["name"],
     },

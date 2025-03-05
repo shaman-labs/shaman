@@ -1,63 +1,63 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 
-import { Sources, Shamans, Abilities, ShamanAbility, ShamanSource, ShamanSourceIndex, ShamanAbilityIndex, SourceShamanIndex, AbilityShamanIndex } from "../codegen/index.sol";
+import { Sources, Shamans, Spells, ShamanSpell, ShamanSource, ShamanSourceIndex, ShamanSpellIndex, SourceShamanIndex, SpellShamanIndex } from "../codegen/index.sol";
 import { LogType } from "../codegen/common.sol";
 
 library ShamanEntitiesLib {
-  function addAbility(bytes32 shamanId, bytes32 abilityId) internal {
-    // Check if the ability already exists in the shaman
+  function addSpell(bytes32 shamanId, bytes32 spellId) internal {
+    // Check if the spell already exists in the shaman
     require(
-      ShamanAbility.getCreatedAt(shamanId, abilityId) == 0,
-      "Ability already exists in shaman"
+      ShamanSpell.getCreatedAt(shamanId, spellId) == 0,
+      "Spell already exists in shaman"
     );
 
-    ShamanAbility.set(shamanId, abilityId, block.timestamp);
+    ShamanSpell.set(shamanId, spellId, block.timestamp);
 
-    uint32 shamanAbilityCount = Shamans.getAbilityCount(shamanId);
-    ShamanAbilityIndex.set(shamanId, shamanAbilityCount, abilityId);
-    Shamans.setAbilityCount(shamanId, shamanAbilityCount + 1);
+    uint32 shamanSpellCount = Shamans.getSpellCount(shamanId);
+    ShamanSpellIndex.set(shamanId, shamanSpellCount, spellId);
+    Shamans.setSpellCount(shamanId, shamanSpellCount + 1);
 
-    uint32 abilityShamanCount = Abilities.getShamanCount(abilityId);
-    AbilityShamanIndex.set(abilityId, abilityShamanCount, shamanId);
-    Abilities.setShamanCount(abilityId, abilityShamanCount + 1);
+    uint32 spellShamanCount = Spells.getShamanCount(spellId);
+    SpellShamanIndex.set(spellId, spellShamanCount, shamanId);
+    Spells.setShamanCount(spellId, spellShamanCount + 1);
   }
 
-  function removeAbility(bytes32 shamanId, bytes32 abilityId) internal {
-    // Check if the ability exists in the shaman
+  function removeSpell(bytes32 shamanId, bytes32 spellId) internal {
+    // Check if the spell exists in the shaman
     require(
-      ShamanAbility.getCreatedAt(shamanId, abilityId) > 0,
-      "Ability does not exist in shaman"
+      ShamanSpell.getCreatedAt(shamanId, spellId) > 0,
+      "Spell does not exist in shaman"
     );
 
-    ShamanAbility.deleteRecord(shamanId, abilityId);
+    ShamanSpell.deleteRecord(shamanId, spellId);
 
-    uint32 shamanAbilityCount = Shamans.getAbilityCount(shamanId);
-    for (uint32 i = 0; i < shamanAbilityCount; i++) {
-      if (ShamanAbilityIndex.getAbilityId(shamanId, i) == abilityId) {
-        if (i != shamanAbilityCount - 1) {
-          bytes32 lastAbilityId = ShamanAbilityIndex.getAbilityId(
+    uint32 shamanSpellCount = Shamans.getSpellCount(shamanId);
+    for (uint32 i = 0; i < shamanSpellCount; i++) {
+      if (ShamanSpellIndex.getSpellId(shamanId, i) == spellId) {
+        if (i != shamanSpellCount - 1) {
+          bytes32 lastSpellId = ShamanSpellIndex.getSpellId(
             shamanId,
-            shamanAbilityCount - 1
+            shamanSpellCount - 1
           );
-          ShamanAbilityIndex.set(shamanId, i, lastAbilityId);
+          ShamanSpellIndex.set(shamanId, i, lastSpellId);
         }
-        Shamans.setAbilityCount(shamanId, shamanAbilityCount - 1);
+        Shamans.setSpellCount(shamanId, shamanSpellCount - 1);
         break;
       }
     }
 
-    uint32 abilityShamanCount = Abilities.getShamanCount(abilityId);
-    for (uint32 i = 0; i < abilityShamanCount; i++) {
-      if (AbilityShamanIndex.getShamanId(abilityId, i) == shamanId) {
-        if (i != abilityShamanCount - 1) {
-          bytes32 lastShamanId = AbilityShamanIndex.getShamanId(
-            abilityId,
-            abilityShamanCount - 1
+    uint32 spellShamanCount = Spells.getShamanCount(spellId);
+    for (uint32 i = 0; i < spellShamanCount; i++) {
+      if (SpellShamanIndex.getShamanId(spellId, i) == shamanId) {
+        if (i != spellShamanCount - 1) {
+          bytes32 lastShamanId = SpellShamanIndex.getShamanId(
+            spellId,
+            spellShamanCount - 1
           );
-          AbilityShamanIndex.set(abilityId, i, lastShamanId);
+          SpellShamanIndex.set(spellId, i, lastShamanId);
         }
-        Abilities.setShamanCount(abilityId, abilityShamanCount - 1);
+        Spells.setShamanCount(spellId, spellShamanCount - 1);
         break;
       }
     }

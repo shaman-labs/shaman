@@ -9,19 +9,19 @@ pragma solidity >=0.8.24;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IShamanEntitiesSystem {
-  function addAbilityToShaman(bytes32 shamanId, bytes32 abilityId) external;
+  function addSpellToShaman(bytes32 shamanId, bytes32 spellId) external;
 
-  function removeAbilityFromShaman(bytes32 shamanId, bytes32 abilityId) external;
+  function removeSpellFromShaman(bytes32 shamanId, bytes32 spellId) external;
 
   function addSourceToShaman(bytes32 shamanId, bytes32 sourceId) external;
 
   function removeSourceFromShaman(bytes32 shamanId, bytes32 sourceId) external;
 
-  function getShamanAbilityIds(bytes32 shamanId) external view returns (bytes32[] memory);
+  function getShamanSpellIds(bytes32 shamanId) external view returns (bytes32[] memory);
 
   function getShamanSourceIds(bytes32 shamanId) external view returns (bytes32[] memory);
 
   function getShamanIdsBySourceId(bytes32 sourceId) external view returns (bytes32[] memory);
 
-  function getShamanIdsByAbilityId(bytes32 abilityId) external view returns (bytes32[] memory);
+  function getShamanIdsBySpellId(bytes32 spellId) external view returns (bytes32[] memory);
 }

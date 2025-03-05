@@ -16,17 +16,17 @@ import { Schema } from "@latticexyz/store/src/Schema.sol";
 import { EncodedLengths, EncodedLengthsLib } from "@latticexyz/store/src/EncodedLengths.sol";
 import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 
-library ShamanAbilityIndex {
-  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "ShamanAbilityInd", typeId: RESOURCE_TABLE });`
-  ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e4162696c697479496e64);
+library ShamanSpell {
+  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "ShamanSpell", typeId: RESOURCE_TABLE });`
+  ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e5370656c6c0000000000);
 
   FieldLayout constant _fieldLayout =
     FieldLayout.wrap(0x0020010020000000000000000000000000000000000000000000000000000000);
 
-  // Hex-encoded key schema of (bytes32, uint32)
-  Schema constant _keySchema = Schema.wrap(0x002402005f030000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (bytes32)
-  Schema constant _valueSchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
+  // Hex-encoded key schema of (bytes32, bytes32)
+  Schema constant _keySchema = Schema.wrap(0x004002005f5f0000000000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (uint256)
+  Schema constant _valueSchema = Schema.wrap(0x002001001f000000000000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -35,7 +35,7 @@ library ShamanAbilityIndex {
   function getKeyNames() internal pure returns (string[] memory keyNames) {
     keyNames = new string[](2);
     keyNames[0] = "shamanId";
-    keyNames[1] = "index";
+    keyNames[1] = "spellId";
   }
 
   /**
@@ -44,7 +44,7 @@ library ShamanAbilityIndex {
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](1);
-    fieldNames[0] = "abilityId";
+    fieldNames[0] = "createdAt";
   }
 
   /**
@@ -62,104 +62,104 @@ library ShamanAbilityIndex {
   }
 
   /**
-   * @notice Get abilityId.
+   * @notice Get createdAt.
    */
-  function getAbilityId(bytes32 shamanId, uint32 index) internal view returns (bytes32 abilityId) {
+  function getCreatedAt(bytes32 shamanId, bytes32 spellId) internal view returns (uint256 createdAt) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
-    _keyTuple[1] = bytes32(uint256(index));
+    _keyTuple[1] = spellId;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (bytes32(_blob));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
-   * @notice Get abilityId.
+   * @notice Get createdAt.
    */
-  function _getAbilityId(bytes32 shamanId, uint32 index) internal view returns (bytes32 abilityId) {
+  function _getCreatedAt(bytes32 shamanId, bytes32 spellId) internal view returns (uint256 createdAt) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
-    _keyTuple[1] = bytes32(uint256(index));
+    _keyTuple[1] = spellId;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (bytes32(_blob));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
-   * @notice Get abilityId.
+   * @notice Get createdAt.
    */
-  function get(bytes32 shamanId, uint32 index) internal view returns (bytes32 abilityId) {
+  function get(bytes32 shamanId, bytes32 spellId) internal view returns (uint256 createdAt) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
-    _keyTuple[1] = bytes32(uint256(index));
+    _keyTuple[1] = spellId;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (bytes32(_blob));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
-   * @notice Get abilityId.
+   * @notice Get createdAt.
    */
-  function _get(bytes32 shamanId, uint32 index) internal view returns (bytes32 abilityId) {
+  function _get(bytes32 shamanId, bytes32 spellId) internal view returns (uint256 createdAt) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
-    _keyTuple[1] = bytes32(uint256(index));
+    _keyTuple[1] = spellId;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (bytes32(_blob));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
-   * @notice Set abilityId.
+   * @notice Set createdAt.
    */
-  function setAbilityId(bytes32 shamanId, uint32 index, bytes32 abilityId) internal {
+  function setCreatedAt(bytes32 shamanId, bytes32 spellId, uint256 createdAt) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
-    _keyTuple[1] = bytes32(uint256(index));
+    _keyTuple[1] = spellId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((abilityId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((createdAt)), _fieldLayout);
   }
 
   /**
-   * @notice Set abilityId.
+   * @notice Set createdAt.
    */
-  function _setAbilityId(bytes32 shamanId, uint32 index, bytes32 abilityId) internal {
+  function _setCreatedAt(bytes32 shamanId, bytes32 spellId, uint256 createdAt) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
-    _keyTuple[1] = bytes32(uint256(index));
+    _keyTuple[1] = spellId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((abilityId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((createdAt)), _fieldLayout);
   }
 
   /**
-   * @notice Set abilityId.
+   * @notice Set createdAt.
    */
-  function set(bytes32 shamanId, uint32 index, bytes32 abilityId) internal {
+  function set(bytes32 shamanId, bytes32 spellId, uint256 createdAt) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
-    _keyTuple[1] = bytes32(uint256(index));
+    _keyTuple[1] = spellId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((abilityId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((createdAt)), _fieldLayout);
   }
 
   /**
-   * @notice Set abilityId.
+   * @notice Set createdAt.
    */
-  function _set(bytes32 shamanId, uint32 index, bytes32 abilityId) internal {
+  function _set(bytes32 shamanId, bytes32 spellId, uint256 createdAt) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
-    _keyTuple[1] = bytes32(uint256(index));
+    _keyTuple[1] = spellId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((abilityId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((createdAt)), _fieldLayout);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(bytes32 shamanId, uint32 index) internal {
+  function deleteRecord(bytes32 shamanId, bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
-    _keyTuple[1] = bytes32(uint256(index));
+    _keyTuple[1] = spellId;
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -167,10 +167,10 @@ library ShamanAbilityIndex {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(bytes32 shamanId, uint32 index) internal {
+  function _deleteRecord(bytes32 shamanId, bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
-    _keyTuple[1] = bytes32(uint256(index));
+    _keyTuple[1] = spellId;
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -179,8 +179,8 @@ library ShamanAbilityIndex {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(bytes32 abilityId) internal pure returns (bytes memory) {
-    return abi.encodePacked(abilityId);
+  function encodeStatic(uint256 createdAt) internal pure returns (bytes memory) {
+    return abi.encodePacked(createdAt);
   }
 
   /**
@@ -189,8 +189,8 @@ library ShamanAbilityIndex {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(bytes32 abilityId) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(abilityId);
+  function encode(uint256 createdAt) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
+    bytes memory _staticData = encodeStatic(createdAt);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;
@@ -201,10 +201,10 @@ library ShamanAbilityIndex {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(bytes32 shamanId, uint32 index) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(bytes32 shamanId, bytes32 spellId) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
-    _keyTuple[1] = bytes32(uint256(index));
+    _keyTuple[1] = spellId;
 
     return _keyTuple;
   }

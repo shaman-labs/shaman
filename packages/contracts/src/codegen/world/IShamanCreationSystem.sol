@@ -12,7 +12,7 @@ interface IShamanCreationSystem {
   function createShaman(
     uint256 balance,
     string memory name,
-    bytes32[] memory abilityIds,
+    bytes32[] memory spellIds,
     bytes32[] memory sourceIds,
     string memory metadata
   ) external;
