@@ -11,7 +11,7 @@ import {
   User,
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState, useEffect } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNow, format } from 'date-fns';
 import Link from 'next/link';
@@ -57,6 +57,7 @@ import { useShamanLogs } from '@/hooks/use-shaman-logs';
 import { ShamanLogType, ShamanLogsTableData } from '@/types/shaman';
 import { DataTable } from '@/components/data-table';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useShamanSpells } from '@/hooks/use-shaman-spells';
 
 type ChartDataPoint = {
   day: string;
@@ -136,6 +137,7 @@ export default function Page() {
   const { data: shamanLogs, isLoading: logsLoading } = useShamanLogs(
     shamanId as string
   );
+  const [spellId, setSpellId] = useState<string | null>(null);
   const executionLogs = shamanLogs?.filter(
     (log) => log.logType === ShamanLogType.COMPLETION
   );
@@ -143,8 +145,19 @@ export default function Page() {
   const { refetch: refetchZugBalance } = useZugBalance(
     embeddedWallet?.address as `0x${string}`
   );
-  const { openAddBalance, openWithdrawBalance, openViewLog } =
+  const { openAddBalance, openWithdrawBalance, openViewLog, openAddSpell } =
     useDialogContext();
+  const { data: shamanSpells, isLoading: shamanSpellsLoading } =
+    useShamanSpells(shamanId as string);
+  const selectedSpell = shamanSpells?.find(
+    (spell) => spell.spellId === spellId
+  );
+
+  useEffect(() => {
+    if (shamanSpells?.length) {
+      setSpellId(shamanSpells[0].spellId);
+    }
+  }, [shamanSpells]);
 
   const handleRefetch = useCallback(() => {
     refetch();
@@ -545,18 +558,148 @@ export default function Page() {
             </TabsContent>
             <TabsContent value="spells">
               <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Shaman Spells</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">
-                      Spells tab functionality will be implemented in a future
-                      update.
-                    </p>
-                    <p className="text-muted-foreground mt-2">
-                      This shaman has {shaman?.spellCount || 0} spells.
-                    </p>
+                  <div className="grid grid-cols-4 gap-4">
+                    <div className="col-span-1 border rounded-md overflow-hidden">
+                      <div className="divide-y">
+                        {shamanSpellsLoading
+                          ? Array(3)
+                              .fill(0)
+                              .map((_, i) => (
+                                <Skeleton key={i} className="h-12 w-full" />
+                              ))
+                          : shamanSpells?.map((spell) => (
+                              <div
+                                key={spell.spellId}
+                                className={`p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between ${
+                                  spellId === spell.spellId ? 'bg-accent' : ''
+                                }`}
+                                onClick={() => setSpellId(spell.spellId)}>
+                                <span>{spell.name}</span>
+                              </div>
+                            ))}
+                        <div
+                          className={`p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
+                          onClick={() =>
+                            openAddSpell(
+                              true,
+                              undefined,
+                              handleRefetch,
+                              shamanId as string
+                            )
+                          }>
+                          <span className="flex items-center gap-2">
+                            <Plus className="h-4 w-4" /> Add Spell
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="col-span-3 space-y-4">
+                      {selectedSpell && (
+                        <>
+                          <Card>
+                            <CardHeader className="pb-4">
+                              <div className="flex justify-between items-center">
+                                <CardTitle>{selectedSpell.name}</CardTitle>
+                              </div>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="grid grid-cols-3 gap-4 mb-4">
+                                <div className="flex flex-col gap-1 p-3 rounded-lg border">
+                                  <p className="text-xs text-muted-foreground">
+                                    Last Execution
+                                  </p>
+                                  <p className="text-sm font-medium">
+                                    2 hours ago
+                                  </p>
+                                </div>
+                                <div className="flex flex-col gap-1 p-3 rounded-lg border">
+                                  <p className="text-xs text-muted-foreground">
+                                    Success Rate
+                                  </p>
+                                  <p className="text-sm font-medium">98%</p>
+                                </div>
+                                <div className="flex flex-col gap-1 p-3 rounded-lg border">
+                                  <p className="text-xs text-muted-foreground">
+                                    ZUG Cost
+                                  </p>
+                                  <p className="text-sm font-medium">
+                                    0.5 ZUG/execution
+                                  </p>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+
+                          <Card>
+                            <CardHeader>
+                              <CardTitle>Spell Execution Logs</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="space-y-4">
+                                {[
+                                  {
+                                    id: 'log-1',
+                                    timestamp: '2023-09-15T14:30:00Z',
+                                    status: 'success',
+                                    message:
+                                      'Successfully fetched weather data for New York',
+                                  },
+                                  {
+                                    id: 'log-2',
+                                    timestamp: '2023-09-14T14:30:00Z',
+                                    status: 'success',
+                                    message:
+                                      'Successfully fetched weather data for New York',
+                                  },
+                                  {
+                                    id: 'log-3',
+                                    timestamp: '2023-09-13T14:30:00Z',
+                                    status: 'error',
+                                    message: 'API rate limit exceeded',
+                                  },
+                                  {
+                                    id: 'log-4',
+                                    timestamp: '2023-09-12T14:30:00Z',
+                                    status: 'success',
+                                    message:
+                                      'Successfully fetched weather data for New York',
+                                  },
+                                ].map((log) => (
+                                  <div
+                                    key={log.id}
+                                    className="border rounded-md p-3">
+                                    <div className="flex justify-between items-center mb-2">
+                                      <div className="flex items-center gap-2">
+                                        <div
+                                          className={`w-2 h-2 rounded-full ${log.status === 'success' ? 'bg-green-500' : 'bg-red-500'}`}
+                                        />
+                                        <span className="text-sm font-medium">
+                                          {log.status === 'success'
+                                            ? 'Success'
+                                            : 'Failed'}
+                                        </span>
+                                      </div>
+                                      <span className="text-xs text-muted-foreground">
+                                        {formatDistanceToNow(
+                                          new Date(log.timestamp),
+                                          { addSuffix: true }
+                                        )}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm">{log.message}</p>
+                                  </div>
+                                ))}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </CardContent>
               </Card>
