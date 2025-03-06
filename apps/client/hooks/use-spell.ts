@@ -4,29 +4,29 @@ import { encodeEntity } from '@latticexyz/store-sync/recs';
 import { useQuery } from '@tanstack/react-query';
 import { useMUD } from '@/contexts/mud-context';
 
-export const useAbility = (abilityId: string) => {
+export const useSpell = (spellId: string) => {
   const mud = useMUD();
 
   return useQuery({
-    queryKey: ['ability', abilityId],
+    queryKey: ['spell', spellId],
     initialData: null,
     queryFn: async () => {
-      if (!mud?.components?.Abilities) return null;
+      if (!mud?.components?.Spells) return null;
 
-      const abilityData = getComponentValueStrict(
-        mud.components.Abilities,
+      const spellData = getComponentValueStrict(
+        mud.components.Spells,
         encodeEntity(
           {
-            abilityId: 'bytes32',
+            spellId: 'bytes32',
           },
           {
-            abilityId: abilityId as `0x${string}`,
+            spellId: spellId as `0x${string}`,
           }
         )
       );
 
       const metadata = await fetch(
-        `https://gateway.shaman.fun/ipfs/${abilityData.metadata}`
+        `https://gateway.shaman.fun/ipfs/${spellData.metadata}`
       );
 
       const metadataJson = (await metadata.json()) as {
@@ -35,13 +35,13 @@ export const useAbility = (abilityId: string) => {
       };
 
       return {
-        ...abilityData,
-        abilityId,
+        ...spellData,
+        spellId,
         code: atob(metadataJson.code),
         prompt: metadataJson.prompt,
       };
     },
     refetchInterval: 2500,
-    enabled: !!mud?.components?.Abilities,
+    enabled: !!mud?.components?.Spells,
   });
 };

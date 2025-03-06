@@ -12,23 +12,23 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { useAbilities } from '@/hooks/use-abilities';
+import { useSpells } from '@/hooks/use-spells';
 
-export function NavAbilities() {
+export function NavSpells() {
   const { user, login } = usePrivy();
   const router = useRouter();
-  const { data: abilities } = useAbilities();
-  const { abilityId } = useParams();
+  const { data: spells } = useSpells();
+  const { spellId } = useParams();
   const pathname = usePathname();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Spells</SidebarGroupLabel>
       <SidebarMenu>
-        {abilities.map((item) => (
-          <SidebarMenuItem key={item.abilityId}>
-            <SidebarMenuButton asChild isActive={abilityId === item.abilityId}>
-              <Link href={`/ability/${item.abilityId}`}>
+        {spells.map((item) => (
+          <SidebarMenuItem key={item.spellId}>
+            <SidebarMenuButton asChild isActive={spellId === item.spellId}>
+              <Link href={`/spell/${item.spellId}`}>
                 <Webhook />
                 <span>{item.name}</span>
               </Link>
@@ -37,8 +37,8 @@ export function NavAbilities() {
         ))}
         <SidebarMenuItem>
           <SidebarMenuButton
-            isActive={pathname === '/ability'}
-            onClick={() => (user ? router.push('/ability') : login())}>
+            isActive={pathname === '/spell'}
+            onClick={() => (user ? router.push('/spell') : login())}>
             <Plus />
             <span>New Spell</span>
           </SidebarMenuButton>

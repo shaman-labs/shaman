@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Book, X, Webhook } from 'lucide-react';
 
 import Link from 'next/link';
-import { NavAbilities } from '@/components/nav-abilities';
+import { NavSpells } from '@/components/nav-spells';
 import { NavShamans } from '@/components/nav-shamans';
 import { NavSecondary } from '@/components/nav-secondary';
 import { NavUser } from '@/components/nav-user';
@@ -55,7 +55,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavShamans />
-        <NavAbilities />
+        <NavSpells />
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>

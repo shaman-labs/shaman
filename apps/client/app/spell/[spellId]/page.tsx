@@ -27,11 +27,11 @@ import {
   BreadcrumbPage,
 } from '@/components/ui/breadcrumb';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { useAbility } from '@/hooks/use-ability';
+import { useSpell } from '@/hooks/use-spell';
 
 export default function Page() {
-  const { abilityId } = useParams();
-  const { data: ability } = useAbility(abilityId as string);
+  const { spellId } = useParams();
+  const { data: spell } = useSpell(spellId as string);
 
   return (
     <SidebarProvider>
@@ -44,12 +44,12 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <Link href="/ability" className="text-muted-foreground">
+                  <Link href="/spell" className="text-muted-foreground">
                     Spells
                   </Link>
                 </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbPage>{ability?.name || abilityId}</BreadcrumbPage>
+                  <BreadcrumbPage>{spell?.name || spellId}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -69,9 +69,7 @@ export default function Page() {
                         <h3 className="text-xs font-medium text-muted-foreground">
                           Name
                         </h3>
-                        <p className="text-base font-semibold">
-                          {ability?.name}
-                        </p>
+                        <p className="text-base font-semibold">{spell?.name}</p>
                       </div>
                     </div>
 
@@ -84,7 +82,7 @@ export default function Page() {
                           Shamans Count
                         </h3>
                         <p className="text-sm font-medium">
-                          {ability?.shamanCount}
+                          {spell?.shamanCount}
                         </p>
                       </div>
                     </div>
@@ -110,7 +108,7 @@ export default function Page() {
                           Creator
                         </h3>
                         <p className="font-mono text-sm truncate">
-                          {ability?.creator}
+                          {spell?.creator}
                         </p>
                       </div>
                     </div>
@@ -123,13 +121,13 @@ export default function Page() {
                         <h3 className="text-xs font-medium text-muted-foreground">
                           IPFS Link
                         </h3>
-                        {ability?.metadata ? (
+                        {spell?.metadata ? (
                           <a
-                            href={`https://gateway.shaman.fun/ipfs/${ability.metadata}`}
+                            href={`https://gateway.shaman.fun/ipfs/${spell.metadata}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
-                            ipfs://{ability.metadata}
+                            ipfs://{spell.metadata}
                           </a>
                         ) : (
                           <p className="text-sm text-muted-foreground">
@@ -148,9 +146,9 @@ export default function Page() {
                           Created
                         </h3>
                         <p className="text-sm">
-                          {ability?.createdAt
+                          {spell?.createdAt
                             ? new Date(
-                                Number(ability.createdAt) * 1000
+                                Number(spell.createdAt) * 1000
                               ).toLocaleString(undefined, {
                                 dateStyle: 'medium',
                                 timeStyle: 'short',
@@ -175,7 +173,7 @@ export default function Page() {
                       <div className="flex flex-col h-full w-full">
                         <Highlight
                           theme={themes.nightOwl}
-                          code={ability?.prompt || ''}
+                          code={spell?.prompt || ''}
                           language="markdown">
                           {({ style, tokens, getLineProps, getTokenProps }) => (
                             <pre
@@ -203,7 +201,7 @@ export default function Page() {
                       <div className="flex flex-col h-full w-full">
                         <Highlight
                           theme={themes.nightOwl}
-                          code={ability?.code || ''}
+                          code={spell?.code || ''}
                           language="tsx">
                           {({ style, tokens, getLineProps, getTokenProps }) => (
                             <pre

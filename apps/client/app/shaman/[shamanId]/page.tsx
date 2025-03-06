@@ -555,7 +555,7 @@ export default function Page() {
                       update.
                     </p>
                     <p className="text-muted-foreground mt-2">
-                      This shaman has {shaman?.abilityCount || 0} spells.
+                      This shaman has {shaman?.spellCount || 0} spells.
                     </p>
                   </div>
                 </CardContent>

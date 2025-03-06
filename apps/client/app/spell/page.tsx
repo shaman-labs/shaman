@@ -106,7 +106,7 @@ export default function Page() {
     setReady(false);
 
     try {
-      const response = await fetch('/api/ability', {
+      const response = await fetch('/api/spell', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -121,7 +121,7 @@ export default function Page() {
 
       toast({
         title: 'Success!',
-        description: `Your Ability has been created.`,
+        description: `Your Spell has been created.`,
       });
     } catch (error) {
       console.error(error);
@@ -139,14 +139,14 @@ export default function Page() {
     setIsDeploying(true);
 
     try {
-      await mud?.calls?.embedded?.systemCalls?.createAbility(
+      await mud?.calls?.embedded?.systemCalls?.createSpell(
         form.getValues('name'),
         ipfs
       );
 
       toast({
         title: 'Success!',
-        description: 'Your Ability has been deployed.',
+        description: 'Your Spell has been deployed.',
       });
 
       router.push(`/`);
@@ -286,7 +286,7 @@ export default function Page() {
                     className="w-full"
                     disabled={isDeploying || !code || !ready}>
                     <Webhook />
-                    {isDeploying ? 'Deploying...' : 'Deploy Ability'}
+                    {isDeploying ? 'Deploying...' : 'Deploy Spell'}
                   </Button>
                 </CardFooter>
               </Card>
