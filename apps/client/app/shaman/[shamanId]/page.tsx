@@ -57,7 +57,7 @@ import { useShamanLogs } from '@/hooks/use-shaman-logs';
 import { ShamanLogType, ShamanLogsTableData } from '@/types/shaman';
 import { DataTable } from '@/components/data-table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useSpells } from '@/hooks/use-spells';
+import { useShamanSpells } from '@/hooks/use-shaman-spells';
 
 type ChartDataPoint = {
   day: string;
@@ -137,9 +137,7 @@ export default function Page() {
   const { data: shamanLogs, isLoading: logsLoading } = useShamanLogs(
     shamanId as string
   );
-  const { data: spells, isLoading: spellsLoading } = useSpells();
   const [spellId, setSpellId] = useState<string | null>(null);
-  const selectedSpell = spells?.find((spell) => spell.spellId === spellId);
   const executionLogs = shamanLogs?.filter(
     (log) => log.logType === ShamanLogType.COMPLETION
   );
@@ -147,14 +145,19 @@ export default function Page() {
   const { refetch: refetchZugBalance } = useZugBalance(
     embeddedWallet?.address as `0x${string}`
   );
-  const { openAddBalance, openWithdrawBalance, openViewLog } =
+  const { openAddBalance, openWithdrawBalance, openViewLog, openAddSpell } =
     useDialogContext();
+  const { data: shamanSpells, isLoading: shamanSpellsLoading } =
+    useShamanSpells(shamanId as string);
+  const selectedSpell = shamanSpells?.find(
+    (spell) => spell.spellId === spellId
+  );
 
   useEffect(() => {
-    if (spells?.length) {
-      setSpellId(spells[0].spellId);
+    if (shamanSpells?.length) {
+      setSpellId(shamanSpells[0].spellId);
     }
-  }, [spells]);
+  }, [shamanSpells]);
 
   const handleRefetch = useCallback(() => {
     refetch();
@@ -555,20 +558,20 @@ export default function Page() {
             </TabsContent>
             <TabsContent value="spells">
               <Card>
-                <CardHeader>
+                <CardHeader className="flex flex-row items-center justify-between">
                   <CardTitle>Shaman Spells</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="grid grid-cols-4 gap-4">
                     <div className="col-span-1 border rounded-md overflow-hidden">
                       <div className="divide-y">
-                        {spellsLoading
-                          ? Array(5)
+                        {shamanSpellsLoading
+                          ? Array(3)
                               .fill(0)
                               .map((_, i) => (
                                 <Skeleton key={i} className="h-12 w-full" />
                               ))
-                          : spells?.map((spell) => (
+                          : shamanSpells?.map((spell) => (
                               <div
                                 key={spell.spellId}
                                 className={`p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between ${
@@ -578,6 +581,20 @@ export default function Page() {
                                 <span>{spell.name}</span>
                               </div>
                             ))}
+                        <div
+                          className={`p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
+                          onClick={() =>
+                            openAddSpell(
+                              true,
+                              undefined,
+                              handleRefetch,
+                              shamanId as string
+                            )
+                          }>
+                          <span className="flex items-center gap-2">
+                            <Plus className="h-4 w-4" /> Add Spell
+                          </span>
+                        </div>
                       </div>
                     </div>
 
