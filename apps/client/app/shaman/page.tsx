@@ -41,7 +41,6 @@ import {
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { useMUD } from '@/contexts/mud-context';
-import { useAbilities } from '@/hooks/use-abilities';
 import { useSources } from '@/hooks/use-sources';
 
 const formSchema = z.object({
@@ -51,32 +50,52 @@ const formSchema = z.object({
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.',
   }),
-  network: z.enum(['arbitrumSepolia'], {
-    required_error: 'Please select a network',
-  }),
-  abilityId: z.string().min(1, {
-    message: 'Please select an ability',
-  }),
   sourceId: z.string().min(1, {
     message: 'Please select a source',
   }),
 });
+
+const sourceLabels = {
+  'interval-hourly': 'Interval (Hourly)',
+  'interval-daily': 'Interval (Daily)',
+  'interval-quarter-hourly': 'Interval (Every 15 minutes)',
+};
+
+const sourceTTLUnits = {
+  'interval-hourly': 1,
+  'interval-daily': 24,
+  'interval-quarter-hourly': 0.25,
+};
+
+const getSourceLabel = (sourceId: string) => {
+  return sourceLabels[sourceId as keyof typeof sourceLabels] || sourceId;
+};
 
 export default function Page() {
   const mud = useMUD();
   const router = useRouter();
   const [isCreating, setIsCreating] = useState(false);
   const [balance, setBalance] = useState(1);
-  const { data: abilities, isLoading: abilitiesLoading } = useAbilities();
   const { data: sources, isLoading: sourcesLoading } = useSources();
+
+  const calculateTTL = (sourceId: string, balance: number) => {
+    if (!sourceId) return '';
+
+    const sourceName = sources.find((s) => s.sourceId === sourceId)?.name || '';
+    const multiplier =
+      sourceTTLUnits[sourceName as keyof typeof sourceTTLUnits] || 1;
+    const hours = balance * multiplier;
+
+    const formattedHours = Number.isInteger(hours) ? hours : hours.toFixed(2);
+
+    return `${formattedHours} ${hours === 1 ? 'hour' : 'hours'}`;
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
       description: '',
-      network: 'arbitrumSepolia',
-      abilityId: '',
       sourceId: '',
     },
   });
@@ -92,8 +111,8 @@ export default function Page() {
         },
       });
 
-      const abilityIds = [values.abilityId as `0x${string}`];
-      const sourceIds = [values.sourceId as `0x${string}`];
+      const abilityIds: `0x${string}`[] = [];
+      const sourceIds: `0x${string}`[] = [values.sourceId as `0x${string}`];
 
       await mud?.calls?.embedded?.systemCalls?.createShaman(
         BigInt(balance),
@@ -157,10 +176,7 @@ export default function Page() {
                           <FormItem>
                             <FormLabel>Shaman Name</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="Enter shaman name"
-                                {...field}
-                              />
+                              <Input placeholder="Shaman Name" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -188,7 +204,7 @@ export default function Page() {
                         name="sourceId"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Select Source</FormLabel>
+                            <FormLabel>Choose Frequency</FormLabel>
                             <FormControl>
                               <Select
                                 value={field.value}
@@ -202,72 +218,18 @@ export default function Page() {
                                     <SelectItem
                                       key={source.sourceId}
                                       value={source.sourceId}>
-                                      {source.name ||
-                                        `Source ${source.sourceId.substring(0, 6)}`}
+                                      {getSourceLabel(source.name)}
                                     </SelectItem>
                                   ))}
                                 </SelectContent>
                               </Select>
                             </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="abilityId"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Select Ability</FormLabel>
-                            <FormControl>
-                              <Select
-                                value={field.value}
-                                onValueChange={field.onChange}
-                                disabled={abilitiesLoading}>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select an ability" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {abilities.map((ability) => (
-                                    <SelectItem
-                                      key={ability.abilityId}
-                                      value={ability.abilityId}>
-                                      {ability.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="network"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Network</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}>
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select network" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                <SelectItem value="arbitrumSepolia">
-                                  Arbitrum Sepolia (Testnet)
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
                             <FormMessage />
                           </FormItem>
                         )}
                       />
                       <FormItem>
-                        <FormLabel>ZUG Balance</FormLabel>
+                        <FormLabel>Initial ZUG Balance</FormLabel>
                         <FormControl>
                           <Input
                             type="number"
@@ -283,9 +245,7 @@ export default function Page() {
                       <Button
                         className="w-full"
                         type="submit"
-                        disabled={
-                          isCreating || abilitiesLoading || sourcesLoading
-                        }>
+                        disabled={isCreating || sourcesLoading}>
                         {isCreating ? (
                           <Loader2 className="animate-spin" />
                         ) : (
@@ -319,29 +279,15 @@ export default function Page() {
                       </p>
                     </div>
                     <div>
-                      <h3 className="text-sm font-medium">Selected Ability</h3>
-                      <div className="flex flex-wrap gap-1">
-                        {form.watch('abilityId') ? (
-                          <div className="px-2 py-1 bg-secondary rounded-md text-xs">
-                            {abilities.find(
-                              (a) => a.abilityId === form.watch('abilityId')
-                            )?.name || form.watch('abilityId').substring(0, 6)}
-                          </div>
-                        ) : (
-                          <p className="text-sm text-muted-foreground">
-                            No ability selected
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    <div>
                       <h3 className="text-sm font-medium">Selected Source</h3>
                       <div className="flex flex-wrap gap-1">
                         {form.watch('sourceId') ? (
                           <div className="px-2 py-1 bg-secondary rounded-md text-xs">
-                            {sources.find(
-                              (s) => s.sourceId === form.watch('sourceId')
-                            )?.name || form.watch('sourceId').substring(0, 6)}
+                            {getSourceLabel(
+                              sources.find(
+                                (s) => s.sourceId === form.watch('sourceId')
+                              )?.name || form.watch('sourceId').substring(0, 6)
+                            )}
                           </div>
                         ) : (
                           <p className="text-sm text-muted-foreground">
@@ -354,6 +300,14 @@ export default function Page() {
                       <h3 className="text-sm font-medium">Balance</h3>
                       <p className="text-sm text-muted-foreground">
                         {balance} ZUG
+                      </p>
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-medium">Time to Live</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {form.watch('sourceId')
+                          ? calculateTTL(form.watch('sourceId'), balance)
+                          : '-'}
                       </p>
                     </div>
                   </div>

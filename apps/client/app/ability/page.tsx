@@ -173,7 +173,7 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbPage>New Ability</BreadcrumbPage>
+                  <BreadcrumbPage>New Spell</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -184,7 +184,7 @@ export default function Page() {
             <div className="flex flex-col gap-4">
               <Card>
                 <CardHeader>
-                  <CardTitle>Create Ability</CardTitle>
+                  <CardTitle>Create Spell</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <Form {...form}>
@@ -209,7 +209,7 @@ export default function Page() {
                         name="prompt"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Shaman Interface</FormLabel>
+                            <FormLabel>Spell Interface</FormLabel>
                             <FormControl>
                               <Textarea
                                 placeholder="Enter your prompt here"
@@ -225,7 +225,7 @@ export default function Page() {
                         className="w-full"
                         type="submit"
                         disabled={isLoading}>
-                        {isLoading ? 'Generating...' : 'Generate Ability Code'}
+                        {isLoading ? 'Generating...' : 'Generate Spell Code'}
                         <ArrowRight />
                       </Button>
                     </form>
@@ -236,7 +236,7 @@ export default function Page() {
             <div className="flex flex-col gap-4">
               <Card className="flex-1">
                 <CardHeader>
-                  <CardTitle>Ability Code</CardTitle>
+                  <CardTitle>Spell Code</CardTitle>
                 </CardHeader>
                 <CardContent className="flex-1 min-h-0">
                   {code ? (
