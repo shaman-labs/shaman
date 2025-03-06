@@ -1,7 +1,15 @@
 'use client';
 
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
-import { Clock, FileCode, Minus, MoreVertical, Plus, User } from 'lucide-react';
+import {
+  Clock,
+  FileCode,
+  LinkIcon,
+  Minus,
+  MoreVertical,
+  Plus,
+  User,
+} from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useMemo, useCallback } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
@@ -280,10 +288,9 @@ export default function Page() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Tabs defaultValue="shaman" className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="shaman">Shaman</TabsTrigger>
-              <TabsTrigger value="sources">Sources</TabsTrigger>
-              <TabsTrigger value="abilities">Abilities</TabsTrigger>
+              <TabsTrigger value="spells">Spells</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
             </TabsList>
             <TabsContent value="shaman">
@@ -379,6 +386,30 @@ export default function Page() {
                             ) : (
                               <p className="font-mono text-sm truncate">
                                 {shaman?.creator}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-3 pt-4">
+                          <div className="bg-primary/10 p-2 rounded-md">
+                            <LinkIcon className="h-5 w-5 text-primary" />
+                          </div>
+                          <div className="flex-1 overflow-hidden">
+                            <h3 className="text-xs font-medium text-muted-foreground">
+                              IPFS Link
+                            </h3>
+                            {shaman?.metadata ? (
+                              <a
+                                href={`https://gateway.shaman.fun/ipfs/${shaman.metadata}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
+                                ipfs://{shaman.metadata}
+                              </a>
+                            ) : (
+                              <p className="text-sm text-muted-foreground">
+                                No IPFS link available
                               </p>
                             )}
                           </div>
@@ -512,37 +543,19 @@ export default function Page() {
                 </div>
               </div>
             </TabsContent>
-            <TabsContent value="sources">
+            <TabsContent value="spells">
               <Card>
                 <CardHeader>
-                  <CardTitle>Shaman Sources</CardTitle>
+                  <CardTitle>Shaman Spells</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-center py-8">
                     <p className="text-muted-foreground">
-                      Sources tab functionality will be implemented in a future
+                      Spells tab functionality will be implemented in a future
                       update.
                     </p>
                     <p className="text-muted-foreground mt-2">
-                      This shaman has {shaman?.sourceCount || 0} sources.
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-            <TabsContent value="abilities">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Shaman Abilities</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="text-center py-8">
-                    <p className="text-muted-foreground">
-                      Abilities tab functionality will be implemented in a
-                      future update.
-                    </p>
-                    <p className="text-muted-foreground mt-2">
-                      This shaman has {shaman?.abilityCount || 0} abilities.
+                      This shaman has {shaman?.abilityCount || 0} spells.
                     </p>
                   </div>
                 </CardContent>
