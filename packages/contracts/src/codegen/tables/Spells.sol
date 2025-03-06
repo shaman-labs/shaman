@@ -16,9 +16,9 @@ import { Schema } from "@latticexyz/store/src/Schema.sol";
 import { EncodedLengths, EncodedLengthsLib } from "@latticexyz/store/src/EncodedLengths.sol";
 import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 
-library Abilities {
-  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "Abilities", typeId: RESOURCE_TABLE });`
-  ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000004162696c697469657300000000000000);
+library Spells {
+  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "Spells", typeId: RESOURCE_TABLE });`
+  ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005370656c6c7300000000000000000000);
 
   FieldLayout constant _fieldLayout =
     FieldLayout.wrap(0x0038030214200400000000000000000000000000000000000000000000000000);
@@ -34,7 +34,7 @@ library Abilities {
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
     keyNames = new string[](1);
-    keyNames[0] = "abilityId";
+    keyNames[0] = "spellId";
   }
 
   /**
@@ -67,9 +67,9 @@ library Abilities {
   /**
    * @notice Get creator.
    */
-  function getCreator(bytes32 abilityId) internal view returns (address creator) {
+  function getCreator(bytes32 spellId) internal view returns (address creator) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (address(bytes20(_blob)));
@@ -78,9 +78,9 @@ library Abilities {
   /**
    * @notice Get creator.
    */
-  function _getCreator(bytes32 abilityId) internal view returns (address creator) {
+  function _getCreator(bytes32 spellId) internal view returns (address creator) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (address(bytes20(_blob)));
@@ -89,9 +89,9 @@ library Abilities {
   /**
    * @notice Set creator.
    */
-  function setCreator(bytes32 abilityId, address creator) internal {
+  function setCreator(bytes32 spellId, address creator) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((creator)), _fieldLayout);
   }
@@ -99,9 +99,9 @@ library Abilities {
   /**
    * @notice Set creator.
    */
-  function _setCreator(bytes32 abilityId, address creator) internal {
+  function _setCreator(bytes32 spellId, address creator) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((creator)), _fieldLayout);
   }
@@ -109,9 +109,9 @@ library Abilities {
   /**
    * @notice Get createdAt.
    */
-  function getCreatedAt(bytes32 abilityId) internal view returns (uint256 createdAt) {
+  function getCreatedAt(bytes32 spellId) internal view returns (uint256 createdAt) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
     return (uint256(bytes32(_blob)));
@@ -120,9 +120,9 @@ library Abilities {
   /**
    * @notice Get createdAt.
    */
-  function _getCreatedAt(bytes32 abilityId) internal view returns (uint256 createdAt) {
+  function _getCreatedAt(bytes32 spellId) internal view returns (uint256 createdAt) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
     return (uint256(bytes32(_blob)));
@@ -131,9 +131,9 @@ library Abilities {
   /**
    * @notice Set createdAt.
    */
-  function setCreatedAt(bytes32 abilityId, uint256 createdAt) internal {
+  function setCreatedAt(bytes32 spellId, uint256 createdAt) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((createdAt)), _fieldLayout);
   }
@@ -141,9 +141,9 @@ library Abilities {
   /**
    * @notice Set createdAt.
    */
-  function _setCreatedAt(bytes32 abilityId, uint256 createdAt) internal {
+  function _setCreatedAt(bytes32 spellId, uint256 createdAt) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((createdAt)), _fieldLayout);
   }
@@ -151,9 +151,9 @@ library Abilities {
   /**
    * @notice Get shamanCount.
    */
-  function getShamanCount(bytes32 abilityId) internal view returns (uint32 shamanCount) {
+  function getShamanCount(bytes32 spellId) internal view returns (uint32 shamanCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
     return (uint32(bytes4(_blob)));
@@ -162,9 +162,9 @@ library Abilities {
   /**
    * @notice Get shamanCount.
    */
-  function _getShamanCount(bytes32 abilityId) internal view returns (uint32 shamanCount) {
+  function _getShamanCount(bytes32 spellId) internal view returns (uint32 shamanCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
     return (uint32(bytes4(_blob)));
@@ -173,9 +173,9 @@ library Abilities {
   /**
    * @notice Set shamanCount.
    */
-  function setShamanCount(bytes32 abilityId, uint32 shamanCount) internal {
+  function setShamanCount(bytes32 spellId, uint32 shamanCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((shamanCount)), _fieldLayout);
   }
@@ -183,9 +183,9 @@ library Abilities {
   /**
    * @notice Set shamanCount.
    */
-  function _setShamanCount(bytes32 abilityId, uint32 shamanCount) internal {
+  function _setShamanCount(bytes32 spellId, uint32 shamanCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((shamanCount)), _fieldLayout);
   }
@@ -193,9 +193,9 @@ library Abilities {
   /**
    * @notice Get name.
    */
-  function getName(bytes32 abilityId) internal view returns (string memory name) {
+  function getName(bytes32 spellId) internal view returns (string memory name) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
     return (string(_blob));
@@ -204,9 +204,9 @@ library Abilities {
   /**
    * @notice Get name.
    */
-  function _getName(bytes32 abilityId) internal view returns (string memory name) {
+  function _getName(bytes32 spellId) internal view returns (string memory name) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
     return (string(_blob));
@@ -215,9 +215,9 @@ library Abilities {
   /**
    * @notice Set name.
    */
-  function setName(bytes32 abilityId, string memory name) internal {
+  function setName(bytes32 spellId, string memory name) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((name)));
   }
@@ -225,9 +225,9 @@ library Abilities {
   /**
    * @notice Set name.
    */
-  function _setName(bytes32 abilityId, string memory name) internal {
+  function _setName(bytes32 spellId, string memory name) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((name)));
   }
@@ -235,9 +235,9 @@ library Abilities {
   /**
    * @notice Get the length of name.
    */
-  function lengthName(bytes32 abilityId) internal view returns (uint256) {
+  function lengthName(bytes32 spellId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
     unchecked {
@@ -248,9 +248,9 @@ library Abilities {
   /**
    * @notice Get the length of name.
    */
-  function _lengthName(bytes32 abilityId) internal view returns (uint256) {
+  function _lengthName(bytes32 spellId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
     unchecked {
@@ -262,9 +262,9 @@ library Abilities {
    * @notice Get an item of name.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function getItemName(bytes32 abilityId, uint256 _index) internal view returns (string memory) {
+  function getItemName(bytes32 spellId, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     unchecked {
       bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
@@ -276,9 +276,9 @@ library Abilities {
    * @notice Get an item of name.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _getItemName(bytes32 abilityId, uint256 _index) internal view returns (string memory) {
+  function _getItemName(bytes32 spellId, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     unchecked {
       bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
@@ -289,9 +289,9 @@ library Abilities {
   /**
    * @notice Push a slice to name.
    */
-  function pushName(bytes32 abilityId, string memory _slice) internal {
+  function pushName(bytes32 spellId, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
   }
@@ -299,9 +299,9 @@ library Abilities {
   /**
    * @notice Push a slice to name.
    */
-  function _pushName(bytes32 abilityId, string memory _slice) internal {
+  function _pushName(bytes32 spellId, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
   }
@@ -309,9 +309,9 @@ library Abilities {
   /**
    * @notice Pop a slice from name.
    */
-  function popName(bytes32 abilityId) internal {
+  function popName(bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
   }
@@ -319,9 +319,9 @@ library Abilities {
   /**
    * @notice Pop a slice from name.
    */
-  function _popName(bytes32 abilityId) internal {
+  function _popName(bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
   }
@@ -329,9 +329,9 @@ library Abilities {
   /**
    * @notice Update a slice of name at `_index`.
    */
-  function updateName(bytes32 abilityId, uint256 _index, string memory _slice) internal {
+  function updateName(bytes32 spellId, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -342,9 +342,9 @@ library Abilities {
   /**
    * @notice Update a slice of name at `_index`.
    */
-  function _updateName(bytes32 abilityId, uint256 _index, string memory _slice) internal {
+  function _updateName(bytes32 spellId, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -355,9 +355,9 @@ library Abilities {
   /**
    * @notice Get metadata.
    */
-  function getMetadata(bytes32 abilityId) internal view returns (string memory metadata) {
+  function getMetadata(bytes32 spellId) internal view returns (string memory metadata) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
@@ -366,9 +366,9 @@ library Abilities {
   /**
    * @notice Get metadata.
    */
-  function _getMetadata(bytes32 abilityId) internal view returns (string memory metadata) {
+  function _getMetadata(bytes32 spellId) internal view returns (string memory metadata) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
@@ -377,9 +377,9 @@ library Abilities {
   /**
    * @notice Set metadata.
    */
-  function setMetadata(bytes32 abilityId, string memory metadata) internal {
+  function setMetadata(bytes32 spellId, string memory metadata) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreSwitch.setDynamicField(_tableId, _keyTuple, 1, bytes((metadata)));
   }
@@ -387,9 +387,9 @@ library Abilities {
   /**
    * @notice Set metadata.
    */
-  function _setMetadata(bytes32 abilityId, string memory metadata) internal {
+  function _setMetadata(bytes32 spellId, string memory metadata) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreCore.setDynamicField(_tableId, _keyTuple, 1, bytes((metadata)));
   }
@@ -397,9 +397,9 @@ library Abilities {
   /**
    * @notice Get the length of metadata.
    */
-  function lengthMetadata(bytes32 abilityId) internal view returns (uint256) {
+  function lengthMetadata(bytes32 spellId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
@@ -410,9 +410,9 @@ library Abilities {
   /**
    * @notice Get the length of metadata.
    */
-  function _lengthMetadata(bytes32 abilityId) internal view returns (uint256) {
+  function _lengthMetadata(bytes32 spellId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
@@ -424,9 +424,9 @@ library Abilities {
    * @notice Get an item of metadata.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function getItemMetadata(bytes32 abilityId, uint256 _index) internal view returns (string memory) {
+  function getItemMetadata(bytes32 spellId, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     unchecked {
       bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
@@ -438,9 +438,9 @@ library Abilities {
    * @notice Get an item of metadata.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _getItemMetadata(bytes32 abilityId, uint256 _index) internal view returns (string memory) {
+  function _getItemMetadata(bytes32 spellId, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     unchecked {
       bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
@@ -451,9 +451,9 @@ library Abilities {
   /**
    * @notice Push a slice to metadata.
    */
-  function pushMetadata(bytes32 abilityId, string memory _slice) internal {
+  function pushMetadata(bytes32 spellId, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
@@ -461,9 +461,9 @@ library Abilities {
   /**
    * @notice Push a slice to metadata.
    */
-  function _pushMetadata(bytes32 abilityId, string memory _slice) internal {
+  function _pushMetadata(bytes32 spellId, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreCore.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
@@ -471,9 +471,9 @@ library Abilities {
   /**
    * @notice Pop a slice from metadata.
    */
-  function popMetadata(bytes32 abilityId) internal {
+  function popMetadata(bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
@@ -481,9 +481,9 @@ library Abilities {
   /**
    * @notice Pop a slice from metadata.
    */
-  function _popMetadata(bytes32 abilityId) internal {
+  function _popMetadata(bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreCore.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
@@ -491,9 +491,9 @@ library Abilities {
   /**
    * @notice Update a slice of metadata at `_index`.
    */
-  function updateMetadata(bytes32 abilityId, uint256 _index, string memory _slice) internal {
+  function updateMetadata(bytes32 spellId, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -504,9 +504,9 @@ library Abilities {
   /**
    * @notice Update a slice of metadata at `_index`.
    */
-  function _updateMetadata(bytes32 abilityId, uint256 _index, string memory _slice) internal {
+  function _updateMetadata(bytes32 spellId, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
@@ -518,14 +518,14 @@ library Abilities {
    * @notice Get the full data.
    */
   function get(
-    bytes32 abilityId
+    bytes32 spellId
   )
     internal
     view
     returns (address creator, uint256 createdAt, uint32 shamanCount, string memory name, string memory metadata)
   {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) = StoreSwitch.getRecord(
       _tableId,
@@ -539,14 +539,14 @@ library Abilities {
    * @notice Get the full data.
    */
   function _get(
-    bytes32 abilityId
+    bytes32 spellId
   )
     internal
     view
     returns (address creator, uint256 createdAt, uint32 shamanCount, string memory name, string memory metadata)
   {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) = StoreCore.getRecord(
       _tableId,
@@ -560,7 +560,7 @@ library Abilities {
    * @notice Set the full data using individual values.
    */
   function set(
-    bytes32 abilityId,
+    bytes32 spellId,
     address creator,
     uint256 createdAt,
     uint32 shamanCount,
@@ -573,7 +573,7 @@ library Abilities {
     bytes memory _dynamicData = encodeDynamic(name, metadata);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
@@ -582,7 +582,7 @@ library Abilities {
    * @notice Set the full data using individual values.
    */
   function _set(
-    bytes32 abilityId,
+    bytes32 spellId,
     address creator,
     uint256 createdAt,
     uint32 shamanCount,
@@ -595,7 +595,7 @@ library Abilities {
     bytes memory _dynamicData = encodeDynamic(name, metadata);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
@@ -657,9 +657,9 @@ library Abilities {
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(bytes32 abilityId) internal {
+  function deleteRecord(bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -667,9 +667,9 @@ library Abilities {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(bytes32 abilityId) internal {
+  function _deleteRecord(bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -728,9 +728,9 @@ library Abilities {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(bytes32 abilityId) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(bytes32 spellId) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = abilityId;
+    _keyTuple[0] = spellId;
 
     return _keyTuple;
   }

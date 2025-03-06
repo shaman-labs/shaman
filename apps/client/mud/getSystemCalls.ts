@@ -180,14 +180,14 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
-  // Shaman ability management
-  const addAbilityToShaman = async (shamanId: Hex, abilityId: Hex) => {
-    await worldContract.simulate.addAbilityToShaman([shamanId, abilityId], {
+  // Shaman spell management
+  const addSpellToShaman = async (shamanId: Hex, spellId: Hex) => {
+    await worldContract.simulate.addSpellToShaman([shamanId, spellId], {
       account: account.address,
     });
 
-    const hash = await worldContract.write.addAbilityToShaman(
-      [shamanId, abilityId],
+    const hash = await worldContract.write.addSpellToShaman(
+      [shamanId, spellId],
       {
         chain,
         account,
@@ -197,16 +197,13 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
-  const removeAbilityFromShaman = async (shamanId: Hex, abilityId: Hex) => {
-    await worldContract.simulate.removeAbilityFromShaman(
-      [shamanId, abilityId],
-      {
-        account: account.address,
-      }
-    );
+  const removeSpellFromShaman = async (shamanId: Hex, spellId: Hex) => {
+    await worldContract.simulate.removeSpellFromShaman([shamanId, spellId], {
+      account: account.address,
+    });
 
-    const hash = await worldContract.write.removeAbilityFromShaman(
-      [shamanId, abilityId],
+    const hash = await worldContract.write.removeSpellFromShaman(
+      [shamanId, spellId],
       {
         chain,
         account,
@@ -249,13 +246,13 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
-  // Ability management
-  const createAbility = async (name: string, metadata: string) => {
-    await worldContract.simulate.createAbility([name, metadata], {
+  // Spell management
+  const createSpell = async (name: string, metadata: string) => {
+    await worldContract.simulate.createSpell([name, metadata], {
       account: account.address,
     });
 
-    const hash = await worldContract.write.createAbility([name, metadata], {
+    const hash = await worldContract.write.createSpell([name, metadata], {
       chain,
       account,
     });
@@ -263,13 +260,13 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
-  const updateAbilityMetadata = async (abilityId: Hex, metadata: string) => {
-    await worldContract.simulate.updateAbilityMetadata([abilityId, metadata], {
+  const updateSpellMetadata = async (spellId: Hex, metadata: string) => {
+    await worldContract.simulate.updateSpellMetadata([spellId, metadata], {
       account: account.address,
     });
 
-    const hash = await worldContract.write.updateAbilityMetadata(
-      [abilityId, metadata],
+    const hash = await worldContract.write.updateSpellMetadata(
+      [spellId, metadata],
       {
         chain,
         account,
@@ -279,18 +276,15 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
-  const updateAbilityName = async (abilityId: Hex, name: string) => {
-    await worldContract.simulate.updateAbilityName([abilityId, name], {
+  const updateSpellName = async (spellId: Hex, name: string) => {
+    await worldContract.simulate.updateSpellName([spellId, name], {
       account: account.address,
     });
 
-    const hash = await worldContract.write.updateAbilityName(
-      [abilityId, name],
-      {
-        chain,
-        account,
-      }
-    );
+    const hash = await worldContract.write.updateSpellName([spellId, name], {
+      chain,
+      account,
+    });
 
     return waitForTransaction(hash);
   };
@@ -423,24 +417,24 @@ export function getSystemCalls({
     return (await worldContract.read.getShamanState([shamanId])) as number;
   };
 
-  const getShamanAbilityIds = async (shamanId: Hex): Promise<Hex[]> => {
-    return (await worldContract.read.getShamanAbilityIds([shamanId])) as Hex[];
+  const getShamanSpellIds = async (shamanId: Hex): Promise<Hex[]> => {
+    return (await worldContract.read.getShamanSpellIds([shamanId])) as Hex[];
   };
 
   const getShamanSourceIds = async (shamanId: Hex): Promise<Hex[]> => {
     return (await worldContract.read.getShamanSourceIds([shamanId])) as Hex[];
   };
 
-  const getAbilityName = async (abilityId: Hex): Promise<string> => {
-    return (await worldContract.read.getAbilityName([abilityId])) as string;
+  const getSpellName = async (spellId: Hex): Promise<string> => {
+    return (await worldContract.read.getSpellName([spellId])) as string;
   };
 
-  const getAbilityMetadata = async (abilityId: Hex): Promise<string> => {
-    return (await worldContract.read.getAbilityMetadata([abilityId])) as string;
+  const getSpellMetadata = async (spellId: Hex): Promise<string> => {
+    return (await worldContract.read.getSpellMetadata([spellId])) as string;
   };
 
-  const getAbilityCreator = async (abilityId: Hex): Promise<Hex> => {
-    return (await worldContract.read.getAbilityCreator([abilityId])) as Hex;
+  const getSpellCreator = async (spellId: Hex): Promise<Hex> => {
+    return (await worldContract.read.getSpellCreator([spellId])) as Hex;
   };
 
   return {
@@ -449,13 +443,13 @@ export function getSystemCalls({
     updateShamanStatus,
     depositShamanBalance,
     withdrawShamanBalance,
-    addAbilityToShaman,
-    removeAbilityFromShaman,
+    addSpellToShaman,
+    removeSpellFromShaman,
     addSourceToShaman,
     removeSourceFromShaman,
-    createAbility,
-    updateAbilityMetadata,
-    updateAbilityName,
+    createSpell,
+    updateSpellMetadata,
+    updateSpellName,
     createSource,
     purchase,
     transferAsset,
@@ -471,10 +465,10 @@ export function getSystemCalls({
     getShamanBalance,
     getShamanActive,
     getShamanState,
-    getShamanAbilityIds,
+    getShamanSpellIds,
     getShamanSourceIds,
-    getAbilityName,
-    getAbilityMetadata,
-    getAbilityCreator,
+    getSpellName,
+    getSpellMetadata,
+    getSpellCreator,
   };
 }

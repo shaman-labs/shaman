@@ -1,24 +1,6 @@
 export const IWorld = [
   {
     "type": "function",
-    "name": "addAbilityToShaman",
-    "inputs": [
-      {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "abilityId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "addSourceToShaman",
     "inputs": [
       {
@@ -28,6 +10,24 @@ export const IWorld = [
       },
       {
         "name": "sourceId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "addSpellToShaman",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "spellId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -185,24 +185,6 @@ export const IWorld = [
   },
   {
     "type": "function",
-    "name": "createAbility",
-    "inputs": [
-      {
-        "name": "name",
-        "type": "string",
-        "internalType": "string"
-      },
-      {
-        "name": "metadata",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "createShaman",
     "inputs": [
       {
@@ -216,7 +198,7 @@ export const IWorld = [
         "internalType": "string"
       },
       {
-        "name": "abilityIds",
+        "name": "spellIds",
         "type": "bytes32[]",
         "internalType": "bytes32[]"
       },
@@ -237,6 +219,24 @@ export const IWorld = [
   {
     "type": "function",
     "name": "createSource",
+    "inputs": [
+      {
+        "name": "name",
+        "type": "string",
+        "internalType": "string"
+      },
+      {
+        "name": "metadata",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "createSpell",
     "inputs": [
       {
         "name": "name",
@@ -318,63 +318,6 @@ export const IWorld = [
     ],
     "outputs": [],
     "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "getAbilityCreator",
-    "inputs": [
-      {
-        "name": "abilityId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "address",
-        "internalType": "address"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getAbilityMetadata",
-    "inputs": [
-      {
-        "name": "abilityId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getAbilityName",
-    "inputs": [
-      {
-        "name": "abilityId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "stateMutability": "view"
   },
   {
     "type": "function",
@@ -712,25 +655,6 @@ export const IWorld = [
   },
   {
     "type": "function",
-    "name": "getShamanAbilityIds",
-    "inputs": [
-      {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "bytes32[]",
-        "internalType": "bytes32[]"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "getShamanActive",
     "inputs": [
       {
@@ -788,10 +712,10 @@ export const IWorld = [
   },
   {
     "type": "function",
-    "name": "getShamanIdsByAbilityId",
+    "name": "getShamanIdsBySourceId",
     "inputs": [
       {
-        "name": "abilityId",
+        "name": "sourceId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -807,10 +731,10 @@ export const IWorld = [
   },
   {
     "type": "function",
-    "name": "getShamanIdsBySourceId",
+    "name": "getShamanIdsBySpellId",
     "inputs": [
       {
-        "name": "sourceId",
+        "name": "spellId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -883,6 +807,25 @@ export const IWorld = [
   },
   {
     "type": "function",
+    "name": "getShamanSpellIds",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bytes32[]",
+        "internalType": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getShamanState",
     "inputs": [
       {
@@ -896,6 +839,63 @@ export const IWorld = [
         "name": "",
         "type": "uint8",
         "internalType": "enum ShamanState"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getSpellCreator",
+    "inputs": [
+      {
+        "name": "spellId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getSpellMetadata",
+    "inputs": [
+      {
+        "name": "spellId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getSpellName",
+    "inputs": [
+      {
+        "name": "spellId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "string",
+        "internalType": "string"
       }
     ],
     "stateMutability": "view"
@@ -1310,24 +1310,6 @@ export const IWorld = [
   },
   {
     "type": "function",
-    "name": "removeAbilityFromShaman",
-    "inputs": [
-      {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "abilityId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "removeSourceFromShaman",
     "inputs": [
       {
@@ -1337,6 +1319,24 @@ export const IWorld = [
       },
       {
         "name": "sourceId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "removeSpellFromShaman",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "spellId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -1750,42 +1750,6 @@ export const IWorld = [
   },
   {
     "type": "function",
-    "name": "updateAbilityMetadata",
-    "inputs": [
-      {
-        "name": "abilityId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "metadata",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
-    "name": "updateAbilityName",
-    "inputs": [
-      {
-        "name": "abilityId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "name",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "outputs": [],
-    "stateMutability": "nonpayable"
-  },
-  {
-    "type": "function",
     "name": "updateShamanMetadata",
     "inputs": [
       {
@@ -1833,6 +1797,42 @@ export const IWorld = [
         "name": "active",
         "type": "bool",
         "internalType": "bool"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "updateSpellMetadata",
+    "inputs": [
+      {
+        "name": "spellId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "metadata",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "updateSpellName",
+    "inputs": [
+      {
+        "name": "spellId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "name",
+        "type": "string",
+        "internalType": "string"
       }
     ],
     "outputs": [],

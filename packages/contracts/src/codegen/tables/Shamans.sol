@@ -51,7 +51,7 @@ library Shamans {
     fieldNames[2] = "createdAt";
     fieldNames[3] = "active";
     fieldNames[4] = "balance";
-    fieldNames[5] = "abilityCount";
+    fieldNames[5] = "spellCount";
     fieldNames[6] = "sourceCount";
     fieldNames[7] = "name";
     fieldNames[8] = "metadata";
@@ -282,9 +282,9 @@ library Shamans {
   }
 
   /**
-   * @notice Get abilityCount.
+   * @notice Get spellCount.
    */
-  function getAbilityCount(bytes32 shamanId) internal view returns (uint32 abilityCount) {
+  function getSpellCount(bytes32 shamanId) internal view returns (uint32 spellCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -293,9 +293,9 @@ library Shamans {
   }
 
   /**
-   * @notice Get abilityCount.
+   * @notice Get spellCount.
    */
-  function _getAbilityCount(bytes32 shamanId) internal view returns (uint32 abilityCount) {
+  function _getSpellCount(bytes32 shamanId) internal view returns (uint32 spellCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -304,23 +304,23 @@ library Shamans {
   }
 
   /**
-   * @notice Set abilityCount.
+   * @notice Set spellCount.
    */
-  function setAbilityCount(bytes32 shamanId, uint32 abilityCount) internal {
+  function setSpellCount(bytes32 shamanId, uint32 spellCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((abilityCount)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((spellCount)), _fieldLayout);
   }
 
   /**
-   * @notice Set abilityCount.
+   * @notice Set spellCount.
    */
-  function _setAbilityCount(bytes32 shamanId, uint32 abilityCount) internal {
+  function _setSpellCount(bytes32 shamanId, uint32 spellCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((abilityCount)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((spellCount)), _fieldLayout);
   }
 
   /**
@@ -703,7 +703,7 @@ library Shamans {
       uint256 createdAt,
       bool active,
       uint256 balance,
-      uint32 abilityCount,
+      uint32 spellCount,
       uint32 sourceCount,
       string memory name,
       string memory metadata
@@ -734,7 +734,7 @@ library Shamans {
       uint256 createdAt,
       bool active,
       uint256 balance,
-      uint32 abilityCount,
+      uint32 spellCount,
       uint32 sourceCount,
       string memory name,
       string memory metadata
@@ -761,12 +761,12 @@ library Shamans {
     uint256 createdAt,
     bool active,
     uint256 balance,
-    uint32 abilityCount,
+    uint32 spellCount,
     uint32 sourceCount,
     string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance, abilityCount, sourceCount);
+    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance, spellCount, sourceCount);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
@@ -787,12 +787,12 @@ library Shamans {
     uint256 createdAt,
     bool active,
     uint256 balance,
-    uint32 abilityCount,
+    uint32 spellCount,
     uint32 sourceCount,
     string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance, abilityCount, sourceCount);
+    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance, spellCount, sourceCount);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
@@ -817,7 +817,7 @@ library Shamans {
       uint256 createdAt,
       bool active,
       uint256 balance,
-      uint32 abilityCount,
+      uint32 spellCount,
       uint32 sourceCount
     )
   {
@@ -831,7 +831,7 @@ library Shamans {
 
     balance = (uint256(Bytes.getBytes32(_blob, 54)));
 
-    abilityCount = (uint32(Bytes.getBytes4(_blob, 86)));
+    spellCount = (uint32(Bytes.getBytes4(_blob, 86)));
 
     sourceCount = (uint32(Bytes.getBytes4(_blob, 90)));
   }
@@ -876,13 +876,13 @@ library Shamans {
       uint256 createdAt,
       bool active,
       uint256 balance,
-      uint32 abilityCount,
+      uint32 spellCount,
       uint32 sourceCount,
       string memory name,
       string memory metadata
     )
   {
-    (state, creator, createdAt, active, balance, abilityCount, sourceCount) = decodeStatic(_staticData);
+    (state, creator, createdAt, active, balance, spellCount, sourceCount) = decodeStatic(_staticData);
 
     (name, metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
@@ -917,10 +917,10 @@ library Shamans {
     uint256 createdAt,
     bool active,
     uint256 balance,
-    uint32 abilityCount,
+    uint32 spellCount,
     uint32 sourceCount
   ) internal pure returns (bytes memory) {
-    return abi.encodePacked(state, creator, createdAt, active, balance, abilityCount, sourceCount);
+    return abi.encodePacked(state, creator, createdAt, active, balance, spellCount, sourceCount);
   }
 
   /**
@@ -957,12 +957,12 @@ library Shamans {
     uint256 createdAt,
     bool active,
     uint256 balance,
-    uint32 abilityCount,
+    uint32 spellCount,
     uint32 sourceCount,
     string memory name,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance, abilityCount, sourceCount);
+    bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance, spellCount, sourceCount);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);

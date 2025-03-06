@@ -16,9 +16,9 @@ import { Schema } from "@latticexyz/store/src/Schema.sol";
 import { EncodedLengths, EncodedLengthsLib } from "@latticexyz/store/src/EncodedLengths.sol";
 import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 
-library AbilityNames {
-  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "AbilityNames", typeId: RESOURCE_TABLE });`
-  ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000004162696c6974794e616d657300000000);
+library SpellNames {
+  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "SpellNames", typeId: RESOURCE_TABLE });`
+  ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005370656c6c4e616d6573000000000000);
 
   FieldLayout constant _fieldLayout =
     FieldLayout.wrap(0x0020010020000000000000000000000000000000000000000000000000000000);
@@ -43,7 +43,7 @@ library AbilityNames {
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](1);
-    fieldNames[0] = "abilityId";
+    fieldNames[0] = "spellId";
   }
 
   /**
@@ -61,9 +61,9 @@ library AbilityNames {
   }
 
   /**
-   * @notice Get abilityId.
+   * @notice Get spellId.
    */
-  function getAbilityId(bytes32 name) internal view returns (bytes32 abilityId) {
+  function getSpellId(bytes32 name) internal view returns (bytes32 spellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = name;
 
@@ -72,9 +72,9 @@ library AbilityNames {
   }
 
   /**
-   * @notice Get abilityId.
+   * @notice Get spellId.
    */
-  function _getAbilityId(bytes32 name) internal view returns (bytes32 abilityId) {
+  function _getSpellId(bytes32 name) internal view returns (bytes32 spellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = name;
 
@@ -83,9 +83,9 @@ library AbilityNames {
   }
 
   /**
-   * @notice Get abilityId.
+   * @notice Get spellId.
    */
-  function get(bytes32 name) internal view returns (bytes32 abilityId) {
+  function get(bytes32 name) internal view returns (bytes32 spellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = name;
 
@@ -94,9 +94,9 @@ library AbilityNames {
   }
 
   /**
-   * @notice Get abilityId.
+   * @notice Get spellId.
    */
-  function _get(bytes32 name) internal view returns (bytes32 abilityId) {
+  function _get(bytes32 name) internal view returns (bytes32 spellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = name;
 
@@ -105,43 +105,43 @@ library AbilityNames {
   }
 
   /**
-   * @notice Set abilityId.
+   * @notice Set spellId.
    */
-  function setAbilityId(bytes32 name, bytes32 abilityId) internal {
+  function setSpellId(bytes32 name, bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = name;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((abilityId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((spellId)), _fieldLayout);
   }
 
   /**
-   * @notice Set abilityId.
+   * @notice Set spellId.
    */
-  function _setAbilityId(bytes32 name, bytes32 abilityId) internal {
+  function _setSpellId(bytes32 name, bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = name;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((abilityId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((spellId)), _fieldLayout);
   }
 
   /**
-   * @notice Set abilityId.
+   * @notice Set spellId.
    */
-  function set(bytes32 name, bytes32 abilityId) internal {
+  function set(bytes32 name, bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = name;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((abilityId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((spellId)), _fieldLayout);
   }
 
   /**
-   * @notice Set abilityId.
+   * @notice Set spellId.
    */
-  function _set(bytes32 name, bytes32 abilityId) internal {
+  function _set(bytes32 name, bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = name;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((abilityId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((spellId)), _fieldLayout);
   }
 
   /**
@@ -168,8 +168,8 @@ library AbilityNames {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(bytes32 abilityId) internal pure returns (bytes memory) {
-    return abi.encodePacked(abilityId);
+  function encodeStatic(bytes32 spellId) internal pure returns (bytes memory) {
+    return abi.encodePacked(spellId);
   }
 
   /**
@@ -178,8 +178,8 @@ library AbilityNames {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(bytes32 abilityId) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(abilityId);
+  function encode(bytes32 spellId) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
+    bytes memory _staticData = encodeStatic(spellId);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;

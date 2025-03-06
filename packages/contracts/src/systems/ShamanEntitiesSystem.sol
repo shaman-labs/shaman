@@ -2,31 +2,31 @@
 pragma solidity >=0.8.24;
 import { BaseSystem } from "./BaseSystem.sol";
 import { ShamanEntitiesLib } from "../lib/ShamanEntitiesLib.sol";
-import { Shamans, Abilities, Sources, ShamanAbilityIndex, ShamanSourceIndex, SourceShamanIndex, AbilityShamanIndex } from "../codegen/index.sol";
+import { Shamans, Spells, Sources, ShamanSpellIndex, ShamanSourceIndex, SourceShamanIndex, SpellShamanIndex } from "../codegen/index.sol";
 
 contract ShamanEntitiesSystem is BaseSystem {
-  function addAbilityToShaman(
+  function addSpellToShaman(
     bytes32 shamanId,
-    bytes32 abilityId
+    bytes32 spellId
   )
     public
     onlyShamanCreator(shamanId)
     onlyActiveShaman(shamanId)
     onlyIdleShaman(shamanId)
   {
-    ShamanEntitiesLib.addAbility(shamanId, abilityId);
+    ShamanEntitiesLib.addSpell(shamanId, spellId);
   }
 
-  function removeAbilityFromShaman(
+  function removeSpellFromShaman(
     bytes32 shamanId,
-    bytes32 abilityId
+    bytes32 spellId
   )
     public
     onlyShamanCreator(shamanId)
     onlyActiveShaman(shamanId)
     onlyIdleShaman(shamanId)
   {
-    ShamanEntitiesLib.removeAbility(shamanId, abilityId);
+    ShamanEntitiesLib.removeSpell(shamanId, spellId);
   }
 
   function addSourceToShaman(
@@ -53,17 +53,17 @@ contract ShamanEntitiesSystem is BaseSystem {
     ShamanEntitiesLib.removeSource(shamanId, sourceId);
   }
 
-  function getShamanAbilityIds(
+  function getShamanSpellIds(
     bytes32 shamanId
   ) public view returns (bytes32[] memory) {
-    uint32 count = Shamans.getAbilityCount(shamanId);
-    bytes32[] memory abilityIds = new bytes32[](count);
+    uint32 count = Shamans.getSpellCount(shamanId);
+    bytes32[] memory spellIds = new bytes32[](count);
 
     for (uint32 i = 0; i < count; i++) {
-      abilityIds[i] = ShamanAbilityIndex.getAbilityId(shamanId, i);
+      spellIds[i] = ShamanSpellIndex.getSpellId(shamanId, i);
     }
 
-    return abilityIds;
+    return spellIds;
   }
 
   function getShamanSourceIds(
@@ -92,14 +92,14 @@ contract ShamanEntitiesSystem is BaseSystem {
     return shamanIds;
   }
 
-  function getShamanIdsByAbilityId(
-    bytes32 abilityId
+  function getShamanIdsBySpellId(
+    bytes32 spellId
   ) public view returns (bytes32[] memory) {
-    uint32 count = Abilities.getShamanCount(abilityId);
+    uint32 count = Spells.getShamanCount(spellId);
     bytes32[] memory shamanIds = new bytes32[](count);
 
     for (uint32 i = 0; i < count; i++) {
-      shamanIds[i] = AbilityShamanIndex.getShamanId(abilityId, i);
+      shamanIds[i] = SpellShamanIndex.getShamanId(spellId, i);
     }
 
     return shamanIds;

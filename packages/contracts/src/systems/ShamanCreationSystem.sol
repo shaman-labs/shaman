@@ -13,7 +13,7 @@ contract ShamanCreationSystem is BaseSystem {
   function createShaman(
     uint256 balance,
     string memory name,
-    bytes32[] memory abilityIds,
+    bytes32[] memory spellIds,
     bytes32[] memory sourceIds,
     string memory metadata
   ) public {
@@ -38,15 +38,15 @@ contract ShamanCreationSystem is BaseSystem {
       block.timestamp,
       true,
       balance,
-      0, // abilityCount
+      0, // spellCount
       0, // sourceCount
       name,
       metadata
     );
 
-    // add initial abilities if provided
-    for (uint256 i = 0; i < abilityIds.length; i++) {
-      ShamanEntitiesLib.addAbility(shamanId, abilityIds[i]);
+    // add initial spells if provided
+    for (uint256 i = 0; i < spellIds.length; i++) {
+      ShamanEntitiesLib.addSpell(shamanId, spellIds[i]);
     }
 
     // add initial sources if provided

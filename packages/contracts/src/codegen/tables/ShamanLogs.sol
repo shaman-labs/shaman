@@ -48,7 +48,7 @@ library ShamanLogs {
     fieldNames = new string[](7);
     fieldNames[0] = "logType";
     fieldNames[1] = "shamanId";
-    fieldNames[2] = "abilityId";
+    fieldNames[2] = "spellId";
     fieldNames[3] = "amount";
     fieldNames[4] = "success";
     fieldNames[5] = "createdAt";
@@ -154,9 +154,9 @@ library ShamanLogs {
   }
 
   /**
-   * @notice Get abilityId.
+   * @notice Get spellId.
    */
-  function getAbilityId(bytes32 logId) internal view returns (bytes32 abilityId) {
+  function getSpellId(bytes32 logId) internal view returns (bytes32 spellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = logId;
 
@@ -165,9 +165,9 @@ library ShamanLogs {
   }
 
   /**
-   * @notice Get abilityId.
+   * @notice Get spellId.
    */
-  function _getAbilityId(bytes32 logId) internal view returns (bytes32 abilityId) {
+  function _getSpellId(bytes32 logId) internal view returns (bytes32 spellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = logId;
 
@@ -176,23 +176,23 @@ library ShamanLogs {
   }
 
   /**
-   * @notice Set abilityId.
+   * @notice Set spellId.
    */
-  function setAbilityId(bytes32 logId, bytes32 abilityId) internal {
+  function setSpellId(bytes32 logId, bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = logId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((abilityId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((spellId)), _fieldLayout);
   }
 
   /**
-   * @notice Set abilityId.
+   * @notice Set spellId.
    */
-  function _setAbilityId(bytes32 logId, bytes32 abilityId) internal {
+  function _setSpellId(bytes32 logId, bytes32 spellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = logId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((abilityId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((spellId)), _fieldLayout);
   }
 
   /**
@@ -494,7 +494,7 @@ library ShamanLogs {
     returns (
       LogType logType,
       bytes32 shamanId,
-      bytes32 abilityId,
+      bytes32 spellId,
       uint256 amount,
       bool success,
       uint256 createdAt,
@@ -523,7 +523,7 @@ library ShamanLogs {
     returns (
       LogType logType,
       bytes32 shamanId,
-      bytes32 abilityId,
+      bytes32 spellId,
       uint256 amount,
       bool success,
       uint256 createdAt,
@@ -548,13 +548,13 @@ library ShamanLogs {
     bytes32 logId,
     LogType logType,
     bytes32 shamanId,
-    bytes32 abilityId,
+    bytes32 spellId,
     uint256 amount,
     bool success,
     uint256 createdAt,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(logType, shamanId, abilityId, amount, success, createdAt);
+    bytes memory _staticData = encodeStatic(logType, shamanId, spellId, amount, success, createdAt);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);
@@ -572,13 +572,13 @@ library ShamanLogs {
     bytes32 logId,
     LogType logType,
     bytes32 shamanId,
-    bytes32 abilityId,
+    bytes32 spellId,
     uint256 amount,
     bool success,
     uint256 createdAt,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(logType, shamanId, abilityId, amount, success, createdAt);
+    bytes memory _staticData = encodeStatic(logType, shamanId, spellId, amount, success, createdAt);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);
@@ -597,13 +597,13 @@ library ShamanLogs {
   )
     internal
     pure
-    returns (LogType logType, bytes32 shamanId, bytes32 abilityId, uint256 amount, bool success, uint256 createdAt)
+    returns (LogType logType, bytes32 shamanId, bytes32 spellId, uint256 amount, bool success, uint256 createdAt)
   {
     logType = LogType(uint8(Bytes.getBytes1(_blob, 0)));
 
     shamanId = (Bytes.getBytes32(_blob, 1));
 
-    abilityId = (Bytes.getBytes32(_blob, 33));
+    spellId = (Bytes.getBytes32(_blob, 33));
 
     amount = (uint256(Bytes.getBytes32(_blob, 65)));
 
@@ -643,14 +643,14 @@ library ShamanLogs {
     returns (
       LogType logType,
       bytes32 shamanId,
-      bytes32 abilityId,
+      bytes32 spellId,
       uint256 amount,
       bool success,
       uint256 createdAt,
       string memory metadata
     )
   {
-    (logType, shamanId, abilityId, amount, success, createdAt) = decodeStatic(_staticData);
+    (logType, shamanId, spellId, amount, success, createdAt) = decodeStatic(_staticData);
 
     (metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
@@ -682,12 +682,12 @@ library ShamanLogs {
   function encodeStatic(
     LogType logType,
     bytes32 shamanId,
-    bytes32 abilityId,
+    bytes32 spellId,
     uint256 amount,
     bool success,
     uint256 createdAt
   ) internal pure returns (bytes memory) {
-    return abi.encodePacked(logType, shamanId, abilityId, amount, success, createdAt);
+    return abi.encodePacked(logType, shamanId, spellId, amount, success, createdAt);
   }
 
   /**
@@ -718,13 +718,13 @@ library ShamanLogs {
   function encode(
     LogType logType,
     bytes32 shamanId,
-    bytes32 abilityId,
+    bytes32 spellId,
     uint256 amount,
     bool success,
     uint256 createdAt,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(logType, shamanId, abilityId, amount, success, createdAt);
+    bytes memory _staticData = encodeStatic(logType, shamanId, spellId, amount, success, createdAt);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);
