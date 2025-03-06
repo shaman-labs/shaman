@@ -152,6 +152,7 @@ export default function Page() {
   const selectedSpell = shamanSpells?.find(
     (spell) => spell.spellId === spellId
   );
+  const spellLogs = shamanLogs?.filter((log) => log.spellId === spellId);
 
   useEffect(() => {
     if (shamanSpells?.length) {
@@ -192,6 +193,20 @@ export default function Page() {
         amount: log.amount,
       })) || [],
     [shamanLogs]
+  );
+
+  const spellTableData: ShamanLogsTableData[] = useMemo(
+    () =>
+      spellLogs?.map((log) => ({
+        id: log.shamanLogId,
+        logType: log.logType as ShamanLogType,
+        timestamp: new Date(Number(log.createdAt) * 1000).toISOString(),
+        metadata: log.metadata,
+        shamanId: log.shamanId,
+        success: log.success,
+        amount: log.amount,
+      })) || [],
+    [spellLogs]
   );
 
   const columns: ColumnDef<ShamanLogsTableData>[] = useMemo(
@@ -608,27 +623,38 @@ export default function Page() {
                               </div>
                             </CardHeader>
                             <CardContent>
-                              <div className="grid grid-cols-3 gap-4 mb-4">
+                              <div className="grid grid-cols-2 gap-4 mb-4">
                                 <div className="flex flex-col gap-1 p-3 rounded-lg border">
                                   <p className="text-xs text-muted-foreground">
                                     Last Execution
                                   </p>
                                   <p className="text-sm font-medium">
-                                    2 hours ago
+                                    {spellLogs && spellLogs.length > 0
+                                      ? formatDistanceToNow(
+                                          new Date(
+                                            Number(spellLogs[0].createdAt) *
+                                              1000
+                                          ),
+                                          { addSuffix: true }
+                                        )
+                                      : 'Never'}
                                   </p>
                                 </div>
                                 <div className="flex flex-col gap-1 p-3 rounded-lg border">
                                   <p className="text-xs text-muted-foreground">
                                     Success Rate
                                   </p>
-                                  <p className="text-sm font-medium">98%</p>
-                                </div>
-                                <div className="flex flex-col gap-1 p-3 rounded-lg border">
-                                  <p className="text-xs text-muted-foreground">
-                                    ZUG Cost
-                                  </p>
                                   <p className="text-sm font-medium">
-                                    0.5 ZUG/execution
+                                    {spellLogs && spellLogs.length > 0
+                                      ? Math.round(
+                                          (spellLogs.filter(
+                                            (log) => log.success
+                                          ).length /
+                                            spellLogs.length) *
+                                            100
+                                        )
+                                      : 0}
+                                    %
                                   </p>
                                 </div>
                               </div>
@@ -640,61 +666,20 @@ export default function Page() {
                               <CardTitle>Spell Execution Logs</CardTitle>
                             </CardHeader>
                             <CardContent>
-                              <div className="space-y-4">
-                                {[
-                                  {
-                                    id: 'log-1',
-                                    timestamp: '2023-09-15T14:30:00Z',
-                                    status: 'success',
-                                    message:
-                                      'Successfully fetched weather data for New York',
-                                  },
-                                  {
-                                    id: 'log-2',
-                                    timestamp: '2023-09-14T14:30:00Z',
-                                    status: 'success',
-                                    message:
-                                      'Successfully fetched weather data for New York',
-                                  },
-                                  {
-                                    id: 'log-3',
-                                    timestamp: '2023-09-13T14:30:00Z',
-                                    status: 'error',
-                                    message: 'API rate limit exceeded',
-                                  },
-                                  {
-                                    id: 'log-4',
-                                    timestamp: '2023-09-12T14:30:00Z',
-                                    status: 'success',
-                                    message:
-                                      'Successfully fetched weather data for New York',
-                                  },
-                                ].map((log) => (
-                                  <div
-                                    key={log.id}
-                                    className="border rounded-md p-3">
-                                    <div className="flex justify-between items-center mb-2">
-                                      <div className="flex items-center gap-2">
-                                        <div
-                                          className={`w-2 h-2 rounded-full ${log.status === 'success' ? 'bg-green-500' : 'bg-red-500'}`}
-                                        />
-                                        <span className="text-sm font-medium">
-                                          {log.status === 'success'
-                                            ? 'Success'
-                                            : 'Failed'}
-                                        </span>
-                                      </div>
-                                      <span className="text-xs text-muted-foreground">
-                                        {formatDistanceToNow(
-                                          new Date(log.timestamp),
-                                          { addSuffix: true }
-                                        )}
-                                      </span>
-                                    </div>
-                                    <p className="text-sm">{log.message}</p>
-                                  </div>
-                                ))}
-                              </div>
+                              {spellLogs && spellLogs.length > 0 ? (
+                                <div className="space-y-4">
+                                  <DataTable
+                                    columns={columns}
+                                    data={spellTableData}
+                                  />
+                                </div>
+                              ) : (
+                                <div className="text-center py-8">
+                                  <p className="text-muted-foreground">
+                                    No execution logs found for this spell
+                                  </p>
+                                </div>
+                              )}
                             </CardContent>
                           </Card>
                         </>
