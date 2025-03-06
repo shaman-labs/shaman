@@ -23,7 +23,7 @@ export function NavAbilities() {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Abilities</SidebarGroupLabel>
+      <SidebarGroupLabel>Spells</SidebarGroupLabel>
       <SidebarMenu>
         {abilities.map((item) => (
           <SidebarMenuItem key={item.abilityId}>
@@ -40,7 +40,7 @@ export function NavAbilities() {
             isActive={pathname === '/ability'}
             onClick={() => (user ? router.push('/ability') : login())}>
             <Plus />
-            <span>New Ability</span>
+            <span>New Spell</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

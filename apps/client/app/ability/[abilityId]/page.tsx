@@ -45,7 +45,7 @@ export default function Page() {
               <BreadcrumbList>
                 <BreadcrumbItem>
                   <Link href="/ability" className="text-muted-foreground">
-                    Abilities
+                    Spells
                   </Link>
                 </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
@@ -103,6 +103,20 @@ export default function Page() {
 
                     <div className="flex items-center gap-3 pt-4">
                       <div className="bg-primary/10 p-2 rounded-md">
+                        <User className="h-5 w-5 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xs font-medium text-muted-foreground">
+                          Creator
+                        </h3>
+                        <p className="font-mono text-sm truncate">
+                          {ability?.creator}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-4">
+                      <div className="bg-primary/10 p-2 rounded-md">
                         <LinkIcon className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1 overflow-hidden">
@@ -122,20 +136,6 @@ export default function Page() {
                             No IPFS link available
                           </p>
                         )}
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 pt-4">
-                      <div className="bg-primary/10 p-2 rounded-md">
-                        <User className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="text-xs font-medium text-muted-foreground">
-                          Creator
-                        </h3>
-                        <p className="font-mono text-sm truncate">
-                          {ability?.creator}
-                        </p>
                       </div>
                     </div>
 
