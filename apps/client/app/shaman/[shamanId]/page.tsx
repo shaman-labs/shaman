@@ -8,6 +8,7 @@ import {
   Minus,
   MoreVertical,
   Plus,
+  Trash2,
   User,
 } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -15,6 +16,7 @@ import { useMemo, useCallback, useState, useEffect } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNow, format } from 'date-fns';
 import Link from 'next/link';
+import { Hex } from 'viem';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -58,6 +60,8 @@ import { ShamanLogType, ShamanLogsTableData } from '@/types/shaman';
 import { DataTable } from '@/components/data-table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useShamanSpells } from '@/hooks/use-shaman-spells';
+import { useMUD } from '@/contexts/mud-context';
+import { toast } from '@/hooks/use-toast';
 
 type ChartDataPoint = {
   day: string;
@@ -128,6 +132,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export default function Page() {
+  const mud = useMUD();
   const { shamanId } = useParams();
   const {
     data: shaman,
@@ -138,6 +143,7 @@ export default function Page() {
     shamanId as string
   );
   const [spellId, setSpellId] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const executionLogs = shamanLogs?.filter(
     (log) => log.logType === ShamanLogType.COMPLETION
   );
@@ -164,6 +170,30 @@ export default function Page() {
     refetch();
     refetchZugBalance();
   }, [refetch, refetchZugBalance]);
+
+  const handleRemoveSpell = useCallback(async () => {
+    try {
+      setLoading(true);
+      await mud?.calls.embedded?.systemCalls?.removeSpellFromShaman(
+        shamanId as Hex,
+        selectedSpell?.spellId as Hex
+      );
+      toast({
+        title: 'Success',
+        description: 'Spell removed from shaman.',
+      });
+      setSpellId(null);
+    } catch (error) {
+      console.error(error);
+      toast({
+        title: 'Error',
+        description: 'Something went wrong. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedSpell, mud, shamanId]);
 
   const chartData: ChartDataPoint[] = useMemo(
     () =>
@@ -620,6 +650,13 @@ export default function Page() {
                             <CardHeader className="pb-4">
                               <div className="flex justify-between items-center">
                                 <CardTitle>{selectedSpell.name}</CardTitle>
+                                <Button
+                                  variant="destructive"
+                                  size="sm"
+                                  onClick={handleRemoveSpell}
+                                  disabled={loading}>
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
                               </div>
                             </CardHeader>
                             <CardContent>

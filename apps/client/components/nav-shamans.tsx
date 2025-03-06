@@ -1,13 +1,6 @@
 'use client';
 
-import {
-  MoreHorizontal,
-  Pencil,
-  Plus,
-  Trash2,
-  Webhook,
-  Zap,
-} from 'lucide-react';
+import { MoreHorizontal, Pencil, Plus, Webhook, Zap } from 'lucide-react';
 
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
@@ -16,7 +9,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -37,7 +29,7 @@ export function NavShamans() {
   const { isMobile } = useSidebar();
   const { data: shamans } = useShamans();
   const { shamanId } = useParams();
-  const { openTrigger, openDelete } = useDialogContext();
+  const { openTrigger } = useDialogContext();
   const pathname = usePathname();
 
   return (
@@ -82,7 +74,7 @@ export function NavShamans() {
                   <Zap className="text-muted-foreground" />
                   <span>Trigger</span>
                 </DropdownMenuItem>
-                <DropdownMenuSeparator />
+                {/* <DropdownMenuSeparator />
                 <DropdownMenuItem
                   onClick={() =>
                     openDelete(true, `/shaman/${item.shamanId}`, undefined)
@@ -90,7 +82,7 @@ export function NavShamans() {
                   className="text-red-500">
                   <Trash2 className="text-red-500" />
                   <span>Delete</span>
-                </DropdownMenuItem>
+                </DropdownMenuItem> */}
               </DropdownMenuContent>
             </DropdownMenu>
           </SidebarMenuItem>
