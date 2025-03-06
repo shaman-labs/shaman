@@ -30,7 +30,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
@@ -38,9 +37,6 @@ import { useMUD } from '@/contexts/mud-context';
 import { useShaman } from '@/hooks/use-shaman';
 
 const formSchema = z.object({
-  name: z.string().min(3, {
-    message: 'Name must be at least 3 characters.',
-  }),
   description: z.string().min(10, {
     message: 'Description must be at least 10 characters.',
   }),
@@ -57,7 +53,6 @@ export default function Page() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
       description: '',
     },
   });
@@ -65,7 +60,6 @@ export default function Page() {
   useEffect(() => {
     if (shaman) {
       form.reset({
-        name: shaman.name,
         description: shaman.description,
       });
     }
@@ -77,7 +71,7 @@ export default function Page() {
     try {
       const { data } = await axios.post<{ ipfs: string }>('/api/ipfs', {
         data: {
-          name: values.name,
+          name: shaman?.name,
           description: values.description,
         },
       });
@@ -86,13 +80,6 @@ export default function Page() {
         shamanId as `0x${string}`,
         data.ipfs
       );
-
-      // if (values.name !== shaman?.name) {
-      //   await mud?.calls?.embedded?.systemCalls?.updateShamanName(
-      //     shamanId as `0x${string}`,
-      //     values.name
-      //   );
-      // }
 
       toast({
         title: 'Success!',
@@ -177,19 +164,6 @@ export default function Page() {
                       className="space-y-4">
                       <FormField
                         control={form.control}
-                        name="name"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Shaman Name</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Shaman Name" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
                         name="description"
                         render={({ field }) => (
                           <FormItem>
@@ -231,7 +205,7 @@ export default function Page() {
                     <div>
                       <h3 className="text-sm font-medium">Name</h3>
                       <p className="text-sm text-muted-foreground">
-                        {form.watch('name') || 'No name specified'}
+                        {shaman?.name}
                       </p>
                     </div>
                     <div>
