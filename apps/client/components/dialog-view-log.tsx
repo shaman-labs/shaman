@@ -16,7 +16,6 @@ import { useShamanLogMetadata } from '@/hooks/use-shaman-log-metadata';
 import { trimHash } from '@/lib/utils';
 import { useShaman } from '@/hooks/use-shaman';
 
-// Recursive component to render nested objects
 function RecursiveTableRows({ data, prefix }: { data: any; prefix: string }) {
   if (!data || typeof data !== 'object') {
     return (
