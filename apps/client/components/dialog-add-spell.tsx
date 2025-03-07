@@ -102,8 +102,10 @@ export function DialogAddSpell(props: DialogProps) {
                   return (
                     <div
                       key={spell.spellId}
-                      className={`p-4 cursor-pointer hover:bg-accent/50 flex items-center justify-between ${
-                        selectedSpellId === spell.spellId ? 'bg-accent' : ''
+                      className={`p-4 cursor-pointer flex items-center justify-between ${
+                        selectedSpellId === spell.spellId
+                          ? 'bg-accent'
+                          : 'hover:bg-accent/50'
                       } ${alreadyAdded ? 'opacity-50' : ''}`}
                       onClick={() =>
                         !alreadyAdded && setSelectedSpellId(spell.spellId)

@@ -82,15 +82,15 @@ export function DialogTrigger(props: DialogProps) {
                 {response.success ? 'Success' : 'Failed'}
               </span>
             </p>
-            {response.success && (
+            {response && (
               <p className="text-sm text-muted-foreground underline">
                 <Button
                   variant="link"
                   onClick={() =>
                     openViewLog(true, undefined, undefined, {
                       success: response.success,
-                      timestamp: response.timestamp.toString(),
-                      metadata: response.metadataHash,
+                      timestamp: response.results[0].timestamp?.toString(),
+                      metadata: response.results[0].metadataHash,
                       id: shamanId as string,
                       logType: ShamanLogType.QUEUE,
                       shamanId: shamanId as string,

@@ -16,6 +16,43 @@ import { useShamanLogMetadata } from '@/hooks/use-shaman-log-metadata';
 import { trimHash } from '@/lib/utils';
 import { useShaman } from '@/hooks/use-shaman';
 
+// Recursive component to render nested objects
+function RecursiveTableRows({ data, prefix }: { data: any; prefix: string }) {
+  if (!data || typeof data !== 'object') {
+    return (
+      <TableRow>
+        <TableCell className="font-medium">{prefix}</TableCell>
+        <TableCell className="break-words whitespace-normal max-w-[400px]">
+          {data === null || data === undefined ? 'N/A' : String(data)}
+        </TableCell>
+      </TableRow>
+    );
+  }
+
+  return (
+    <>
+      {Object.entries(data).map(([key, value]) => {
+        const newKey = prefix ? `${prefix}.${key}` : key;
+
+        if (value !== null && typeof value === 'object') {
+          return (
+            <RecursiveTableRows key={newKey} data={value} prefix={newKey} />
+          );
+        }
+
+        return (
+          <TableRow key={newKey}>
+            <TableCell className="font-medium">{newKey}</TableCell>
+            <TableCell className="break-words whitespace-normal max-w-[400px]">
+              {value === null || value === undefined ? 'N/A' : String(value)}
+            </TableCell>
+          </TableRow>
+        );
+      })}
+    </>
+  );
+}
+
 interface ShamanLogResult {
   type: string;
   status: number;
@@ -108,14 +145,7 @@ export function DialogViewLog(props: DialogProps) {
                     Result {index + 1}
                   </TableCell>
                 </TableRow>
-                {Object.entries(result.result).map(([key, value]) => (
-                  <TableRow key={`${index}-${key}`}>
-                    <TableCell className="font-medium">{key}</TableCell>
-                    <TableCell className="break-words whitespace-normal max-w-[400px]">
-                      {String(value ?? 'N/A')}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                <RecursiveTableRows data={result.result} prefix="" />
               </TableBody>
             </Table>
           ))}
