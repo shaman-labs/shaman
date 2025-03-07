@@ -240,7 +240,7 @@ export default function Page() {
     [spellLogs]
   );
 
-  const columns: ColumnDef<ShamanLogsTableData>[] = useMemo(
+  const logColumns: ColumnDef<ShamanLogsTableData>[] = useMemo(
     () => [
       {
         accessorKey: 'logType',
@@ -274,6 +274,88 @@ export default function Page() {
             );
           }
           return null;
+        },
+      },
+      {
+        accessorKey: 'timestamp',
+        header: 'Age',
+        cell: ({ row }) => {
+          const timestamp = new Date(row.original.timestamp ?? '');
+          return formatDistanceToNow(timestamp, { addSuffix: true });
+        },
+      },
+      {
+        id: 'actions',
+        cell: ({ row }) => {
+          if (row.original.logType === ShamanLogType.COMPLETION) {
+            return (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0">
+                    <MoreVertical className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem
+                    className="cursor-pointer"
+                    onClick={() =>
+                      openViewLog(true, undefined, handleRefetch, row.original)
+                    }>
+                    View logs
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            );
+          }
+          return null;
+        },
+      },
+    ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [openViewLog]
+  );
+
+  const extendedLogColumns: ColumnDef<ShamanLogsTableData>[] = useMemo(
+    () => [
+      {
+        accessorKey: 'logType',
+        header: 'Log Type',
+        cell: ({ row }) => (
+          <div className="flex items-center gap-2">
+            <div
+              className="w-2 h-2 rounded-full"
+              style={{
+                backgroundColor: logTypes[row.original.logType]?.color,
+              }}
+            />
+            {logTypes[row.original.logType]?.label}
+          </div>
+        ),
+      },
+      {
+        accessorKey: 'success',
+        header: 'Status',
+        cell: ({ row }) => {
+          if (row.original.logType === ShamanLogType.COMPLETION) {
+            return (
+              <div className="flex items-center gap-2">
+                <div
+                  className={`w-2 h-2 rounded-full ${
+                    row.original.success ? 'bg-green-500' : 'bg-red-500'
+                  }`}
+                />
+                {row.original.success ? 'Success' : 'Failed'}
+              </div>
+            );
+          }
+          return null;
+        },
+      },
+      {
+        accessorKey: 'amount',
+        header: 'Amount',
+        cell: ({ row }) => {
+          return row.original.amount;
         },
       },
       {
@@ -589,7 +671,7 @@ export default function Page() {
                         </div>
                       ) : tableData.length > 0 ? (
                         <DataTable
-                          columns={columns}
+                          columns={logColumns}
                           data={tableData.slice(0, 5)}
                         />
                       ) : (
@@ -620,8 +702,10 @@ export default function Page() {
                           : shamanSpells?.map((spell) => (
                               <div
                                 key={spell.spellId}
-                                className={`p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between ${
-                                  spellId === spell.spellId ? 'bg-accent' : ''
+                                className={`p-5 cursor-pointer flex items-center justify-between ${
+                                  spellId === spell.spellId
+                                    ? 'bg-accent'
+                                    : 'hover:bg-accent/50'
                                 }`}
                                 onClick={() => setSpellId(spell.spellId)}>
                                 <span>{spell.name}</span>
@@ -798,7 +882,7 @@ export default function Page() {
                               {spellLogs && spellLogs.length > 0 ? (
                                 <div className="space-y-4">
                                   <DataTable
-                                    columns={columns}
+                                    columns={logColumns}
                                     data={spellTableData}
                                   />
                                 </div>
@@ -831,7 +915,7 @@ export default function Page() {
                       ))}
                     </div>
                   ) : tableData.length > 0 ? (
-                    <DataTable columns={columns} data={tableData} />
+                    <DataTable columns={extendedLogColumns} data={tableData} />
                   ) : (
                     <div className="text-center py-8">
                       <p className="text-muted-foreground">

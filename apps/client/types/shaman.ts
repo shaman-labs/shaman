@@ -143,11 +143,13 @@ export type ShamanLogsTableData = {
 
 export type ShamanTriggerResponse = {
   success: boolean;
-  decodedCode: string;
-  result: string;
-  timestamp: number;
-  metadataHash: string;
-  txHash: string;
-  logs: string[];
   error?: string;
+  results: {
+    decodedCode: string;
+    result: any;
+    timestamp: number;
+    metadataHash: string;
+    txHash: string;
+    logs: string[];
+  }[];
 };
