@@ -17,6 +17,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { formatDistanceToNow, format } from 'date-fns';
 import Link from 'next/link';
 import { Hex } from 'viem';
+import { Highlight, themes } from 'prism-react-renderer';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -649,7 +650,12 @@ export default function Page() {
                           <Card>
                             <CardHeader className="pb-4">
                               <div className="flex justify-between items-center">
-                                <CardTitle>{selectedSpell.name}</CardTitle>
+                                <div>
+                                  <CardTitle>{selectedSpell.name}</CardTitle>
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    Creator {selectedSpell.creator || 'Unknown'}
+                                  </p>
+                                </div>
                                 <Button
                                   variant="destructive"
                                   size="sm"
@@ -660,6 +666,92 @@ export default function Page() {
                               </div>
                             </CardHeader>
                             <CardContent>
+                              <Tabs
+                                defaultValue="prompt"
+                                className="w-full mt-2 mb-8">
+                                <TabsList className="grid w-full grid-cols-2">
+                                  <TabsTrigger value="prompt">
+                                    Prompt
+                                  </TabsTrigger>
+                                  <TabsTrigger value="code">Code</TabsTrigger>
+                                </TabsList>
+                                <TabsContent
+                                  value="prompt"
+                                  className="max-h-[33vh] overflow-auto border rounded-md">
+                                  <div className="flex flex-col h-full w-full">
+                                    <Highlight
+                                      theme={themes.nightOwl}
+                                      code={selectedSpell?.prompt || ''}
+                                      language="markdown">
+                                      {({
+                                        style,
+                                        tokens,
+                                        getLineProps,
+                                        getTokenProps,
+                                      }) => (
+                                        <pre
+                                          className="w-full p-4 text-sm whitespace-pre-wrap"
+                                          style={{
+                                            ...style,
+                                            maxWidth: '100%',
+                                          }}>
+                                          {tokens.map((line, i) => (
+                                            <div
+                                              key={i}
+                                              {...getLineProps({ line })}
+                                              className="whitespace-pre-wrap">
+                                              {line.map((token, key) => (
+                                                <span
+                                                  key={key}
+                                                  {...getTokenProps({ token })}
+                                                />
+                                              ))}
+                                            </div>
+                                          ))}
+                                        </pre>
+                                      )}
+                                    </Highlight>
+                                  </div>
+                                </TabsContent>
+                                <TabsContent
+                                  value="code"
+                                  className="max-h-[33vh] overflow-auto border rounded-md">
+                                  <div className="flex flex-col h-full w-full">
+                                    <Highlight
+                                      theme={themes.nightOwl}
+                                      code={selectedSpell?.code || ''}
+                                      language="tsx">
+                                      {({
+                                        style,
+                                        tokens,
+                                        getLineProps,
+                                        getTokenProps,
+                                      }) => (
+                                        <pre
+                                          className="overflow-x-auto w-full p-4 text-sm whitespace-pre"
+                                          style={{
+                                            ...style,
+                                            maxWidth: '100%',
+                                          }}>
+                                          {tokens.map((line, i) => (
+                                            <div
+                                              key={i}
+                                              {...getLineProps({ line })}
+                                              className="whitespace-pre">
+                                              {line.map((token, key) => (
+                                                <span
+                                                  key={key}
+                                                  {...getTokenProps({ token })}
+                                                />
+                                              ))}
+                                            </div>
+                                          ))}
+                                        </pre>
+                                      )}
+                                    </Highlight>
+                                  </div>
+                                </TabsContent>
+                              </Tabs>
                               <div className="grid grid-cols-2 gap-4 mb-4">
                                 <div className="flex flex-col gap-1 p-3 rounded-lg border">
                                   <p className="text-xs text-muted-foreground">

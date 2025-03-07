@@ -1,6 +1,6 @@
 'use client';
 
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { DialogProps } from '@/contexts/dialog-context';
 import { Button } from '@/components/ui/button';
 import {
@@ -59,16 +59,15 @@ export function DialogViewLog(props: DialogProps) {
 
   return (
     <Dialog {...props}>
-      <DialogContent className="sm:max-w-[700px]">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-[700px] max-h-[90vh] overflow-y-auto flex flex-col">
+        <DialogHeader className="sticky top-0 pb-2">
           <DialogTitle>Shaman Log</DialogTitle>
           <DialogDescription>
             Viewing log details for Shaman ID: {trimHash(shaman?.shamanId)}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="py-4">
-          <h3 className="text-lg font-medium mb-2">Log Information</h3>
+        <div className="my-4 whitespace-pre-wrap overflow-y-auto flex-grow">
           <Table>
             <TableBody>
               <TableRow>
@@ -80,34 +79,61 @@ export function DialogViewLog(props: DialogProps) {
                   </span>
                 </TableCell>
               </TableRow>
-              {shamanLogMetadata?.results.map((result, index) => (
-                <Fragment key={index}>
-                  <TableRow>
-                    <TableCell colSpan={2} className="font-semibold">
-                      Result {index + 1}
-                    </TableCell>
-                  </TableRow>
-                  {Object.entries(result.result).map(([key, value]) => (
-                    <TableRow key={`${index}-${key}`}>
-                      <TableCell className="font-medium">{key}</TableCell>
-                      <TableCell>{String(value ?? 'N/A')}</TableCell>
-                    </TableRow>
-                  ))}
-                </Fragment>
-              ))}
+              <TableRow>
+                <TableCell className="font-medium">IPFS Link</TableCell>
+                <TableCell>
+                  {shamanLog?.metadata ? (
+                    <a
+                      href={`https://gateway.shaman.fun/ipfs/${shamanLog.metadata}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
+                      ipfs://{shamanLog.metadata}
+                    </a>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No IPFS link available
+                    </p>
+                  )}
+                </TableCell>
+              </TableRow>
             </TableBody>
           </Table>
+
+          {shamanLogMetadata?.results.map((result, index) => (
+            <Table key={index} className="my-4">
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={2} className="font-semibold">
+                    Result {index + 1}
+                  </TableCell>
+                </TableRow>
+                {Object.entries(result.result).map(([key, value]) => (
+                  <TableRow key={`${index}-${key}`}>
+                    <TableCell className="font-medium">{key}</TableCell>
+                    <TableCell className="break-words whitespace-normal max-w-[400px]">
+                      {String(value ?? 'N/A')}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ))}
 
           <h3 className="text-lg font-medium mt-6 mb-2">Shaman Metadata</h3>
           <Table>
             <TableBody>
               <TableRow>
                 <TableCell className="font-medium">Shaman ID</TableCell>
-                <TableCell className="break-all">{shaman?.shamanId}</TableCell>
+                <TableCell className="break-words whitespace-normal">
+                  {shaman?.shamanId}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Creator</TableCell>
-                <TableCell className="break-all">{shaman?.creator}</TableCell>
+                <TableCell className="break-words whitespace-normal">
+                  {shaman?.creator}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Created At</TableCell>
@@ -119,7 +145,7 @@ export function DialogViewLog(props: DialogProps) {
           </Table>
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="sticky bottom-0 bg-background z-10 pt-2 mt-auto">
           <Button onClick={handleClose}>Close</Button>
         </DialogFooter>
       </DialogContent>

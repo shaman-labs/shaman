@@ -2,6 +2,7 @@ import { getComponentValueStrict } from '@latticexyz/recs';
 import { encodeEntity } from '@latticexyz/store-sync/recs';
 
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useMUD } from '@/contexts/mud-context';
 
 export const useShamanSpells = (shamanId: string) => {
@@ -10,7 +11,7 @@ export const useShamanSpells = (shamanId: string) => {
   return useQuery({
     queryKey: ['shamanSpells', shamanId],
     initialData: [],
-    queryFn: () => {
+    queryFn: async () => {
       if (!mud?.components?.Shamans) return [];
 
       const shamanData = getComponentValueStrict(
@@ -25,8 +26,8 @@ export const useShamanSpells = (shamanId: string) => {
         )
       );
 
-      const spells = Array.from(Array(shamanData.spellCount)).map(
-        (_, index) => {
+      const spells = await Promise.all(
+        Array.from(Array(shamanData.spellCount)).map(async (_, index) => {
           const spellId = getComponentValueStrict(
             mud.components.ShamanSpellIndex,
             encodeEntity(
@@ -47,11 +48,19 @@ export const useShamanSpells = (shamanId: string) => {
               { spellId: spellId.spellId as `0x${string}` }
             )
           );
+
+          const spellMetadata = await axios.get<{
+            code: string;
+            prompt: string;
+          }>(`https://gateway.shaman.fun/ipfs/${spell.metadata}`);
+
           return {
             spellId: spellId.spellId,
             ...spell,
+            ...spellMetadata.data,
+            code: atob(spellMetadata.data.code),
           };
-        }
+        })
       );
 
       return spells;

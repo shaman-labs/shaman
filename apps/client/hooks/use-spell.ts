@@ -2,6 +2,7 @@ import { getComponentValueStrict } from '@latticexyz/recs';
 import { encodeEntity } from '@latticexyz/store-sync/recs';
 
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useMUD } from '@/contexts/mud-context';
 
 export const useSpell = (spellId: string) => {
@@ -25,20 +26,16 @@ export const useSpell = (spellId: string) => {
         )
       );
 
-      const metadata = await fetch(
-        `https://gateway.shaman.fun/ipfs/${spellData.metadata}`
-      );
-
-      const metadataJson = (await metadata.json()) as {
+      const spellMetadata = await axios.get<{
         code: string;
         prompt: string;
-      };
+      }>(`https://gateway.shaman.fun/ipfs/${spellData.metadata}`);
 
       return {
         ...spellData,
         spellId,
-        code: atob(metadataJson.code),
-        prompt: metadataJson.prompt,
+        code: atob(spellMetadata.data.code),
+        prompt: spellMetadata.data.prompt,
       };
     },
     refetchInterval: 2500,
