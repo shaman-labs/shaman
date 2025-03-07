@@ -8,8 +8,7 @@ import {
   Link as LinkIcon,
   DollarSign,
 } from 'lucide-react';
-import { themes } from 'prism-react-renderer';
-import { Highlight } from 'prism-react-renderer';
+import { Highlight, themes } from 'prism-react-renderer';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { AppSidebar } from '@/components/app-sidebar';
