@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronsUpDown, LogOut, Sparkles, Wallet } from 'lucide-react';
+import { Brain, ChevronsUpDown, LogOut, Sparkles, Wallet } from 'lucide-react';
 import BoringAvatar from 'boring-avatars';
 import { useFundWallet, usePrivy } from '@privy-io/react-auth';
 import { Chain, formatEther } from 'viem';
@@ -91,6 +91,14 @@ export function NavUser() {
               </div>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => router.push('/contexts')}>
+                <Brain />
+                Shaman Contexts
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
             <DropdownMenuGroup>
               <DropdownMenuItem
                 className="cursor-pointer"
