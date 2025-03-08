@@ -11,9 +11,9 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
-import { useContexts } from '@/hooks/use-contexts';
-import { DialogAddContext } from '@/components/dialog-add-context';
-import { DialogDeleteContext } from '@/components/dialog-delete-context';
+import { useSecrets } from '@/hooks/use-secrets';
+import { DialogAddSecret } from '@/components/dialog-add-secret';
+import { DialogDeleteSecret } from '@/components/dialog-delete-secret';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/breadcrumb';
 
 export default function Page() {
-  const { data: contexts } = useContexts();
+  const { data: secrets } = useSecrets();
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [deleteDialogState, setDeleteDialogState] = useState<{
     isOpen: boolean;
@@ -50,7 +50,7 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbPage>Contexts</BreadcrumbPage>
+                  <BreadcrumbPage>Secrets</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -59,16 +59,16 @@ export default function Page() {
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="flex justify-between items-center mb-4">
             <p className="text-sm text-muted-foreground">
-              Manage your environment variables and secrets.
+              Manage your secrets.
             </p>
             <Button onClick={() => setIsAddDialogOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Context
+              Add Secret
             </Button>
           </div>
 
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {contexts.map((key: string) => (
+            {secrets.map((key: string) => (
               <Card key={key} className="flex flex-col">
                 <CardHeader>
                   <CardTitle className="flex justify-between items-center">
@@ -93,17 +93,17 @@ export default function Page() {
         </div>
       </SidebarInset>
 
-      <DialogAddContext
+      <DialogAddSecret
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
       />
 
-      <DialogDeleteContext
+      <DialogDeleteSecret
         open={deleteDialogState.isOpen}
-        onOpenChange={(isOpen) =>
+        onOpenChange={(isOpen: boolean) =>
           setDeleteDialogState((prev) => ({ ...prev, isOpen }))
         }
-        contextKey={deleteDialogState.key}
+        secretKey={deleteDialogState.key}
       />
     </SidebarProvider>
   );

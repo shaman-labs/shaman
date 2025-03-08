@@ -15,27 +15,27 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-interface DialogDeleteContextProps extends DialogProps {
-  contextKey: string;
+interface DialogDeleteSecretProps extends DialogProps {
+  secretKey: string;
 }
 
-export function DialogDeleteContext(props: DialogDeleteContextProps) {
+export function DialogDeleteSecret(props: DialogDeleteSecretProps) {
   const [loading, setLoading] = useState(false);
   const queryClient = useQueryClient();
-  const { contextKey } = props;
+  const { secretKey } = props;
 
-  const handleDeleteContext = async () => {
+  const handleDeleteSecret = async () => {
     setLoading(true);
     try {
-      await axios.delete('/api/context', { data: { key: contextKey } });
+      await axios.delete('/api/secret', { data: { key: secretKey } });
 
       toast({
         title: 'Success',
-        description: 'Context deleted successfully.',
+        description: 'Secret deleted successfully.',
       });
 
-      // Invalidate the contexts query to refresh the list
-      queryClient.invalidateQueries({ queryKey: ['contexts'] });
+      // Invalidate the secrets query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['secrets'] });
 
       props.onSuccess?.();
       props.onOpenChange?.(false);
@@ -55,15 +55,15 @@ export function DialogDeleteContext(props: DialogDeleteContextProps) {
     <Dialog {...props}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Delete Context</DialogTitle>
+          <DialogTitle>Delete Secret</DialogTitle>
           <DialogDescription>
             <span className="block text-sm text-muted-foreground mb-2">
-              Are you sure you want to delete this context?
+              Are you sure you want to delete this secret?
             </span>
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
-          <p className="text-center font-medium">{contextKey}</p>
+          <p className="text-center font-medium">{secretKey}</p>
           <p className="text-center text-sm text-muted-foreground mt-2">
             This action cannot be undone.
           </p>
@@ -78,7 +78,7 @@ export function DialogDeleteContext(props: DialogDeleteContextProps) {
           <Button
             variant="destructive"
             disabled={loading}
-            onClick={handleDeleteContext}>
+            onClick={handleDeleteSecret}>
             {loading ? 'Deleting...' : 'Delete'}
           </Button>
         </DialogFooter>

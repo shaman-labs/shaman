@@ -17,13 +17,13 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
-export function DialogAddContext(props: DialogProps) {
+export function DialogAddSecret(props: DialogProps) {
   const [loading, setLoading] = useState(false);
   const [key, setKey] = useState('');
   const [value, setValue] = useState('');
   const queryClient = useQueryClient();
 
-  const handleAddContext = async () => {
+  const handleAddSecret = async () => {
     if (!key.trim()) {
       toast({
         title: 'Error',
@@ -44,15 +44,15 @@ export function DialogAddContext(props: DialogProps) {
 
     setLoading(true);
     try {
-      await axios.post('/api/context', { key, value });
+      await axios.post('/api/secret', { key, value });
 
       toast({
         title: 'Success',
         description: 'Context added successfully.',
       });
 
-      // Invalidate the contexts query to refresh the list
-      queryClient.invalidateQueries({ queryKey: ['contexts'] });
+      // Invalidate the secrets query to refresh the list
+      queryClient.invalidateQueries({ queryKey: ['secrets'] });
 
       // Reset form
       setKey('');
@@ -76,10 +76,10 @@ export function DialogAddContext(props: DialogProps) {
     <Dialog {...props}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add Context</DialogTitle>
+          <DialogTitle>Add Secret</DialogTitle>
           <DialogDescription>
             <span className="block text-sm text-muted-foreground mb-2">
-              Add a new key-value pair to your contexts.
+              Add a new key-value pair to your secrets.
             </span>
           </DialogDescription>
         </DialogHeader>
@@ -111,8 +111,8 @@ export function DialogAddContext(props: DialogProps) {
           </div>
         </div>
         <DialogFooter>
-          <Button disabled={loading} onClick={handleAddContext} type="submit">
-            {loading ? 'Adding...' : 'Add Context'}
+          <Button disabled={loading} onClick={handleAddSecret} type="submit">
+            {loading ? 'Adding...' : 'Add Secret'}
           </Button>
         </DialogFooter>
       </DialogContent>

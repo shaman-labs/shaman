@@ -94,9 +94,9 @@ export function NavUser() {
             <DropdownMenuGroup>
               <DropdownMenuItem
                 className="cursor-pointer"
-                onClick={() => router.push('/contexts')}>
+                onClick={() => router.push('/secrets')}>
                 <Brain />
-                Shaman Contexts
+                Shaman Secrets
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuGroup>

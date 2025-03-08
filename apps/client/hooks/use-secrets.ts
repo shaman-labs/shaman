@@ -1,16 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 
-export const useContexts = () => {
+export const useSecrets = () => {
   return useQuery({
-    queryKey: ['contexts'],
+    queryKey: ['secrets'],
     initialData: [],
     queryFn: async () => {
       try {
-        const response = await axios.get('/api/context');
+        const response = await axios.get('/api/secret');
         return response.data.keys || [];
       } catch (error) {
-        console.error('Error fetching contexts:', error);
+        console.error('Error fetching secrets:', error);
         return [];
       }
     },
