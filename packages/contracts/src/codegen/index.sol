@@ -5,6 +5,7 @@ pragma solidity >=0.8.24;
 
 import { ShamanConfig } from "./tables/ShamanConfig.sol";
 import { Spells } from "./tables/Spells.sol";
+import { SpellVersions } from "./tables/SpellVersions.sol";
 import { Shamans } from "./tables/Shamans.sol";
 import { ShamanLogs } from "./tables/ShamanLogs.sol";
 import { Sources } from "./tables/Sources.sol";

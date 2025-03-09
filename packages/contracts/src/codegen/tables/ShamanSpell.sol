@@ -21,12 +21,12 @@ library ShamanSpell {
   ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e5370656c6c0000000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0020010020000000000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0024020120040000000000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32, bytes32)
   Schema constant _keySchema = Schema.wrap(0x004002005f5f0000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (uint256)
-  Schema constant _valueSchema = Schema.wrap(0x002001001f000000000000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (uint256, uint32, string)
+  Schema constant _valueSchema = Schema.wrap(0x002402011f03c500000000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -43,8 +43,10 @@ library ShamanSpell {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](1);
+    fieldNames = new string[](3);
     fieldNames[0] = "createdAt";
+    fieldNames[1] = "version";
+    fieldNames[2] = "metadata";
   }
 
   /**
@@ -86,30 +88,6 @@ library ShamanSpell {
   }
 
   /**
-   * @notice Get createdAt.
-   */
-  function get(bytes32 shamanId, bytes32 spellId) internal view returns (uint256 createdAt) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
-    _keyTuple[1] = spellId;
-
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint256(bytes32(_blob)));
-  }
-
-  /**
-   * @notice Get createdAt.
-   */
-  function _get(bytes32 shamanId, bytes32 spellId) internal view returns (uint256 createdAt) {
-    bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
-    _keyTuple[1] = spellId;
-
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (uint256(bytes32(_blob)));
-  }
-
-  /**
    * @notice Set createdAt.
    */
   function setCreatedAt(bytes32 shamanId, bytes32 spellId, uint256 createdAt) internal {
@@ -132,25 +110,335 @@ library ShamanSpell {
   }
 
   /**
-   * @notice Set createdAt.
+   * @notice Get version.
    */
-  function set(bytes32 shamanId, bytes32 spellId, uint256 createdAt) internal {
+  function getVersion(bytes32 shamanId, bytes32 spellId) internal view returns (uint32 version) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = spellId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((createdAt)), _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (uint32(bytes4(_blob)));
   }
 
   /**
-   * @notice Set createdAt.
+   * @notice Get version.
    */
-  function _set(bytes32 shamanId, bytes32 spellId, uint256 createdAt) internal {
+  function _getVersion(bytes32 shamanId, bytes32 spellId) internal view returns (uint32 version) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = spellId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((createdAt)), _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (uint32(bytes4(_blob)));
+  }
+
+  /**
+   * @notice Set version.
+   */
+  function setVersion(bytes32 shamanId, bytes32 spellId, uint32 version) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((version)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set version.
+   */
+  function _setVersion(bytes32 shamanId, bytes32 spellId, uint32 version) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((version)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get metadata.
+   */
+  function getMetadata(bytes32 shamanId, bytes32 spellId) internal view returns (string memory metadata) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
+  }
+
+  /**
+   * @notice Get metadata.
+   */
+  function _getMetadata(bytes32 shamanId, bytes32 spellId) internal view returns (string memory metadata) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
+  }
+
+  /**
+   * @notice Set metadata.
+   */
+  function setMetadata(bytes32 shamanId, bytes32 spellId, string memory metadata) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((metadata)));
+  }
+
+  /**
+   * @notice Set metadata.
+   */
+  function _setMetadata(bytes32 shamanId, bytes32 spellId, string memory metadata) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((metadata)));
+  }
+
+  /**
+   * @notice Get the length of metadata.
+   */
+  function lengthMetadata(bytes32 shamanId, bytes32 spellId) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get the length of metadata.
+   */
+  function _lengthMetadata(bytes32 shamanId, bytes32 spellId) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get an item of metadata.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function getItemMetadata(bytes32 shamanId, bytes32 spellId, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    unchecked {
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Get an item of metadata.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function _getItemMetadata(bytes32 shamanId, bytes32 spellId, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    unchecked {
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Push a slice to metadata.
+   */
+  function pushMetadata(bytes32 shamanId, bytes32 spellId, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Push a slice to metadata.
+   */
+  function _pushMetadata(bytes32 shamanId, bytes32 spellId, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Pop a slice from metadata.
+   */
+  function popMetadata(bytes32 shamanId, bytes32 spellId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Pop a slice from metadata.
+   */
+  function _popMetadata(bytes32 shamanId, bytes32 spellId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Update a slice of metadata at `_index`.
+   */
+  function updateMetadata(bytes32 shamanId, bytes32 spellId, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Update a slice of metadata at `_index`.
+   */
+  function _updateMetadata(bytes32 shamanId, bytes32 spellId, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Get the full data.
+   */
+  function get(
+    bytes32 shamanId,
+    bytes32 spellId
+  ) internal view returns (uint256 createdAt, uint32 version, string memory metadata) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) = StoreSwitch.getRecord(
+      _tableId,
+      _keyTuple,
+      _fieldLayout
+    );
+    return decode(_staticData, _encodedLengths, _dynamicData);
+  }
+
+  /**
+   * @notice Get the full data.
+   */
+  function _get(
+    bytes32 shamanId,
+    bytes32 spellId
+  ) internal view returns (uint256 createdAt, uint32 version, string memory metadata) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) = StoreCore.getRecord(
+      _tableId,
+      _keyTuple,
+      _fieldLayout
+    );
+    return decode(_staticData, _encodedLengths, _dynamicData);
+  }
+
+  /**
+   * @notice Set the full data using individual values.
+   */
+  function set(bytes32 shamanId, bytes32 spellId, uint256 createdAt, uint32 version, string memory metadata) internal {
+    bytes memory _staticData = encodeStatic(createdAt, version);
+
+    EncodedLengths _encodedLengths = encodeLengths(metadata);
+    bytes memory _dynamicData = encodeDynamic(metadata);
+
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
+  }
+
+  /**
+   * @notice Set the full data using individual values.
+   */
+  function _set(bytes32 shamanId, bytes32 spellId, uint256 createdAt, uint32 version, string memory metadata) internal {
+    bytes memory _staticData = encodeStatic(createdAt, version);
+
+    EncodedLengths _encodedLengths = encodeLengths(metadata);
+    bytes memory _dynamicData = encodeDynamic(metadata);
+
+    bytes32[] memory _keyTuple = new bytes32[](2);
+    _keyTuple[0] = shamanId;
+    _keyTuple[1] = spellId;
+
+    StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
+  }
+
+  /**
+   * @notice Decode the tightly packed blob of static data using this table's field layout.
+   */
+  function decodeStatic(bytes memory _blob) internal pure returns (uint256 createdAt, uint32 version) {
+    createdAt = (uint256(Bytes.getBytes32(_blob, 0)));
+
+    version = (uint32(Bytes.getBytes4(_blob, 32)));
+  }
+
+  /**
+   * @notice Decode the tightly packed blob of dynamic data using the encoded lengths.
+   */
+  function decodeDynamic(
+    EncodedLengths _encodedLengths,
+    bytes memory _blob
+  ) internal pure returns (string memory metadata) {
+    uint256 _start;
+    uint256 _end;
+    unchecked {
+      _end = _encodedLengths.atIndex(0);
+    }
+    metadata = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
+  }
+
+  /**
+   * @notice Decode the tightly packed blobs using this table's field layout.
+   * @param _staticData Tightly packed static fields.
+   * @param _encodedLengths Encoded lengths of dynamic fields.
+   * @param _dynamicData Tightly packed dynamic fields.
+   */
+  function decode(
+    bytes memory _staticData,
+    EncodedLengths _encodedLengths,
+    bytes memory _dynamicData
+  ) internal pure returns (uint256 createdAt, uint32 version, string memory metadata) {
+    (createdAt, version) = decodeStatic(_staticData);
+
+    (metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
 
   /**
@@ -179,8 +467,27 @@ library ShamanSpell {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(uint256 createdAt) internal pure returns (bytes memory) {
-    return abi.encodePacked(createdAt);
+  function encodeStatic(uint256 createdAt, uint32 version) internal pure returns (bytes memory) {
+    return abi.encodePacked(createdAt, version);
+  }
+
+  /**
+   * @notice Tightly pack dynamic data lengths using this table's schema.
+   * @return _encodedLengths The lengths of the dynamic fields (packed into a single bytes32 value).
+   */
+  function encodeLengths(string memory metadata) internal pure returns (EncodedLengths _encodedLengths) {
+    // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
+    unchecked {
+      _encodedLengths = EncodedLengthsLib.pack(bytes(metadata).length);
+    }
+  }
+
+  /**
+   * @notice Tightly pack dynamic (variable length) data using this table's schema.
+   * @return The dynamic data, encoded into a sequence of bytes.
+   */
+  function encodeDynamic(string memory metadata) internal pure returns (bytes memory) {
+    return abi.encodePacked(bytes((metadata)));
   }
 
   /**
@@ -189,11 +496,15 @@ library ShamanSpell {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(uint256 createdAt) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(createdAt);
+  function encode(
+    uint256 createdAt,
+    uint32 version,
+    string memory metadata
+  ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
+    bytes memory _staticData = encodeStatic(createdAt, version);
 
-    EncodedLengths _encodedLengths;
-    bytes memory _dynamicData;
+    EncodedLengths _encodedLengths = encodeLengths(metadata);
+    bytes memory _dynamicData = encodeDynamic(metadata);
 
     return (_staticData, _encodedLengths, _dynamicData);
   }

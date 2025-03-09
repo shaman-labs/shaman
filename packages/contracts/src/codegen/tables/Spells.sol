@@ -21,12 +21,12 @@ library Spells {
   ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005370656c6c7300000000000000000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0038030214200400000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x003c040214200404000000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (address, uint256, uint32, string, string)
-  Schema constant _valueSchema = Schema.wrap(0x00380302611f03c5c50000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (address, uint256, uint32, uint32, string, string)
+  Schema constant _valueSchema = Schema.wrap(0x003c0402611f0303c5c500000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -42,12 +42,13 @@ library Spells {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](5);
+    fieldNames = new string[](6);
     fieldNames[0] = "creator";
     fieldNames[1] = "createdAt";
     fieldNames[2] = "shamanCount";
-    fieldNames[3] = "name";
-    fieldNames[4] = "metadata";
+    fieldNames[3] = "version";
+    fieldNames[4] = "name";
+    fieldNames[5] = "metadata";
   }
 
   /**
@@ -188,6 +189,48 @@ library Spells {
     _keyTuple[0] = spellId;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((shamanCount)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get version.
+   */
+  function getVersion(bytes32 spellId) internal view returns (uint32 version) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = spellId;
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
+    return (uint32(bytes4(_blob)));
+  }
+
+  /**
+   * @notice Get version.
+   */
+  function _getVersion(bytes32 spellId) internal view returns (uint32 version) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = spellId;
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
+    return (uint32(bytes4(_blob)));
+  }
+
+  /**
+   * @notice Set version.
+   */
+  function setVersion(bytes32 spellId, uint32 version) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = spellId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((version)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set version.
+   */
+  function _setVersion(bytes32 spellId, uint32 version) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = spellId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((version)), _fieldLayout);
   }
 
   /**
@@ -522,7 +565,14 @@ library Spells {
   )
     internal
     view
-    returns (address creator, uint256 createdAt, uint32 shamanCount, string memory name, string memory metadata)
+    returns (
+      address creator,
+      uint256 createdAt,
+      uint32 shamanCount,
+      uint32 version,
+      string memory name,
+      string memory metadata
+    )
   {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = spellId;
@@ -543,7 +593,14 @@ library Spells {
   )
     internal
     view
-    returns (address creator, uint256 createdAt, uint32 shamanCount, string memory name, string memory metadata)
+    returns (
+      address creator,
+      uint256 createdAt,
+      uint32 shamanCount,
+      uint32 version,
+      string memory name,
+      string memory metadata
+    )
   {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = spellId;
@@ -564,10 +621,11 @@ library Spells {
     address creator,
     uint256 createdAt,
     uint32 shamanCount,
+    uint32 version,
     string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(creator, createdAt, shamanCount);
+    bytes memory _staticData = encodeStatic(creator, createdAt, shamanCount, version);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
@@ -586,10 +644,11 @@ library Spells {
     address creator,
     uint256 createdAt,
     uint32 shamanCount,
+    uint32 version,
     string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(creator, createdAt, shamanCount);
+    bytes memory _staticData = encodeStatic(creator, createdAt, shamanCount, version);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
@@ -605,12 +664,14 @@ library Spells {
    */
   function decodeStatic(
     bytes memory _blob
-  ) internal pure returns (address creator, uint256 createdAt, uint32 shamanCount) {
+  ) internal pure returns (address creator, uint256 createdAt, uint32 shamanCount, uint32 version) {
     creator = (address(Bytes.getBytes20(_blob, 0)));
 
     createdAt = (uint256(Bytes.getBytes32(_blob, 20)));
 
     shamanCount = (uint32(Bytes.getBytes4(_blob, 52)));
+
+    version = (uint32(Bytes.getBytes4(_blob, 56)));
   }
 
   /**
@@ -647,9 +708,16 @@ library Spells {
   )
     internal
     pure
-    returns (address creator, uint256 createdAt, uint32 shamanCount, string memory name, string memory metadata)
+    returns (
+      address creator,
+      uint256 createdAt,
+      uint32 shamanCount,
+      uint32 version,
+      string memory name,
+      string memory metadata
+    )
   {
-    (creator, createdAt, shamanCount) = decodeStatic(_staticData);
+    (creator, createdAt, shamanCount, version) = decodeStatic(_staticData);
 
     (name, metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
@@ -678,8 +746,13 @@ library Spells {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(address creator, uint256 createdAt, uint32 shamanCount) internal pure returns (bytes memory) {
-    return abi.encodePacked(creator, createdAt, shamanCount);
+  function encodeStatic(
+    address creator,
+    uint256 createdAt,
+    uint32 shamanCount,
+    uint32 version
+  ) internal pure returns (bytes memory) {
+    return abi.encodePacked(creator, createdAt, shamanCount, version);
   }
 
   /**
@@ -714,10 +787,11 @@ library Spells {
     address creator,
     uint256 createdAt,
     uint32 shamanCount,
+    uint32 version,
     string memory name,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(creator, createdAt, shamanCount);
+    bytes memory _staticData = encodeStatic(creator, createdAt, shamanCount, version);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);

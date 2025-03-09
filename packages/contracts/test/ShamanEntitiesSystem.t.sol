@@ -4,7 +4,7 @@ pragma solidity >=0.8.24;
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
-import { Shamans, Spells, Sources, Roles, ShamanSpell, ShamanSource } from "../src/codegen/index.sol";
+import { Shamans, Spells, Sources, Roles, ShamanSpell, ShamanSource, SpellVersions } from "../src/codegen/index.sol";
 import { ShamanState, RoleType } from "../src/codegen/common.sol";
 
 contract ShamanEntitiesSystemTest is BaseTest {

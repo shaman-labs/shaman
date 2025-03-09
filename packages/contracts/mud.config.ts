@@ -25,10 +25,24 @@ export default defineWorld({
         creator: "address",
         createdAt: "uint256",
         shamanCount: "uint32",
+        version: "uint32", // latest version of the spell
         name: "string",
-        metadata: "string",
+        metadata: "string", // latest metadata of the spell
       },
       key: ["spellId"],
+    },
+    // keep track of all versions of a spell
+    SpellVersions: {
+      codegen: {
+        dataStruct: false,
+      },
+      schema: {
+        spellId: "bytes32",
+        createdAt: "uint256",
+        version: "uint32",
+        metadata: "string",
+      },
+      key: ["spellId", "version"],
     },
     Shamans: {
       codegen: {
@@ -97,6 +111,8 @@ export default defineWorld({
         shamanId: "bytes32",
         spellId: "bytes32",
         createdAt: "uint256",
+        version: "uint32", // version of the spell
+        metadata: "string", // metadata of version of the spell
       },
       key: ["shamanId", "spellId"],
     },
