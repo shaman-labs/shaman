@@ -21,7 +21,6 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { useShamans } from '@/hooks/use-shamans';
-import { trimHash } from '@/lib/utils';
 
 export default function Page() {
   const { data: shamans } = useShamans();
@@ -65,9 +64,7 @@ export default function Page() {
               {shamans.map((shaman) => (
                 <Card key={shaman.shamanId} className="mb-4 flex flex-col">
                   <CardHeader>
-                    <CardTitle>
-                      Shaman: {trimHash(shaman.shamanId, 4)}
-                    </CardTitle>
+                    <CardTitle>{shaman.name}</CardTitle>
                   </CardHeader>
                   <CardContent className="flex-grow">
                     <div className="flex flex-col gap-2">
