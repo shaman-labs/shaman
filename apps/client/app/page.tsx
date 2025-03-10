@@ -21,7 +21,6 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { useShamans } from '@/hooks/use-shamans';
-import { trimHash } from '@/lib/utils';
 
 export default function Page() {
   const { data: shamans } = useShamans();
@@ -43,12 +42,12 @@ export default function Page() {
         </header>
         {user ? (
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="mb-4 flex flex-col min-h-[200px]">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <Card className="flex flex-col">
                 <CardHeader>
                   <CardTitle>Create New Workflow</CardTitle>
                 </CardHeader>
-                <CardContent className="flex-grow">
+                <CardContent>
                   <p>Automate and orchestrate your onchain workflows.</p>
                 </CardContent>
                 <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
@@ -60,14 +59,12 @@ export default function Page() {
                   </Button>
                 </CardFooter>
               </Card>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {shamans.map((shaman) => (
-                <Card
-                  key={shaman.shamanId}
-                  className="mb-4 flex flex-col min-h-[200px]">
+                <Card key={shaman.shamanId} className="mb-4 flex flex-col">
                   <CardHeader>
-                    <CardTitle>
-                      Shaman: {trimHash(shaman.shamanId, 4)}
-                    </CardTitle>
+                    <CardTitle>{shaman.name}</CardTitle>
                   </CardHeader>
                   <CardContent className="flex-grow">
                     <div className="flex flex-col gap-2">

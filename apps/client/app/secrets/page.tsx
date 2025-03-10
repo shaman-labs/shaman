@@ -4,7 +4,13 @@ import { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import {
   SidebarInset,
   SidebarProvider,
@@ -57,16 +63,25 @@ export default function Page() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="flex justify-between items-center mb-4">
-            <p className="text-sm text-muted-foreground">
-              Manage your secrets.
-            </p>
-            <Button onClick={() => setIsAddDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Secret
-            </Button>
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <Card className="flex flex-col">
+              <CardHeader>
+                <CardTitle>Create New Secret</CardTitle>
+              </CardHeader>
+              <CardContent className="flex-grow">
+                <p>Create a new secret to be used in your shamans.</p>
+              </CardContent>
+              <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
+                <Button
+                  onClick={() => setIsAddDialogOpen(true)}
+                  className="w-full"
+                  variant="default">
+                  <Plus />
+                  Create Secret
+                </Button>
+              </CardFooter>
+            </Card>
           </div>
-
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {secrets.map((key: string) => (
               <Card key={key} className="flex flex-col">
@@ -82,7 +97,7 @@ export default function Page() {
                     </Button>
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="flex-grow">
+                <CardContent>
                   <p className="text-sm text-muted-foreground">
                     Value is hidden for security purposes.
                   </p>

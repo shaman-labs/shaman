@@ -62,12 +62,6 @@ export function DialogDeleteSecret(props: DialogDeleteSecretProps) {
             </span>
           </DialogDescription>
         </DialogHeader>
-        <div className="py-4">
-          <p className="text-center font-medium">{secretKey}</p>
-          <p className="text-center text-sm text-muted-foreground mt-2">
-            This action cannot be undone.
-          </p>
-        </div>
         <DialogFooter>
           <Button
             variant="outline"
