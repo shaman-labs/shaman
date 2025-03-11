@@ -165,6 +165,34 @@ export const IWorld = [
         "internalType": "bytes32"
       },
       {
+        "name": "success",
+        "type": "bool",
+        "internalType": "bool"
+      },
+      {
+        "name": "metadata",
+        "type": "string",
+        "internalType": "string"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "completeSpellJob",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "spellId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
         "name": "cost",
         "type": "uint256",
         "internalType": "uint256"
@@ -307,6 +335,24 @@ export const IWorld = [
     "inputs": [
       {
         "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "enqueueSpellJob",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "spellId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -838,7 +884,7 @@ export const IWorld = [
       {
         "name": "",
         "type": "uint8",
-        "internalType": "enum ShamanState"
+        "internalType": "enum JobState"
       }
     ],
     "stateMutability": "view"
@@ -1645,6 +1691,24 @@ export const IWorld = [
     "inputs": [
       {
         "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "startSpellJob",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "spellId",
         "type": "bytes32",
         "internalType": "bytes32"
       }

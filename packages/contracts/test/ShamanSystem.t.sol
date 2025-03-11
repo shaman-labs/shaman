@@ -5,7 +5,7 @@ import "forge-std/console.sol";
 import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
 import { Shamans, Roles } from "../src/codegen/index.sol";
-import { ShamanState, RoleType } from "../src/codegen/common.sol";
+import { JobState, RoleType } from "../src/codegen/common.sol";
 
 contract ShamanSystemTest is BaseTest {
   string constant INITIAL_METADATA = "QmShamanTest1";
@@ -68,7 +68,7 @@ contract ShamanSystemTest is BaseTest {
     );
 
     // Verify shaman state
-    assertEq(uint8(Shamans.getState(shamanId)), uint8(ShamanState.Idle));
+    assertEq(uint8(Shamans.getState(shamanId)), uint8(JobState.Idle));
     assertEq(Shamans.getCreator(shamanId), creatorAlice);
     assertEq(Shamans.getActive(shamanId), true);
     assertEq(Shamans.getBalance(shamanId), INITIAL_BALANCE);
@@ -266,7 +266,7 @@ contract ShamanSystemTest is BaseTest {
     );
 
     // Verify shaman state
-    assertEq(uint8(Shamans.getState(shamanId)), uint8(ShamanState.Idle));
+    assertEq(uint8(Shamans.getState(shamanId)), uint8(JobState.Idle));
     assertEq(Shamans.getCreator(shamanId), creatorAlice);
     assertEq(Shamans.getActive(shamanId), true);
     assertEq(Shamans.getBalance(shamanId), INITIAL_BALANCE);

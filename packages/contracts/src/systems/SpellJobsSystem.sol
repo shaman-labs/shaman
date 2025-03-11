@@ -14,7 +14,7 @@ contract SpellJobsSystem is BaseSystem {
     public
     onlyOperator
     onlyActiveShaman(shamanId)
-    onlyIdleShaman(shamanId)
+    onlyInProgressShaman(shamanId)
     onlyIdleSpell(shamanId, spellId)
   {
     require(
@@ -34,11 +34,12 @@ contract SpellJobsSystem is BaseSystem {
   function startSpellJob(
     bytes32 shamanId,
     bytes32 spellId
-  ) public onlyOperator onlyActiveShaman(shamanId) {
-    require(
-      Shamans.getState(shamanId) == JobState.Queue,
-      "Shaman must be queued"
-    );
+  )
+    public
+    onlyOperator
+    onlyActiveShaman(shamanId)
+    onlyInProgressShaman(shamanId)
+  {
     require(
       ShamanSpell.getState(shamanId, spellId) == JobState.Queue,
       "Spell must be queued"
@@ -54,11 +55,12 @@ contract SpellJobsSystem is BaseSystem {
     uint256 cost,
     bool success,
     string memory metadata
-  ) public onlyOperator onlyActiveShaman(shamanId) {
-    require(
-      Shamans.getState(shamanId) == JobState.InProgress,
-      "Shaman must be in progress"
-    );
+  )
+    public
+    onlyOperator
+    onlyActiveShaman(shamanId)
+    onlyInProgressShaman(shamanId)
+  {
     require(
       ShamanSpell.getState(shamanId, spellId) == JobState.InProgress,
       "Spell must be in progress"

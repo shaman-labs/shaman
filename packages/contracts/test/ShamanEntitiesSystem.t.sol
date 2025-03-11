@@ -5,7 +5,7 @@ import "forge-std/console.sol";
 import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
 import { Shamans, Spells, Sources, Roles, ShamanSpell, ShamanSource, SpellVersions } from "../src/codegen/index.sol";
-import { ShamanState, RoleType } from "../src/codegen/common.sol";
+import { JobState, RoleType } from "../src/codegen/common.sol";
 
 contract ShamanEntitiesSystemTest is BaseTest {
   string constant INITIAL_METADATA = "QmShamanTest1";

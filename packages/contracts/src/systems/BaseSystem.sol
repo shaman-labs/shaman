@@ -32,6 +32,14 @@ contract BaseSystem is System {
     _;
   }
 
+  modifier onlyInProgressShaman(bytes32 shamanId) {
+    require(
+      Shamans.getState(shamanId) == JobState.InProgress,
+      "Shaman is not in progress"
+    );
+    _;
+  }
+
   modifier onlyIdleSpell(bytes32 shamanId, bytes32 spellId) {
     require(
       ShamanSpell.getState(shamanId, spellId) == JobState.Idle,
