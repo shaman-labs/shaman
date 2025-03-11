@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 import { Shamans } from "../codegen/index.sol";
-import { ShamanState, LogType } from "../codegen/common.sol";
+import { JobState, LogType } from "../codegen/common.sol";
 import { ShamanLogsLib } from "../lib/ShamanLogsLib.sol";
 import { BaseSystem } from "./BaseSystem.sol";
 
@@ -13,7 +13,7 @@ contract ShamanBalanceSystem is BaseSystem {
     require(amount > 0, "Amount must be greater than 0");
 
     Shamans.setBalance(shamanId, Shamans.getBalance(shamanId) + amount);
-    ShamanLogsLib.logOperation(shamanId, amount, true, LogType.Deposit, "");
+    ShamanLogsLib.logOperation(shamanId, 0, amount, true, LogType.Deposit, "");
 
     _token().transferFrom(_msgSender(), address(this), amount);
   }
@@ -26,7 +26,7 @@ contract ShamanBalanceSystem is BaseSystem {
     require(Shamans.getBalance(shamanId) >= amount, "Insufficient balance");
 
     Shamans.setBalance(shamanId, Shamans.getBalance(shamanId) - amount);
-    ShamanLogsLib.logOperation(shamanId, amount, true, LogType.Withdraw, "");
+    ShamanLogsLib.logOperation(shamanId, 0, amount, true, LogType.Withdraw, "");
 
     _token().transfer(_msgSender(), amount);
   }

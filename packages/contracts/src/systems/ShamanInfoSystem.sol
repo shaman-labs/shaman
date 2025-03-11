@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 import { Shamans } from "../codegen/index.sol";
-import { ShamanState } from "../codegen/common.sol";
+import { JobState } from "../codegen/common.sol";
 import { BaseSystem } from "./BaseSystem.sol";
 
 contract ShamanInfoSystem is BaseSystem {
-  function getShamanState(bytes32 shamanId) public view returns (ShamanState) {
+  function getShamanState(bytes32 shamanId) public view returns (JobState) {
     return Shamans.getState(shamanId);
   }
 

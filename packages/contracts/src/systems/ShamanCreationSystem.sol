@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 import { Shamans, ShamanNames } from "../codegen/index.sol";
-import { ShamanState } from "../codegen/common.sol";
+import { JobState } from "../codegen/common.sol";
 import { BaseSystem } from "./BaseSystem.sol";
 import { LogType } from "../codegen/common.sol";
 import { ShamanLogsLib } from "../lib/ShamanLogsLib.sol";
@@ -33,7 +33,7 @@ contract ShamanCreationSystem is BaseSystem {
 
     Shamans.set(
       shamanId,
-      ShamanState.Idle,
+      JobState.Idle,
       _msgSender(),
       block.timestamp,
       true,
@@ -56,7 +56,14 @@ contract ShamanCreationSystem is BaseSystem {
 
     // log initial deposit if balance provided
     if (balance > 0) {
-      ShamanLogsLib.logOperation(shamanId, balance, true, LogType.Deposit, "");
+      ShamanLogsLib.logOperation(
+        shamanId,
+        0,
+        balance,
+        true,
+        LogType.Deposit,
+        ""
+      );
 
       // get funds tokens
       _token().transferFrom(_msgSender(), address(this), balance);

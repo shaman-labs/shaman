@@ -4,7 +4,7 @@ export default defineWorld({
   enums: {
     LogType: ["Queue", "Start", "Completion", "Deposit", "Withdraw", "Refund"],
     RoleType: ["None", "Operator"],
-    ShamanState: ["Idle", "Queue", "InProgress", "Completed"],
+    JobState: ["Idle", "Queue", "InProgress", "Completed"],
   },
   tables: {
     ShamanConfig: {
@@ -50,7 +50,7 @@ export default defineWorld({
       },
       schema: {
         shamanId: "bytes32",
-        state: "ShamanState",
+        state: "JobState",
         creator: "address",
         createdAt: "uint256",
         active: "bool",
@@ -112,6 +112,7 @@ export default defineWorld({
         spellId: "bytes32",
         createdAt: "uint256",
         version: "uint32", // version of the spell
+        state: "JobState", // state of the spell
         metadata: "string", // metadata of version of the spell
       },
       key: ["shamanId", "spellId"],

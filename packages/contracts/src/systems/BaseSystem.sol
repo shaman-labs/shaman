@@ -3,8 +3,8 @@ pragma solidity >=0.8.24;
 
 import { System } from "@latticexyz/world/src/System.sol";
 import { IZugToken } from "../IZugToken.sol";
-import { Spells, ShamanConfig, Roles, Shamans } from "../codegen/index.sol";
-import { RoleType, ShamanState } from "../codegen/common.sol";
+import { Spells, ShamanConfig, Roles, Shamans, ShamanSpell } from "../codegen/index.sol";
+import { RoleType, JobState } from "../codegen/common.sol";
 
 contract BaseSystem is System {
   modifier onlyOperator() {
@@ -28,9 +28,14 @@ contract BaseSystem is System {
   }
 
   modifier onlyIdleShaman(bytes32 shamanId) {
+    require(Shamans.getState(shamanId) == JobState.Idle, "Shaman is not idle");
+    _;
+  }
+
+  modifier onlyIdleSpell(bytes32 shamanId, bytes32 spellId) {
     require(
-      Shamans.getState(shamanId) == ShamanState.Idle,
-      "Shaman is not idle"
+      ShamanSpell.getState(shamanId, spellId) == JobState.Idle,
+      "Spell is not idle"
     );
     _;
   }
