@@ -9,9 +9,9 @@ pragma solidity >=0.8.24;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IShamanJobsSystem {
-  function enqueueShamanJob(bytes32 shamanId, uint256 cost) external;
+  function enqueueShamanJob(bytes32 shamanId) external;
 
   function startShamanJob(bytes32 shamanId) external;
 
-  function completeShamanJob(bytes32 shamanId, uint256 cost, bool success, string memory metadata) external;
+  function completeShamanJob(bytes32 shamanId, bool success, string memory metadata) external;
 }

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 import { Shamans, ShamanNames } from "../codegen/index.sol";
-import { ShamanState } from "../codegen/common.sol";
 import { BaseSystem } from "./BaseSystem.sol";
 
 contract ShamanOperationsSystem is BaseSystem {

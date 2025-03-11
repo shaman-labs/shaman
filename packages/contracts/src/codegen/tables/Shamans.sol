@@ -17,7 +17,7 @@ import { EncodedLengths, EncodedLengthsLib } from "@latticexyz/store/src/Encoded
 import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 
 // Import user types
-import { ShamanState } from "../common.sol";
+import { JobState } from "../common.sol";
 
 library Shamans {
   // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "Shamans", typeId: RESOURCE_TABLE });`
@@ -74,29 +74,29 @@ library Shamans {
   /**
    * @notice Get state.
    */
-  function getState(bytes32 shamanId) internal view returns (ShamanState state) {
+  function getState(bytes32 shamanId) internal view returns (JobState state) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return ShamanState(uint8(bytes1(_blob)));
+    return JobState(uint8(bytes1(_blob)));
   }
 
   /**
    * @notice Get state.
    */
-  function _getState(bytes32 shamanId) internal view returns (ShamanState state) {
+  function _getState(bytes32 shamanId) internal view returns (JobState state) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return ShamanState(uint8(bytes1(_blob)));
+    return JobState(uint8(bytes1(_blob)));
   }
 
   /**
    * @notice Set state.
    */
-  function setState(bytes32 shamanId, ShamanState state) internal {
+  function setState(bytes32 shamanId, JobState state) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -106,7 +106,7 @@ library Shamans {
   /**
    * @notice Set state.
    */
-  function _setState(bytes32 shamanId, ShamanState state) internal {
+  function _setState(bytes32 shamanId, JobState state) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -698,7 +698,7 @@ library Shamans {
     internal
     view
     returns (
-      ShamanState state,
+      JobState state,
       address creator,
       uint256 createdAt,
       bool active,
@@ -729,7 +729,7 @@ library Shamans {
     internal
     view
     returns (
-      ShamanState state,
+      JobState state,
       address creator,
       uint256 createdAt,
       bool active,
@@ -756,7 +756,7 @@ library Shamans {
    */
   function set(
     bytes32 shamanId,
-    ShamanState state,
+    JobState state,
     address creator,
     uint256 createdAt,
     bool active,
@@ -782,7 +782,7 @@ library Shamans {
    */
   function _set(
     bytes32 shamanId,
-    ShamanState state,
+    JobState state,
     address creator,
     uint256 createdAt,
     bool active,
@@ -812,7 +812,7 @@ library Shamans {
     internal
     pure
     returns (
-      ShamanState state,
+      JobState state,
       address creator,
       uint256 createdAt,
       bool active,
@@ -821,7 +821,7 @@ library Shamans {
       uint32 sourceCount
     )
   {
-    state = ShamanState(uint8(Bytes.getBytes1(_blob, 0)));
+    state = JobState(uint8(Bytes.getBytes1(_blob, 0)));
 
     creator = (address(Bytes.getBytes20(_blob, 1)));
 
@@ -871,7 +871,7 @@ library Shamans {
     internal
     pure
     returns (
-      ShamanState state,
+      JobState state,
       address creator,
       uint256 createdAt,
       bool active,
@@ -912,7 +912,7 @@ library Shamans {
    * @return The static data, encoded into a sequence of bytes.
    */
   function encodeStatic(
-    ShamanState state,
+    JobState state,
     address creator,
     uint256 createdAt,
     bool active,
@@ -952,7 +952,7 @@ library Shamans {
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
   function encode(
-    ShamanState state,
+    JobState state,
     address creator,
     uint256 createdAt,
     bool active,

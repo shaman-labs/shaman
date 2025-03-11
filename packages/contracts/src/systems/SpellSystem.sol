@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 import { BaseSystem } from "./BaseSystem.sol";
-import { Spells, SpellNames } from "../codegen/index.sol";
+import { Spells, SpellNames, SpellVersions } from "../codegen/index.sol";
 
 contract SpellSystem is BaseSystem {
   event SpellCreated(bytes32 indexed spellId, address indexed creator);
@@ -26,9 +26,12 @@ contract SpellSystem is BaseSystem {
       _msgSender(),
       block.timestamp,
       0, // shamanCount
+      1, // version
       name,
       metadata
     );
+
+    SpellVersions.set(spellId, 1, block.timestamp, metadata);
 
     SpellNames.set(encodedName, spellId);
 
@@ -40,7 +43,16 @@ contract SpellSystem is BaseSystem {
     string memory metadata
   ) public onlySpellCreator(spellId) {
     require(bytes(metadata).length > 0, "Metadata cannot be empty");
+
+    // Get current version and increment it
+    uint32 version = Spells.getVersion(spellId) + 1;
+
+    // Update spell with new metadata and version
     Spells.setMetadata(spellId, metadata);
+    Spells.setVersion(spellId, version);
+
+    // Store the new version in SpellVersions table
+    SpellVersions.set(spellId, version, block.timestamp, metadata);
   }
 
   function updateSpellName(
@@ -65,7 +77,18 @@ contract SpellSystem is BaseSystem {
     return Spells.getMetadata(spellId);
   }
 
+  function getSpellVersionMetadata(
+    bytes32 spellId,
+    uint32 version
+  ) public view returns (string memory) {
+    return SpellVersions.getMetadata(spellId, version);
+  }
+
   function getSpellCreator(bytes32 spellId) public view returns (address) {
     return Spells.getCreator(spellId);
+  }
+
+  function getSpellVersion(bytes32 spellId) public view returns (uint32) {
+    return Spells.getVersion(spellId);
   }
 }

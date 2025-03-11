@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 
-import { Sources, Shamans, Spells, ShamanSpell, ShamanSource, ShamanSourceIndex, ShamanSpellIndex, SourceShamanIndex, SpellShamanIndex } from "../codegen/index.sol";
-import { LogType } from "../codegen/common.sol";
+import { Sources, Shamans, Spells, SpellVersions, ShamanSpell, ShamanSource, ShamanSourceIndex, ShamanSpellIndex, SourceShamanIndex, SpellShamanIndex } from "../codegen/index.sol";
+import { LogType, JobState } from "../codegen/common.sol";
 
 library ShamanEntitiesLib {
   function addSpell(bytes32 shamanId, bytes32 spellId) internal {
@@ -12,7 +12,15 @@ library ShamanEntitiesLib {
       "Spell already exists in shaman"
     );
 
-    ShamanSpell.set(shamanId, spellId, block.timestamp);
+    // Store the spell with latest version and metadata
+    ShamanSpell.set(
+      shamanId,
+      spellId,
+      block.timestamp,
+      Spells.getVersion(spellId),
+      JobState.Idle,
+      Spells.getMetadata(spellId)
+    );
 
     uint32 shamanSpellCount = Shamans.getSpellCount(shamanId);
     ShamanSpellIndex.set(shamanId, shamanSpellCount, spellId);

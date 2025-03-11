@@ -19,5 +19,9 @@ interface ISpellSystem {
 
   function getSpellMetadata(bytes32 spellId) external view returns (string memory);
 
+  function getSpellVersionMetadata(bytes32 spellId, uint32 version) external view returns (string memory);
+
   function getSpellCreator(bytes32 spellId) external view returns (address);
+
+  function getSpellVersion(bytes32 spellId) external view returns (uint32);
 }
