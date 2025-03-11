@@ -24,4 +24,8 @@ interface IShamanEntitiesSystem {
   function getShamanIdsBySourceId(bytes32 sourceId) external view returns (bytes32[] memory);
 
   function getShamanIdsBySpellId(bytes32 spellId) external view returns (bytes32[] memory);
+
+  function getShamanSpellMetadata(bytes32 shamanId, bytes32 spellId) external view returns (string memory);
+
+  function getShamanSpellVersion(bytes32 shamanId, bytes32 spellId) external view returns (uint256);
 }

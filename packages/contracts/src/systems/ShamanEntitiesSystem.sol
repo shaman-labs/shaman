@@ -2,7 +2,7 @@
 pragma solidity >=0.8.24;
 import { BaseSystem } from "./BaseSystem.sol";
 import { ShamanEntitiesLib } from "../lib/ShamanEntitiesLib.sol";
-import { Shamans, Spells, Sources, ShamanSpellIndex, ShamanSourceIndex, SourceShamanIndex, SpellShamanIndex } from "../codegen/index.sol";
+import { Shamans, Spells, Sources, ShamanSpell, ShamanSpellIndex, ShamanSourceIndex, SourceShamanIndex, SpellShamanIndex } from "../codegen/index.sol";
 
 contract ShamanEntitiesSystem is BaseSystem {
   function addSpellToShaman(
@@ -103,5 +103,19 @@ contract ShamanEntitiesSystem is BaseSystem {
     }
 
     return shamanIds;
+  }
+
+  function getShamanSpellMetadata(
+    bytes32 shamanId,
+    bytes32 spellId
+  ) public view returns (string memory) {
+    return ShamanSpell.getMetadata(shamanId, spellId);
+  }
+
+  function getShamanSpellVersion(
+    bytes32 shamanId,
+    bytes32 spellId
+  ) public view returns (uint256) {
+    return ShamanSpell.getVersion(shamanId, spellId);
   }
 }
