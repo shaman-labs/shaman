@@ -63,6 +63,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useShamanSpells } from '@/hooks/use-shaman-spells';
 import { useMUD } from '@/contexts/mud-context';
 import { toast } from '@/hooks/use-toast';
+import { trimHash } from '@/lib/utils';
 
 type ChartDataPoint = {
   day: string;
@@ -83,7 +84,7 @@ const logTypes = [
     color: 'hsl(var(--chart-3))',
   },
   {
-    label: 'Executed',
+    label: 'Completed',
     color: 'hsl(var(--chart-1))',
   },
   {
@@ -160,6 +161,9 @@ export default function Page() {
     (spell) => spell.spellId === spellId
   );
   const spellLogs = shamanLogs?.filter((log) => log.spellId === spellId);
+  const spellExecutionLogs = spellLogs?.filter(
+    (log) => log.logType === ShamanLogType.COMPLETION
+  );
 
   useEffect(() => {
     if (shamanSpells?.length) {
@@ -207,6 +211,7 @@ export default function Page() {
           metadata: log.metadata,
           amount: log.amount,
           success: log.success,
+          spellId: log.spellId,
         })) || []
       ),
     [executionLogs]
@@ -222,6 +227,7 @@ export default function Page() {
         shamanId: log.shamanId,
         success: log.success,
         amount: log.amount,
+        spellId: log.spellId,
       })) || [],
     [shamanLogs]
   );
@@ -236,6 +242,7 @@ export default function Page() {
         shamanId: log.shamanId,
         success: log.success,
         amount: log.amount,
+        spellId: log.spellId,
       })) || [],
     [spellLogs]
   );
@@ -273,7 +280,7 @@ export default function Page() {
               </div>
             );
           }
-          return null;
+          return '-';
         },
       },
       {
@@ -333,6 +340,22 @@ export default function Page() {
         ),
       },
       {
+        accessorKey: 'spellId',
+        header: 'Spell',
+        cell: ({ row }) => {
+          const spell = shamanSpells?.find(
+            (spell) => spell.spellId === row.original.spellId
+          );
+          return (
+            spell?.name ||
+            (row.original.spellId ===
+            '0x0000000000000000000000000000000000000000000000000000000000000000'
+              ? '-'
+              : trimHash(row.original.spellId))
+          );
+        },
+      },
+      {
         accessorKey: 'success',
         header: 'Status',
         cell: ({ row }) => {
@@ -348,7 +371,7 @@ export default function Page() {
               </div>
             );
           }
-          return null;
+          return '-';
         },
       },
       {
@@ -394,7 +417,7 @@ export default function Page() {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [openViewLog]
+    [openViewLog, shamanSpells]
   );
 
   return (
@@ -858,12 +881,13 @@ export default function Page() {
                                     Success Rate
                                   </p>
                                   <p className="text-sm font-medium">
-                                    {spellLogs && spellLogs.length > 0
+                                    {spellExecutionLogs &&
+                                    spellExecutionLogs.length > 0
                                       ? Math.round(
-                                          (spellLogs.filter(
+                                          (spellExecutionLogs.filter(
                                             (log) => log.success
                                           ).length /
-                                            spellLogs.length) *
+                                            spellExecutionLogs.length) *
                                             100
                                         )
                                       : 0}
