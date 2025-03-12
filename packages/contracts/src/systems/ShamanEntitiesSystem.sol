@@ -3,6 +3,7 @@ pragma solidity >=0.8.24;
 import { BaseSystem } from "./BaseSystem.sol";
 import { ShamanEntitiesLib } from "../lib/ShamanEntitiesLib.sol";
 import { Shamans, Spells, Sources, ShamanSpell, ShamanSpellIndex, ShamanSourceIndex, SourceShamanIndex, SpellShamanIndex } from "../codegen/index.sol";
+import { JobState } from "../codegen/common.sol";
 
 contract ShamanEntitiesSystem is BaseSystem {
   function addSpellToShaman(
@@ -117,5 +118,12 @@ contract ShamanEntitiesSystem is BaseSystem {
     bytes32 spellId
   ) public view returns (uint256) {
     return ShamanSpell.getVersion(shamanId, spellId);
+  }
+
+  function getShamanSpellState(
+    bytes32 shamanId,
+    bytes32 spellId
+  ) public view returns (JobState) {
+    return ShamanSpell.getState(shamanId, spellId);
   }
 }
