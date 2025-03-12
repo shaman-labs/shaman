@@ -75,7 +75,7 @@ contract SpellJobsSystem is BaseSystem {
       "Operator has insufficient balance"
     );
 
-    ShamanSpell.setState(shamanId, spellId, JobState.Completed);
+    ShamanSpell.setState(shamanId, spellId, JobState.Idle);
     Shamans.setBalance(shamanId, Shamans.getBalance(shamanId) - cost);
 
     ShamanLogsLib.logOperation(

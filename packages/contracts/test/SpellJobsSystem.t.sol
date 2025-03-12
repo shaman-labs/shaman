@@ -266,8 +266,8 @@ contract SpellJobsSystemTest is BaseTest {
     // Verify the spell job was completed
     assertEq(
       uint8(ShamanSpell.getState(shamanId, spellId)),
-      uint8(JobState.Completed),
-      "Spell state should be Completed after completion"
+      uint8(JobState.Idle),
+      "Spell state should be Idle after completion"
     );
 
     // Verify the balance was updated
