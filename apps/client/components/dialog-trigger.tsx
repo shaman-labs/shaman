@@ -95,6 +95,7 @@ export function DialogTrigger(props: DialogProps) {
                       logType: ShamanLogType.QUEUE,
                       shamanId: shamanId as string,
                       amount: BigInt(1),
+                      spellId: response.results[0].spellId,
                     })
                   }>
                   View Logs
