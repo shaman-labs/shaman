@@ -139,6 +139,7 @@ export type ShamanLogsTableData = {
   success: boolean;
   timestamp: string;
   metadata: string;
+  spellId: string;
 };
 
 export type ShamanTriggerResponse = {
