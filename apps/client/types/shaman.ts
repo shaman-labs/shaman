@@ -152,5 +152,6 @@ export type ShamanTriggerResponse = {
     metadataHash: string;
     txHash: string;
     logs: string[];
+    spellId: string;
   }[];
 };
