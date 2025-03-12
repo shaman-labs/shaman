@@ -896,6 +896,30 @@
   },
   {
     "type": "function",
+    "name": "getShamanSpellState",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "spellId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint8",
+        "internalType": "enum JobState"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "getShamanSpellVersion",
     "inputs": [
       {
