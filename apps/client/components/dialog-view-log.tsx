@@ -136,7 +136,7 @@ export function DialogViewLog(props: DialogProps) {
             </TableBody>
           </Table>
 
-          {shamanLogMetadata?.results.map((result, index) => (
+          {shamanLogMetadata?.results?.map((result, index) => (
             <Table key={index} className="my-4">
               <TableBody>
                 <TableRow>
@@ -148,6 +148,19 @@ export function DialogViewLog(props: DialogProps) {
               </TableBody>
             </Table>
           ))}
+
+          {shamanLogMetadata?.result && (
+            <Table className="my-4">
+              <TableBody>
+                <TableRow>
+                  <TableCell colSpan={2} className="font-semibold">
+                    Result
+                  </TableCell>
+                </TableRow>
+                <RecursiveTableRows data={shamanLogMetadata.result} prefix="" />
+              </TableBody>
+            </Table>
+          )}
 
           <h3 className="text-lg font-medium mt-6 mb-2">Shaman Metadata</h3>
           <Table>
