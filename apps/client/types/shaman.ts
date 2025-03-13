@@ -127,7 +127,8 @@ export function stringifyShamanMetadata(metadata: ShamanMetadata): string {
 
 export type ShamanLogMetadata = {
   success: boolean;
-  results: Record<string, string | number>[];
+  results?: Record<string, string | number>[];
+  result?: Record<string, string | number>;
   timestamp: number;
 };
 
