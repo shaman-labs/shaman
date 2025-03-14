@@ -75,7 +75,6 @@ export default {
       },
       animation: {
         glitch: 'glitch 1s infinite linear alternate-reverse',
-        flicker: 'flicker 1.2s infinite alternate',
       },
       keyframes: {
         glitch: {
@@ -85,10 +84,6 @@ export default {
           '60%': { transform: 'translate(-1px, -1px)' },
           '80%': { transform: 'translate(1px, 1px)' },
           '100%': { transform: 'translate(0, 0)' },
-        },
-        flicker: {
-          '0%, 100%': { opacity: 1 },
-          '50%': { opacity: 0.85 },
         },
       },
     },
