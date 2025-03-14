@@ -2,8 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("/fonts/JetBrainsMono-VariableFont_wght.ttf") format("truetype");
+  font-display: swap;
+}
+
 body {
-  font-family: "Fira Code", monospace;
+  font-family: "JetBrains Mono", monospace;
   background: #0D1117;
   color: #A3F7BF;
 }
