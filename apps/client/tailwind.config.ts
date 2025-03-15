@@ -44,11 +44,11 @@ export default {
         input: '#1A1F26',
         ring: '#A3F7BF',
         chart: {
-          '1': '#77DD77',
-          '2': '#D05C5C',
-          '3': '#77DDFF',
-          '4': '#F5A623',
-          '5': '#BB77FF',
+          '1': 'hsl(var(--chart-1))',
+          '2': 'hsl(var(--chart-2))',
+          '3': 'hsl(var(--chart-3))',
+          '4': 'hsl(var(--chart-4))',
+          '5': 'hsl(var(--chart-5))',
         },
         sidebar: {
           DEFAULT: '#161B22',
@@ -72,19 +72,6 @@ export default {
       boxShadow: {
         subtle: '0 0 8px rgba(163, 247, 191, 0.2)',
         focused: '0 0 12px rgba(163, 247, 191, 0.4)',
-      },
-      animation: {
-        glitch: 'glitch 1s infinite linear alternate-reverse',
-      },
-      keyframes: {
-        glitch: {
-          '0%': { transform: 'translate(0, 0)' },
-          '20%': { transform: 'translate(-1px, 1px)' },
-          '40%': { transform: 'translate(1px, -1px)' },
-          '60%': { transform: 'translate(-1px, -1px)' },
-          '80%': { transform: 'translate(1px, 1px)' },
-          '100%': { transform: 'translate(0, 0)' },
-        },
       },
     },
   },
