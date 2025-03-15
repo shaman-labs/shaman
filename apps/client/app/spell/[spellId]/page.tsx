@@ -57,8 +57,8 @@ export default function Page() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <Grid cols={{ sm: 1, md: 2 }} gap={4}>
-            <GridItem className="order-last sm:order-first">
+          <Grid cols={{ sm: 1, lg: 2 }} gap={4}>
+            <GridItem className="order-last md:order-first">
               <Card className="pt-6">
                 <CardContent className="flex-grow space-y-4">
                   <div className="grid gap-6 divide-y divide-border">
@@ -114,7 +114,7 @@ export default function Page() {
                 </CardContent>
               </Card>
             </GridItem>
-            <GridItem className="order-first sm:order-last">
+            <GridItem className="order-first md:order-last">
               <Card className="pt-6">
                 <CardContent className="flex-1 min-h-0 max-w-full w-full">
                   <Tabs defaultValue="prompt" className="w-full">
