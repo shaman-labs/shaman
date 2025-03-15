@@ -24,7 +24,7 @@ body {
   --privy-color-foreground-2: var(--secondary-foreground);
   --privy-color-foreground-3: var(--muted-foreground);
   --privy-color-foreground-4: var(--accent-foreground);
-  --privy-color-foreground-accent: var(--primary);
+  --privy-color-foreground-accent: #ffffff;
   --privy-color-accent: var(--primary);
   --privy-color-accent-light: var(--chart-3);
   --privy-color-accent-lightest: var(--chart-4);
