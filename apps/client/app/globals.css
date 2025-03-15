@@ -12,6 +12,27 @@ body {
   font-family: "JetBrains Mono", monospace;
   background: #0D1117;
   color: #A3F7BF;
+
+  --privy-border-radius-sm: 0.1rem;
+  --privy-border-radius-md: 0.2rem;
+  --privy-border-radius-lg: 0.25rem;
+  --privy-border-radius-full: 9999px;
+  --privy-color-background: var(--background);
+  --privy-color-background-2: var(--card);
+  --privy-color-background-3: var(--popover);
+  --privy-color-foreground: var(--foreground);
+  --privy-color-foreground-2: var(--secondary-foreground);
+  --privy-color-foreground-3: var(--muted-foreground);
+  --privy-color-foreground-4: var(--accent-foreground);
+  --privy-color-foreground-accent: var(--primary);
+  --privy-color-accent: var(--primary);
+  --privy-color-accent-light: var(--chart-3);
+  --privy-color-accent-lightest: var(--chart-4);
+  --privy-color-accent-dark: var(--chart-1);
+  --privy-color-accent-darkest: var(--chart-2);
+  --privy-color-success: var(--primary);
+  --privy-color-error: var(--destructive);
+  --privy-color-error-light: var(--destructive);
 }
 
 @layer utilities {
