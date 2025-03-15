@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save, Webhook } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
@@ -201,19 +201,33 @@ export default function Page() {
                   <CardTitle>Shaman Preview</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-sm font-medium">Name</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {shaman?.name}
-                      </p>
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        <Webhook className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xs font-medium text-muted-foreground">
+                          Name
+                        </h3>
+                        <p className="text-sm truncate">
+                          {shaman?.name || '-'}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-sm font-medium">Description</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {form.watch('description') ||
-                          'No description specified'}
-                      </p>
+
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        <Webhook className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xs font-medium text-muted-foreground">
+                          Description
+                        </h3>
+                        <p className="text-sm line-clamp-2">
+                          {form.watch('description') || '-'}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>

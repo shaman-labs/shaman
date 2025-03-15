@@ -836,14 +836,14 @@ export default function Page() {
                 </CardContent>
               </Card>
             </TabsContent>
-            <TabsContent value="logs">
-              <Card>
+            <TabsContent value="logs" className="mt-2">
+              <Card className="overflow-hidden">
                 <CardHeader>
                   <CardTitle>Shaman Logs</CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-0 sm:p-6">
                   {logsLoading ? (
-                    <div className="space-y-2">
+                    <div className="space-y-2 p-6">
                       {[1, 2, 3, 4, 5].map((i) => (
                         <Skeleton key={i} className="h-10 w-full" />
                       ))}

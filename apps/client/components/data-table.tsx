@@ -32,8 +32,8 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md border w-full">
-      <Table>
+    <div className="max-w-[calc(100vw-3rem)] md:max-w-full relative overflow-x-auto">
+      <Table className="w-full caption-bottom">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

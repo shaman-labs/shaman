@@ -26,6 +26,7 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
 } from '@/components/ui/breadcrumb';
+import { Grid, GridItem } from '@/components/grid';
 
 export default function Page() {
   const { data: secrets } = useSecrets();
@@ -63,48 +64,52 @@ export default function Page() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="flex flex-col">
-              <CardHeader>
-                <CardTitle>Create New Secret</CardTitle>
-              </CardHeader>
-              <CardContent className="flex-grow">
-                <p>Create a new secret to be used in your shamans.</p>
-              </CardContent>
-              <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
-                <Button
-                  onClick={() => setIsAddDialogOpen(true)}
-                  className="w-full"
-                  variant="default">
-                  <Plus />
-                  Create Secret
-                </Button>
-              </CardFooter>
-            </Card>
-          </div>
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {secrets.map((key: string) => (
-              <Card key={key} className="flex flex-col">
+          <Grid cols={{ sm: 1, md: 2, lg: 3 }} gap={4}>
+            <GridItem>
+              <Card className="flex flex-col">
                 <CardHeader>
-                  <CardTitle className="flex justify-between items-center">
-                    <span className="truncate">{key}</span>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => handleOpenDeleteDialog(key)}
-                      className="h-8 w-8">
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  </CardTitle>
+                  <CardTitle>Create New Secret</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    Value is hidden for security purposes.
-                  </p>
+                <CardContent className="flex-grow">
+                  <p>Create a new secret to be used in your shamans.</p>
                 </CardContent>
+                <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
+                  <Button
+                    onClick={() => setIsAddDialogOpen(true)}
+                    className="w-full"
+                    variant="default">
+                    <Plus />
+                    Create Secret
+                  </Button>
+                </CardFooter>
               </Card>
+            </GridItem>
+          </Grid>
+          <Grid cols={{ sm: 1, md: 2, lg: 3 }} gap={4}>
+            {secrets.map((key: string) => (
+              <GridItem key={key}>
+                <Card className="flex flex-col">
+                  <CardHeader>
+                    <CardTitle className="flex justify-between items-center">
+                      <span className="truncate">{key}</span>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleOpenDeleteDialog(key)}
+                        className="h-8 w-8">
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Value is hidden for security purposes.
+                    </p>
+                  </CardContent>
+                </Card>
+              </GridItem>
             ))}
-          </div>
+          </Grid>
         </div>
       </SidebarInset>
 
