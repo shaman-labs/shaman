@@ -142,17 +142,3 @@ export type ShamanLogsTableData = {
   metadata: string;
   spellId: string;
 };
-
-export type ShamanTriggerResponse = {
-  success: boolean;
-  error?: string;
-  results: {
-    decodedCode: string;
-    result: any;
-    timestamp: number;
-    metadataHash: string;
-    txHash: string;
-    logs: string[];
-    spellId: string;
-  }[];
-};
