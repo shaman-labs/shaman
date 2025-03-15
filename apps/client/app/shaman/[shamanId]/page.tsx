@@ -620,8 +620,8 @@ export default function Page() {
                   <CardTitle>Shaman Spells</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-4 gap-4">
-                    <div className="col-span-1 border rounded-md overflow-hidden">
+                  <div className="flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className="w-full md:col-span-1 border rounded-md overflow-hidden mb-4 md:mb-0">
                       <div className="divide-y">
                         {shamanSpellsLoading
                           ? Array(3)
@@ -632,17 +632,17 @@ export default function Page() {
                           : shamanSpells?.map((spell) => (
                               <div
                                 key={spell.spellId}
-                                className={`p-5 cursor-pointer flex items-center justify-between ${
+                                className={`p-4 sm:p-5 cursor-pointer flex items-center justify-between ${
                                   spellId === spell.spellId
                                     ? 'bg-accent'
                                     : 'hover:bg-accent/50'
                                 }`}
                                 onClick={() => setSpellId(spell.spellId)}>
-                                <span>{spell.name}</span>
+                                <span className="truncate">{spell.name}</span>
                               </div>
                             ))}
                         <div
-                          className={`p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
+                          className={`p-4 sm:p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
                           onClick={() =>
                             openAddSpell(
                               true,
@@ -658,14 +658,16 @@ export default function Page() {
                       </div>
                     </div>
 
-                    <div className="col-span-3 space-y-4">
+                    <div className="w-full md:col-span-2 lg:col-span-3 space-y-4">
                       {selectedSpell && (
                         <>
                           <Card>
                             <CardHeader className="pb-4">
-                              <div className="flex justify-between items-center">
+                              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                                 <div>
-                                  <CardTitle>{selectedSpell.name}</CardTitle>
+                                  <CardTitle className="break-words">
+                                    {selectedSpell.name}
+                                  </CardTitle>
                                   <p className="text-sm text-muted-foreground mt-1">
                                     Creator {selectedSpell.creator || 'Unknown'}
                                   </p>
@@ -674,7 +676,8 @@ export default function Page() {
                                   variant="destructive"
                                   size="sm"
                                   onClick={handleRemoveSpell}
-                                  disabled={loading}>
+                                  disabled={loading}
+                                  className="self-start sm:self-auto">
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
@@ -704,7 +707,7 @@ export default function Page() {
                                         getTokenProps,
                                       }) => (
                                         <pre
-                                          className="w-full p-4 text-sm whitespace-pre-wrap"
+                                          className="w-full p-3 sm:p-4 text-xs sm:text-sm whitespace-pre-wrap"
                                           style={{
                                             ...style,
                                             maxWidth: '100%',
@@ -742,7 +745,7 @@ export default function Page() {
                                         getTokenProps,
                                       }) => (
                                         <pre
-                                          className="overflow-x-auto w-full p-4 text-sm whitespace-pre"
+                                          className="overflow-x-auto w-full p-3 sm:p-4 text-xs sm:text-sm whitespace-pre"
                                           style={{
                                             ...style,
                                             maxWidth: '100%',
@@ -766,7 +769,7 @@ export default function Page() {
                                   </div>
                                 </TabsContent>
                               </Tabs>
-                              <div className="grid grid-cols-2 gap-4 mb-4">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                                 <div className="flex flex-col gap-1 p-3 rounded-lg border">
                                   <p className="text-xs text-muted-foreground">
                                     Last Execution
@@ -809,7 +812,7 @@ export default function Page() {
                             <CardHeader>
                               <CardTitle>Spell Execution Logs</CardTitle>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="overflow-x-auto">
                               {spellLogs && spellLogs.length > 0 ? (
                                 <div className="space-y-4">
                                   <DataTable
