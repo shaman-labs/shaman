@@ -31,6 +31,7 @@ export function DialogTrigger(props: DialogProps) {
         variant: 'default',
       });
 
+      props.onOpenChange(false);
       props.onSuccess?.();
     } catch (error) {
       console.error(error);
