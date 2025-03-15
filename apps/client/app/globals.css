@@ -15,14 +15,6 @@ body {
 }
 
 @layer utilities {
-  .glitch {
-    animation: glitch 1s infinite linear alternate-reverse;
-  }
-
-  .flicker {
-    animation: flicker 1.2s infinite alternate;
-  }
-
   .border-subtle {
     border: 1px solid #4C665A;
     box-shadow: 0 0 8px rgba(163, 247, 191, 0.3);
@@ -58,6 +50,40 @@ body {
     --border: #A3F7BF;
     --input: #0D1117;
     --ring: #A3F7BF;
+
+    --chart-1: 140 60% 50%;
+    --chart-2: 20 80% 55%;
+    --chart-3: 200 75% 60%;
+    --chart-4: 45 85% 55%;
+    --chart-5: 280 70% 60%;
+  }
+
+  .dark {
+    --background: #0D1117;
+    --foreground: #A3F7BF;
+    --card: #161B22;
+    --card-foreground: #A3F7BF;
+    --popover: #1A1F26;
+    --popover-foreground: #A3F7BF;
+    --primary: #77DD77;
+    --primary-foreground: #0D1117;
+    --secondary: #1B3A34;
+    --secondary-foreground: #A3F7BF;
+    --muted: #121417;
+    --muted-foreground: #A3F7BF;
+    --accent: #1B3A34;
+    --accent-foreground: #A3F7BF;
+    --destructive: #D05C5C;
+    --destructive-foreground: #0D1117;
+    --border: #A3F7BF;
+    --input: #0D1117;
+    --ring: #A3F7BF;
+
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 
   * {
