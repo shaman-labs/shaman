@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { useShamans } from '@/hooks/use-shamans';
+import { Grid, GridItem } from '@/components/grid';
 
 export default function Page() {
   const { data: shamans } = useShamans();
@@ -42,65 +43,71 @@ export default function Page() {
         </header>
         {user ? (
           <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <Card className="flex flex-col">
-                <CardHeader>
-                  <CardTitle>Create New Workflow</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>Automate and orchestrate your onchain workflows.</p>
-                </CardContent>
-                <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
-                  <Button asChild className="w-full" variant="default">
-                    <Link href="/shaman">
-                      <Plus />
-                      Create Shaman
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {shamans.map((shaman) => (
-                <Card key={shaman.shamanId} className="mb-4 flex flex-col">
+            <Grid cols={{ sm: 1, md: 2, lg: 3 }} gap={4}>
+              <GridItem>
+                <Card className="flex flex-col">
                   <CardHeader>
-                    <CardTitle>{shaman.name}</CardTitle>
+                    <CardTitle>Create New Workflow</CardTitle>
                   </CardHeader>
-                  <CardContent className="flex-grow">
-                    <div className="flex flex-col gap-2">
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">Balance:</span>
-                        <span className="text-sm">
-                          <code className="rounded-md bg-muted px-1 py-0.5 text-sm overflow-y-auto">
-                            <span className="font-mono">{shaman.balance}</span>
-                          </code>
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">
-                          Created{' '}
-                          {formatDistance(
-                            new Date(Number(shaman.createdAt) * 1000),
-                            new Date(),
-                            {
-                              addSuffix: true,
-                            }
-                          )}
-                        </span>
-                      </div>
-                    </div>
+                  <CardContent>
+                    <p>Automate and orchestrate your onchain workflows.</p>
                   </CardContent>
                   <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
-                    <Button asChild className="w-full" variant="outline">
-                      <Link href={`/shaman/${shaman.shamanId}`}>
-                        <Eye />
-                        View Details
+                    <Button asChild className="w-full" variant="default">
+                      <Link href="/shaman">
+                        <Plus />
+                        Create Shaman
                       </Link>
                     </Button>
                   </CardFooter>
                 </Card>
+              </GridItem>
+            </Grid>
+            <Grid cols={{ sm: 1, md: 2, lg: 3 }} gap={4}>
+              {shamans.map((shaman) => (
+                <GridItem key={shaman.shamanId}>
+                  <Card className="mb-4 flex flex-col">
+                    <CardHeader>
+                      <CardTitle>{shaman.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-grow">
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">Balance:</span>
+                          <span className="text-sm">
+                            <code className="rounded-md bg-muted px-1 py-0.5 text-sm overflow-y-auto">
+                              <span className="font-mono">
+                                {shaman.balance}
+                              </span>
+                            </code>
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">
+                            Created{' '}
+                            {formatDistance(
+                              new Date(Number(shaman.createdAt) * 1000),
+                              new Date(),
+                              {
+                                addSuffix: true,
+                              }
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                    <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
+                      <Button asChild className="w-full" variant="outline">
+                        <Link href={`/shaman/${shaman.shamanId}`}>
+                          <Eye />
+                          View Details
+                        </Link>
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                </GridItem>
               ))}
-            </div>
+            </Grid>
           </div>
         ) : (
           <div className="flex justify-center items-center h-full">

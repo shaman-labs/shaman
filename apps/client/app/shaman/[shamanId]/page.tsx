@@ -64,6 +64,8 @@ import { useShamanSpells } from '@/hooks/use-shaman-spells';
 import { useMUD } from '@/contexts/mud-context';
 import { toast } from '@/hooks/use-toast';
 import { trimHash } from '@/lib/utils';
+import { Grid, GridItem } from '@/components/grid';
+import { RowItem } from '@/components/row-item';
 
 type ChartDataPoint = {
   day: string;
@@ -458,61 +460,55 @@ export default function Page() {
               <TabsTrigger value="logs">Logs</TabsTrigger>
             </TabsList>
             <TabsContent value="shaman">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>ZUG Balance</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {shamanLoading ? (
-                        <Skeleton className="h-14 w-32 mx-auto" />
-                      ) : (
-                        <p className="text-center text-5xl font-bold">
-                          {Number(shaman?.balance || 0)}
-                        </p>
-                      )}
-                    </CardContent>
-                    <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
-                      <Button
-                        className="w-full"
-                        variant="default"
-                        onClick={() =>
-                          openAddBalance(
-                            true,
-                            shamanId as string,
-                            handleRefetch
-                          )
-                        }>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Balance
-                      </Button>
-                      <Button
-                        className="w-full"
-                        variant="outline"
-                        onClick={() =>
-                          openWithdrawBalance(
-                            true,
-                            shamanId as string,
-                            handleRefetch
-                          )
-                        }>
-                        <Minus className="mr-2 h-4 w-4" />
-                        Withdraw Balance
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                  <Card className="pt-6">
-                    <CardContent className="flex-grow space-y-4">
-                      <div className="grid gap-6 divide-y divide-border">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-primary/10 p-2 rounded-md">
-                            <FileCode className="h-5 w-5 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-xs font-medium text-muted-foreground">
-                              Name
-                            </h3>
+              <Grid cols={{ sm: 1, lg: 2 }} gap={4}>
+                <GridItem>
+                  <div className="flex flex-col gap-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>ZUG Balance</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {shamanLoading ? (
+                          <Skeleton className="h-14 w-32 mx-auto" />
+                        ) : (
+                          <p className="text-center text-5xl font-bold">
+                            {Number(shaman?.balance || 0)}
+                          </p>
+                        )}
+                      </CardContent>
+                      <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
+                        <Button
+                          className="w-full"
+                          variant="default"
+                          onClick={() =>
+                            openAddBalance(
+                              true,
+                              shamanId as string,
+                              handleRefetch
+                            )
+                          }>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add Balance
+                        </Button>
+                        <Button
+                          className="w-full"
+                          variant="outline"
+                          onClick={() =>
+                            openWithdrawBalance(
+                              true,
+                              shamanId as string,
+                              handleRefetch
+                            )
+                          }>
+                          <Minus className="mr-2 h-4 w-4" />
+                          Withdraw Balance
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                    <Card className="pt-6">
+                      <CardContent className="flex-grow space-y-4">
+                        <div className="grid gap-6 divide-y divide-border">
+                          <RowItem icon={FileCode} label="Name" noDivider>
                             {shamanLoading ? (
                               <Skeleton className="h-5 w-32" />
                             ) : (
@@ -520,31 +516,15 @@ export default function Page() {
                                 {shaman?.name}
                               </p>
                             )}
-                          </div>
-                        </div>
+                          </RowItem>
 
-                        {shaman?.description && (
-                          <div className="flex items-start gap-3 pt-4">
-                            <div className="bg-primary/10 p-2 rounded-md mt-1">
-                              <FileCode className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-xs font-medium text-muted-foreground">
-                                Description
-                              </h3>
+                          {shaman?.description && (
+                            <RowItem icon={FileCode} label="Description">
                               <p className="text-sm">{shaman.description}</p>
-                            </div>
-                          </div>
-                        )}
+                            </RowItem>
+                          )}
 
-                        <div className="flex items-center gap-3 pt-4">
-                          <div className="bg-primary/10 p-2 rounded-md">
-                            <User className="h-5 w-5 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-xs font-medium text-muted-foreground">
-                              Creator
-                            </h3>
+                          <RowItem icon={User} label="Creator">
                             {shamanLoading ? (
                               <Skeleton className="h-5 w-40" />
                             ) : (
@@ -552,17 +532,9 @@ export default function Page() {
                                 {shaman?.creator}
                               </p>
                             )}
-                          </div>
-                        </div>
+                          </RowItem>
 
-                        <div className="flex items-center gap-3 pt-4">
-                          <div className="bg-primary/10 p-2 rounded-md">
-                            <LinkIcon className="h-5 w-5 text-primary" />
-                          </div>
-                          <div className="flex-1 overflow-hidden">
-                            <h3 className="text-xs font-medium text-muted-foreground">
-                              IPFS Link
-                            </h3>
+                          <RowItem icon={LinkIcon} label="IPFS Link">
                             {shaman?.metadata ? (
                               <a
                                 href={`https://gateway.shaman.fun/ipfs/${shaman.metadata}`}
@@ -576,136 +548,71 @@ export default function Page() {
                                 No IPFS link available
                               </p>
                             )}
-                          </div>
-                        </div>
+                          </RowItem>
 
-                        {shaman?.createdAt && (
-                          <div className="flex items-center gap-3 pt-4">
-                            <div className="bg-primary/10 p-2 rounded-md">
-                              <Clock className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-xs font-medium text-muted-foreground">
-                                Created
-                              </h3>
+                          {shaman?.createdAt && (
+                            <RowItem icon={Clock} label="Created">
                               <p className="text-sm">
                                 {format(
                                   Number(shaman.createdAt) * 1000,
                                   'PPpp'
                                 )}
                               </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Stats</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-2 p-4 rounded-lg border">
-                          <p className="text-sm text-muted-foreground">
-                            Total Executions
-                          </p>
-                          <p className="text-2xl font-bold">
-                            {executionLogs?.length || 0}
-                          </p>
+                            </RowItem>
+                          )}
                         </div>
-                        <div className="flex flex-col gap-2 p-4 rounded-lg border">
-                          <p className="text-sm text-muted-foreground">
-                            Success Rate
-                          </p>
-                          <p className="text-2xl font-bold">
-                            {executionLogs?.length
-                              ? Math.round(
-                                  (executionLogs.filter((log) => log.success)
-                                    .length /
-                                    executionLogs.length) *
-                                    100
-                                )
-                              : 0}
-                            %
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </GridItem>
+                <GridItem>
                   <Card>
                     <CardHeader>
-                      <CardTitle>Executions</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ChartContainer config={chartConfig}>
-                        <LineChart
-                          accessibilityLayer
-                          data={chartData}
-                          margin={{
-                            left: 12,
-                            right: 12,
-                          }}>
-                          <CartesianGrid vertical={false} />
-                          <XAxis
-                            dataKey="day"
-                            tickLine={false}
-                            axisLine={false}
-                            tickMargin={8}
-                            tickFormatter={(value) => value.slice(0, 3)}
-                          />
-                          <YAxis
-                            tickLine={false}
-                            axisLine={false}
-                            tickMargin={8}
-                          />
-                          <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
-                          />
-                          <Line
-                            dataKey="executions"
-                            type="step"
-                            stroke="var(--color-executions)"
-                            strokeWidth={2}
-                            dot={false}
-                          />
-                        </LineChart>
-                      </ChartContainer>
-                    </CardContent>
-                    <CardFooter className="flex-col items-start gap-2 text-sm">
-                      <div className="leading-none text-muted-foreground">
-                        Showing executions for the last 7 days
-                      </div>
-                    </CardFooter>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Recent Logs</CardTitle>
+                      <CardTitle>Executions By Day</CardTitle>
                     </CardHeader>
                     <CardContent>
                       {logsLoading ? (
-                        <div className="space-y-2">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <Skeleton key={i} className="h-10 w-full" />
-                          ))}
-                        </div>
-                      ) : tableData.length > 0 ? (
-                        <DataTable
-                          columns={logColumns}
-                          data={tableData.slice(0, 5)}
-                        />
+                        <Skeleton className="h-40 w-full" />
                       ) : (
-                        <p className="text-center py-8 text-muted-foreground">
-                          No logs found for this shaman
-                        </p>
+                        <ChartContainer
+                          config={chartConfig}
+                          className="h-40 w-full">
+                          <LineChart data={chartData}>
+                            <XAxis
+                              dataKey="day"
+                              tickLine={false}
+                              axisLine={false}
+                              tick={{ fontSize: 10 }}
+                            />
+                            <YAxis
+                              tickLine={false}
+                              axisLine={false}
+                              tick={{ fontSize: 10 }}
+                            />
+                            <CartesianGrid
+                              strokeDasharray="3 3"
+                              vertical={false}
+                            />
+                            <ChartTooltip
+                              cursor={{
+                                stroke: 'hsl(var(--muted-foreground))',
+                              }}
+                              wrapperStyle={{ outline: 'none' }}
+                              content={<ChartTooltipContent />}
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="executions"
+                              stroke={chartConfig.executions.color}
+                              strokeWidth={2}
+                            />
+                          </LineChart>
+                        </ChartContainer>
                       )}
                     </CardContent>
                   </Card>
-                </div>
-              </div>
+                </GridItem>
+              </Grid>
             </TabsContent>
             <TabsContent value="spells">
               <Card>
@@ -713,8 +620,8 @@ export default function Page() {
                   <CardTitle>Shaman Spells</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="grid grid-cols-4 gap-4">
-                    <div className="col-span-1 border rounded-md overflow-hidden">
+                  <div className="flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className="w-full md:col-span-1 border rounded-md overflow-hidden mb-4 md:mb-0">
                       <div className="divide-y">
                         {shamanSpellsLoading
                           ? Array(3)
@@ -725,17 +632,17 @@ export default function Page() {
                           : shamanSpells?.map((spell) => (
                               <div
                                 key={spell.spellId}
-                                className={`p-5 cursor-pointer flex items-center justify-between ${
+                                className={`p-4 sm:p-5 cursor-pointer flex items-center justify-between ${
                                   spellId === spell.spellId
                                     ? 'bg-accent'
                                     : 'hover:bg-accent/50'
                                 }`}
                                 onClick={() => setSpellId(spell.spellId)}>
-                                <span>{spell.name}</span>
+                                <span className="truncate">{spell.name}</span>
                               </div>
                             ))}
                         <div
-                          className={`p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
+                          className={`p-4 sm:p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
                           onClick={() =>
                             openAddSpell(
                               true,
@@ -751,14 +658,16 @@ export default function Page() {
                       </div>
                     </div>
 
-                    <div className="col-span-3 space-y-4">
+                    <div className="w-full md:col-span-2 lg:col-span-3 space-y-4">
                       {selectedSpell && (
                         <>
                           <Card>
                             <CardHeader className="pb-4">
-                              <div className="flex justify-between items-center">
+                              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                                 <div>
-                                  <CardTitle>{selectedSpell.name}</CardTitle>
+                                  <CardTitle className="break-words">
+                                    {selectedSpell.name}
+                                  </CardTitle>
                                   <p className="text-sm text-muted-foreground mt-1">
                                     Creator {selectedSpell.creator || 'Unknown'}
                                   </p>
@@ -767,7 +676,8 @@ export default function Page() {
                                   variant="destructive"
                                   size="sm"
                                   onClick={handleRemoveSpell}
-                                  disabled={loading}>
+                                  disabled={loading}
+                                  className="self-start sm:self-auto">
                                   <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
@@ -797,7 +707,7 @@ export default function Page() {
                                         getTokenProps,
                                       }) => (
                                         <pre
-                                          className="w-full p-4 text-sm whitespace-pre-wrap"
+                                          className="w-full p-3 sm:p-4 text-xs sm:text-sm whitespace-pre-wrap"
                                           style={{
                                             ...style,
                                             maxWidth: '100%',
@@ -835,7 +745,7 @@ export default function Page() {
                                         getTokenProps,
                                       }) => (
                                         <pre
-                                          className="overflow-x-auto w-full p-4 text-sm whitespace-pre"
+                                          className="overflow-x-auto w-full p-3 sm:p-4 text-xs sm:text-sm whitespace-pre"
                                           style={{
                                             ...style,
                                             maxWidth: '100%',
@@ -859,7 +769,7 @@ export default function Page() {
                                   </div>
                                 </TabsContent>
                               </Tabs>
-                              <div className="grid grid-cols-2 gap-4 mb-4">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                                 <div className="flex flex-col gap-1 p-3 rounded-lg border">
                                   <p className="text-xs text-muted-foreground">
                                     Last Execution
@@ -902,7 +812,7 @@ export default function Page() {
                             <CardHeader>
                               <CardTitle>Spell Execution Logs</CardTitle>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="overflow-x-auto">
                               {spellLogs && spellLogs.length > 0 ? (
                                 <div className="space-y-4">
                                   <DataTable

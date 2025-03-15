@@ -43,6 +43,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { useDialogContext } from '@/contexts/dialog-context';
+import { Grid, GridItem } from '@/components/grid';
 
 const transactionsColumns: ColumnDef<Transaction>[] = [
   {
@@ -190,8 +191,8 @@ export default function Page() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-4">
+          <Grid cols={{ sm: 1, lg: 2 }} gap={4}>
+            <GridItem>
               <Card>
                 <CardHeader>
                   <CardTitle>Assets</CardTitle>
@@ -202,18 +203,18 @@ export default function Page() {
                     data={balances?.items ?? []}
                   />
                 </CardContent>
-                <CardFooter className="flex-col items-start gap-2 text-sm">
-                  <div className="leading-none text-muted-foreground">
-                    To make a deposit, use <b>{address}</b> as the recipient on
-                    Arbitrum Sepolia Network.
+                <CardFooter className="flex justify-between">
+                  <div className="text-sm text-muted-foreground">
+                    Showing {balances?.items?.length || 0} tokens
                   </div>
+                  <Button variant="outline">View Portfolio</Button>
                 </CardFooter>
               </Card>
-            </div>
-            <div className="flex flex-col gap-4">
+            </GridItem>
+            <GridItem>
               <Card>
                 <CardHeader>
-                  <CardTitle>Transactions</CardTitle>
+                  <CardTitle>Recent Transactions</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <DataTable
@@ -221,12 +222,18 @@ export default function Page() {
                     data={transactions ?? []}
                   />
                 </CardContent>
+                <CardFooter className="flex justify-between">
+                  <div className="text-sm text-muted-foreground">
+                    Showing recent {transactions?.length || 0} transactions
+                  </div>
+                  <Button variant="outline">View All</Button>
+                </CardFooter>
               </Card>
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
         </div>
+        <AlertDialogPaywall open={open} onOpenChange={setOpen} />
       </SidebarInset>
-      <AlertDialogPaywall open={open} onOpenChange={setOpen} />
     </SidebarProvider>
   );
 }
