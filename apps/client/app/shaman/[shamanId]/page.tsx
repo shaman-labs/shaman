@@ -65,6 +65,7 @@ import { useMUD } from '@/contexts/mud-context';
 import { toast } from '@/hooks/use-toast';
 import { trimHash } from '@/lib/utils';
 import { Grid, GridItem } from '@/components/grid';
+import { RowItem } from '@/components/row-item';
 
 type ChartDataPoint = {
   day: string;
@@ -507,97 +508,57 @@ export default function Page() {
                     <Card className="pt-6">
                       <CardContent className="flex-grow space-y-4">
                         <div className="grid gap-6 divide-y divide-border">
-                          <div className="flex items-center gap-3">
-                            <div className="bg-primary/10 p-2 rounded-md">
-                              <FileCode className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-xs font-medium text-muted-foreground">
-                                Name
-                              </h3>
-                              {shamanLoading ? (
-                                <Skeleton className="h-5 w-32" />
-                              ) : (
-                                <p className="text-base font-semibold">
-                                  {shaman?.name}
-                                </p>
-                              )}
-                            </div>
-                          </div>
+                          <RowItem icon={FileCode} label="Name" noDivider>
+                            {shamanLoading ? (
+                              <Skeleton className="h-5 w-32" />
+                            ) : (
+                              <p className="text-base font-semibold">
+                                {shaman?.name}
+                              </p>
+                            )}
+                          </RowItem>
 
                           {shaman?.description && (
-                            <div className="flex items-start gap-3 pt-4">
-                              <div className="bg-primary/10 p-2 rounded-md mt-1">
-                                <FileCode className="h-5 w-5 text-primary" />
-                              </div>
-                              <div className="flex-1">
-                                <h3 className="text-xs font-medium text-muted-foreground">
-                                  Description
-                                </h3>
-                                <p className="text-sm">{shaman.description}</p>
-                              </div>
-                            </div>
+                            <RowItem icon={FileCode} label="Description">
+                              <p className="text-sm">{shaman.description}</p>
+                            </RowItem>
                           )}
 
-                          <div className="flex items-center gap-3 pt-4">
-                            <div className="bg-primary/10 p-2 rounded-md">
-                              <User className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="flex-1">
-                              <h3 className="text-xs font-medium text-muted-foreground">
-                                Creator
-                              </h3>
-                              {shamanLoading ? (
-                                <Skeleton className="h-5 w-40" />
-                              ) : (
-                                <p className="font-mono text-sm truncate">
-                                  {shaman?.creator}
-                                </p>
-                              )}
-                            </div>
-                          </div>
+                          <RowItem icon={User} label="Creator">
+                            {shamanLoading ? (
+                              <Skeleton className="h-5 w-40" />
+                            ) : (
+                              <p className="font-mono text-sm truncate">
+                                {shaman?.creator}
+                              </p>
+                            )}
+                          </RowItem>
 
-                          <div className="flex items-center gap-3 pt-4">
-                            <div className="bg-primary/10 p-2 rounded-md">
-                              <LinkIcon className="h-5 w-5 text-primary" />
-                            </div>
-                            <div className="flex-1 overflow-hidden">
-                              <h3 className="text-xs font-medium text-muted-foreground">
-                                IPFS Link
-                              </h3>
-                              {shaman?.metadata ? (
-                                <a
-                                  href={`https://gateway.shaman.fun/ipfs/${shaman.metadata}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
-                                  ipfs://{shaman.metadata}
-                                </a>
-                              ) : (
-                                <p className="text-sm text-muted-foreground">
-                                  No IPFS link available
-                                </p>
-                              )}
-                            </div>
-                          </div>
+                          <RowItem icon={LinkIcon} label="IPFS Link">
+                            {shaman?.metadata ? (
+                              <a
+                                href={`https://gateway.shaman.fun/ipfs/${shaman.metadata}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
+                                ipfs://{shaman.metadata}
+                              </a>
+                            ) : (
+                              <p className="text-sm text-muted-foreground">
+                                No IPFS link available
+                              </p>
+                            )}
+                          </RowItem>
 
                           {shaman?.createdAt && (
-                            <div className="flex items-center gap-3 pt-4">
-                              <div className="bg-primary/10 p-2 rounded-md">
-                                <Clock className="h-5 w-5 text-primary" />
-                              </div>
-                              <div className="flex-1">
-                                <h3 className="text-xs font-medium text-muted-foreground">
-                                  Created
-                                </h3>
-                                <p className="text-sm">
-                                  {format(
-                                    Number(shaman.createdAt) * 1000,
-                                    'PPpp'
-                                  )}
-                                </p>
-                              </div>
-                            </div>
+                            <RowItem icon={Clock} label="Created">
+                              <p className="text-sm">
+                                {format(
+                                  Number(shaman.createdAt) * 1000,
+                                  'PPpp'
+                                )}
+                              </p>
+                            </RowItem>
                           )}
                         </div>
                       </CardContent>
@@ -637,9 +598,7 @@ export default function Page() {
                                 stroke: 'hsl(var(--muted-foreground))',
                               }}
                               wrapperStyle={{ outline: 'none' }}
-                              content={
-                                <ChartTooltipContent config={chartConfig} />
-                              }
+                              content={<ChartTooltipContent />}
                             />
                             <Line
                               type="monotone"

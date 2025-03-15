@@ -207,9 +207,7 @@ export default function Page() {
                   <div className="text-sm text-muted-foreground">
                     Showing {balances?.items?.length || 0} tokens
                   </div>
-                  <Button variant="outline" onClick={() => setOpen(true)}>
-                    View Portfolio
-                  </Button>
+                  <Button variant="outline">View Portfolio</Button>
                 </CardFooter>
               </Card>
             </GridItem>
@@ -228,9 +226,7 @@ export default function Page() {
                   <div className="text-sm text-muted-foreground">
                     Showing recent {transactions?.length || 0} transactions
                   </div>
-                  <Button variant="outline" onClick={() => setOpen(true)}>
-                    View All
-                  </Button>
+                  <Button variant="outline">View All</Button>
                 </CardFooter>
               </Card>
             </GridItem>
