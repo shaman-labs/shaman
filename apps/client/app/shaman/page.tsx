@@ -42,6 +42,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { useMUD } from '@/contexts/mud-context';
 import { useSources } from '@/hooks/use-sources';
+import { Grid, GridItem } from '@/components/grid';
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -158,8 +159,8 @@ export default function Page() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-4">
+          <Grid cols={{ sm: 1, lg: 2 }} gap={4}>
+            <GridItem>
               <Card>
                 <CardHeader>
                   <CardTitle>Create Shaman</CardTitle>
@@ -257,64 +258,48 @@ export default function Page() {
                   </Form>
                 </CardContent>
               </Card>
-            </div>
-            <div className="flex flex-col gap-4">
-              <Card className="flex-1">
+            </GridItem>
+            <GridItem>
+              <Card>
                 <CardHeader>
-                  <CardTitle>Shaman Preview</CardTitle>
+                  <CardTitle>Preview</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-sm font-medium">Name</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {form.watch('name') || 'No name specified'}
-                      </p>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium">Description</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {form.watch('description') ||
-                          'No description specified'}
-                      </p>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium">Selected Source</h3>
-                      <div className="flex flex-wrap gap-1">
-                        {form.watch('sourceId') ? (
-                          <div className="px-2 py-1 bg-secondary rounded-md text-xs">
-                            {getSourceLabel(
-                              sources.find(
-                                (s) => s.sourceId === form.watch('sourceId')
-                              )?.name || form.watch('sourceId').substring(0, 6)
-                            )}
-                          </div>
-                        ) : (
-                          <p className="text-sm text-muted-foreground">
-                            No source selected
-                          </p>
-                        )}
+                  <div className="flex flex-col space-y-2">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        <Webhook className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xs font-medium text-muted-foreground">
+                          Source
+                        </h3>
+                        <p className="text-sm truncate">
+                          {form.watch('sourceId')
+                            ? getSourceLabel(form.watch('sourceId'))
+                            : 'No source selected'}
+                        </p>
                       </div>
                     </div>
-                    <div>
-                      <h3 className="text-sm font-medium">Balance</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {balance} ZUG
-                      </p>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-medium">Time to Live</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {form.watch('sourceId')
-                          ? calculateTTL(form.watch('sourceId'), balance)
-                          : '-'}
-                      </p>
+
+                    <div className="flex items-center gap-3 mt-2">
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        <Webhook className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xs font-medium text-muted-foreground">
+                          Estimated Runtime
+                        </h3>
+                        <p className="text-sm truncate">
+                          {calculateTTL(form.watch('sourceId'), balance)}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
         </div>
       </SidebarInset>
     </SidebarProvider>

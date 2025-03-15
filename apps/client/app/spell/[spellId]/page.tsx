@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSpell } from '@/hooks/use-spell';
+import { Grid, GridItem } from '@/components/grid';
 
 export default function Page() {
   const { spellId } = useParams();
@@ -55,8 +56,8 @@ export default function Page() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col gap-4">
+          <Grid cols={{ sm: 1, md: 2 }} gap={4}>
+            <GridItem>
               <Card className="pt-6">
                 <CardContent className="flex-grow space-y-4">
                   <div className="grid gap-6 divide-y divide-border">
@@ -125,7 +126,7 @@ export default function Page() {
                             href={`https://gateway.shaman.fun/ipfs/${spell.metadata}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
+                            className="text-primary hover:text-primary/80 text-sm font-medium truncate block w-full overflow-hidden">
                             ipfs://{spell.metadata}
                           </a>
                         ) : (
@@ -159,8 +160,8 @@ export default function Page() {
                   </div>
                 </CardContent>
               </Card>
-            </div>
-            <div className="flex flex-col gap-4">
+            </GridItem>
+            <GridItem>
               <Card className="pt-6">
                 <CardContent className="flex-1 min-h-0 max-w-full w-full">
                   <Tabs defaultValue="prompt" className="w-full">
@@ -227,8 +228,8 @@ export default function Page() {
                   </Tabs>
                 </CardContent>
               </Card>
-            </div>
-          </div>
+            </GridItem>
+          </Grid>
         </div>
       </SidebarInset>
     </SidebarProvider>

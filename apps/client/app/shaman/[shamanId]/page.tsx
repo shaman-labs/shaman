@@ -64,6 +64,7 @@ import { useShamanSpells } from '@/hooks/use-shaman-spells';
 import { useMUD } from '@/contexts/mud-context';
 import { toast } from '@/hooks/use-toast';
 import { trimHash } from '@/lib/utils';
+import { Grid, GridItem } from '@/components/grid';
 
 type ChartDataPoint = {
   day: string;
@@ -458,254 +459,201 @@ export default function Page() {
               <TabsTrigger value="logs">Logs</TabsTrigger>
             </TabsList>
             <TabsContent value="shaman">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                <div className="flex flex-col gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>ZUG Balance</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {shamanLoading ? (
-                        <Skeleton className="h-14 w-32 mx-auto" />
-                      ) : (
-                        <p className="text-center text-5xl font-bold">
-                          {Number(shaman?.balance || 0)}
-                        </p>
-                      )}
-                    </CardContent>
-                    <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
-                      <Button
-                        className="w-full"
-                        variant="default"
-                        onClick={() =>
-                          openAddBalance(
-                            true,
-                            shamanId as string,
-                            handleRefetch
-                          )
-                        }>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Balance
-                      </Button>
-                      <Button
-                        className="w-full"
-                        variant="outline"
-                        onClick={() =>
-                          openWithdrawBalance(
-                            true,
-                            shamanId as string,
-                            handleRefetch
-                          )
-                        }>
-                        <Minus className="mr-2 h-4 w-4" />
-                        Withdraw Balance
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                  <Card className="pt-6">
-                    <CardContent className="flex-grow space-y-4">
-                      <div className="grid gap-6 divide-y divide-border">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-primary/10 p-2 rounded-md">
-                            <FileCode className="h-5 w-5 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-xs font-medium text-muted-foreground">
-                              Name
-                            </h3>
-                            {shamanLoading ? (
-                              <Skeleton className="h-5 w-32" />
-                            ) : (
-                              <p className="text-base font-semibold">
-                                {shaman?.name}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        {shaman?.description && (
-                          <div className="flex items-start gap-3 pt-4">
-                            <div className="bg-primary/10 p-2 rounded-md mt-1">
+              <Grid cols={{ sm: 1, lg: 2 }} gap={4}>
+                <GridItem>
+                  <div className="flex flex-col gap-4">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>ZUG Balance</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {shamanLoading ? (
+                          <Skeleton className="h-14 w-32 mx-auto" />
+                        ) : (
+                          <p className="text-center text-5xl font-bold">
+                            {Number(shaman?.balance || 0)}
+                          </p>
+                        )}
+                      </CardContent>
+                      <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
+                        <Button
+                          className="w-full"
+                          variant="default"
+                          onClick={() =>
+                            openAddBalance(
+                              true,
+                              shamanId as string,
+                              handleRefetch
+                            )
+                          }>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Add Balance
+                        </Button>
+                        <Button
+                          className="w-full"
+                          variant="outline"
+                          onClick={() =>
+                            openWithdrawBalance(
+                              true,
+                              shamanId as string,
+                              handleRefetch
+                            )
+                          }>
+                          <Minus className="mr-2 h-4 w-4" />
+                          Withdraw Balance
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                    <Card className="pt-6">
+                      <CardContent className="flex-grow space-y-4">
+                        <div className="grid gap-6 divide-y divide-border">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-primary/10 p-2 rounded-md">
                               <FileCode className="h-5 w-5 text-primary" />
                             </div>
                             <div className="flex-1">
                               <h3 className="text-xs font-medium text-muted-foreground">
-                                Description
+                                Name
                               </h3>
-                              <p className="text-sm">{shaman.description}</p>
+                              {shamanLoading ? (
+                                <Skeleton className="h-5 w-32" />
+                              ) : (
+                                <p className="text-base font-semibold">
+                                  {shaman?.name}
+                                </p>
+                              )}
                             </div>
                           </div>
-                        )}
 
-                        <div className="flex items-center gap-3 pt-4">
-                          <div className="bg-primary/10 p-2 rounded-md">
-                            <User className="h-5 w-5 text-primary" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-xs font-medium text-muted-foreground">
-                              Creator
-                            </h3>
-                            {shamanLoading ? (
-                              <Skeleton className="h-5 w-40" />
-                            ) : (
-                              <p className="font-mono text-sm truncate">
-                                {shaman?.creator}
-                              </p>
-                            )}
-                          </div>
-                        </div>
+                          {shaman?.description && (
+                            <div className="flex items-start gap-3 pt-4">
+                              <div className="bg-primary/10 p-2 rounded-md mt-1">
+                                <FileCode className="h-5 w-5 text-primary" />
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="text-xs font-medium text-muted-foreground">
+                                  Description
+                                </h3>
+                                <p className="text-sm">{shaman.description}</p>
+                              </div>
+                            </div>
+                          )}
 
-                        <div className="flex items-center gap-3 pt-4">
-                          <div className="bg-primary/10 p-2 rounded-md">
-                            <LinkIcon className="h-5 w-5 text-primary" />
-                          </div>
-                          <div className="flex-1 overflow-hidden">
-                            <h3 className="text-xs font-medium text-muted-foreground">
-                              IPFS Link
-                            </h3>
-                            {shaman?.metadata ? (
-                              <a
-                                href={`https://gateway.shaman.fun/ipfs/${shaman.metadata}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
-                                ipfs://{shaman.metadata}
-                              </a>
-                            ) : (
-                              <p className="text-sm text-muted-foreground">
-                                No IPFS link available
-                              </p>
-                            )}
-                          </div>
-                        </div>
-
-                        {shaman?.createdAt && (
                           <div className="flex items-center gap-3 pt-4">
                             <div className="bg-primary/10 p-2 rounded-md">
-                              <Clock className="h-5 w-5 text-primary" />
+                              <User className="h-5 w-5 text-primary" />
                             </div>
                             <div className="flex-1">
                               <h3 className="text-xs font-medium text-muted-foreground">
-                                Created
+                                Creator
                               </h3>
-                              <p className="text-sm">
-                                {format(
-                                  Number(shaman.createdAt) * 1000,
-                                  'PPpp'
-                                )}
-                              </p>
+                              {shamanLoading ? (
+                                <Skeleton className="h-5 w-40" />
+                              ) : (
+                                <p className="font-mono text-sm truncate">
+                                  {shaman?.creator}
+                                </p>
+                              )}
                             </div>
                           </div>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-                <div className="flex flex-col gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Stats</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="flex flex-col gap-2 p-4 rounded-lg border">
-                          <p className="text-sm text-muted-foreground">
-                            Total Executions
-                          </p>
-                          <p className="text-2xl font-bold">
-                            {executionLogs?.length || 0}
-                          </p>
+
+                          <div className="flex items-center gap-3 pt-4">
+                            <div className="bg-primary/10 p-2 rounded-md">
+                              <LinkIcon className="h-5 w-5 text-primary" />
+                            </div>
+                            <div className="flex-1 overflow-hidden">
+                              <h3 className="text-xs font-medium text-muted-foreground">
+                                IPFS Link
+                              </h3>
+                              {shaman?.metadata ? (
+                                <a
+                                  href={`https://gateway.shaman.fun/ipfs/${shaman.metadata}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
+                                  ipfs://{shaman.metadata}
+                                </a>
+                              ) : (
+                                <p className="text-sm text-muted-foreground">
+                                  No IPFS link available
+                                </p>
+                              )}
+                            </div>
+                          </div>
+
+                          {shaman?.createdAt && (
+                            <div className="flex items-center gap-3 pt-4">
+                              <div className="bg-primary/10 p-2 rounded-md">
+                                <Clock className="h-5 w-5 text-primary" />
+                              </div>
+                              <div className="flex-1">
+                                <h3 className="text-xs font-medium text-muted-foreground">
+                                  Created
+                                </h3>
+                                <p className="text-sm">
+                                  {format(
+                                    Number(shaman.createdAt) * 1000,
+                                    'PPpp'
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                          )}
                         </div>
-                        <div className="flex flex-col gap-2 p-4 rounded-lg border">
-                          <p className="text-sm text-muted-foreground">
-                            Success Rate
-                          </p>
-                          <p className="text-2xl font-bold">
-                            {executionLogs?.length
-                              ? Math.round(
-                                  (executionLogs.filter((log) => log.success)
-                                    .length /
-                                    executionLogs.length) *
-                                    100
-                                )
-                              : 0}
-                            %
-                          </p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </GridItem>
+                <GridItem>
                   <Card>
                     <CardHeader>
-                      <CardTitle>Executions</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <ChartContainer config={chartConfig}>
-                        <LineChart
-                          accessibilityLayer
-                          data={chartData}
-                          margin={{
-                            left: 12,
-                            right: 12,
-                          }}>
-                          <CartesianGrid vertical={false} />
-                          <XAxis
-                            dataKey="day"
-                            tickLine={false}
-                            axisLine={false}
-                            tickMargin={8}
-                            tickFormatter={(value) => value.slice(0, 3)}
-                          />
-                          <YAxis
-                            tickLine={false}
-                            axisLine={false}
-                            tickMargin={8}
-                          />
-                          <ChartTooltip
-                            cursor={false}
-                            content={<ChartTooltipContent hideLabel />}
-                          />
-                          <Line
-                            dataKey="executions"
-                            type="step"
-                            stroke="var(--color-executions)"
-                            strokeWidth={2}
-                            dot={false}
-                          />
-                        </LineChart>
-                      </ChartContainer>
-                    </CardContent>
-                    <CardFooter className="flex-col items-start gap-2 text-sm">
-                      <div className="leading-none text-muted-foreground">
-                        Showing executions for the last 7 days
-                      </div>
-                    </CardFooter>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle>Recent Logs</CardTitle>
+                      <CardTitle>Executions By Day</CardTitle>
                     </CardHeader>
                     <CardContent>
                       {logsLoading ? (
-                        <div className="space-y-2">
-                          {[1, 2, 3, 4, 5].map((i) => (
-                            <Skeleton key={i} className="h-10 w-full" />
-                          ))}
-                        </div>
-                      ) : tableData.length > 0 ? (
-                        <DataTable
-                          columns={logColumns}
-                          data={tableData.slice(0, 5)}
-                        />
+                        <Skeleton className="h-40 w-full" />
                       ) : (
-                        <p className="text-center py-8 text-muted-foreground">
-                          No logs found for this shaman
-                        </p>
+                        <ChartContainer
+                          config={chartConfig}
+                          className="h-40 w-full">
+                          <LineChart data={chartData}>
+                            <XAxis
+                              dataKey="day"
+                              tickLine={false}
+                              axisLine={false}
+                              tick={{ fontSize: 10 }}
+                            />
+                            <YAxis
+                              tickLine={false}
+                              axisLine={false}
+                              tick={{ fontSize: 10 }}
+                            />
+                            <CartesianGrid
+                              strokeDasharray="3 3"
+                              vertical={false}
+                            />
+                            <ChartTooltip
+                              cursor={{
+                                stroke: 'hsl(var(--muted-foreground))',
+                              }}
+                              wrapperStyle={{ outline: 'none' }}
+                              content={
+                                <ChartTooltipContent config={chartConfig} />
+                              }
+                            />
+                            <Line
+                              type="monotone"
+                              dataKey="executions"
+                              stroke={chartConfig.executions.color}
+                              strokeWidth={2}
+                            />
+                          </LineChart>
+                        </ChartContainer>
                       )}
                     </CardContent>
                   </Card>
-                </div>
-              </div>
+                </GridItem>
+              </Grid>
             </TabsContent>
             <TabsContent value="spells">
               <Card>
