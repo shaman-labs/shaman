@@ -1,13 +1,10 @@
-import { ShamanTriggerResponse } from '@/types/shaman';
+import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_SHAMAN_WORKER_API_URL;
 
-export const triggerShaman = async (
-  shamanId: string
-): Promise<ShamanTriggerResponse> => {
-  const response = await fetch(`${API_URL}/execute`, {
-    method: 'POST',
-    body: JSON.stringify({ shamanId }),
+export const triggerShaman = async (shamanId: string) => {
+  const response = await axios.post<{ ok: boolean }>(`${API_URL}/execute`, {
+    shamanId,
   });
-  return response.json();
+  return response.data;
 };
