@@ -272,12 +272,42 @@ export default function Page() {
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">
+                          Name
+                        </h3>
+                        <p className="text-sm truncate">
+                          {form.watch('name') || '-'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3">
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        <Webhook className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xs font-medium text-muted-foreground">
+                          Description
+                        </h3>
+                        <p className="text-sm line-clamp-2">
+                          {form.watch('description') || '-'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-3 mt-2">
+                      <div className="bg-primary/10 p-2 rounded-md">
+                        <Webhook className="h-4 w-4 text-primary" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="text-xs font-medium text-muted-foreground">
                           Source
                         </h3>
                         <p className="text-sm truncate">
-                          {form.watch('sourceId')
-                            ? getSourceLabel(form.watch('sourceId'))
-                            : 'No source selected'}
+                          {getSourceLabel(
+                            sources.find(
+                              (s) => s.sourceId === form.watch('sourceId')
+                            )?.name || form.watch('sourceId').substring(0, 6)
+                          ) || '-'}
                         </p>
                       </div>
                     </div>
@@ -291,7 +321,7 @@ export default function Page() {
                           Estimated Runtime
                         </h3>
                         <p className="text-sm truncate">
-                          {calculateTTL(form.watch('sourceId'), balance)}
+                          {calculateTTL(form.watch('sourceId'), balance) || '-'}
                         </p>
                       </div>
                     </div>
