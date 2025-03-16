@@ -168,6 +168,7 @@ export default function Page() {
   const spellExecutionLogs = spellLogs?.filter(
     (log) => log.logType === ShamanLogType.COMPLETION
   );
+  const isShamanCreator = embeddedWallet?.address === shaman?.creator;
 
   useEffect(() => {
     if (shamanSpells?.length) {
@@ -477,34 +478,36 @@ export default function Page() {
                         </p>
                       )}
                     </CardContent>
-                    <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
-                      <Button
-                        className="w-full"
-                        variant="default"
-                        onClick={() =>
-                          openAddBalance(
-                            true,
-                            shamanId as string,
-                            handleRefetch
-                          )
-                        }>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Deposit
-                      </Button>
-                      <Button
-                        className="w-full"
-                        variant="outline"
-                        onClick={() =>
-                          openWithdrawBalance(
-                            true,
-                            shamanId as string,
-                            handleRefetch
-                          )
-                        }>
-                        <Minus className="mr-2 h-4 w-4" />
-                        Withdraw
-                      </Button>
-                    </CardFooter>
+                    {isShamanCreator && (
+                      <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
+                        <Button
+                          className="w-full"
+                          variant="default"
+                          onClick={() =>
+                            openAddBalance(
+                              true,
+                              shamanId as string,
+                              handleRefetch
+                            )
+                          }>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Deposit
+                        </Button>
+                        <Button
+                          className="w-full"
+                          variant="outline"
+                          onClick={() =>
+                            openWithdrawBalance(
+                              true,
+                              shamanId as string,
+                              handleRefetch
+                            )
+                          }>
+                          <Minus className="mr-2 h-4 w-4" />
+                          Withdraw
+                        </Button>
+                      </CardFooter>
+                    )}
                   </Card>
                   <Card className="pt-6">
                     <CardContent className="flex-grow space-y-4">
@@ -641,20 +644,22 @@ export default function Page() {
                                 <span className="truncate">{spell.name}</span>
                               </div>
                             ))}
-                        <div
-                          className={`p-4 sm:p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
-                          onClick={() =>
-                            openAddSpell(
-                              true,
-                              undefined,
-                              handleRefetch,
-                              shamanId as string
-                            )
-                          }>
-                          <span className="flex items-center gap-2">
-                            <Plus className="h-4 w-4" /> Add Spell
-                          </span>
-                        </div>
+                        {isShamanCreator && (
+                          <div
+                            className={`p-4 sm:p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
+                            onClick={() =>
+                              openAddSpell(
+                                true,
+                                undefined,
+                                handleRefetch,
+                                shamanId as string
+                              )
+                            }>
+                            <span className="flex items-center gap-2">
+                              <Plus className="h-4 w-4" /> Add Spell
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -675,14 +680,16 @@ export default function Page() {
                                     />
                                   </div>
                                 </div>
-                                <Button
-                                  variant="destructive"
-                                  size="sm"
-                                  onClick={handleRemoveSpell}
-                                  disabled={loading}
-                                  className="self-start sm:self-auto">
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                                {isShamanCreator && (
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={handleRemoveSpell}
+                                    disabled={loading}
+                                    className="self-start sm:self-auto">
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                )}
                               </div>
                             </CardHeader>
                             <CardContent>
