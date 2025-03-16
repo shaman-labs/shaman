@@ -679,6 +679,12 @@ export default function Page() {
                                       creator={selectedSpell.creator}
                                     />
                                   </div>
+                                  <div className="text-sm text-muted-foreground mt-1">
+                                    Installed Version:{' '}
+                                    <span className="font-mono">
+                                      {selectedSpell.version}
+                                    </span>
+                                  </div>
                                 </div>
                                 {isShamanCreator && (
                                   <Button
