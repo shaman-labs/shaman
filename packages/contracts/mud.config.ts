@@ -2,8 +2,18 @@ import { defineWorld } from "@latticexyz/world";
 
 export default defineWorld({
   enums: {
-    LogType: ["Queue", "Start", "Completion", "Deposit", "Withdraw", "Refund"],
-    RoleType: ["None", "Operator"],
+    LogType: [
+      "Queue",
+      "Start",
+      "Completion",
+      "Deposit",
+      "Withdraw",
+      "Refund",
+      "Modification",
+      "Deactivation",
+      "Activation",
+    ],
+    RoleType: ["None", "Operator", "Tester"],
     JobState: ["Idle", "Queue", "InProgress", "Completed"],
   },
   tables: {
