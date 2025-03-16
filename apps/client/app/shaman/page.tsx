@@ -153,11 +153,9 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbItem>
-                    <Link href="/" className="text-muted-foreground">
-                      Shamans
-                    </Link>
-                  </BreadcrumbItem>
+                  <Link href="/" className="text-muted-foreground">
+                    Shamans
+                  </Link>
                 </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbPage>New Shaman</BreadcrumbPage>
