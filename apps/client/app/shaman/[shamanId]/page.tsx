@@ -464,99 +464,94 @@ export default function Page() {
             <TabsContent value="shaman">
               <Grid cols={{ sm: 1, lg: 2 }} gap={4}>
                 <GridItem>
-                  <div className="flex flex-col gap-4">
-                    <Card>
-                      <CardHeader>
-                        <CardTitle>ZUG Balance</CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        {shamanLoading ? (
-                          <Skeleton className="h-14 w-32 mx-auto" />
-                        ) : (
-                          <p className="text-center text-5xl font-bold">
-                            {Number(shaman?.balance || 0)}
-                          </p>
+                  <Card className="mb-4">
+                    <CardHeader>
+                      <CardTitle>ZUG Balance</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {shamanLoading ? (
+                        <Skeleton className="h-14 w-32 mx-auto" />
+                      ) : (
+                        <p className="text-center text-5xl font-bold">
+                          {Number(shaman?.balance || 0)}
+                        </p>
+                      )}
+                    </CardContent>
+                    <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
+                      <Button
+                        className="w-full"
+                        variant="default"
+                        onClick={() =>
+                          openAddBalance(
+                            true,
+                            shamanId as string,
+                            handleRefetch
+                          )
+                        }>
+                        <Plus className="mr-2 h-4 w-4" />
+                        Deposit
+                      </Button>
+                      <Button
+                        className="w-full"
+                        variant="outline"
+                        onClick={() =>
+                          openWithdrawBalance(
+                            true,
+                            shamanId as string,
+                            handleRefetch
+                          )
+                        }>
+                        <Minus className="mr-2 h-4 w-4" />
+                        Withdraw
+                      </Button>
+                    </CardFooter>
+                  </Card>
+                  <Card className="pt-6">
+                    <CardContent className="flex-grow space-y-4">
+                      <div className="grid gap-6 divide-y divide-border">
+                        <RowItem icon={FileCode} label="Name" noDivider>
+                          {shamanLoading ? (
+                            <Skeleton className="h-5 w-32" />
+                          ) : (
+                            <p className="text-base font-semibold">
+                              {shaman?.name}
+                            </p>
+                          )}
+                        </RowItem>
+
+                        {shaman?.description && (
+                          <RowItem icon={FileCode} label="Description">
+                            <p className="text-sm">{shaman.description}</p>
+                          </RowItem>
                         )}
-                      </CardContent>
-                      <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
-                        <Button
-                          className="w-full"
-                          variant="default"
-                          onClick={() =>
-                            openAddBalance(
-                              true,
-                              shamanId as string,
-                              handleRefetch
-                            )
-                          }>
-                          <Plus className="mr-2 h-4 w-4" />
-                          Deposit
-                        </Button>
-                        <Button
-                          className="w-full"
-                          variant="outline"
-                          onClick={() =>
-                            openWithdrawBalance(
-                              true,
-                              shamanId as string,
-                              handleRefetch
-                            )
-                          }>
-                          <Minus className="mr-2 h-4 w-4" />
-                          Withdraw
-                        </Button>
-                      </CardFooter>
-                    </Card>
-                    <Card className="pt-6">
-                      <CardContent className="flex-grow space-y-4">
-                        <div className="grid gap-6 divide-y divide-border">
-                          <RowItem icon={FileCode} label="Name" noDivider>
-                            {shamanLoading ? (
-                              <Skeleton className="h-5 w-32" />
-                            ) : (
-                              <p className="text-base font-semibold">
-                                {shaman?.name}
-                              </p>
-                            )}
-                          </RowItem>
 
-                          {shaman?.description && (
-                            <RowItem icon={FileCode} label="Description">
-                              <p className="text-sm">{shaman.description}</p>
-                            </RowItem>
+                        <RowItem icon={User} label="Creator">
+                          {shamanLoading ? (
+                            <Skeleton className="h-5 w-40" />
+                          ) : (
+                            <div className="text-sm font-small">
+                              <LabelCreator creator={shaman?.creator} />
+                            </div>
                           )}
+                        </RowItem>
 
-                          <RowItem icon={User} label="Creator">
-                            {shamanLoading ? (
-                              <Skeleton className="h-5 w-40" />
-                            ) : (
-                              <div className="text-sm font-small">
-                                <LabelCreator creator={shaman?.creator} />
-                              </div>
-                            )}
+                        <RowItem icon={LinkIcon} label="IPFS Link">
+                          <LabelIPFS ipfs={shaman?.metadata} />
+                        </RowItem>
+
+                        {shaman?.createdAt && (
+                          <RowItem icon={Clock} label="Created">
+                            <p className="text-sm">
+                              {format(Number(shaman.createdAt) * 1000, 'PPpp')}
+                            </p>
                           </RowItem>
-
-                          <RowItem icon={LinkIcon} label="IPFS Link">
-                            <LabelIPFS ipfs={shaman?.metadata} />
-                          </RowItem>
-
-                          {shaman?.createdAt && (
-                            <RowItem icon={Clock} label="Created">
-                              <p className="text-sm">
-                                {format(
-                                  Number(shaman.createdAt) * 1000,
-                                  'PPpp'
-                                )}
-                              </p>
-                            </RowItem>
-                          )}
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
                 </GridItem>
                 <GridItem>
-                  <Card>
+                  <Card className="mb-4">
                     <CardHeader>
                       <CardTitle>Executions By Day</CardTitle>
                     </CardHeader>
@@ -598,6 +593,21 @@ export default function Page() {
                             />
                           </LineChart>
                         </ChartContainer>
+                      )}
+                    </CardContent>
+                  </Card>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Recent Logs</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {logsLoading ? (
+                        <Skeleton className="h-40 w-full" />
+                      ) : (
+                        <DataTable
+                          columns={logColumns}
+                          data={tableData.slice(0, 10)}
+                        />
                       )}
                     </CardContent>
                   </Card>
