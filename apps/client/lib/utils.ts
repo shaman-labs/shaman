@@ -5,7 +5,7 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function trimHash(hash = '', startSize = 6): string {
+export function trimHash(hash = '', startSize = 4): string {
   if (!hash) return '';
 
   return `${hash?.substring(0, startSize)}...${hash?.substring(
