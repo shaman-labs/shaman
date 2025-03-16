@@ -1,6 +1,14 @@
 'use client';
 
-import { MoreHorizontal, Pencil, Plus, Webhook, Zap } from 'lucide-react';
+import {
+  CirclePlay,
+  CircleStop,
+  MoreHorizontal,
+  Pencil,
+  Plus,
+  Webhook,
+  Zap,
+} from 'lucide-react';
 
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
@@ -32,7 +40,7 @@ export function NavShamans() {
   const { data: shamans } = useShamans();
   const userShamans = shamans.filter((shaman) => shaman.creator === address);
   const { shamanId } = useParams();
-  const { openTrigger } = useDialogContext();
+  const { openTrigger, openActivation } = useDialogContext();
   const pathname = usePathname();
 
   return (
@@ -68,6 +76,27 @@ export function NavShamans() {
                   }>
                   <Pencil className="text-muted-foreground" />
                   <span>Update</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() =>
+                    openActivation(
+                      true,
+                      `/shaman/${item.shamanId}`,
+                      undefined,
+                      item.shamanId
+                    )
+                  }>
+                  {item.active ? (
+                    <>
+                      <CircleStop className="text-muted-foreground" />
+                      <span>Deactivate</span>
+                    </>
+                  ) : (
+                    <>
+                      <CirclePlay className="text-muted-foreground" />
+                      <span>Activate</span>
+                    </>
+                  )}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() =>
