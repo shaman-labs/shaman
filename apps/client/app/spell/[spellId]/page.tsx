@@ -29,6 +29,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSpell } from '@/hooks/use-spell';
 import { Grid, GridItem } from '@/components/grid';
 import { RowItem } from '@/components/row-item';
+import { LabelCreator } from '@/components/label-creator';
 
 export default function Page() {
   const { spellId } = useParams();
@@ -66,6 +67,12 @@ export default function Page() {
                       <p className="text-base font-semibold">{spell?.name}</p>
                     </RowItem>
 
+                    <RowItem icon={User} label="Creator">
+                      <div className="text-sm font-small">
+                        <LabelCreator creator={spell?.creator} />
+                      </div>
+                    </RowItem>
+
                     <RowItem icon={Hash} label="Shamans Count">
                       <p className="text-sm font-medium">
                         {spell?.shamanCount}
@@ -74,12 +81,6 @@ export default function Page() {
 
                     <RowItem icon={DollarSign} label="Commission Revenue">
                       <p className="text-sm font-medium">0 ZUG</p>
-                    </RowItem>
-
-                    <RowItem icon={User} label="Creator">
-                      <p className="font-mono text-sm truncate">
-                        {spell?.creator}
-                      </p>
                     </RowItem>
 
                     <RowItem icon={LinkIcon} label="IPFS Link">

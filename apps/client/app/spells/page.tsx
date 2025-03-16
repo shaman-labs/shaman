@@ -26,6 +26,7 @@ import {
   BreadcrumbList,
 } from '@/components/ui/breadcrumb';
 import { LabelCreator } from '@/components/label-creator';
+
 export default function Page() {
   const { data: spells } = useSpells();
 
@@ -103,7 +104,7 @@ export default function Page() {
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">Created by:</span>
+                        <span className="text-sm font-medium">Created by</span>
                         <span className="text-sm">
                           <LabelCreator creator={spell.creator} />
                         </span>

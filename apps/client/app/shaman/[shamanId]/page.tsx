@@ -66,6 +66,7 @@ import { toast } from '@/hooks/use-toast';
 import { trimHash } from '@/lib/utils';
 import { Grid, GridItem } from '@/components/grid';
 import { RowItem } from '@/components/row-item';
+import { LabelCreator } from '@/components/label-creator';
 
 type ChartDataPoint = {
   day: string;
@@ -528,9 +529,9 @@ export default function Page() {
                             {shamanLoading ? (
                               <Skeleton className="h-5 w-40" />
                             ) : (
-                              <p className="font-mono text-sm truncate">
-                                {shaman?.creator}
-                              </p>
+                              <div className="text-sm font-small">
+                                <LabelCreator creator={shaman?.creator} />
+                              </div>
                             )}
                           </RowItem>
 
@@ -668,9 +669,12 @@ export default function Page() {
                                   <CardTitle className="break-words">
                                     {selectedSpell.name}
                                   </CardTitle>
-                                  <p className="text-sm text-muted-foreground mt-1">
-                                    Creator {selectedSpell.creator || 'Unknown'}
-                                  </p>
+                                  <div className="text-sm text-muted-foreground mt-1">
+                                    Created by{' '}
+                                    <LabelCreator
+                                      creator={selectedSpell.creator}
+                                    />
+                                  </div>
                                 </div>
                                 <Button
                                   variant="destructive"
