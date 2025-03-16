@@ -3,8 +3,8 @@
 import { MoreHorizontal, Pencil, Plus, Webhook, Zap } from 'lucide-react';
 
 import Link from 'next/link';
-import { usePrivy } from '@privy-io/react-auth';
 import { useParams, usePathname, useRouter } from 'next/navigation';
+import { usePrivy } from '@privy-io/react-auth';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,12 +22,15 @@ import {
 } from '@/components/ui/sidebar';
 import { useDialogContext } from '@/contexts/dialog-context';
 import { useShamans } from '@/hooks/use-shamans';
+import { useEmbeddedWallet } from '@/hooks/use-embedded-wallet';
 
 export function NavShamans() {
   const { user, login } = usePrivy();
+  const { address } = useEmbeddedWallet();
   const router = useRouter();
   const { isMobile } = useSidebar();
   const { data: shamans } = useShamans();
+  const userShamans = shamans.filter((shaman) => shaman.creator === address);
   const { shamanId } = useParams();
   const { openTrigger } = useDialogContext();
   const pathname = usePathname();
@@ -36,7 +39,7 @@ export function NavShamans() {
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Shamans</SidebarGroupLabel>
       <SidebarMenu>
-        {shamans.map((item) => (
+        {userShamans.map((item) => (
           <SidebarMenuItem key={item.shamanId}>
             <SidebarMenuButton asChild isActive={shamanId === item.shamanId}>
               <Link href={`/shaman/${item.shamanId}`}>

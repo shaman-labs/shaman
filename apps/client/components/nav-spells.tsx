@@ -13,19 +13,23 @@ import {
   SidebarMenuItem,
 } from '@/components/ui/sidebar';
 import { useSpells } from '@/hooks/use-spells';
-
+import { useEmbeddedWallet } from '@/hooks/use-embedded-wallet';
 export function NavSpells() {
   const { user, login } = usePrivy();
+  const { address } = useEmbeddedWallet();
   const router = useRouter();
   const { data: spells } = useSpells();
+  const userSpells = spells.filter((spell) => spell.creator === address);
   const { spellId } = useParams();
   const pathname = usePathname();
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Spells</SidebarGroupLabel>
+      <SidebarGroupLabel>
+        <Link href="/spells">Spells</Link>
+      </SidebarGroupLabel>
       <SidebarMenu>
-        {spells.map((item) => (
+        {userSpells.map((item) => (
           <SidebarMenuItem key={item.spellId}>
             <SidebarMenuButton asChild isActive={spellId === item.spellId}>
               <Link href={`/spell/${item.spellId}`}>

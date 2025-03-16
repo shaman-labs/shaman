@@ -488,7 +488,7 @@ export default function Page() {
                             )
                           }>
                           <Plus className="mr-2 h-4 w-4" />
-                          Add Balance
+                          Deposit
                         </Button>
                         <Button
                           className="w-full"
@@ -501,7 +501,7 @@ export default function Page() {
                             )
                           }>
                           <Minus className="mr-2 h-4 w-4" />
-                          Withdraw Balance
+                          Withdraw
                         </Button>
                       </CardFooter>
                     </Card>

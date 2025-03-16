@@ -45,7 +45,7 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <Link href="/spell" className="text-muted-foreground">
+                  <Link href="/spells" className="text-muted-foreground">
                     Spells
                   </Link>
                 </BreadcrumbItem>

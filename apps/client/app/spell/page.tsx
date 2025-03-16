@@ -8,6 +8,7 @@ import { ArrowRight, Webhook } from 'lucide-react';
 import { Highlight, themes } from 'prism-react-renderer';
 import { useRouter } from 'next/navigation';
 import { usePrivy, WalletWithMetadata } from '@privy-io/react-auth';
+import Link from 'next/link';
 import {
   SidebarInset,
   SidebarProvider,
@@ -172,6 +173,11 @@ export default function Page() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
+                <BreadcrumbItem>
+                  <Link href="/spells" className="text-muted-foreground">
+                    Spells
+                  </Link>
+                </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbPage>New Spell</BreadcrumbPage>
                 </BreadcrumbItem>
