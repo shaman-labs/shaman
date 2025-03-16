@@ -30,6 +30,7 @@ import { useSpell } from '@/hooks/use-spell';
 import { Grid, GridItem } from '@/components/grid';
 import { RowItem } from '@/components/row-item';
 import { LabelCreator } from '@/components/label-creator';
+import { LabelIPFS } from '@/components/label-ipfs';
 
 export default function Page() {
   const { spellId } = useParams();
@@ -84,19 +85,7 @@ export default function Page() {
                     </RowItem>
 
                     <RowItem icon={LinkIcon} label="IPFS Link">
-                      {spell?.metadata ? (
-                        <a
-                          href={`https://gateway.shaman.fun/ipfs/${spell.metadata}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:text-primary/80 text-sm font-medium truncate block w-full overflow-hidden">
-                          ipfs://{spell.metadata}
-                        </a>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">
-                          No IPFS link available
-                        </p>
-                      )}
+                      <LabelIPFS ipfs={spell?.metadata} />
                     </RowItem>
 
                     <RowItem icon={Calendar} label="Created">

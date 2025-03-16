@@ -67,6 +67,7 @@ import { trimHash } from '@/lib/utils';
 import { Grid, GridItem } from '@/components/grid';
 import { RowItem } from '@/components/row-item';
 import { LabelCreator } from '@/components/label-creator';
+import { LabelIPFS } from '@/components/label-ipfs';
 
 type ChartDataPoint = {
   day: string;
@@ -536,19 +537,7 @@ export default function Page() {
                           </RowItem>
 
                           <RowItem icon={LinkIcon} label="IPFS Link">
-                            {shaman?.metadata ? (
-                              <a
-                                href={`https://gateway.shaman.fun/ipfs/${shaman.metadata}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
-                                ipfs://{shaman.metadata}
-                              </a>
-                            ) : (
-                              <p className="text-sm text-muted-foreground">
-                                No IPFS link available
-                              </p>
-                            )}
+                            <LabelIPFS ipfs={shaman?.metadata} />
                           </RowItem>
 
                           {shaman?.createdAt && (
