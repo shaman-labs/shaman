@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 
-import { ERC20 } from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
+import { ERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
+import { AccessControlUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import { IZugToken } from "./IZugToken.sol";
 
-contract ZugToken is IZugToken, ERC20, AccessControl {
+contract ZugToken is IZugToken, ERC20Upgradeable, AccessControlUpgradeable {
   bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
 
   address public treasury;
@@ -15,12 +15,21 @@ contract ZugToken is IZugToken, ERC20, AccessControl {
   uint256 public price;
   bool public saleActive;
 
-  constructor(uint256 maxSupply_, uint256 maxSaleSupply_) ERC20("Zug", "ZUG") {
-    require(
-      maxSaleSupply_ <= maxSupply_,
-      "ZugToken: max sale supply cannot exceed max supply"
-    );
+  /// @custom:oz-upgrades-unsafe-allow constructor
+  constructor() {
+    _disableInitializers();
+  }
+
+  function initialize(
+    uint256 maxSupply_,
+    uint256 maxSaleSupply_
+  ) public initializer {
+    __ERC20_init("Zug", "ZUG");
+    __ERC20Permit_init("Zug");
+    __AccessControl_init();
+
     _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
+
     _maxSupply = maxSupply_;
     _maxSaleSupply = maxSaleSupply_;
     saleActive = false;
