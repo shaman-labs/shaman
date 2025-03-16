@@ -25,7 +25,6 @@ contract ZugToken is IZugToken, ERC20Upgradeable, AccessControlUpgradeable {
     uint256 maxSaleSupply_
   ) public initializer {
     __ERC20_init("Zug", "ZUG");
-    __ERC20Permit_init("Zug");
     __AccessControl_init();
 
     _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());

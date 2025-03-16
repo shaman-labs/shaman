@@ -5,6 +5,7 @@ import { Script } from "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
 import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 import { IAccessControl } from "@openzeppelin/contracts/access/IAccessControl.sol";
+import { Upgrades } from "@openzeppelin/foundry-upgrades/Upgrades.sol";
 
 import { ShamanConfig, Roles } from "../src/codegen/index.sol";
 import { ZugToken } from "../src/ZugToken.sol";
@@ -16,6 +17,8 @@ contract PostDeploy is Script {
   function run(address worldAddress) external {
     // Load the private key from the `PRIVATE_KEY` environment variable (in .env)
     uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+    // Load the deployer address
+    address deployerAddress = vm.addr(deployerPrivateKey);
     // Load the signer address
     address signerAddress = vm.envAddress("SIGNER_ADDRESS");
     // Load the treasury address
@@ -28,9 +31,23 @@ contract PostDeploy is Script {
     uint256 maxSupply = 1_000_000_000; // 1B tokens
     uint256 maxSaleSupply = 10_000_000; // 10M tokens
     uint256 price = 0.00001 ether; // Example price per token
-    ZugToken zugToken = new ZugToken(maxSupply, maxSaleSupply);
+    // Deploy proxy using the OpenZeppelin Upgrades library
+    address proxyAddress = Upgrades.deployTransparentProxy(
+      "ZugToken.sol",
+      deployerAddress, // proxy admin owner
+      abi.encodeCall(ZugToken.initialize, (maxSupply, maxSaleSupply))
+    );
+    ZugToken zugToken = ZugToken(proxyAddress);
 
-    console.log("ZugToken deployed at:", address(zugToken));
+    console.log("ZugToken proxy deployed at:", address(proxyAddress));
+    console.log(
+      "ZugToken implementation deployed at:",
+      Upgrades.getImplementationAddress(address(proxyAddress))
+    );
+    console.log(
+      "ZugToken proxy admin deployed at:",
+      Upgrades.getAdminAddress(address(proxyAddress))
+    );
     console.log("ZugToken max supply:", maxSupply);
     console.log("ZugToken max sale supply:", maxSaleSupply);
 
