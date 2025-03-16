@@ -61,11 +61,15 @@ export default function Page() {
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Grid cols={{ sm: 1, lg: 2 }} gap={4}>
             <GridItem className="order-last md:order-first">
-              <Card className="pt-6">
+              <Card className="pt-3">
                 <CardContent className="flex-grow space-y-4">
                   <div className="grid gap-6 divide-y divide-border">
-                    <RowItem icon={FileCode} label="Name" noDivider>
+                    <RowItem icon={FileCode} label="Name">
                       <p className="text-base font-semibold">{spell?.name}</p>
+                    </RowItem>
+
+                    <RowItem icon={FileCode} label="Version">
+                      <p className="text-base font-mono">{spell?.version}</p>
                     </RowItem>
 
                     <RowItem icon={User} label="Creator">
