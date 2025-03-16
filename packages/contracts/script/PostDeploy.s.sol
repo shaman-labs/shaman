@@ -5,7 +5,7 @@ import { Script } from "forge-std/Script.sol";
 import { console } from "forge-std/console.sol";
 import { StoreSwitch } from "@latticexyz/store/src/StoreSwitch.sol";
 import { IAccessControl } from "@openzeppelin/contracts/access/IAccessControl.sol";
-import { Upgrades } from "@openzeppelin/foundry-upgrades/Upgrades.sol";
+import { Upgrades } from "@openzeppelin/foundry-upgrades/src/Upgrades.sol";
 
 import { ShamanConfig, Roles } from "../src/codegen/index.sol";
 import { ZugToken } from "../src/ZugToken.sol";

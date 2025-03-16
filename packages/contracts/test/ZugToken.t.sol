@@ -3,6 +3,7 @@ pragma solidity >=0.8.24;
 
 import "forge-std/Test.sol";
 import "forge-std/console.sol";
+import { Upgrades } from "@openzeppelin/foundry-upgrades/src/Upgrades.sol";
 import { ZugToken } from "../src/ZugToken.sol";
 
 contract ZugTokenTest is Test {
@@ -23,14 +24,23 @@ contract ZugTokenTest is Test {
     bob = makeAddr("bob");
 
     vm.startPrank(admin);
-    token = new ZugToken(INITIAL_MAX_SUPPLY, INITIAL_MAX_SALE_SUPPLY);
+    // Deploy proxy using the OpenZeppelin Upgrades library
+    address proxyAddress = Upgrades.deployTransparentProxy(
+      "ZugToken.sol",
+      admin, // proxy admin owner
+      abi.encodeCall(
+        ZugToken.initialize,
+        (INITIAL_MAX_SUPPLY, INITIAL_MAX_SALE_SUPPLY)
+      )
+    );
+    token = ZugToken(proxyAddress);
     token.setTreasury(treasury);
     token.setPrice(INITIAL_PRICE);
     token.grantRole(token.MINTER_ROLE(), admin);
     vm.stopPrank();
   }
 
-  function testInitialState() public {
+  function testInitialState() public view {
     assertEq(token.name(), "Zug");
     assertEq(token.symbol(), "ZUG");
     assertEq(token.maxSupply(), INITIAL_MAX_SUPPLY);

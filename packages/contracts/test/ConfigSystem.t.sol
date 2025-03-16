@@ -6,7 +6,7 @@ import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
 
 contract ConfigSystemTest is BaseTest {
-  function testGetTokenAddress() public {
+  function testGetTokenAddress() public view {
     // Get the token address from the ConfigSystem
     address tokenAddress = world.getTokenAddress();
 
