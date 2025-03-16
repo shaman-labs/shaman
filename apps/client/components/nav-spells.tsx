@@ -26,7 +26,9 @@ export function NavSpells() {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>
-        <Link href="/spells">Spells</Link>
+        <Link href="/spells" className="text-muted-foreground">
+          Spells
+        </Link>
       </SidebarGroupLabel>
       <SidebarMenu>
         {userSpells.map((item) => (

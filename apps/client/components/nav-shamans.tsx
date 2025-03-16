@@ -37,7 +37,11 @@ export function NavShamans() {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>Shamans</SidebarGroupLabel>
+      <SidebarGroupLabel>
+        <Link href="/" className="text-muted-foreground">
+          Shamans
+        </Link>
+      </SidebarGroupLabel>
       <SidebarMenu>
         {userShamans.map((item) => (
           <SidebarMenuItem key={item.shamanId}>
