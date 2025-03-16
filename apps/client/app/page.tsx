@@ -22,6 +22,12 @@ import {
 import { Button } from '@/components/ui/button';
 import { useShamans } from '@/hooks/use-shamans';
 import { Grid, GridItem } from '@/components/grid';
+import { LabelCreator } from '@/components/label-creator';
+import {
+  BreadcrumbItem,
+  BreadcrumbList,
+  Breadcrumb,
+} from '@/components/ui/breadcrumb';
 
 export default function Page() {
   const { data: shamans } = useShamans();
@@ -39,6 +45,15 @@ export default function Page() {
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem>
+                  <Link href="/" className="text-muted-foreground">
+                    Shamans
+                  </Link>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
           </div>
         </header>
         {user ? (
@@ -92,6 +107,14 @@ export default function Page() {
                                 addSuffix: true,
                               }
                             )}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">
+                            Created by
+                          </span>
+                          <span className="text-sm">
+                            <LabelCreator creator={shaman.creator} />
                           </span>
                         </div>
                       </div>

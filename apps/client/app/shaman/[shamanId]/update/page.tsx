@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Loader2, Save, Webhook } from 'lucide-react';
 import { useRouter, useParams } from 'next/navigation';
+import Link from 'next/link';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -18,7 +19,6 @@ import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
-  BreadcrumbLink,
   BreadcrumbPage,
 } from '@/components/ui/breadcrumb';
 import { Button } from '@/components/ui/button';
@@ -136,12 +136,16 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/shaman">Shamans</BreadcrumbLink>
+                  <Link href="/" className="text-muted-foreground">
+                    Shamans
+                  </Link>
                 </BreadcrumbItem>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/shaman/${shamanId}`}>
+                  <Link
+                    href={`/shaman/${shamanId}`}
+                    className="text-muted-foreground">
                     {shaman.name}
-                  </BreadcrumbLink>
+                  </Link>
                 </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbPage>Update</BreadcrumbPage>

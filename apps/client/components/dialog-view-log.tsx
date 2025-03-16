@@ -159,13 +159,13 @@ export function DialogViewLog(props: DialogProps) {
               <TableRow>
                 <TableCell className="font-medium">Shaman ID</TableCell>
                 <TableCell className="break-words whitespace-normal">
-                  <LabelShamanId shamanId={shaman?.shamanId} />
+                  <LabelShamanId shamanId={shaman?.shamanId} copyable />
                 </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Created by</TableCell>
                 <TableCell className="break-words whitespace-normal">
-                  <LabelCreator creator={shaman?.creator} />
+                  <LabelCreator creator={shaman?.creator} copyable />
                 </TableCell>
               </TableRow>
               <TableRow>
