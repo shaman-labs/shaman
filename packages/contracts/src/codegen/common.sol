@@ -18,7 +18,8 @@ enum LogType {
 enum RoleType {
   None,
   Operator,
-  Tester
+  Tester,
+  Admin
 }
 
 enum JobState {
