@@ -110,7 +110,12 @@ export function DialogAddSpell(props: DialogProps) {
                       onClick={() =>
                         !alreadyAdded && setSelectedSpellId(spell.spellId)
                       }>
-                      <span>{spell.name}</span>
+                      <span className="flex flex-col">
+                        <span className="font-semibold">{spell.name}</span>
+                        <span className="text-xs text-muted-foreground">
+                          Version: {spell.version}
+                        </span>
+                      </span>
                       {alreadyAdded && (
                         <span className="text-xs text-muted-foreground">
                           Already added
