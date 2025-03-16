@@ -7,6 +7,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { Loader2, Webhook } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -151,6 +152,13 @@ export default function Page() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
+                <BreadcrumbItem>
+                  <BreadcrumbItem>
+                    <Link href="/" className="text-muted-foreground">
+                      Shamans
+                    </Link>
+                  </BreadcrumbItem>
+                </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbPage>New Shaman</BreadcrumbPage>
                 </BreadcrumbItem>

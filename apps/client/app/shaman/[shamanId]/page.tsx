@@ -66,6 +66,8 @@ import { toast } from '@/hooks/use-toast';
 import { trimHash } from '@/lib/utils';
 import { Grid, GridItem } from '@/components/grid';
 import { RowItem } from '@/components/row-item';
+import { LabelCreator } from '@/components/label-creator';
+import { LabelIPFS } from '@/components/label-ipfs';
 
 type ChartDataPoint = {
   day: string;
@@ -433,7 +435,7 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <Link href="/shaman" className="text-muted-foreground">
+                  <Link href="/" className="text-muted-foreground">
                     Shamans
                   </Link>
                 </BreadcrumbItem>
@@ -488,7 +490,7 @@ export default function Page() {
                             )
                           }>
                           <Plus className="mr-2 h-4 w-4" />
-                          Add Balance
+                          Deposit
                         </Button>
                         <Button
                           className="w-full"
@@ -501,7 +503,7 @@ export default function Page() {
                             )
                           }>
                           <Minus className="mr-2 h-4 w-4" />
-                          Withdraw Balance
+                          Withdraw
                         </Button>
                       </CardFooter>
                     </Card>
@@ -528,26 +530,14 @@ export default function Page() {
                             {shamanLoading ? (
                               <Skeleton className="h-5 w-40" />
                             ) : (
-                              <p className="font-mono text-sm truncate">
-                                {shaman?.creator}
-                              </p>
+                              <div className="text-sm font-small">
+                                <LabelCreator creator={shaman?.creator} />
+                              </div>
                             )}
                           </RowItem>
 
                           <RowItem icon={LinkIcon} label="IPFS Link">
-                            {shaman?.metadata ? (
-                              <a
-                                href={`https://gateway.shaman.fun/ipfs/${shaman.metadata}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
-                                ipfs://{shaman.metadata}
-                              </a>
-                            ) : (
-                              <p className="text-sm text-muted-foreground">
-                                No IPFS link available
-                              </p>
-                            )}
+                            <LabelIPFS ipfs={shaman?.metadata} />
                           </RowItem>
 
                           {shaman?.createdAt && (
@@ -668,9 +658,12 @@ export default function Page() {
                                   <CardTitle className="break-words">
                                     {selectedSpell.name}
                                   </CardTitle>
-                                  <p className="text-sm text-muted-foreground mt-1">
-                                    Creator {selectedSpell.creator || 'Unknown'}
-                                  </p>
+                                  <div className="text-sm text-muted-foreground mt-1">
+                                    Created by{' '}
+                                    <LabelCreator
+                                      creator={selectedSpell.creator}
+                                    />
+                                  </div>
                                 </div>
                                 <Button
                                   variant="destructive"

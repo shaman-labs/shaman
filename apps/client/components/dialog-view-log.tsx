@@ -1,6 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { LabelIPFS } from './label-ipfs';
+import { LabelCreator } from './label-creator';
+import { LabelShamanId } from './label-shaman-id';
 import { DialogProps } from '@/contexts/dialog-context';
 import { Button } from '@/components/ui/button';
 import {
@@ -118,19 +121,7 @@ export function DialogViewLog(props: DialogProps) {
               <TableRow>
                 <TableCell className="font-medium">IPFS Link</TableCell>
                 <TableCell>
-                  {shamanLog?.metadata ? (
-                    <a
-                      href={`https://gateway.shaman.fun/ipfs/${shamanLog.metadata}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-primary hover:text-primary/80 text-sm font-medium truncate block">
-                      ipfs://{shamanLog.metadata}
-                    </a>
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      No IPFS link available
-                    </p>
-                  )}
+                  <LabelIPFS ipfs={shamanLog?.metadata} copyable />
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -168,17 +159,17 @@ export function DialogViewLog(props: DialogProps) {
               <TableRow>
                 <TableCell className="font-medium">Shaman ID</TableCell>
                 <TableCell className="break-words whitespace-normal">
-                  {shaman?.shamanId}
+                  <LabelShamanId shamanId={shaman?.shamanId} copyable />
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium">Creator</TableCell>
+                <TableCell className="font-medium">Created by</TableCell>
                 <TableCell className="break-words whitespace-normal">
-                  {shaman?.creator}
+                  <LabelCreator creator={shaman?.creator} copyable />
                 </TableCell>
               </TableRow>
               <TableRow>
-                <TableCell className="font-medium">Created At</TableCell>
+                <TableCell className="font-medium">Created at</TableCell>
                 <TableCell>
                   {new Date(Number(shaman?.createdAt) * 1000).toLocaleString()}
                 </TableCell>

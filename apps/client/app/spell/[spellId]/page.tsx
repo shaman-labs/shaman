@@ -29,6 +29,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useSpell } from '@/hooks/use-spell';
 import { Grid, GridItem } from '@/components/grid';
 import { RowItem } from '@/components/row-item';
+import { LabelCreator } from '@/components/label-creator';
+import { LabelIPFS } from '@/components/label-ipfs';
 
 export default function Page() {
   const { spellId } = useParams();
@@ -45,7 +47,7 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <Link href="/spell" className="text-muted-foreground">
+                  <Link href="/spells" className="text-muted-foreground">
                     Spells
                   </Link>
                 </BreadcrumbItem>
@@ -66,6 +68,12 @@ export default function Page() {
                       <p className="text-base font-semibold">{spell?.name}</p>
                     </RowItem>
 
+                    <RowItem icon={User} label="Creator">
+                      <div className="text-sm font-small">
+                        <LabelCreator creator={spell?.creator} />
+                      </div>
+                    </RowItem>
+
                     <RowItem icon={Hash} label="Shamans Count">
                       <p className="text-sm font-medium">
                         {spell?.shamanCount}
@@ -76,26 +84,8 @@ export default function Page() {
                       <p className="text-sm font-medium">0 ZUG</p>
                     </RowItem>
 
-                    <RowItem icon={User} label="Creator">
-                      <p className="font-mono text-sm truncate">
-                        {spell?.creator}
-                      </p>
-                    </RowItem>
-
                     <RowItem icon={LinkIcon} label="IPFS Link">
-                      {spell?.metadata ? (
-                        <a
-                          href={`https://gateway.shaman.fun/ipfs/${spell.metadata}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:text-primary/80 text-sm font-medium truncate block w-full overflow-hidden">
-                          ipfs://{spell.metadata}
-                        </a>
-                      ) : (
-                        <p className="text-sm text-muted-foreground">
-                          No IPFS link available
-                        </p>
-                      )}
+                      <LabelIPFS ipfs={spell?.metadata} />
                     </RowItem>
 
                     <RowItem icon={Calendar} label="Created">

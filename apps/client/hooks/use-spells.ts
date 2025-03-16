@@ -31,7 +31,9 @@ export const useSpells = () => {
         };
       });
 
-      return spells.sort((a, b) => Number(b.createdAt) - Number(a.createdAt));
+      return spells.sort(
+        (a, b) => Number(b.shamanCount) - Number(a.shamanCount)
+      );
     },
     refetchInterval: 2500,
     enabled: !!mud?.components?.Spells,
