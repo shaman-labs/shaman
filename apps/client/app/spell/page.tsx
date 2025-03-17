@@ -69,7 +69,7 @@ export default function Page() {
   const [ready, setReady] = useState(false);
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const { ready: privyReady, user } = usePrivy();
+  const { ready: privyReady, user, login } = usePrivy();
   const embeddedWallet = user?.linkedAccounts?.find(
     (account) =>
       account.type === 'wallet' && account.connectorType === 'embedded'
@@ -80,6 +80,12 @@ export default function Page() {
     isLoading: isZugBalanceLoading,
     isFetching: isZugBalanceFetching,
   } = useZugBalance(address as `0x${string}`);
+
+  useEffect(() => {
+    if (!user) {
+      login();
+    }
+  }, [user, login]);
 
   useEffect(() => {
     if (
