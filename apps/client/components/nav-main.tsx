@@ -1,6 +1,7 @@
 'use client';
 
 import { IconChevronRight } from '@tabler/icons-react';
+import { type Icon } from '@tabler/icons-react';
 
 import {
   Collapsible,
@@ -26,7 +27,7 @@ export function NavMain({
   items: {
     title: string;
     url: string;
-    icon: string;
+    icon: Icon;
     isActive?: boolean;
     items?: {
       title: string;
