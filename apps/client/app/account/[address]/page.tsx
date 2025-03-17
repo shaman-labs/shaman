@@ -8,8 +8,7 @@ import { BalanceItem } from '@covalenthq/client-sdk';
 import { Transaction } from '@covalenthq/client-sdk';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
-import { ExternalLinkIcon } from 'lucide-react';
-import { MoreVertical } from 'lucide-react';
+import { IconDotsVertical, IconExternalLink } from '@tabler/icons-react'
 import {
   SidebarInset,
   SidebarProvider,
@@ -89,7 +88,7 @@ const transactionsColumns: ColumnDef<Transaction>[] = [
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary hover:underline">
-          <ExternalLinkIcon className="w-4 h-4" />
+          <IconExternalLink className="w-4 h-4" />
         </Link>
       );
     },
@@ -143,7 +142,7 @@ export default function Page() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="h-8 w-8 p-0">
-                  <MoreVertical className="h-4 w-4" />
+                  <IconDotsVertical className="h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">

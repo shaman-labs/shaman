@@ -1,14 +1,14 @@
 'use client';
 
 import {
-  CirclePlay,
-  CircleStop,
-  MoreHorizontal,
-  Pencil,
-  Plus,
-  Webhook,
-  Zap,
-} from 'lucide-react';
+  IconRobot,
+  IconEdit,
+  IconPlayerPlay,
+  IconRobotOff,
+  IconBolt,
+  IconPlus,
+  IconDots,
+} from '@tabler/icons-react';
 
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
@@ -55,14 +55,14 @@ export function NavShamans() {
           <SidebarMenuItem key={item.shamanId}>
             <SidebarMenuButton asChild isActive={shamanId === item.shamanId}>
               <Link href={`/shaman/${item.shamanId}`}>
-                <Webhook />
+                <IconRobot />
                 <span>{item.name}</span>
               </Link>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover>
-                  <MoreHorizontal />
+                  <IconDots />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
@@ -74,7 +74,7 @@ export function NavShamans() {
                   onClick={() =>
                     router.push(`/shaman/${item.shamanId}/update`)
                   }>
-                  <Pencil className="text-muted-foreground" />
+                  <IconEdit className="text-muted-foreground" />
                   <span>Update</span>
                 </DropdownMenuItem>
                 <DropdownMenuItem
@@ -88,12 +88,12 @@ export function NavShamans() {
                   }>
                   {item.active ? (
                     <>
-                      <CircleStop className="text-muted-foreground" />
+                      <IconRobotOff className="text-muted-foreground" />
                       <span>Deactivate</span>
                     </>
                   ) : (
                     <>
-                      <CirclePlay className="text-muted-foreground" />
+                      <IconPlayerPlay className="text-muted-foreground" />
                       <span>Activate</span>
                     </>
                   )}
@@ -107,7 +107,7 @@ export function NavShamans() {
                       item.shamanId
                     )
                   }>
-                  <Zap className="text-muted-foreground" />
+                  <IconBolt className="text-muted-foreground" />
                   <span>Trigger</span>
                 </DropdownMenuItem>
                 {/* <DropdownMenuSeparator />
@@ -116,7 +116,7 @@ export function NavShamans() {
                     openDelete(true, `/shaman/${item.shamanId}`, undefined)
                   }
                   className="text-red-500">
-                  <Trash2 className="text-red-500" />
+                  <IconTrash className="text-red-500" />
                   <span>Delete</span>
                 </DropdownMenuItem> */}
               </DropdownMenuContent>
@@ -127,7 +127,7 @@ export function NavShamans() {
           <SidebarMenuButton
             isActive={pathname === '/shaman'}
             onClick={() => (user ? router.push('/shaman') : login())}>
-            <Plus />
+            <IconPlus />
             <span>New Shaman</span>
           </SidebarMenuButton>
         </SidebarMenuItem>

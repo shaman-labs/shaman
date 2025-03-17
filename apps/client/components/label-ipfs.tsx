@@ -1,5 +1,5 @@
 import React from 'react';
-import { Copy } from 'lucide-react';
+import { IconCopy } from '@tabler/icons-react';
 import { toast } from '@/hooks/use-toast';
 
 interface LabelIPFSProps {
@@ -44,7 +44,7 @@ export const LabelIPFS: React.FC<LabelIPFSProps> = ({
       )}
       {copyable && (
         <button onClick={handleCopy} className="ml-2" title="Copy IPFS">
-          <Copy />
+          <IconCopy />
         </button>
       )}
     </div>

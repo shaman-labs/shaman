@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Loader2, Webhook } from 'lucide-react';
+import { IconLoader2, IconDiamonds } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AppSidebar } from '@/components/app-sidebar';
@@ -254,9 +254,9 @@ export default function Page() {
                         type="submit"
                         disabled={isCreating || sourcesLoading}>
                         {isCreating ? (
-                          <Loader2 className="animate-spin" />
+                          <IconLoader2 className="animate-spin" />
                         ) : (
-                          <Webhook className="ml-2" />
+                          <IconDiamonds className="ml-2" />
                         )}
                         {isCreating ? 'Creating...' : 'Create Shaman'}
                       </Button>

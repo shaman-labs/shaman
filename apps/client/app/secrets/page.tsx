@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Plus, Trash2 } from 'lucide-react';
+import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -78,7 +78,7 @@ export default function Page() {
                     onClick={() => setIsAddDialogOpen(true)}
                     className="w-full"
                     variant="default">
-                    <Plus />
+                    <IconPlus />
                     Create Secret
                   </Button>
                 </CardFooter>
@@ -97,7 +97,7 @@ export default function Page() {
                         size="icon"
                         onClick={() => handleOpenDeleteDialog(key)}
                         className="h-8 w-8">
-                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <IconTrash className="h-4 w-4 text-destructive" />
                       </Button>
                     </CardTitle>
                   </CardHeader>

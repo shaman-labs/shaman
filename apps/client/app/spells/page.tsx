@@ -1,6 +1,6 @@
 'use client';
 
-import { Eye, Plus } from 'lucide-react';
+import { IconEye, IconPlus } from '@tabler/icons-react';
 import Link from 'next/link';
 import { formatDistance } from 'date-fns';
 import { usePrivy } from '@privy-io/react-auth';
@@ -65,7 +65,7 @@ export default function Page() {
                   <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
                     <Button asChild className="w-full" variant="default">
                       <Link href="/spell">
-                        <Plus />
+                        <IconPlus />
                         Create Spell
                       </Link>
                     </Button>
@@ -118,7 +118,7 @@ export default function Page() {
                   <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
                     <Button asChild className="w-full" variant="outline">
                       <Link href={`/spell/${spell.spellId}`}>
-                        <Eye />
+                        <IconEye />
                         View Details
                       </Link>
                     </Button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Copy } from 'lucide-react';
+import { IconCopy } from '@tabler/icons-react';
 import { toast } from '@/hooks/use-toast';
 
 interface LabelShamanIdProps {
@@ -36,7 +36,7 @@ export const LabelShamanId: React.FC<LabelShamanIdProps> = ({
       </span>
       {copyable && (
         <button onClick={handleCopy} className="ml-2" title="Copy Shaman ID">
-          <Copy />
+          <IconCopy />
         </button>
       )}
     </div>
