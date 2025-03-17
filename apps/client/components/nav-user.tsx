@@ -1,6 +1,12 @@
 'use client';
 
-import { Brain, ChevronsUpDown, LogOut, Sparkles, Wallet } from 'lucide-react';
+import {
+  IconKey,
+  IconWallet,
+  IconMoneybag,
+  IconLogout,
+  IconCaretUpDown,
+} from '@tabler/icons-react';
 import BoringAvatar from 'boring-avatars';
 import { useFundWallet, usePrivy } from '@privy-io/react-auth';
 import { Chain, formatEther } from 'viem';
@@ -61,7 +67,7 @@ export function NavUser() {
                     ETH
                   </span>
                 </div>
-                <ChevronsUpDown className="ml-auto size-4" />
+                <IconCaretUpDown className="ml-auto size-4" />
               </SidebarMenuButton>
             </DropdownMenuTrigger>
           ) : (
@@ -95,7 +101,7 @@ export function NavUser() {
               <DropdownMenuItem
                 className="cursor-pointer"
                 onClick={() => router.push('/secrets')}>
-                <Brain />
+                <IconKey />
                 Shaman Secrets
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -105,7 +111,7 @@ export function NavUser() {
                 onClick={() =>
                   fundWallet(address || '', { chain: chain as Chain })
                 }>
-                <Wallet />
+                <IconWallet />
                 Fund Shaman Wallet
               </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -113,13 +119,13 @@ export function NavUser() {
               <DropdownMenuItem
                 className="cursor-pointer"
                 onClick={() => openBuyZug(true)}>
-                <Sparkles />
+                <IconMoneybag />
                 Buy ZUG
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="cursor-pointer" onClick={logout}>
-              <LogOut />
+              <IconLogout />
               Disconnect
             </DropdownMenuItem>
           </DropdownMenuContent>

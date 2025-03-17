@@ -1,6 +1,11 @@
 'use client';
 
-import { MoreHorizontal, Pencil, Plus, Webhook } from 'lucide-react';
+import {
+  IconDots,
+  IconEdit,
+  IconPlus,
+  IconActivity,
+} from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
 import { useParams, usePathname, useRouter } from 'next/navigation';
@@ -44,14 +49,14 @@ export function NavSpells() {
           <SidebarMenuItem key={item.spellId}>
             <SidebarMenuButton asChild isActive={spellId === item.spellId}>
               <Link href={`/spell/${item.spellId}`}>
-                <Webhook />
+                <IconActivity />
                 <span>{item.name}</span>
               </Link>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuAction showOnHover>
-                  <MoreHorizontal />
+                  <IconDots />
                   <span className="sr-only">More</span>
                 </SidebarMenuAction>
               </DropdownMenuTrigger>
@@ -61,7 +66,7 @@ export function NavSpells() {
                 align={isMobile ? 'end' : 'start'}>
                 <DropdownMenuItem
                   onClick={() => router.push(`/spell/${item.spellId}/update`)}>
-                  <Pencil className="text-muted-foreground" />
+                  <IconEdit className="text-muted-foreground" />
                   <span>Update</span>
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -72,7 +77,7 @@ export function NavSpells() {
           <SidebarMenuButton
             isActive={pathname === '/spell'}
             onClick={() => (user ? router.push('/spell') : login())}>
-            <Plus />
+            <IconPlus />
             <span>New Spell</span>
           </SidebarMenuButton>
         </SidebarMenuItem>

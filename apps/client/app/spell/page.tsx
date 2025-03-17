@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { ArrowRight, Webhook } from 'lucide-react';
+import { IconArrowRight, IconDiamonds } from '@tabler/icons-react';
 import { Highlight, themes } from 'prism-react-renderer';
 import { useRouter } from 'next/navigation';
 import { usePrivy, WalletWithMetadata } from '@privy-io/react-auth';
@@ -235,7 +235,7 @@ export default function Page() {
                         type="submit"
                         disabled={isLoading}>
                         {isLoading ? 'Generating...' : 'Generate Spell Code'}
-                        <ArrowRight />
+                        <IconArrowRight />
                       </Button>
                     </form>
                   </Form>
@@ -294,7 +294,7 @@ export default function Page() {
                     onClick={handleDeploy}
                     className="w-full"
                     disabled={isDeploying || !code}>
-                    <Webhook />
+                    <IconDiamonds />
                     {isDeploying ? 'Deploying...' : 'Deploy Spell'}
                   </Button>
                 </CardFooter>

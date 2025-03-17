@@ -4,7 +4,11 @@ import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Loader2, Save, ArrowRight } from 'lucide-react';
+import {
+  IconLoader2,
+  IconDeviceFloppy,
+  IconArrowRight,
+} from '@tabler/icons-react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Highlight, themes } from 'prism-react-renderer';
@@ -151,7 +155,7 @@ export default function Page() {
         <AppSidebar />
         <SidebarInset>
           <div className="flex h-full items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin" />
+            <IconLoader2 className="h-8 w-8 animate-spin" />
           </div>
         </SidebarInset>
       </SidebarProvider>
@@ -234,7 +238,7 @@ export default function Page() {
                         type="submit"
                         disabled={isLoading}>
                         {isLoading ? 'Generating...' : 'Regenerate Spell Code'}
-                        <ArrowRight />
+                        <IconArrowRight />
                       </Button>
                     </form>
                   </Form>
@@ -293,7 +297,7 @@ export default function Page() {
                     onClick={handleUpdate}
                     className="w-full"
                     disabled={isUpdating || !ipfs}>
-                    <Save className="mr-2" />
+                    <IconDeviceFloppy className="mr-2" />
                     {isUpdating ? 'Updating...' : 'Update Spell'}
                   </Button>
                 </CardFooter>

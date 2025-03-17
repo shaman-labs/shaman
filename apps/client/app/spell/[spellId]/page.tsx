@@ -1,13 +1,14 @@
 'use client';
 
 import {
-  User,
-  Calendar,
-  Hash,
-  FileCode,
-  Link as LinkIcon,
-  DollarSign,
-} from 'lucide-react';
+  IconUser,
+  IconCalendarWeek,
+  IconFileSmile,
+  IconCoin,
+  IconLink,
+  IconHash,
+  IconActivity,
+} from '@tabler/icons-react';
 import { Highlight, themes } from 'prism-react-renderer';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
@@ -64,35 +65,35 @@ export default function Page() {
               <Card className="pt-3">
                 <CardContent className="flex-grow space-y-4">
                   <div className="grid gap-6 divide-y divide-border">
-                    <RowItem icon={FileCode} label="Name">
+                    <RowItem icon={IconActivity} label="Name">
                       <p className="text-base font-semibold">{spell?.name}</p>
                     </RowItem>
 
-                    <RowItem icon={FileCode} label="Version">
+                    <RowItem icon={IconFileSmile} label="Version">
                       <p className="text-base font-mono">{spell?.version}</p>
                     </RowItem>
 
-                    <RowItem icon={User} label="Creator">
+                    <RowItem icon={IconUser} label="Creator">
                       <div className="text-sm font-small">
                         <LabelCreator creator={spell?.creator} />
                       </div>
                     </RowItem>
 
-                    <RowItem icon={Hash} label="Shamans Count">
+                    <RowItem icon={IconHash} label="Shamans Count">
                       <p className="text-sm font-medium">
                         {spell?.shamanCount}
                       </p>
                     </RowItem>
 
-                    <RowItem icon={DollarSign} label="Commission Revenue">
+                    <RowItem icon={IconCoin} label="Commission Revenue">
                       <p className="text-sm font-medium">0 ZUG</p>
                     </RowItem>
 
-                    <RowItem icon={LinkIcon} label="IPFS Link">
+                    <RowItem icon={IconLink} label="IPFS Link">
                       <LabelIPFS ipfs={spell?.metadata} />
                     </RowItem>
 
-                    <RowItem icon={Calendar} label="Created">
+                    <RowItem icon={IconCalendarWeek} label="Created">
                       <p className="text-sm">
                         {spell?.createdAt
                           ? new Date(

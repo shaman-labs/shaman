@@ -5,7 +5,11 @@ import { useState, useEffect } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Loader2, Save, Webhook } from 'lucide-react';
+import {
+  IconLoader2,
+  IconDeviceFloppy,
+  IconDiamonds,
+} from '@tabler/icons-react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 import { AppSidebar } from '@/components/app-sidebar';
@@ -105,7 +109,7 @@ export default function Page() {
         <AppSidebar />
         <SidebarInset>
           <div className="flex h-full items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin" />
+            <IconLoader2 className="h-8 w-8 animate-spin" />
           </div>
         </SidebarInset>
       </SidebarProvider>
@@ -188,9 +192,9 @@ export default function Page() {
                         type="submit"
                         disabled={isUpdating}>
                         {isUpdating ? (
-                          <Loader2 className="animate-spin" />
+                          <IconLoader2 className="animate-spin" />
                         ) : (
-                          <Save className="mr-2" />
+                          <IconDeviceFloppy className="mr-2" />
                         )}
                         {isUpdating ? 'Updating...' : 'Update Shaman'}
                       </Button>
@@ -208,7 +212,7 @@ export default function Page() {
                   <div className="flex flex-col space-y-2">
                     <div className="flex items-center gap-3">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Webhook className="h-4 w-4 text-primary" />
+                        <IconDiamonds className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">
@@ -222,7 +226,7 @@ export default function Page() {
 
                     <div className="flex items-center gap-3">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Webhook className="h-4 w-4 text-primary" />
+                        <IconDiamonds className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">

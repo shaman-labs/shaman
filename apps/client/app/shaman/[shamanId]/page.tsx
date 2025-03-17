@@ -2,15 +2,17 @@
 
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import {
-  Clock,
-  FileCode,
-  LinkIcon,
-  Minus,
-  MoreVertical,
-  Plus,
-  Trash2,
-  User,
-} from 'lucide-react';
+  IconClock,
+  IconRobot,
+  IconFileDescription,
+  IconUser,
+  IconLink,
+  IconMinus,
+  IconPlus,
+  IconTrash,
+  IconDotsVertical,
+} from '@tabler/icons-react';
+
 import { useParams } from 'next/navigation';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
@@ -304,7 +306,7 @@ export default function Page() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 p-0">
-                    <MoreVertical className="h-4 w-4" />
+                    <IconDotsVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -402,7 +404,7 @@ export default function Page() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 p-0">
-                    <MoreVertical className="h-4 w-4" />
+                    <IconDotsVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -490,7 +492,7 @@ export default function Page() {
                               handleRefetch
                             )
                           }>
-                          <Plus className="mr-2 h-4 w-4" />
+                          <IconPlus className="mr-2 h-4 w-4" />
                           Deposit
                         </Button>
                         <Button
@@ -503,7 +505,7 @@ export default function Page() {
                               handleRefetch
                             )
                           }>
-                          <Minus className="mr-2 h-4 w-4" />
+                          <IconMinus className="mr-2 h-4 w-4" />
                           Withdraw
                         </Button>
                       </CardFooter>
@@ -512,7 +514,7 @@ export default function Page() {
                   <Card className="pt-6">
                     <CardContent className="flex-grow space-y-4">
                       <div className="grid gap-6 divide-y divide-border">
-                        <RowItem icon={FileCode} label="Name" noDivider>
+                        <RowItem icon={IconRobot} label="Name" noDivider>
                           {shamanLoading ? (
                             <Skeleton className="h-5 w-32" />
                           ) : (
@@ -523,12 +525,14 @@ export default function Page() {
                         </RowItem>
 
                         {shaman?.description && (
-                          <RowItem icon={FileCode} label="Description">
+                          <RowItem
+                            icon={IconFileDescription}
+                            label="Description">
                             <p className="text-sm">{shaman.description}</p>
                           </RowItem>
                         )}
 
-                        <RowItem icon={User} label="Creator">
+                        <RowItem icon={IconUser} label="Creator">
                           {shamanLoading ? (
                             <Skeleton className="h-5 w-40" />
                           ) : (
@@ -538,12 +542,12 @@ export default function Page() {
                           )}
                         </RowItem>
 
-                        <RowItem icon={LinkIcon} label="IPFS Link">
+                        <RowItem icon={IconLink} label="IPFS Link">
                           <LabelIPFS ipfs={shaman?.metadata} />
                         </RowItem>
 
                         {shaman?.createdAt && (
-                          <RowItem icon={Clock} label="Created">
+                          <RowItem icon={IconClock} label="Created">
                             <p className="text-sm">
                               {format(Number(shaman.createdAt) * 1000, 'PPpp')}
                             </p>
@@ -656,7 +660,7 @@ export default function Page() {
                               )
                             }>
                             <span className="flex items-center gap-2">
-                              <Plus className="h-4 w-4" /> Add Spell
+                              <IconPlus className="h-4 w-4" /> Add Spell
                             </span>
                           </div>
                         )}
@@ -693,7 +697,7 @@ export default function Page() {
                                     onClick={handleRemoveSpell}
                                     disabled={loading}
                                     className="self-start sm:self-auto">
-                                    <Trash2 className="h-4 w-4" />
+                                    <IconTrash className="h-4 w-4" />
                                   </Button>
                                 )}
                               </div>
