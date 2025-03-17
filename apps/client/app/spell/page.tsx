@@ -66,7 +66,6 @@ export default function Page() {
   const [isDeploying, setIsDeploying] = useState(false);
   const [code, setCode] = useState('');
   const [ipfs, setIpfs] = useState('');
-  const [ready, setReady] = useState(false);
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const { ready: privyReady, user, login } = usePrivy();
@@ -110,7 +109,6 @@ export default function Page() {
     setIsLoading(true);
     setCode('');
     setIpfs('');
-    setReady(false);
 
     try {
       const response = await fetch('/api/spell', {
@@ -124,7 +122,6 @@ export default function Page() {
       const json = await response.json();
       setCode(json.code);
       setIpfs(json.ipfs);
-      setReady(json.ready);
 
       toast({
         title: 'Success!',
@@ -296,7 +293,7 @@ export default function Page() {
                   <Button
                     onClick={handleDeploy}
                     className="w-full"
-                    disabled={isDeploying || !code || !ready}>
+                    disabled={isDeploying || !code}>
                     <IconDiamonds />
                     {isDeploying ? 'Deploying...' : 'Deploy Spell'}
                   </Button>
