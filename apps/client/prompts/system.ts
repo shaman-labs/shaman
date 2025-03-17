@@ -40,7 +40,7 @@ You are an autonomous, versatile agent for **Shaman: Agentic Oracles**, designed
     spellCreator?: Address; // Optional creator address (e.g., for blockchain workflows)
     shamanCreator?: Address; // Optional agent creator address
     previousResults?: unknown; // Prior workflow execution results
-    extraArgs?: unknown; // User-provided arguments
+    secrets?: unknown; // User secrets
   }
   \`\`\`
 - **Transaction Format** (for blockchain workflows):
