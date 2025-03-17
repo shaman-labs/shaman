@@ -14,21 +14,11 @@ contract SpellJobsSystemTest is BaseTest {
   uint256 constant INITIAL_BALANCE = 1000;
   uint256 constant JOB_COST = 500;
 
-  function _setupOperator(address operator) private {
-    vm.prank(signerAddress);
-    Roles.setRole(operator, RoleType.Operator);
-    vm.stopPrank();
-  }
-
-  function _prepareTokens(address user, uint256 amount) private {
-    _mintTokens(user, amount);
-    _increaseAllowance(user, amount);
-  }
-
   function _createTestShaman(
     address creator,
     uint256 balance
   ) private returns (bytes32 shamanId) {
+    _setMember(creator);
     _prepareTokens(creator, balance);
 
     vm.recordLogs();
@@ -56,10 +46,9 @@ contract SpellJobsSystemTest is BaseTest {
     return shamanId;
   }
 
-  function _createTestSpell(
-    address creator
-  ) private returns (bytes32 spellId) {
+  function _createTestSpell(address creator) private returns (bytes32 spellId) {
     vm.recordLogs();
+    _setMember(creator);
     vm.prank(creator);
     world.createSpell("TestSpell", SPELL_METADATA);
     vm.stopPrank();
@@ -76,11 +65,7 @@ contract SpellJobsSystemTest is BaseTest {
     require(spellId != bytes32(0), "Spell creation failed");
 
     // Verify the spell was created correctly
-    assertEq(
-      Spells.getCreator(spellId),
-      creator,
-      "Creator not set correctly"
-    );
+    assertEq(Spells.getCreator(spellId), creator, "Creator not set correctly");
     assertEq(
       Spells.getMetadata(spellId),
       SPELL_METADATA,
@@ -95,11 +80,13 @@ contract SpellJobsSystemTest is BaseTest {
     uint256 balance
   ) private returns (bytes32 shamanId, bytes32 spellId) {
     spellId = _createTestSpell(creator);
-    
+
     bytes32[] memory spellIds = new bytes32[](1);
     spellIds[0] = spellId;
-    
+
     _prepareTokens(creator, balance);
+
+    _setMember(creator);
 
     vm.recordLogs();
     vm.prank(creator);
@@ -127,8 +114,12 @@ contract SpellJobsSystemTest is BaseTest {
   }
 
   function testEnqueueSpellJob() public {
-    _setupOperator(creatorAlice);
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(creatorAlice, INITIAL_BALANCE);
+    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
+      creatorAlice,
+      INITIAL_BALANCE
+    );
+
+    _setOperator(creatorAlice);
 
     // Verify initial state
     assertEq(
@@ -168,8 +159,12 @@ contract SpellJobsSystemTest is BaseTest {
   }
 
   function testStartSpellJob() public {
-    _setupOperator(creatorAlice);
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(creatorAlice, INITIAL_BALANCE);
+    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
+      creatorAlice,
+      INITIAL_BALANCE
+    );
+
+    _setOperator(creatorAlice);
 
     // First, enqueue the shaman job
     vm.prank(creatorAlice);
@@ -207,8 +202,12 @@ contract SpellJobsSystemTest is BaseTest {
   }
 
   function testCompleteSpellJob() public {
-    _setupOperator(creatorAlice);
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(creatorAlice, INITIAL_BALANCE);
+    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
+      creatorAlice,
+      INITIAL_BALANCE
+    );
+
+    _setOperator(creatorAlice);
 
     // 1. Enqueue shaman job first
     vm.prank(creatorAlice);
@@ -238,7 +237,7 @@ contract SpellJobsSystemTest is BaseTest {
     vm.prank(creatorAlice);
     world.enqueueSpellJob(shamanId, spellId, JOB_COST);
     vm.stopPrank();
-    
+
     // Verify the spell is in Queue state
     assertEq(
       uint8(ShamanSpell.getState(shamanId, spellId)),
@@ -260,7 +259,13 @@ contract SpellJobsSystemTest is BaseTest {
 
     // 5. Complete the spell job
     vm.prank(creatorAlice);
-    world.completeSpellJob(shamanId, spellId, JOB_COST, true, COMPLETION_METADATA);
+    world.completeSpellJob(
+      shamanId,
+      spellId,
+      JOB_COST,
+      true,
+      COMPLETION_METADATA
+    );
     vm.stopPrank();
 
     // Verify the spell job was completed
@@ -289,4 +294,4 @@ contract SpellJobsSystemTest is BaseTest {
       "Shaman state should be Idle after completion"
     );
   }
-} 
+}

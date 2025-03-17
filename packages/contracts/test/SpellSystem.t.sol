@@ -13,6 +13,8 @@ contract SpellSystemTest is BaseTest {
   function testCreateSpell() public {
     string memory spellName = "TestSpell";
     
+    _setMember(creatorAlice);
+
     vm.recordLogs();
     vm.prank(creatorAlice);
     world.createSpell(spellName, INITIAL_METADATA);
@@ -42,7 +44,9 @@ contract SpellSystemTest is BaseTest {
 
   function testUpdateSpell() public {
     string memory spellName = "TestSpell";
-    
+
+    _setMember(creatorAlice);
+
     vm.recordLogs();
     vm.prank(creatorAlice);
     world.createSpell(spellName, INITIAL_METADATA);
@@ -76,7 +80,9 @@ contract SpellSystemTest is BaseTest {
 
   function testUpdateSpellNotCreator() public {
     string memory spellName = "TestSpell";
-    
+
+    _setMember(creatorAlice);
+
     vm.recordLogs();
     vm.prank(creatorAlice);
     world.createSpell(spellName, INITIAL_METADATA);
@@ -107,7 +113,9 @@ contract SpellSystemTest is BaseTest {
 
   function testGetSpellVersion() public {
     string memory spellName = "TestSpell";
-    
+
+    _setMember(creatorAlice);
+
     vm.recordLogs();
     vm.prank(creatorAlice);
     world.createSpell(spellName, INITIAL_METADATA);

@@ -13,16 +13,13 @@ contract ShamanBalanceSystemTest is BaseTest {
   uint256 constant DEPOSIT_AMOUNT = 500;
   uint256 constant WITHDRAW_AMOUNT = 300;
 
-  function _prepareTokens(address user, uint256 amount) private {
-    _mintTokens(user, amount);
-    _increaseAllowance(user, amount);
-  }
-
   function _createTestShaman() private returns (bytes32 shamanId) {
     _prepareTokens(creatorAlice, 10000);
 
     bytes32[] memory abilityIds = new bytes32[](0);
     bytes32[] memory sourceIds = new bytes32[](0);
+
+    _setMember(creatorAlice);
 
     vm.recordLogs();
     vm.prank(creatorAlice);

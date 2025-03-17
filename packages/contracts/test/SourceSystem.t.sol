@@ -11,14 +11,7 @@ contract SourceSystemTest is BaseTest {
   string constant INITIAL_METADATA = "QmSourceTest1";
   string constant INITIAL_NAME = "Test Source";
 
-  function _setupOperator(address operator) private {
-    vm.prank(signerAddress);
-    Roles.setRole(operator, RoleType.Operator);
-    vm.stopPrank();
-  }
-
   function testCreateSource() public {
-    _setupOperator(creatorAlice);
     bytes32 sourceId = _createSource(
       creatorAlice,
       INITIAL_NAME,
@@ -31,15 +24,15 @@ contract SourceSystemTest is BaseTest {
     assertEq(Sources.getName(sourceId), INITIAL_NAME);
   }
 
-  function testCreateSourceNonOperator() public {
+  function testCreateSourceNonAdmin() public {
     vm.prank(creatorBob);
-    vm.expectRevert("Not operator");
+    vm.expectRevert("Not admin");
     world.createSource(INITIAL_NAME, INITIAL_METADATA);
     vm.stopPrank();
   }
 
   function testCreateSourceWithEmptyName() public {
-    _setupOperator(creatorAlice);
+    _setAdmin(creatorAlice);
 
     vm.prank(creatorAlice);
     vm.expectRevert("Source name cannot be empty");
@@ -48,7 +41,7 @@ contract SourceSystemTest is BaseTest {
   }
 
   function testCreateSourceWithLongName() public {
-    _setupOperator(creatorAlice);
+    _setAdmin(creatorAlice);
 
     string memory longName = "ThisNameIsTooLongForASource";
 
@@ -59,7 +52,7 @@ contract SourceSystemTest is BaseTest {
   }
 
   function testCreateSourceWithEmptyMetadata() public {
-    _setupOperator(creatorAlice);
+    _setAdmin(creatorAlice);
 
     vm.prank(creatorAlice);
     vm.expectRevert("Metadata cannot be empty");
@@ -68,7 +61,7 @@ contract SourceSystemTest is BaseTest {
   }
 
   function testCreateSourceWithDuplicateName() public {
-    _setupOperator(creatorAlice);
+    _setAdmin(creatorAlice);
     // Create first source
     _createSource(creatorAlice, INITIAL_NAME, INITIAL_METADATA);
 

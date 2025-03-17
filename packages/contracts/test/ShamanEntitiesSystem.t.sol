@@ -12,22 +12,13 @@ contract ShamanEntitiesSystemTest is BaseTest {
 
   uint256 constant INITIAL_BALANCE = 1000;
 
-  function _setupOperator(address operator) private {
-    vm.prank(signerAddress);
-    Roles.setRole(operator, RoleType.Operator);
-    vm.stopPrank();
-  }
-
-  function _prepareTokens(address user, uint256 amount) private {
-    _mintTokens(user, amount);
-    _increaseAllowance(user, amount);
-  }
-
   function _createTestSpells(
     address creator,
     string memory suffix
   ) internal returns (bytes32, bytes32) {
     vm.recordLogs();
+
+    _setMember(creator);
 
     // Use single-character names to avoid "Spell name too long" error
     string memory name1 = string(abi.encodePacked("A", suffix));
@@ -80,6 +71,8 @@ contract ShamanEntitiesSystemTest is BaseTest {
   ) private returns (bytes32 shamanId) {
     _prepareTokens(creator, INITIAL_BALANCE);
 
+    _setMember(creator);
+
     vm.recordLogs();
     vm.prank(creator);
     world.createShaman(
@@ -123,7 +116,6 @@ contract ShamanEntitiesSystemTest is BaseTest {
   }
 
   function testAddSpell() public {
-    _setupOperator(creatorAlice);
     (bytes32 spellId1, bytes32 spellId2) = _createTestSpells(
       creatorAlice,
       "AddTest1"
@@ -169,7 +161,6 @@ contract ShamanEntitiesSystemTest is BaseTest {
   }
 
   function testAddSpellNotCreator() public {
-    _setupOperator(creatorAlice);
     (bytes32 spellId1, bytes32 spellId2) = _createTestSpells(
       creatorAlice,
       "AddTest3"
@@ -209,7 +200,6 @@ contract ShamanEntitiesSystemTest is BaseTest {
   }
 
   function testAddSpellAlreadyExists() public {
-    _setupOperator(creatorAlice);
     (bytes32 spellId1, ) = _createTestSpells(creatorAlice, "3");
     (bytes32 sourceId1, ) = _createTestSources(creatorAlice, "3");
 
@@ -242,7 +232,6 @@ contract ShamanEntitiesSystemTest is BaseTest {
   }
 
   function testRemoveSpell() public {
-    _setupOperator(creatorAlice);
     (bytes32 spellId1, bytes32 spellId2) = _createTestSpells(
       creatorAlice,
       "RemoveTest1"

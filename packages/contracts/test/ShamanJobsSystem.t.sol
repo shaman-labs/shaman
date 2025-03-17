@@ -13,23 +13,13 @@ contract ShamanJobsSystemTest is BaseTest {
   uint256 constant INITIAL_BALANCE = 1000;
   uint256 constant JOB_COST = 500;
 
-  function _setupOperator(address operator) private {
-    vm.prank(signerAddress);
-    Roles.setRole(operator, RoleType.Operator);
-    vm.stopPrank();
-  }
-
-  function _prepareTokens(address user, uint256 amount) private {
-    _mintTokens(user, amount);
-    _increaseAllowance(user, amount);
-  }
-
   function _createTestShaman(
     address creator,
     uint256 balance
   ) private returns (bytes32 shamanId) {
     _prepareTokens(creator, balance);
 
+    _setMember(creator);
     vm.recordLogs();
     vm.prank(creator);
     world.createShaman(
@@ -73,7 +63,6 @@ contract ShamanJobsSystemTest is BaseTest {
   }
 
   function testEnqueueShamanJob() public {
-    _setupOperator(creatorAlice);
     bytes32 shamanId = _createTestShaman(creatorAlice, INITIAL_BALANCE);
 
     // Verify initial state
@@ -83,6 +72,7 @@ contract ShamanJobsSystemTest is BaseTest {
       "Initial state should be Idle"
     );
 
+    _setOperator(creatorAlice);
     // Enqueue the shaman
     vm.prank(creatorAlice);
     world.enqueueShamanJob(shamanId);
@@ -97,9 +87,9 @@ contract ShamanJobsSystemTest is BaseTest {
   }
 
   function testStartShamanJob() public {
-    _setupOperator(creatorAlice);
     bytes32 shamanId = _createTestShaman(creatorAlice, INITIAL_BALANCE);
 
+    _setOperator(creatorAlice);
     // Enqueue the shaman
     vm.prank(creatorAlice);
     world.enqueueShamanJob(shamanId);
@@ -119,9 +109,9 @@ contract ShamanJobsSystemTest is BaseTest {
   }
 
   function testCompleteShamanJob() public {
-    _setupOperator(creatorAlice);
     bytes32 shamanId = _createTestShaman(creatorAlice, INITIAL_BALANCE);
 
+    _setOperator(creatorAlice);
     // Enqueue the shaman
     vm.prank(creatorAlice);
     world.enqueueShamanJob(shamanId);
