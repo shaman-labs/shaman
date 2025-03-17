@@ -8,7 +8,7 @@ import { BalanceItem } from '@covalenthq/client-sdk';
 import { Transaction } from '@covalenthq/client-sdk';
 import Link from 'next/link';
 import { formatDistanceToNow } from 'date-fns';
-import { IconDotsVertical, IconExternalLink } from '@tabler/icons-react'
+import { IconDotsVertical, IconExternalLink } from '@tabler/icons-react';
 import {
   SidebarInset,
   SidebarProvider,
