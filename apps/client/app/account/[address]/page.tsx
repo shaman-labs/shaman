@@ -161,7 +161,7 @@ export default function Page() {
                       '_blank'
                     );
                   }}>
-                  View Contract <ExternalLinkIcon className="w-4 h-4" />
+                  View Contract <IconExternalLink className="w-4 h-4" />
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
