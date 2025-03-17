@@ -192,7 +192,7 @@ export default function Page() {
                         type="submit"
                         disabled={isUpdating}>
                         {isUpdating ? (
-                          <Loader2 className="animate-spin" />
+                          <IconLoader2 className="animate-spin" />
                         ) : (
                           <IconDeviceFloppy className="mr-2" />
                         )}
@@ -226,7 +226,7 @@ export default function Page() {
 
                     <div className="flex items-center gap-3">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Webhook className="h-4 w-4 text-primary" />
+                        <IconDiamonds className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">

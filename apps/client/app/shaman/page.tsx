@@ -274,7 +274,7 @@ export default function Page() {
                   <div className="flex flex-col space-y-2">
                     <div className="flex items-center gap-3">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Webhook className="h-4 w-4 text-primary" />
+                        <IconDiamonds className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">
@@ -288,7 +288,7 @@ export default function Page() {
 
                     <div className="flex items-center gap-3">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Webhook className="h-4 w-4 text-primary" />
+                        <IconDiamonds className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">
@@ -302,7 +302,7 @@ export default function Page() {
 
                     <div className="flex items-center gap-3 mt-2">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Webhook className="h-4 w-4 text-primary" />
+                        <IconDiamonds className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">
@@ -320,7 +320,7 @@ export default function Page() {
 
                     <div className="flex items-center gap-3 mt-2">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Webhook className="h-4 w-4 text-primary" />
+                        <IconDiamonds className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">
