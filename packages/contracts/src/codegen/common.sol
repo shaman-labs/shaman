@@ -18,7 +18,7 @@ enum LogType {
 enum RoleType {
   None,
   Operator,
-  Tester,
+  Member,
   Admin
 }
 

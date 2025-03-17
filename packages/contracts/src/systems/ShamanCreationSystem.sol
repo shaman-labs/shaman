@@ -16,7 +16,7 @@ contract ShamanCreationSystem is BaseSystem {
     bytes32[] memory spellIds,
     bytes32[] memory sourceIds,
     string memory metadata
-  ) public {
+  ) public onlyMember {
     bytes memory nameBytes = bytes(name);
     require(nameBytes.length > 0, "Shaman name cannot be empty");
     require(nameBytes.length <= 20, "Shaman name too long");

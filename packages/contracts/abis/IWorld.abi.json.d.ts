@@ -1196,6 +1196,25 @@ declare const abi: [
   },
   {
     "type": "function",
+    "name": "isMember",
+    "inputs": [
+      {
+        "name": "member",
+        "type": "address",
+        "internalType": "address"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool",
+        "internalType": "bool"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
     "name": "popFromDynamicField",
     "inputs": [
       {
@@ -1620,6 +1639,19 @@ declare const abi: [
         "name": "fieldLayout",
         "type": "bytes32",
         "internalType": "FieldLayout"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setMembers",
+    "inputs": [
+      {
+        "name": "members",
+        "type": "address[]",
+        "internalType": "address[]"
       }
     ],
     "outputs": [],

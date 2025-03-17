@@ -13,7 +13,7 @@ export default defineWorld({
       "Deactivation",
       "Activation",
     ],
-    RoleType: ["None", "Operator", "Tester", "Admin"],
+    RoleType: ["None", "Operator", "Member", "Admin"],
     JobState: ["Idle", "Queue", "InProgress", "Completed"],
   },
   tables: {

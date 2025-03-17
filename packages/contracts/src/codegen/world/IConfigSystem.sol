@@ -10,4 +10,8 @@ pragma solidity >=0.8.24;
  */
 interface IConfigSystem {
   function getTokenAddress() external view returns (address);
+
+  function isMember(address member) external view returns (bool);
+
+  function setMembers(address[] calldata members) external;
 }

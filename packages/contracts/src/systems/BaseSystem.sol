@@ -17,8 +17,8 @@ contract BaseSystem is System {
     _;
   }
 
-  modifier onlyTester() {
-    require(Roles.getRole(_msgSender()) == RoleType.Tester, "Not tester");
+  modifier onlyMember() {
+    require(Roles.getRole(_msgSender()) == RoleType.Member, "Not member");
     _;
   }
 
