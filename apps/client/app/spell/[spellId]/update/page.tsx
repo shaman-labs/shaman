@@ -57,7 +57,6 @@ export default function Page() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [code, setCode] = useState('');
   const [ipfs, setIpfs] = useState('');
-  const [ready, setReady] = useState(false);
   const { data: spell, isLoading: isSpellLoading } = useSpell(spellId);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -80,7 +79,6 @@ export default function Page() {
     setIsLoading(true);
     setCode('');
     setIpfs('');
-    setReady(false);
 
     try {
       const response = await fetch('/api/spell', {
@@ -94,7 +92,6 @@ export default function Page() {
       const json = await response.json();
       setCode(json.code);
       setIpfs(json.ipfs);
-      setReady(json.ready);
 
       toast({
         title: 'Success!',
@@ -295,7 +292,7 @@ export default function Page() {
                   <Button
                     onClick={handleUpdate}
                     className="w-full"
-                    disabled={isUpdating || !ipfs || !ready}>
+                    disabled={isUpdating || !ipfs}>
                     <Save className="mr-2" />
                     {isUpdating ? 'Updating...' : 'Update Spell'}
                   </Button>

@@ -26,16 +26,11 @@ export async function POST(req: Request) {
   const system = getSystemPrompt();
 
   const executable = await generateObject({
-    model: anthropic('claude-3-5-sonnet-latest'),
+    model: anthropic('claude-3-7-sonnet-20250219'),
     system,
     prompt,
     schema: z.object({
       code: z.string().describe('The code to be executed.'),
-      ready: z
-        .boolean()
-        .describe(
-          'Whether the code can be executed for the users intent. If the code is not ready, the user will need to provide more information.'
-        ),
     }),
   });
 
@@ -55,7 +50,6 @@ export async function POST(req: Request) {
 
   return Response.json({
     code: executable.object.code,
-    ready: executable.object.ready,
     ipfs: upload.cid,
     metadata,
   });
