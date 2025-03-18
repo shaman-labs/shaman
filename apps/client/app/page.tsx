@@ -81,7 +81,7 @@ export default function Page() {
             <Grid cols={{ sm: 1, md: 2, lg: 3 }} gap={4}>
               {shamans.map((shaman) => (
                 <GridItem key={shaman.shamanId}>
-                  <Card className="mb-4 flex flex-col">
+                  <Card className="flex flex-col">
                     <CardHeader>
                       <CardTitle>{shaman.name}</CardTitle>
                     </CardHeader>

@@ -77,7 +77,7 @@ export default function Page() {
           <Grid cols={{ sm: 1, md: 2, lg: 3 }} gap={4}>
             {spells.map((spell) => (
               <GridItem key={spell.spellId}>
-                <Card className="mb-4 flex flex-col">
+                <Card className="flex flex-col">
                   <CardHeader>
                     <CardTitle>{spell.name}</CardTitle>
                   </CardHeader>
