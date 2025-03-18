@@ -46,7 +46,7 @@ export function AlertDialogPaywall(props: AlertDialogProps) {
 
                 openBuyZug(true, '/');
               }}>
-              Buy ZUG
+              Claim ZUG
             </AlertDialogAction>
           ) : (
             <AlertDialogAction

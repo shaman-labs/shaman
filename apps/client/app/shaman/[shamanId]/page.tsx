@@ -106,6 +106,18 @@ const logTypes = [
     label: 'Refunded ZUG',
     color: 'hsl(var(--chart-6))',
   },
+  {
+    label: 'Modification',
+    color: 'hsl(var(--chart-7))',
+  },
+  {
+    label: 'Deactivation',
+    color: 'hsl(var(--chart-8))',
+  },
+  {
+    label: 'Activation',
+    color: 'hsl(var(--chart-9))',
+  },
 ];
 
 const getChartData = (logs: ShamanLogsTableData[]): ChartDataPoint[] => {
