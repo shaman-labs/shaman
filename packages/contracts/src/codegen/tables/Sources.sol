@@ -21,12 +21,12 @@ library Sources {
   ResourceId constant _tableId = ResourceId.wrap(0x74620000000000000000000000000000536f7572636573000000000000000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0038030214200400000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0054030214202000000000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (address, uint256, uint32, string, string)
-  Schema constant _valueSchema = Schema.wrap(0x00380302611f03c5c50000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (address, uint256, uint256, string, string)
+  Schema constant _valueSchema = Schema.wrap(0x00540302611f1fc5c50000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -151,29 +151,29 @@ library Sources {
   /**
    * @notice Get shamanCount.
    */
-  function getShamanCount(bytes32 sourceId) internal view returns (uint32 shamanCount) {
+  function getShamanCount(bytes32 sourceId) internal view returns (uint256 shamanCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Get shamanCount.
    */
-  function _getShamanCount(bytes32 sourceId) internal view returns (uint32 shamanCount) {
+  function _getShamanCount(bytes32 sourceId) internal view returns (uint256 shamanCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Set shamanCount.
    */
-  function setShamanCount(bytes32 sourceId, uint32 shamanCount) internal {
+  function setShamanCount(bytes32 sourceId, uint256 shamanCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
@@ -183,7 +183,7 @@ library Sources {
   /**
    * @notice Set shamanCount.
    */
-  function _setShamanCount(bytes32 sourceId, uint32 shamanCount) internal {
+  function _setShamanCount(bytes32 sourceId, uint256 shamanCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
@@ -522,7 +522,7 @@ library Sources {
   )
     internal
     view
-    returns (address creator, uint256 createdAt, uint32 shamanCount, string memory name, string memory metadata)
+    returns (address creator, uint256 createdAt, uint256 shamanCount, string memory name, string memory metadata)
   {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
@@ -543,7 +543,7 @@ library Sources {
   )
     internal
     view
-    returns (address creator, uint256 createdAt, uint32 shamanCount, string memory name, string memory metadata)
+    returns (address creator, uint256 createdAt, uint256 shamanCount, string memory name, string memory metadata)
   {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
@@ -563,7 +563,7 @@ library Sources {
     bytes32 sourceId,
     address creator,
     uint256 createdAt,
-    uint32 shamanCount,
+    uint256 shamanCount,
     string memory name,
     string memory metadata
   ) internal {
@@ -585,7 +585,7 @@ library Sources {
     bytes32 sourceId,
     address creator,
     uint256 createdAt,
-    uint32 shamanCount,
+    uint256 shamanCount,
     string memory name,
     string memory metadata
   ) internal {
@@ -605,12 +605,12 @@ library Sources {
    */
   function decodeStatic(
     bytes memory _blob
-  ) internal pure returns (address creator, uint256 createdAt, uint32 shamanCount) {
+  ) internal pure returns (address creator, uint256 createdAt, uint256 shamanCount) {
     creator = (address(Bytes.getBytes20(_blob, 0)));
 
     createdAt = (uint256(Bytes.getBytes32(_blob, 20)));
 
-    shamanCount = (uint32(Bytes.getBytes4(_blob, 52)));
+    shamanCount = (uint256(Bytes.getBytes32(_blob, 52)));
   }
 
   /**
@@ -647,7 +647,7 @@ library Sources {
   )
     internal
     pure
-    returns (address creator, uint256 createdAt, uint32 shamanCount, string memory name, string memory metadata)
+    returns (address creator, uint256 createdAt, uint256 shamanCount, string memory name, string memory metadata)
   {
     (creator, createdAt, shamanCount) = decodeStatic(_staticData);
 
@@ -678,7 +678,7 @@ library Sources {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(address creator, uint256 createdAt, uint32 shamanCount) internal pure returns (bytes memory) {
+  function encodeStatic(address creator, uint256 createdAt, uint256 shamanCount) internal pure returns (bytes memory) {
     return abi.encodePacked(creator, createdAt, shamanCount);
   }
 
@@ -713,7 +713,7 @@ library Sources {
   function encode(
     address creator,
     uint256 createdAt,
-    uint32 shamanCount,
+    uint256 shamanCount,
     string memory name,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {

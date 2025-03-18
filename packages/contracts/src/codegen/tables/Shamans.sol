@@ -24,12 +24,12 @@ library Shamans {
   ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e73000000000000000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x005e070201142001200404000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0096070201142001202020000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (uint8, address, uint256, bool, uint256, uint32, uint32, string, string)
-  Schema constant _valueSchema = Schema.wrap(0x005e070200611f601f0303c5c500000000000000000000000000000000000000);
+  // Hex-encoded value schema of (uint8, address, uint256, bool, uint256, uint256, uint256, string, string)
+  Schema constant _valueSchema = Schema.wrap(0x0096070200611f601f1f1fc5c500000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -284,29 +284,29 @@ library Shamans {
   /**
    * @notice Get spellCount.
    */
-  function getSpellCount(bytes32 shamanId) internal view returns (uint32 spellCount) {
+  function getSpellCount(bytes32 shamanId) internal view returns (uint256 spellCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Get spellCount.
    */
-  function _getSpellCount(bytes32 shamanId) internal view returns (uint32 spellCount) {
+  function _getSpellCount(bytes32 shamanId) internal view returns (uint256 spellCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Set spellCount.
    */
-  function setSpellCount(bytes32 shamanId, uint32 spellCount) internal {
+  function setSpellCount(bytes32 shamanId, uint256 spellCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -316,7 +316,7 @@ library Shamans {
   /**
    * @notice Set spellCount.
    */
-  function _setSpellCount(bytes32 shamanId, uint32 spellCount) internal {
+  function _setSpellCount(bytes32 shamanId, uint256 spellCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -326,29 +326,29 @@ library Shamans {
   /**
    * @notice Get sourceCount.
    */
-  function getSourceCount(bytes32 shamanId) internal view returns (uint32 sourceCount) {
+  function getSourceCount(bytes32 shamanId) internal view returns (uint256 sourceCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 6, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Get sourceCount.
    */
-  function _getSourceCount(bytes32 shamanId) internal view returns (uint32 sourceCount) {
+  function _getSourceCount(bytes32 shamanId) internal view returns (uint256 sourceCount) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 6, _fieldLayout);
-    return (uint32(bytes4(_blob)));
+    return (uint256(bytes32(_blob)));
   }
 
   /**
    * @notice Set sourceCount.
    */
-  function setSourceCount(bytes32 shamanId, uint32 sourceCount) internal {
+  function setSourceCount(bytes32 shamanId, uint256 sourceCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -358,7 +358,7 @@ library Shamans {
   /**
    * @notice Set sourceCount.
    */
-  function _setSourceCount(bytes32 shamanId, uint32 sourceCount) internal {
+  function _setSourceCount(bytes32 shamanId, uint256 sourceCount) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -703,8 +703,8 @@ library Shamans {
       uint256 createdAt,
       bool active,
       uint256 balance,
-      uint32 spellCount,
-      uint32 sourceCount,
+      uint256 spellCount,
+      uint256 sourceCount,
       string memory name,
       string memory metadata
     )
@@ -734,8 +734,8 @@ library Shamans {
       uint256 createdAt,
       bool active,
       uint256 balance,
-      uint32 spellCount,
-      uint32 sourceCount,
+      uint256 spellCount,
+      uint256 sourceCount,
       string memory name,
       string memory metadata
     )
@@ -761,8 +761,8 @@ library Shamans {
     uint256 createdAt,
     bool active,
     uint256 balance,
-    uint32 spellCount,
-    uint32 sourceCount,
+    uint256 spellCount,
+    uint256 sourceCount,
     string memory name,
     string memory metadata
   ) internal {
@@ -787,8 +787,8 @@ library Shamans {
     uint256 createdAt,
     bool active,
     uint256 balance,
-    uint32 spellCount,
-    uint32 sourceCount,
+    uint256 spellCount,
+    uint256 sourceCount,
     string memory name,
     string memory metadata
   ) internal {
@@ -817,8 +817,8 @@ library Shamans {
       uint256 createdAt,
       bool active,
       uint256 balance,
-      uint32 spellCount,
-      uint32 sourceCount
+      uint256 spellCount,
+      uint256 sourceCount
     )
   {
     state = JobState(uint8(Bytes.getBytes1(_blob, 0)));
@@ -831,9 +831,9 @@ library Shamans {
 
     balance = (uint256(Bytes.getBytes32(_blob, 54)));
 
-    spellCount = (uint32(Bytes.getBytes4(_blob, 86)));
+    spellCount = (uint256(Bytes.getBytes32(_blob, 86)));
 
-    sourceCount = (uint32(Bytes.getBytes4(_blob, 90)));
+    sourceCount = (uint256(Bytes.getBytes32(_blob, 118)));
   }
 
   /**
@@ -876,8 +876,8 @@ library Shamans {
       uint256 createdAt,
       bool active,
       uint256 balance,
-      uint32 spellCount,
-      uint32 sourceCount,
+      uint256 spellCount,
+      uint256 sourceCount,
       string memory name,
       string memory metadata
     )
@@ -917,8 +917,8 @@ library Shamans {
     uint256 createdAt,
     bool active,
     uint256 balance,
-    uint32 spellCount,
-    uint32 sourceCount
+    uint256 spellCount,
+    uint256 sourceCount
   ) internal pure returns (bytes memory) {
     return abi.encodePacked(state, creator, createdAt, active, balance, spellCount, sourceCount);
   }
@@ -957,8 +957,8 @@ library Shamans {
     uint256 createdAt,
     bool active,
     uint256 balance,
-    uint32 spellCount,
-    uint32 sourceCount,
+    uint256 spellCount,
+    uint256 sourceCount,
     string memory name,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {

@@ -1044,8 +1044,8 @@ declare const abi: [
     "outputs": [
       {
         "name": "",
-        "type": "uint32",
-        "internalType": "uint32"
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "stateMutability": "view"
@@ -1061,8 +1061,8 @@ declare const abi: [
       },
       {
         "name": "version",
-        "type": "uint32",
-        "internalType": "uint32"
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [
@@ -1698,6 +1698,29 @@ declare const abi: [
         "name": "dynamicData",
         "type": "bytes",
         "internalType": "bytes"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
+    "name": "setShamanSpellVersion",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "spellId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "version",
+        "type": "uint256",
+        "internalType": "uint256"
       }
     ],
     "outputs": [],

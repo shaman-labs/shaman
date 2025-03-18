@@ -22,11 +22,11 @@ library ShamanEntitiesLib {
       Spells.getMetadata(spellId)
     );
 
-    uint32 shamanSpellCount = Shamans.getSpellCount(shamanId);
+    uint256 shamanSpellCount = Shamans.getSpellCount(shamanId);
     ShamanSpellIndex.set(shamanId, shamanSpellCount, spellId);
     Shamans.setSpellCount(shamanId, shamanSpellCount + 1);
 
-    uint32 spellShamanCount = Spells.getShamanCount(spellId);
+    uint256 spellShamanCount = Spells.getShamanCount(spellId);
     SpellShamanIndex.set(spellId, spellShamanCount, shamanId);
     Spells.setShamanCount(spellId, spellShamanCount + 1);
   }
@@ -40,8 +40,8 @@ library ShamanEntitiesLib {
 
     ShamanSpell.deleteRecord(shamanId, spellId);
 
-    uint32 shamanSpellCount = Shamans.getSpellCount(shamanId);
-    for (uint32 i = 0; i < shamanSpellCount; i++) {
+    uint256 shamanSpellCount = Shamans.getSpellCount(shamanId);
+    for (uint256 i = 0; i < shamanSpellCount; i++) {
       if (ShamanSpellIndex.getSpellId(shamanId, i) == spellId) {
         if (i != shamanSpellCount - 1) {
           bytes32 lastSpellId = ShamanSpellIndex.getSpellId(
@@ -55,8 +55,8 @@ library ShamanEntitiesLib {
       }
     }
 
-    uint32 spellShamanCount = Spells.getShamanCount(spellId);
-    for (uint32 i = 0; i < spellShamanCount; i++) {
+    uint256 spellShamanCount = Spells.getShamanCount(spellId);
+    for (uint256 i = 0; i < spellShamanCount; i++) {
       if (SpellShamanIndex.getShamanId(spellId, i) == shamanId) {
         if (i != spellShamanCount - 1) {
           bytes32 lastShamanId = SpellShamanIndex.getShamanId(
@@ -80,11 +80,11 @@ library ShamanEntitiesLib {
 
     ShamanSource.set(shamanId, sourceId, block.timestamp);
 
-    uint32 shamanSourceCount = Shamans.getSourceCount(shamanId);
+    uint256 shamanSourceCount = Shamans.getSourceCount(shamanId);
     ShamanSourceIndex.set(shamanId, shamanSourceCount, sourceId);
     Shamans.setSourceCount(shamanId, shamanSourceCount + 1);
 
-    uint32 sourceShamanCount = Sources.getShamanCount(sourceId);
+    uint256 sourceShamanCount = Sources.getShamanCount(sourceId);
     SourceShamanIndex.set(sourceId, sourceShamanCount, shamanId);
     Sources.setShamanCount(sourceId, sourceShamanCount + 1);
   }
@@ -98,8 +98,8 @@ library ShamanEntitiesLib {
 
     ShamanSource.deleteRecord(shamanId, sourceId);
 
-    uint32 shamanSourceCount = Shamans.getSourceCount(shamanId);
-    for (uint32 i = 0; i < shamanSourceCount; i++) {
+    uint256 shamanSourceCount = Shamans.getSourceCount(shamanId);
+    for (uint256 i = 0; i < shamanSourceCount; i++) {
       if (ShamanSourceIndex.getSourceId(shamanId, i) == sourceId) {
         if (i != shamanSourceCount - 1) {
           bytes32 lastSourceId = ShamanSourceIndex.getSourceId(
@@ -113,8 +113,8 @@ library ShamanEntitiesLib {
       }
     }
 
-    uint32 sourceShamanCount = Sources.getShamanCount(sourceId);
-    for (uint32 i = 0; i < sourceShamanCount; i++) {
+    uint256 sourceShamanCount = Sources.getShamanCount(sourceId);
+    for (uint256 i = 0; i < sourceShamanCount; i++) {
       if (SourceShamanIndex.getShamanId(sourceId, i) == shamanId) {
         if (i != sourceShamanCount - 1) {
           bytes32 lastShamanId = SourceShamanIndex.getShamanId(

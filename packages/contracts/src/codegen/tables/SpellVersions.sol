@@ -23,8 +23,8 @@ library SpellVersions {
   FieldLayout constant _fieldLayout =
     FieldLayout.wrap(0x0020010120000000000000000000000000000000000000000000000000000000);
 
-  // Hex-encoded key schema of (bytes32, uint32)
-  Schema constant _keySchema = Schema.wrap(0x002402005f030000000000000000000000000000000000000000000000000000);
+  // Hex-encoded key schema of (bytes32, uint256)
+  Schema constant _keySchema = Schema.wrap(0x004002005f1f0000000000000000000000000000000000000000000000000000);
   // Hex-encoded value schema of (uint256, string)
   Schema constant _valueSchema = Schema.wrap(0x002001011fc50000000000000000000000000000000000000000000000000000);
 
@@ -65,7 +65,7 @@ library SpellVersions {
   /**
    * @notice Get createdAt.
    */
-  function getCreatedAt(bytes32 spellId, uint32 version) internal view returns (uint256 createdAt) {
+  function getCreatedAt(bytes32 spellId, uint256 version) internal view returns (uint256 createdAt) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -77,7 +77,7 @@ library SpellVersions {
   /**
    * @notice Get createdAt.
    */
-  function _getCreatedAt(bytes32 spellId, uint32 version) internal view returns (uint256 createdAt) {
+  function _getCreatedAt(bytes32 spellId, uint256 version) internal view returns (uint256 createdAt) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -89,7 +89,7 @@ library SpellVersions {
   /**
    * @notice Set createdAt.
    */
-  function setCreatedAt(bytes32 spellId, uint32 version, uint256 createdAt) internal {
+  function setCreatedAt(bytes32 spellId, uint256 version, uint256 createdAt) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -100,7 +100,7 @@ library SpellVersions {
   /**
    * @notice Set createdAt.
    */
-  function _setCreatedAt(bytes32 spellId, uint32 version, uint256 createdAt) internal {
+  function _setCreatedAt(bytes32 spellId, uint256 version, uint256 createdAt) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -111,7 +111,7 @@ library SpellVersions {
   /**
    * @notice Get metadata.
    */
-  function getMetadata(bytes32 spellId, uint32 version) internal view returns (string memory metadata) {
+  function getMetadata(bytes32 spellId, uint256 version) internal view returns (string memory metadata) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -123,7 +123,7 @@ library SpellVersions {
   /**
    * @notice Get metadata.
    */
-  function _getMetadata(bytes32 spellId, uint32 version) internal view returns (string memory metadata) {
+  function _getMetadata(bytes32 spellId, uint256 version) internal view returns (string memory metadata) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -135,7 +135,7 @@ library SpellVersions {
   /**
    * @notice Set metadata.
    */
-  function setMetadata(bytes32 spellId, uint32 version, string memory metadata) internal {
+  function setMetadata(bytes32 spellId, uint256 version, string memory metadata) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -146,7 +146,7 @@ library SpellVersions {
   /**
    * @notice Set metadata.
    */
-  function _setMetadata(bytes32 spellId, uint32 version, string memory metadata) internal {
+  function _setMetadata(bytes32 spellId, uint256 version, string memory metadata) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -157,7 +157,7 @@ library SpellVersions {
   /**
    * @notice Get the length of metadata.
    */
-  function lengthMetadata(bytes32 spellId, uint32 version) internal view returns (uint256) {
+  function lengthMetadata(bytes32 spellId, uint256 version) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -171,7 +171,7 @@ library SpellVersions {
   /**
    * @notice Get the length of metadata.
    */
-  function _lengthMetadata(bytes32 spellId, uint32 version) internal view returns (uint256) {
+  function _lengthMetadata(bytes32 spellId, uint256 version) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -186,7 +186,7 @@ library SpellVersions {
    * @notice Get an item of metadata.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function getItemMetadata(bytes32 spellId, uint32 version, uint256 _index) internal view returns (string memory) {
+  function getItemMetadata(bytes32 spellId, uint256 version, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -201,7 +201,7 @@ library SpellVersions {
    * @notice Get an item of metadata.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _getItemMetadata(bytes32 spellId, uint32 version, uint256 _index) internal view returns (string memory) {
+  function _getItemMetadata(bytes32 spellId, uint256 version, uint256 _index) internal view returns (string memory) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -215,7 +215,7 @@ library SpellVersions {
   /**
    * @notice Push a slice to metadata.
    */
-  function pushMetadata(bytes32 spellId, uint32 version, string memory _slice) internal {
+  function pushMetadata(bytes32 spellId, uint256 version, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -226,7 +226,7 @@ library SpellVersions {
   /**
    * @notice Push a slice to metadata.
    */
-  function _pushMetadata(bytes32 spellId, uint32 version, string memory _slice) internal {
+  function _pushMetadata(bytes32 spellId, uint256 version, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -237,7 +237,7 @@ library SpellVersions {
   /**
    * @notice Pop a slice from metadata.
    */
-  function popMetadata(bytes32 spellId, uint32 version) internal {
+  function popMetadata(bytes32 spellId, uint256 version) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -248,7 +248,7 @@ library SpellVersions {
   /**
    * @notice Pop a slice from metadata.
    */
-  function _popMetadata(bytes32 spellId, uint32 version) internal {
+  function _popMetadata(bytes32 spellId, uint256 version) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -259,7 +259,7 @@ library SpellVersions {
   /**
    * @notice Update a slice of metadata at `_index`.
    */
-  function updateMetadata(bytes32 spellId, uint32 version, uint256 _index, string memory _slice) internal {
+  function updateMetadata(bytes32 spellId, uint256 version, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -273,7 +273,7 @@ library SpellVersions {
   /**
    * @notice Update a slice of metadata at `_index`.
    */
-  function _updateMetadata(bytes32 spellId, uint32 version, uint256 _index, string memory _slice) internal {
+  function _updateMetadata(bytes32 spellId, uint256 version, uint256 _index, string memory _slice) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -287,7 +287,7 @@ library SpellVersions {
   /**
    * @notice Get the full data.
    */
-  function get(bytes32 spellId, uint32 version) internal view returns (uint256 createdAt, string memory metadata) {
+  function get(bytes32 spellId, uint256 version) internal view returns (uint256 createdAt, string memory metadata) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -303,7 +303,7 @@ library SpellVersions {
   /**
    * @notice Get the full data.
    */
-  function _get(bytes32 spellId, uint32 version) internal view returns (uint256 createdAt, string memory metadata) {
+  function _get(bytes32 spellId, uint256 version) internal view returns (uint256 createdAt, string memory metadata) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -319,7 +319,7 @@ library SpellVersions {
   /**
    * @notice Set the full data using individual values.
    */
-  function set(bytes32 spellId, uint32 version, uint256 createdAt, string memory metadata) internal {
+  function set(bytes32 spellId, uint256 version, uint256 createdAt, string memory metadata) internal {
     bytes memory _staticData = encodeStatic(createdAt);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
@@ -335,7 +335,7 @@ library SpellVersions {
   /**
    * @notice Set the full data using individual values.
    */
-  function _set(bytes32 spellId, uint32 version, uint256 createdAt, string memory metadata) internal {
+  function _set(bytes32 spellId, uint256 version, uint256 createdAt, string memory metadata) internal {
     bytes memory _staticData = encodeStatic(createdAt);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
@@ -389,7 +389,7 @@ library SpellVersions {
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(bytes32 spellId, uint32 version) internal {
+  function deleteRecord(bytes32 spellId, uint256 version) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -400,7 +400,7 @@ library SpellVersions {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(bytes32 spellId, uint32 version) internal {
+  function _deleteRecord(bytes32 spellId, uint256 version) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));
@@ -456,7 +456,7 @@ library SpellVersions {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(bytes32 spellId, uint32 version) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(bytes32 spellId, uint256 version) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = spellId;
     _keyTuple[1] = bytes32(uint256(version));

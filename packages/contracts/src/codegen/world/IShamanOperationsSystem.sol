@@ -14,4 +14,6 @@ interface IShamanOperationsSystem {
   function updateShamanMetadata(bytes32 shamanId, string memory metadata) external;
 
   function updateShamanStatus(bytes32 shamanId, bool active) external;
+
+  function setShamanSpellVersion(bytes32 shamanId, bytes32 spellId, uint256 version) external;
 }

@@ -48,7 +48,7 @@ contract SpellSystem is BaseSystem {
     require(bytes(metadata).length > 0, "Metadata cannot be empty");
 
     // Get current version and increment it
-    uint32 version = Spells.getVersion(spellId) + 1;
+    uint256 version = Spells.getVersion(spellId) + 1;
 
     // Update spell with new metadata and version
     Spells.setMetadata(spellId, metadata);
@@ -82,7 +82,7 @@ contract SpellSystem is BaseSystem {
 
   function getSpellVersionMetadata(
     bytes32 spellId,
-    uint32 version
+    uint256 version
   ) public view returns (string memory) {
     return SpellVersions.getMetadata(spellId, version);
   }
@@ -91,7 +91,7 @@ contract SpellSystem is BaseSystem {
     return Spells.getCreator(spellId);
   }
 
-  function getSpellVersion(bytes32 spellId) public view returns (uint32) {
+  function getSpellVersion(bytes32 spellId) public view returns (uint256) {
     return Spells.getVersion(spellId);
   }
 }

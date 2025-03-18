@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
-import { Shamans, ShamanNames } from "../codegen/index.sol";
+import { Shamans, ShamanNames, ShamanSpell, SpellVersions } from "../codegen/index.sol";
 import { ShamanLogsLib } from "../lib/ShamanLogsLib.sol";
 import { LogType } from "../codegen/common.sol";
 import { BaseSystem } from "./BaseSystem.sol";
@@ -58,5 +58,31 @@ contract ShamanOperationsSystem is BaseSystem {
       active ? LogType.Activation : LogType.Deactivation,
       ""
     );
+  }
+
+  function setShamanSpellVersion(
+    bytes32 shamanId,
+    bytes32 spellId,
+    uint256 version
+  )
+    public
+    onlyShamanCreator(shamanId)
+    onlyActiveShaman(shamanId)
+    onlyIdleShaman(shamanId)
+  {
+    require(version > 0, "Version must be greater than 0");
+    require(
+      ShamanSpell.getVersion(shamanId, spellId) != version,
+      "Version already set"
+    );
+
+    ShamanSpell.setVersion(shamanId, spellId, version);
+    ShamanSpell.setMetadata(
+      shamanId,
+      spellId,
+      SpellVersions.getMetadata(shamanId, version)
+    );
+
+    ShamanLogsLib.logOperation(shamanId, 0, 0, true, LogType.Modification, "");
   }
 }
