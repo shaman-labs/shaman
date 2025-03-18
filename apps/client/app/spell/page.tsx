@@ -45,6 +45,7 @@ import {
 import { useMUD } from '@/contexts/mud-context';
 import { AlertDialogPaywall } from '@/components/alert-dialog-paywall';
 import { useZugBalance } from '@/hooks/use-zug-balance';
+import { handleError } from '@/lib/errors';
 
 const formSchema = z.object({
   name: z
@@ -128,12 +129,7 @@ export default function Page() {
         description: `Your Spell has been created.`,
       });
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
@@ -155,12 +151,7 @@ export default function Page() {
 
       router.push(`/`);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setIsDeploying(false);
     }

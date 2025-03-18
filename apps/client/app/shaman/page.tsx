@@ -50,6 +50,7 @@ import { toast } from '@/hooks/use-toast';
 import { useMUD } from '@/contexts/mud-context';
 import { useSources } from '@/hooks/use-sources';
 import { Grid, GridItem } from '@/components/grid';
+import { handleError } from '@/lib/errors';
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -137,12 +138,7 @@ export default function Page() {
 
       router.push('/');
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setIsCreating(false);
     }

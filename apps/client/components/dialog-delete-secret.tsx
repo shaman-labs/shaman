@@ -14,6 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { handleError } from '@/lib/errors';
 
 interface DialogDeleteSecretProps extends DialogProps {
   secretKey: string;
@@ -40,12 +41,7 @@ export function DialogDeleteSecret(props: DialogDeleteSecretProps) {
       props.onSuccess?.();
       props.onOpenChange?.(false);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setLoading(false);
     }

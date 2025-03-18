@@ -45,6 +45,7 @@ import {
 import { toast } from '@/hooks/use-toast';
 import { useMUD } from '@/contexts/mud-context';
 import { useSpell } from '@/hooks/use-spell';
+import { handleError } from '@/lib/errors';
 
 const formSchema = z.object({
   prompt: z.string().min(16, {
@@ -102,12 +103,7 @@ export default function Page() {
         description: `Your Spell code has been regenerated.`,
       });
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
@@ -138,12 +134,7 @@ export default function Page() {
 
       router.push(`/spell/${spellId}`);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setIsUpdating(false);
     }

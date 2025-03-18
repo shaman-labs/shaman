@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { triggerShaman } from '@/services/api';
+import { handleError } from '@/lib/errors';
 
 export function DialogTrigger(props: DialogProps) {
   const [loading, setLoading] = useState(false);
@@ -34,12 +35,7 @@ export function DialogTrigger(props: DialogProps) {
       props.onOpenChange(false);
       props.onSuccess?.();
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setLoading(false);
     }

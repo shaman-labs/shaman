@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { useMUD } from '@/contexts/mud-context';
 import { useShaman } from '@/hooks/use-shaman';
+import { handleError } from '@/lib/errors';
 
 export function DialogActivation(props: DialogProps) {
   const mud = useMUD();
@@ -42,12 +43,7 @@ export function DialogActivation(props: DialogProps) {
       props.onOpenChange(false);
       props.onSuccess?.();
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setLoading(false);
     }

@@ -39,6 +39,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { toast } from '@/hooks/use-toast';
 import { useMUD } from '@/contexts/mud-context';
 import { useShaman } from '@/hooks/use-shaman';
+import { handleError } from '@/lib/errors';
 
 const formSchema = z.object({
   description: z.string().min(10, {
@@ -92,12 +93,7 @@ export default function Page() {
 
       router.push(`/shaman/${shamanId}`);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setIsUpdating(false);
     }

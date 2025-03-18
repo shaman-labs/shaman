@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { handleError } from '@/lib/errors';
 
 export function DialogAddSecret(props: DialogProps) {
   const [loading, setLoading] = useState(false);
@@ -61,12 +62,7 @@ export function DialogAddSecret(props: DialogProps) {
       props.onSuccess?.();
       props.onOpenChange?.(false);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setLoading(false);
     }
