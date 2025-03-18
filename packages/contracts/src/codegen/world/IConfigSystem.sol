@@ -14,4 +14,6 @@ interface IConfigSystem {
   function isMember(address member) external view returns (bool);
 
   function setMembers(address[] calldata members) external;
+
+  function claimZug(uint256 amount) external;
 }

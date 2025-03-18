@@ -55,6 +55,7 @@ contract PostDeploy is Script {
     zugToken.setTreasury(treasuryAddress);
     zugToken.setPrice(price);
     zugToken.grantRole(MINTER_ROLE, signerAddress);
+    zugToken.grantRole(MINTER_ROLE, worldAddress);
 
     console.log("ZugToken treasury set to:", treasuryAddress);
     console.log("ZugToken price set to:", price);

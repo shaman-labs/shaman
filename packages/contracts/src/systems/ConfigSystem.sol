@@ -22,4 +22,9 @@ contract ConfigSystem is BaseSystem {
       }
     }
   }
+
+  function claimZug(uint256 amount) public onlyMember {
+    require(amount > 0, "Amount must be greater than 0");
+    _token().mint(_msgSender(), amount);
+  }
 }
