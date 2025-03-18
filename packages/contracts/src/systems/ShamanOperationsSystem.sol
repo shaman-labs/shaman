@@ -72,6 +72,10 @@ contract ShamanOperationsSystem is BaseSystem {
   {
     require(version > 0, "Version must be greater than 0");
     require(
+      ShamanSpell.getVersion(shamanId, spellId) > 0,
+      "Spell not initialized"
+    );
+    require(
       ShamanSpell.getVersion(shamanId, spellId) != version,
       "Version already set"
     );
@@ -81,6 +85,30 @@ contract ShamanOperationsSystem is BaseSystem {
       shamanId,
       spellId,
       SpellVersions.getMetadata(shamanId, version)
+    );
+
+    ShamanLogsLib.logOperation(shamanId, 0, 0, true, LogType.Modification, "");
+  }
+
+  function updateShamanSpellVersion(
+    bytes32 shamanId,
+    bytes32 spellId
+  )
+    public
+    onlyShamanCreator(shamanId)
+    onlyActiveShaman(shamanId)
+    onlyIdleShaman(shamanId)
+  {
+    uint256 latestVersion = ShamanSpell.getVersion(shamanId, spellId);
+
+    require(latestVersion > 0, "Spell not initialized");
+
+    ShamanSpell.setVersion(shamanId, spellId, latestVersion + 1);
+
+    ShamanSpell.setMetadata(
+      shamanId,
+      spellId,
+      SpellVersions.getMetadata(shamanId, latestVersion)
     );
 
     ShamanLogsLib.logOperation(shamanId, 0, 0, true, LogType.Modification, "");

@@ -2033,6 +2033,24 @@ declare const abi: [
   },
   {
     "type": "function",
+    "name": "updateShamanSpellVersion",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      },
+      {
+        "name": "spellId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
+  },
+  {
+    "type": "function",
     "name": "updateShamanStatus",
     "inputs": [
       {
