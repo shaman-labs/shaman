@@ -21,12 +21,7 @@ contract ShamanEntitiesSystem is BaseSystem {
   function removeSpellFromShaman(
     bytes32 shamanId,
     bytes32 spellId
-  )
-    public
-    onlyShamanCreator(shamanId)
-    onlyActiveShaman(shamanId)
-    onlyIdleShaman(shamanId)
-  {
+  ) public onlyShamanCreator(shamanId) onlyIdleShaman(shamanId) {
     ShamanEntitiesLib.removeSpell(shamanId, spellId);
   }
 
@@ -45,12 +40,7 @@ contract ShamanEntitiesSystem is BaseSystem {
   function removeSourceFromShaman(
     bytes32 shamanId,
     bytes32 sourceId
-  )
-    public
-    onlyShamanCreator(shamanId)
-    onlyActiveShaman(shamanId)
-    onlyIdleShaman(shamanId)
-  {
+  ) public onlyShamanCreator(shamanId) onlyIdleShaman(shamanId) {
     ShamanEntitiesLib.removeSource(shamanId, sourceId);
   }
 
