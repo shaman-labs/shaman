@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { formatUnits, Hex } from 'viem';
 import { parseUnits } from 'viem';
-import { CirclePlus } from 'lucide-react';
+import { IconCirclePlus } from '@tabler/icons-react';
 import { DialogProps } from '@/contexts/dialog-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -18,6 +18,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useMUD } from '@/contexts/mud-context';
+import { handleError } from '@/lib/errors';
 
 export function DialogTransferAsset(props: DialogProps) {
   const mud = useMUD();
@@ -43,12 +44,7 @@ export function DialogTransferAsset(props: DialogProps) {
       props.onSuccess?.();
       props.onOpenChange?.(false);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setLoading(false);
     }
@@ -112,7 +108,7 @@ export function DialogTransferAsset(props: DialogProps) {
                 }
                 variant="ghost"
                 size="icon">
-                <CirclePlus className="w-2 h-2" />
+                <IconCirclePlus className="w-2 h-2" />
               </Button>
             </div>
           </div>

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { ArrowRight, Webhook } from 'lucide-react';
+import { IconArrowRight, IconDiamonds } from '@tabler/icons-react';
 import { Highlight, themes } from 'prism-react-renderer';
 import { useRouter } from 'next/navigation';
 import { usePrivy, WalletWithMetadata } from '@privy-io/react-auth';
@@ -45,6 +45,7 @@ import {
 import { useMUD } from '@/contexts/mud-context';
 import { AlertDialogPaywall } from '@/components/alert-dialog-paywall';
 import { useZugBalance } from '@/hooks/use-zug-balance';
+import { handleError } from '@/lib/errors';
 
 const formSchema = z.object({
   name: z
@@ -66,10 +67,9 @@ export default function Page() {
   const [isDeploying, setIsDeploying] = useState(false);
   const [code, setCode] = useState('');
   const [ipfs, setIpfs] = useState('');
-  const [ready, setReady] = useState(false);
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const { ready: privyReady, user } = usePrivy();
+  const { ready: privyReady, user, login } = usePrivy();
   const embeddedWallet = user?.linkedAccounts?.find(
     (account) =>
       account.type === 'wallet' && account.connectorType === 'embedded'
@@ -80,6 +80,12 @@ export default function Page() {
     isLoading: isZugBalanceLoading,
     isFetching: isZugBalanceFetching,
   } = useZugBalance(address as `0x${string}`);
+
+  useEffect(() => {
+    if (!user) {
+      login();
+    }
+  }, [user, login]);
 
   useEffect(() => {
     if (
@@ -104,7 +110,6 @@ export default function Page() {
     setIsLoading(true);
     setCode('');
     setIpfs('');
-    setReady(false);
 
     try {
       const response = await fetch('/api/spell', {
@@ -118,19 +123,13 @@ export default function Page() {
       const json = await response.json();
       setCode(json.code);
       setIpfs(json.ipfs);
-      setReady(json.ready);
 
       toast({
         title: 'Success!',
         description: `Your Spell has been created.`,
       });
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setIsLoading(false);
     }
@@ -152,12 +151,7 @@ export default function Page() {
 
       router.push(`/`);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setIsDeploying(false);
     }
@@ -232,7 +226,7 @@ export default function Page() {
                         type="submit"
                         disabled={isLoading}>
                         {isLoading ? 'Generating...' : 'Generate Spell Code'}
-                        <ArrowRight />
+                        <IconArrowRight />
                       </Button>
                     </form>
                   </Form>
@@ -290,8 +284,8 @@ export default function Page() {
                   <Button
                     onClick={handleDeploy}
                     className="w-full"
-                    disabled={isDeploying || !code || !ready}>
-                    <Webhook />
+                    disabled={isDeploying || !code}>
+                    <IconDiamonds />
                     {isDeploying ? 'Deploying...' : 'Deploy Spell'}
                   </Button>
                 </CardFooter>

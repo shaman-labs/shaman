@@ -1,8 +1,9 @@
 'use client';
 
-import { Eye, Plus } from 'lucide-react';
+import { IconEye, IconPlus } from '@tabler/icons-react';
 import Link from 'next/link';
 import { formatDistance } from 'date-fns';
+import { usePrivy } from '@privy-io/react-auth';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -29,6 +30,7 @@ import { LabelCreator } from '@/components/label-creator';
 
 export default function Page() {
   const { data: spells } = useSpells();
+  const { user } = usePrivy();
 
   return (
     <SidebarProvider>
@@ -50,30 +52,32 @@ export default function Page() {
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <Grid cols={{ sm: 1, md: 2, lg: 3 }} gap={4}>
-            <GridItem>
-              <Card className="flex flex-col">
-                <CardHeader>
-                  <CardTitle>Create New Spell</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>Automate and orchestrate your onchain workflows.</p>
-                </CardContent>
-                <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
-                  <Button asChild className="w-full" variant="default">
-                    <Link href="/spell">
-                      <Plus />
-                      Create Spell
-                    </Link>
-                  </Button>
-                </CardFooter>
-              </Card>
-            </GridItem>
-          </Grid>
+          {user && (
+            <Grid cols={{ sm: 1, md: 2, lg: 3 }} gap={4}>
+              <GridItem>
+                <Card className="flex flex-col">
+                  <CardHeader>
+                    <CardTitle>Create New Spell</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p>Automate and orchestrate your onchain workflows.</p>
+                  </CardContent>
+                  <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
+                    <Button asChild className="w-full" variant="default">
+                      <Link href="/spell">
+                        <IconPlus />
+                        Create Spell
+                      </Link>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </GridItem>
+            </Grid>
+          )}
           <Grid cols={{ sm: 1, md: 2, lg: 3 }} gap={4}>
             {spells.map((spell) => (
               <GridItem key={spell.spellId}>
-                <Card className="mb-4 flex flex-col">
+                <Card className="flex flex-col">
                   <CardHeader>
                     <CardTitle>{spell.name}</CardTitle>
                   </CardHeader>
@@ -114,7 +118,7 @@ export default function Page() {
                   <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
                     <Button asChild className="w-full" variant="outline">
                       <Link href={`/spell/${spell.spellId}`}>
-                        <Eye />
+                        <IconEye />
                         View Details
                       </Link>
                     </Button>

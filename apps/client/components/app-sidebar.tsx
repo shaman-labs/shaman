@@ -1,9 +1,9 @@
 'use client';
 
 import * as React from 'react';
-import { Book, X, Webhook } from 'lucide-react';
-
+import { IconBook, IconBrandX } from '@tabler/icons-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { NavSpells } from '@/components/nav-spells';
 import { NavShamans } from '@/components/nav-shamans';
 import { NavSecondary } from '@/components/nav-secondary';
@@ -23,12 +23,12 @@ const data = {
     {
       title: 'Follow us on X',
       url: 'https://x.com/shamandotfun',
-      icon: X,
+      icon: IconBrandX,
     },
     {
       title: 'Documentation',
       url: 'https://shamandotfun.notion.site/',
-      icon: Book,
+      icon: IconBook,
     },
   ],
 };
@@ -42,7 +42,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton size="lg" asChild>
               <Link href="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                  <Webhook className="size-4" />
+                  <Image
+                    src="/logo-sm.svg"
+                    alt="Small Logo"
+                    width={20}
+                    height={20}
+                  />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Shaman</span>

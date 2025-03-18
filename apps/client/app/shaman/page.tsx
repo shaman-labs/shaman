@@ -5,7 +5,13 @@ import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import { Loader2, Webhook } from 'lucide-react';
+import {
+  IconLoader2,
+  IconRobot,
+  IconFileDescription,
+  IconLink,
+  IconClock,
+} from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { AppSidebar } from '@/components/app-sidebar';
@@ -44,6 +50,7 @@ import { toast } from '@/hooks/use-toast';
 import { useMUD } from '@/contexts/mud-context';
 import { useSources } from '@/hooks/use-sources';
 import { Grid, GridItem } from '@/components/grid';
+import { handleError } from '@/lib/errors';
 
 const formSchema = z.object({
   name: z.string().min(3, {
@@ -131,12 +138,7 @@ export default function Page() {
 
       router.push('/');
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setIsCreating(false);
     }
@@ -254,9 +256,9 @@ export default function Page() {
                         type="submit"
                         disabled={isCreating || sourcesLoading}>
                         {isCreating ? (
-                          <Loader2 className="animate-spin" />
+                          <IconLoader2 className="animate-spin" />
                         ) : (
-                          <Webhook className="ml-2" />
+                          <IconRobot className="ml-2" />
                         )}
                         {isCreating ? 'Creating...' : 'Create Shaman'}
                       </Button>
@@ -274,7 +276,7 @@ export default function Page() {
                   <div className="flex flex-col space-y-2">
                     <div className="flex items-center gap-3">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Webhook className="h-4 w-4 text-primary" />
+                        <IconRobot className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">
@@ -288,7 +290,7 @@ export default function Page() {
 
                     <div className="flex items-center gap-3">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Webhook className="h-4 w-4 text-primary" />
+                        <IconFileDescription className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">
@@ -302,7 +304,7 @@ export default function Page() {
 
                     <div className="flex items-center gap-3 mt-2">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Webhook className="h-4 w-4 text-primary" />
+                        <IconLink className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">
@@ -320,7 +322,7 @@ export default function Page() {
 
                     <div className="flex items-center gap-3 mt-2">
                       <div className="bg-primary/10 p-2 rounded-md">
-                        <Webhook className="h-4 w-4 text-primary" />
+                        <IconClock className="h-4 w-4 text-primary" />
                       </div>
                       <div className="flex-1">
                         <h3 className="text-xs font-medium text-muted-foreground">

@@ -1,7 +1,7 @@
 'use client';
 
 import { useAsciiText, alligator } from 'react-ascii-text';
-import { Eye, Plus } from 'lucide-react';
+import { IconEye, IconPlus } from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
 import { formatDistance } from 'date-fns';
@@ -70,7 +70,7 @@ export default function Page() {
                   <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
                     <Button asChild className="w-full" variant="default">
                       <Link href="/shaman">
-                        <Plus />
+                        <IconPlus />
                         Create Shaman
                       </Link>
                     </Button>
@@ -81,7 +81,7 @@ export default function Page() {
             <Grid cols={{ sm: 1, md: 2, lg: 3 }} gap={4}>
               {shamans.map((shaman) => (
                 <GridItem key={shaman.shamanId}>
-                  <Card className="mb-4 flex flex-col">
+                  <Card className="flex flex-col">
                     <CardHeader>
                       <CardTitle>{shaman.name}</CardTitle>
                     </CardHeader>
@@ -122,7 +122,7 @@ export default function Page() {
                     <CardFooter className="flex-col items-start gap-2 text-sm mt-auto">
                       <Button asChild className="w-full" variant="outline">
                         <Link href={`/shaman/${shaman.shamanId}`}>
-                          <Eye />
+                          <IconEye />
                           View Details
                         </Link>
                       </Button>

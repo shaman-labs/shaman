@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { handleError } from '@/lib/errors';
 
 export function DialogDelete(props: DialogProps) {
   const router = useRouter();
@@ -42,12 +43,7 @@ export function DialogDelete(props: DialogProps) {
         router.push('/dashboard');
       }
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setLoading(false);
     }

@@ -1,12 +1,14 @@
 'use client';
 
-import { ChevronRight, type LucideIcon } from 'lucide-react';
+import { IconChevronRight } from '@tabler/icons-react';
+import { type Icon } from '@tabler/icons-react';
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -25,7 +27,7 @@ export function NavMain({
   items: {
     title: string;
     url: string;
-    icon: LucideIcon;
+    icon: Icon;
     isActive?: boolean;
     items?: {
       title: string;
@@ -50,7 +52,7 @@ export function NavMain({
                 <>
                   <CollapsibleTrigger asChild>
                     <SidebarMenuAction className="data-[state=open]:rotate-90">
-                      <ChevronRight />
+                      <IconChevronRight />
                       <span className="sr-only">Toggle</span>
                     </SidebarMenuAction>
                   </CollapsibleTrigger>

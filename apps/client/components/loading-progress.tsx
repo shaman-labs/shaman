@@ -16,7 +16,7 @@ export function LoadingProgress({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen w-screen bg-black">
+    <div className="flex h-screen w-screen bg-background">
       <div className="flex flex-col items-center justify-center gap-2 m-auto">
         <div className="self-center">
           <div className="text-[6px] sm:text-[8px] md:text-[10px] lg:text-sm">

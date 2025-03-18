@@ -2,15 +2,17 @@
 
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import {
-  Clock,
-  FileCode,
-  LinkIcon,
-  Minus,
-  MoreVertical,
-  Plus,
-  Trash2,
-  User,
-} from 'lucide-react';
+  IconClock,
+  IconRobot,
+  IconFileDescription,
+  IconUser,
+  IconLink,
+  IconMinus,
+  IconPlus,
+  IconTrash,
+  IconDotsVertical,
+} from '@tabler/icons-react';
+
 import { useParams } from 'next/navigation';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
@@ -68,6 +70,7 @@ import { Grid, GridItem } from '@/components/grid';
 import { RowItem } from '@/components/row-item';
 import { LabelCreator } from '@/components/label-creator';
 import { LabelIPFS } from '@/components/label-ipfs';
+import { handleError } from '@/lib/errors';
 
 type ChartDataPoint = {
   day: string;
@@ -168,6 +171,7 @@ export default function Page() {
   const spellExecutionLogs = spellLogs?.filter(
     (log) => log.logType === ShamanLogType.COMPLETION
   );
+  const isShamanCreator = embeddedWallet?.address === shaman?.creator;
 
   useEffect(() => {
     if (shamanSpells?.length) {
@@ -193,12 +197,7 @@ export default function Page() {
       });
       setSpellId(null);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setLoading(false);
     }
@@ -303,7 +302,7 @@ export default function Page() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 p-0">
-                    <MoreVertical className="h-4 w-4" />
+                    <IconDotsVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -401,7 +400,7 @@ export default function Page() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="h-8 w-8 p-0">
-                    <MoreVertical className="h-4 w-4" />
+                    <IconDotsVertical className="h-4 w-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
@@ -456,7 +455,7 @@ export default function Page() {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <Tabs defaultValue="shaman" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid mb-5 w-full grid-cols-3">
               <TabsTrigger value="shaman">Shaman</TabsTrigger>
               <TabsTrigger value="spells">Spells</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
@@ -477,39 +476,41 @@ export default function Page() {
                         </p>
                       )}
                     </CardContent>
-                    <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
-                      <Button
-                        className="w-full"
-                        variant="default"
-                        onClick={() =>
-                          openAddBalance(
-                            true,
-                            shamanId as string,
-                            handleRefetch
-                          )
-                        }>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Deposit
-                      </Button>
-                      <Button
-                        className="w-full"
-                        variant="outline"
-                        onClick={() =>
-                          openWithdrawBalance(
-                            true,
-                            shamanId as string,
-                            handleRefetch
-                          )
-                        }>
-                        <Minus className="mr-2 h-4 w-4" />
-                        Withdraw
-                      </Button>
-                    </CardFooter>
+                    {isShamanCreator && (
+                      <CardFooter className="flex flex-row items-center justify-end mt-auto space-x-3">
+                        <Button
+                          className="w-full"
+                          variant="default"
+                          onClick={() =>
+                            openAddBalance(
+                              true,
+                              shamanId as string,
+                              handleRefetch
+                            )
+                          }>
+                          <IconPlus className="mr-2 h-4 w-4" />
+                          Deposit
+                        </Button>
+                        <Button
+                          className="w-full"
+                          variant="outline"
+                          onClick={() =>
+                            openWithdrawBalance(
+                              true,
+                              shamanId as string,
+                              handleRefetch
+                            )
+                          }>
+                          <IconMinus className="mr-2 h-4 w-4" />
+                          Withdraw
+                        </Button>
+                      </CardFooter>
+                    )}
                   </Card>
                   <Card className="pt-6">
                     <CardContent className="flex-grow space-y-4">
                       <div className="grid gap-6 divide-y divide-border">
-                        <RowItem icon={FileCode} label="Name" noDivider>
+                        <RowItem icon={IconRobot} label="Name" noDivider>
                           {shamanLoading ? (
                             <Skeleton className="h-5 w-32" />
                           ) : (
@@ -520,12 +521,14 @@ export default function Page() {
                         </RowItem>
 
                         {shaman?.description && (
-                          <RowItem icon={FileCode} label="Description">
+                          <RowItem
+                            icon={IconFileDescription}
+                            label="Description">
                             <p className="text-sm">{shaman.description}</p>
                           </RowItem>
                         )}
 
-                        <RowItem icon={User} label="Creator">
+                        <RowItem icon={IconUser} label="Creator">
                           {shamanLoading ? (
                             <Skeleton className="h-5 w-40" />
                           ) : (
@@ -535,12 +538,12 @@ export default function Page() {
                           )}
                         </RowItem>
 
-                        <RowItem icon={LinkIcon} label="IPFS Link">
+                        <RowItem icon={IconLink} label="IPFS Link">
                           <LabelIPFS ipfs={shaman?.metadata} />
                         </RowItem>
 
                         {shaman?.createdAt && (
-                          <RowItem icon={Clock} label="Created">
+                          <RowItem icon={IconClock} label="Created">
                             <p className="text-sm">
                               {format(Number(shaman.createdAt) * 1000, 'PPpp')}
                             </p>
@@ -621,42 +624,50 @@ export default function Page() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    <div className="w-full md:col-span-1 border rounded-md overflow-hidden mb-4 md:mb-0">
-                      <div className="divide-y">
-                        {shamanSpellsLoading
-                          ? Array(3)
-                              .fill(0)
-                              .map((_, i) => (
-                                <Skeleton key={i} className="h-12 w-full" />
-                              ))
-                          : shamanSpells?.map((spell) => (
-                              <div
-                                key={spell.spellId}
-                                className={`p-4 sm:p-5 cursor-pointer flex items-center justify-between ${
-                                  spellId === spell.spellId
-                                    ? 'bg-accent'
-                                    : 'hover:bg-accent/50'
-                                }`}
-                                onClick={() => setSpellId(spell.spellId)}>
-                                <span className="truncate">{spell.name}</span>
-                              </div>
-                            ))}
-                        <div
-                          className={`p-4 sm:p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
-                          onClick={() =>
-                            openAddSpell(
-                              true,
-                              undefined,
-                              handleRefetch,
-                              shamanId as string
-                            )
-                          }>
-                          <span className="flex items-center gap-2">
-                            <Plus className="h-4 w-4" /> Add Spell
-                          </span>
+                    {shamanSpells?.length > 0 || isShamanCreator ? (
+                      <div className="w-full md:col-span-1 border rounded-md overflow-hidden mb-4 md:mb-0">
+                        <div className="divide-y">
+                          {shamanSpellsLoading
+                            ? Array(3)
+                                .fill(0)
+                                .map((_, i) => (
+                                  <Skeleton key={i} className="h-12 w-full" />
+                                ))
+                            : shamanSpells?.map((spell) => (
+                                <div
+                                  key={spell.spellId}
+                                  className={`p-4 sm:p-5 cursor-pointer flex items-center justify-between ${
+                                    spellId === spell.spellId
+                                      ? 'bg-accent'
+                                      : 'hover:bg-accent/50'
+                                  }`}
+                                  onClick={() => setSpellId(spell.spellId)}>
+                                  <span className="truncate">{spell.name}</span>
+                                </div>
+                              ))}
+                          <div
+                            className={`p-4 sm:p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
+                            onClick={() =>
+                              openAddSpell(
+                                true,
+                                undefined,
+                                handleRefetch,
+                                shamanId as string
+                              )
+                            }>
+                            <span className="flex items-center gap-2">
+                              <IconPlus className="h-4 w-4" /> Add Spell
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
+                    ) : (
+                      <div className="w-full md:col-span-2 lg:col-span-3 space-y-4">
+                        <p className="text-muted-foreground">
+                          No spells found.
+                        </p>
+                      </div>
+                    )}
 
                     <div className="w-full md:col-span-2 lg:col-span-3 space-y-4">
                       {selectedSpell && (
@@ -674,15 +685,23 @@ export default function Page() {
                                       creator={selectedSpell.creator}
                                     />
                                   </div>
+                                  <div className="text-sm text-muted-foreground mt-1">
+                                    Installed Version:{' '}
+                                    <span className="font-mono">
+                                      {selectedSpell.version}
+                                    </span>
+                                  </div>
                                 </div>
-                                <Button
-                                  variant="destructive"
-                                  size="sm"
-                                  onClick={handleRemoveSpell}
-                                  disabled={loading}
-                                  className="self-start sm:self-auto">
-                                  <Trash2 className="h-4 w-4" />
-                                </Button>
+                                {isShamanCreator && (
+                                  <Button
+                                    variant="destructive"
+                                    size="sm"
+                                    onClick={handleRemoveSpell}
+                                    disabled={loading}
+                                    className="self-start sm:self-auto">
+                                    <IconTrash className="h-4 w-4" />
+                                  </Button>
+                                )}
                               </div>
                             </CardHeader>
                             <CardContent>
@@ -844,9 +863,9 @@ export default function Page() {
                 <CardHeader>
                   <CardTitle>Shaman Logs</CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 sm:p-6">
+                <CardContent className="p-0 sm:px-6">
                   {logsLoading ? (
-                    <div className="space-y-2 p-6">
+                    <div className="space-y-2 px-6">
                       {[1, 2, 3, 4, 5].map((i) => (
                         <Skeleton key={i} className="h-10 w-full" />
                       ))}

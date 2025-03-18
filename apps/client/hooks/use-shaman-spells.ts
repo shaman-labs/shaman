@@ -41,6 +41,17 @@ export const useShamanSpells = (shamanId: string) => {
               }
             )
           );
+          const shamanSpell = getComponentValueStrict(
+            mud.components.ShamanSpell,
+            encodeEntity(
+              { shamanId: 'bytes32', spellId: 'bytes32' },
+              {
+                shamanId: shamanId as `0x${string}`,
+                spellId: spellId.spellId as `0x${string}`,
+              }
+            )
+          );
+
           const spell = getComponentValueStrict(
             mud.components.Spells,
             encodeEntity(
@@ -52,11 +63,12 @@ export const useShamanSpells = (shamanId: string) => {
           const spellMetadata = await axios.get<{
             code: string;
             prompt: string;
-          }>(`https://gateway.shaman.fun/ipfs/${spell.metadata}`);
+          }>(`https://gateway.shaman.fun/ipfs/${shamanSpell.metadata}`);
 
           return {
             spellId: spellId.spellId,
             ...spell,
+            ...shamanSpell,
             ...spellMetadata.data,
             code: atob(spellMetadata.data.code),
           };

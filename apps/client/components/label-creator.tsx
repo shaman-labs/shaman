@@ -1,5 +1,5 @@
 import React from 'react';
-import { Copy } from 'lucide-react';
+import { IconCopy } from '@tabler/icons-react';
 import BoringAvatar from 'boring-avatars';
 import { Avatar } from '@/components/ui/avatar';
 import { toast } from '@/hooks/use-toast';
@@ -41,7 +41,7 @@ export const LabelCreator: React.FC<LabelCreatorProps> = ({
       </span>
       {copyable && (
         <button onClick={handleCopy} className="ml-2" title="Copy full address">
-          <Copy />
+          <IconCopy />
         </button>
       )}
     </div>
