@@ -18,6 +18,7 @@ import { useMUD } from '@/contexts/mud-context';
 import { useSpells } from '@/hooks/use-spells';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useShamanSpells } from '@/hooks/use-shaman-spells';
+import { handleError } from '@/lib/errors';
 
 export function DialogAddSpell(props: DialogProps) {
   const mud = useMUD();
@@ -67,12 +68,7 @@ export function DialogAddSpell(props: DialogProps) {
       props.onSuccess?.();
       props.onOpenChange?.(false);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setLoading(false);
     }

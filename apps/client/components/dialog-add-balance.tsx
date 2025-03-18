@@ -19,6 +19,7 @@ import {
 import { useMUD } from '@/contexts/mud-context';
 import { useEmbeddedWallet } from '@/hooks/use-embedded-wallet';
 import { useZugBalance } from '@/hooks/use-zug-balance';
+import { handleError } from '@/lib/errors';
 
 export function DialogAddBalance(props: DialogProps) {
   const mud = useMUD();
@@ -47,12 +48,7 @@ export function DialogAddBalance(props: DialogProps) {
       props.onSuccess?.();
       props.onOpenChange?.(false);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setLoading(false);
     }

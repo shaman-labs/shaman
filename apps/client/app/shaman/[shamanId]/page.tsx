@@ -70,6 +70,7 @@ import { Grid, GridItem } from '@/components/grid';
 import { RowItem } from '@/components/row-item';
 import { LabelCreator } from '@/components/label-creator';
 import { LabelIPFS } from '@/components/label-ipfs';
+import { handleError } from '@/lib/errors';
 
 type ChartDataPoint = {
   day: string;
@@ -196,12 +197,7 @@ export default function Page() {
       });
       setSpellId(null);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setLoading(false);
     }

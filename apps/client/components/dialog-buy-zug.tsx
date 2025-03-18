@@ -19,6 +19,7 @@ import { useMUD } from '@/contexts/mud-context';
 import { useZugPrice } from '@/hooks/use-zug-price';
 import { useZugAddress } from '@/hooks/use-zug-address';
 import { useZugSaleSupply } from '@/hooks/use-zug-sale-supply';
+import { handleError } from '@/lib/errors';
 
 export function DialogBuyZug(props: DialogProps) {
   const mud = useMUD();
@@ -41,12 +42,7 @@ export function DialogBuyZug(props: DialogProps) {
       props.onSuccess?.();
       props.onOpenChange?.(false);
     } catch (error) {
-      console.error(error);
-      toast({
-        title: 'Error',
-        description: 'Something went wrong. Please try again.',
-        variant: 'destructive',
-      });
+      handleError(error);
     } finally {
       setLoading(false);
     }
