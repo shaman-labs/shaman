@@ -628,47 +628,50 @@ export default function Page() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {shamanSpells?.length > 0 ||
-                      (isShamanCreator && (
-                        <div className="w-full md:col-span-1 border rounded-md overflow-hidden mb-4 md:mb-0">
-                          <div className="divide-y">
-                            {shamanSpellsLoading
-                              ? Array(3)
-                                  .fill(0)
-                                  .map((_, i) => (
-                                    <Skeleton key={i} className="h-12 w-full" />
-                                  ))
-                              : shamanSpells?.map((spell) => (
-                                  <div
-                                    key={spell.spellId}
-                                    className={`p-4 sm:p-5 cursor-pointer flex items-center justify-between ${
-                                      spellId === spell.spellId
-                                        ? 'bg-accent'
-                                        : 'hover:bg-accent/50'
-                                    }`}
-                                    onClick={() => setSpellId(spell.spellId)}>
-                                    <span className="truncate">
-                                      {spell.name}
-                                    </span>
-                                  </div>
-                                ))}
-                            <div
-                              className={`p-4 sm:p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
-                              onClick={() =>
-                                openAddSpell(
-                                  true,
-                                  undefined,
-                                  handleRefetch,
-                                  shamanId as string
-                                )
-                              }>
-                              <span className="flex items-center gap-2">
-                                <IconPlus className="h-4 w-4" /> Add Spell
-                              </span>
-                            </div>
+                    {shamanSpells?.length > 0 || isShamanCreator ? (
+                      <div className="w-full md:col-span-1 border rounded-md overflow-hidden mb-4 md:mb-0">
+                        <div className="divide-y">
+                          {shamanSpellsLoading
+                            ? Array(3)
+                                .fill(0)
+                                .map((_, i) => (
+                                  <Skeleton key={i} className="h-12 w-full" />
+                                ))
+                            : shamanSpells?.map((spell) => (
+                                <div
+                                  key={spell.spellId}
+                                  className={`p-4 sm:p-5 cursor-pointer flex items-center justify-between ${
+                                    spellId === spell.spellId
+                                      ? 'bg-accent'
+                                      : 'hover:bg-accent/50'
+                                  }`}
+                                  onClick={() => setSpellId(spell.spellId)}>
+                                  <span className="truncate">{spell.name}</span>
+                                </div>
+                              ))}
+                          <div
+                            className={`p-4 sm:p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
+                            onClick={() =>
+                              openAddSpell(
+                                true,
+                                undefined,
+                                handleRefetch,
+                                shamanId as string
+                              )
+                            }>
+                            <span className="flex items-center gap-2">
+                              <IconPlus className="h-4 w-4" /> Add Spell
+                            </span>
                           </div>
                         </div>
-                      ))}
+                      </div>
+                    ) : (
+                      <div className="w-full md:col-span-2 lg:col-span-3 space-y-4">
+                        <p className="text-muted-foreground">
+                          No spells found.
+                        </p>
+                      </div>
+                    )}
 
                     <div className="w-full md:col-span-2 lg:col-span-3 space-y-4">
                       {selectedSpell && (
@@ -864,9 +867,9 @@ export default function Page() {
                 <CardHeader>
                   <CardTitle>Shaman Logs</CardTitle>
                 </CardHeader>
-                <CardContent className="p-0 sm:p-6">
+                <CardContent className="p-0 sm:px-6">
                   {logsLoading ? (
-                    <div className="space-y-2 p-6">
+                    <div className="space-y-2 px-6">
                       {[1, 2, 3, 4, 5].map((i) => (
                         <Skeleton key={i} className="h-10 w-full" />
                       ))}
