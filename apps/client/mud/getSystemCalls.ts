@@ -321,6 +321,19 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
+  const claimZug = async (amount: bigint) => {
+    await worldContract.simulate.claimZug([amount], {
+      account: account.address,
+    });
+
+    const hash = await worldContract.write.claimZug([amount], {
+      chain,
+      account,
+    });
+
+    return waitForTransaction(hash);
+  };
+
   const transferAsset = async (
     contractAddress: Hex,
     address: Hex,
@@ -470,5 +483,6 @@ export function getSystemCalls({
     getSpellName,
     getSpellMetadata,
     getSpellCreator,
+    claimZug,
   };
 }

@@ -120,7 +120,7 @@ export function NavUser() {
                 className="cursor-pointer"
                 onClick={() => openBuyZug(true)}>
                 <IconMoneybag />
-                Buy ZUG
+                Claim ZUG
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
