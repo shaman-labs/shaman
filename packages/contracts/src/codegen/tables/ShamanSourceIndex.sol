@@ -23,8 +23,8 @@ library ShamanSourceIndex {
   FieldLayout constant _fieldLayout =
     FieldLayout.wrap(0x0020010020000000000000000000000000000000000000000000000000000000);
 
-  // Hex-encoded key schema of (bytes32, uint32)
-  Schema constant _keySchema = Schema.wrap(0x002402005f030000000000000000000000000000000000000000000000000000);
+  // Hex-encoded key schema of (bytes32, uint256)
+  Schema constant _keySchema = Schema.wrap(0x004002005f1f0000000000000000000000000000000000000000000000000000);
   // Hex-encoded value schema of (bytes32)
   Schema constant _valueSchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
 
@@ -64,7 +64,7 @@ library ShamanSourceIndex {
   /**
    * @notice Get sourceId.
    */
-  function getSourceId(bytes32 shamanId, uint32 index) internal view returns (bytes32 sourceId) {
+  function getSourceId(bytes32 shamanId, uint256 index) internal view returns (bytes32 sourceId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = bytes32(uint256(index));
@@ -76,7 +76,7 @@ library ShamanSourceIndex {
   /**
    * @notice Get sourceId.
    */
-  function _getSourceId(bytes32 shamanId, uint32 index) internal view returns (bytes32 sourceId) {
+  function _getSourceId(bytes32 shamanId, uint256 index) internal view returns (bytes32 sourceId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = bytes32(uint256(index));
@@ -88,7 +88,7 @@ library ShamanSourceIndex {
   /**
    * @notice Get sourceId.
    */
-  function get(bytes32 shamanId, uint32 index) internal view returns (bytes32 sourceId) {
+  function get(bytes32 shamanId, uint256 index) internal view returns (bytes32 sourceId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = bytes32(uint256(index));
@@ -100,7 +100,7 @@ library ShamanSourceIndex {
   /**
    * @notice Get sourceId.
    */
-  function _get(bytes32 shamanId, uint32 index) internal view returns (bytes32 sourceId) {
+  function _get(bytes32 shamanId, uint256 index) internal view returns (bytes32 sourceId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = bytes32(uint256(index));
@@ -112,7 +112,7 @@ library ShamanSourceIndex {
   /**
    * @notice Set sourceId.
    */
-  function setSourceId(bytes32 shamanId, uint32 index, bytes32 sourceId) internal {
+  function setSourceId(bytes32 shamanId, uint256 index, bytes32 sourceId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = bytes32(uint256(index));
@@ -123,7 +123,7 @@ library ShamanSourceIndex {
   /**
    * @notice Set sourceId.
    */
-  function _setSourceId(bytes32 shamanId, uint32 index, bytes32 sourceId) internal {
+  function _setSourceId(bytes32 shamanId, uint256 index, bytes32 sourceId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = bytes32(uint256(index));
@@ -134,7 +134,7 @@ library ShamanSourceIndex {
   /**
    * @notice Set sourceId.
    */
-  function set(bytes32 shamanId, uint32 index, bytes32 sourceId) internal {
+  function set(bytes32 shamanId, uint256 index, bytes32 sourceId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = bytes32(uint256(index));
@@ -145,7 +145,7 @@ library ShamanSourceIndex {
   /**
    * @notice Set sourceId.
    */
-  function _set(bytes32 shamanId, uint32 index, bytes32 sourceId) internal {
+  function _set(bytes32 shamanId, uint256 index, bytes32 sourceId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = bytes32(uint256(index));
@@ -156,7 +156,7 @@ library ShamanSourceIndex {
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(bytes32 shamanId, uint32 index) internal {
+  function deleteRecord(bytes32 shamanId, uint256 index) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = bytes32(uint256(index));
@@ -167,7 +167,7 @@ library ShamanSourceIndex {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(bytes32 shamanId, uint32 index) internal {
+  function _deleteRecord(bytes32 shamanId, uint256 index) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = bytes32(uint256(index));
@@ -201,7 +201,7 @@ library ShamanSourceIndex {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(bytes32 shamanId, uint32 index) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(bytes32 shamanId, uint256 index) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = shamanId;
     _keyTuple[1] = bytes32(uint256(index));

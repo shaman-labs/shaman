@@ -46,23 +46,51 @@ contract BaseTest is MudTest, GasReporter {
     console.log("Creator Charlie:", creatorCharlie);
   }
 
-  function _mintTokens(address to, uint256 amount) internal {
+  function _setMember(address member) internal virtual {
+    vm.prank(signerAddress);
+    Roles.setRole(member, RoleType.Member);
+    vm.stopPrank();
+  }
+
+  function _setOperator(address operator) internal virtual {
+    vm.prank(signerAddress);
+    Roles.setRole(operator, RoleType.Operator);
+    vm.stopPrank();
+  }
+
+  function _setAdmin(address admin) internal virtual {
+    vm.prank(signerAddress);
+    Roles.setRole(admin, RoleType.Admin);
+    vm.stopPrank();
+  }
+
+  function _mintTokens(address to, uint256 amount) internal virtual {
     vm.prank(signerAddress);
     token.mint(to, amount);
     vm.stopPrank();
   }
 
-  function _increaseAllowance(address creator, uint256 amount) internal {
+  function _increaseAllowance(
+    address creator,
+    uint256 amount
+  ) internal virtual {
     vm.prank(creator);
     token.approve(worldAddress, amount);
     vm.stopPrank();
   }
 
+  function _prepareTokens(address user, uint256 amount) internal virtual {
+    _mintTokens(user, amount);
+    _increaseAllowance(user, amount);
+  }
+
   function _createShaman(
     address creator,
     string memory metadata
-  ) internal returns (bytes32 shamanId) {
+  ) internal virtual returns (bytes32 shamanId) {
     vm.recordLogs();
+
+    _setMember(creator);
 
     vm.prank(creator);
     world.createShaman(
@@ -96,8 +124,11 @@ contract BaseTest is MudTest, GasReporter {
     address creator,
     string memory name,
     string memory metadata
-  ) internal returns (bytes32 spellId) {
+  ) internal virtual returns (bytes32 spellId) {
     vm.recordLogs();
+
+    _setMember(creator);
+
     vm.prank(creator);
     world.createSpell(name, metadata);
     vm.stopPrank();
@@ -118,8 +149,11 @@ contract BaseTest is MudTest, GasReporter {
     address creator,
     string memory name,
     string memory metadata
-  ) internal returns (bytes32 sourceId) {
+  ) internal virtual returns (bytes32 sourceId) {
     vm.recordLogs();
+
+    _setAdmin(creator);
+
     vm.prank(creator);
     world.createSource(name, metadata);
     vm.stopPrank();
@@ -138,8 +172,11 @@ contract BaseTest is MudTest, GasReporter {
 
   function _createTestShaman(
     string memory metadata
-  ) internal returns (bytes32) {
+  ) internal virtual returns (bytes32) {
     vm.recordLogs();
+
+    _setMember(creatorAlice);
+
     vm.prank(creatorAlice);
     world.createShaman(
       0,

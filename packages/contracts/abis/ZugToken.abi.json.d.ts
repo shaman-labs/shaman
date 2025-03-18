@@ -1,18 +1,7 @@
 declare const abi: [
   {
     "type": "constructor",
-    "inputs": [
-      {
-        "name": "maxSupply_",
-        "type": "uint256",
-        "internalType": "uint256"
-      },
-      {
-        "name": "maxSaleSupply_",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
+    "inputs": [],
     "stateMutability": "nonpayable"
   },
   {
@@ -231,6 +220,24 @@ declare const abi: [
       }
     ],
     "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "initialize",
+    "inputs": [
+      {
+        "name": "maxSupply_",
+        "type": "uint256",
+        "internalType": "uint256"
+      },
+      {
+        "name": "maxSaleSupply_",
+        "type": "uint256",
+        "internalType": "uint256"
+      }
+    ],
+    "outputs": [],
+    "stateMutability": "nonpayable"
   },
   {
     "type": "function",
@@ -574,6 +581,19 @@ declare const abi: [
   },
   {
     "type": "event",
+    "name": "Initialized",
+    "inputs": [
+      {
+        "name": "version",
+        "type": "uint64",
+        "indexed": false,
+        "internalType": "uint64"
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
     "name": "RoleAdminChanged",
     "inputs": [
       {
@@ -778,6 +798,16 @@ declare const abi: [
         "internalType": "address"
       }
     ]
+  },
+  {
+    "type": "error",
+    "name": "InvalidInitialization",
+    "inputs": []
+  },
+  {
+    "type": "error",
+    "name": "NotInitializing",
+    "inputs": []
   }
 ];
 

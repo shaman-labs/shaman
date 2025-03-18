@@ -14,17 +14,6 @@ contract ShamanSystemTest is BaseTest {
   bytes32 constant SOURCE_ID = bytes32(uint256(2));
   uint256 constant INITIAL_BALANCE = 1000;
 
-  function _setupOperator(address operator) private {
-    vm.prank(signerAddress);
-    Roles.setRole(operator, RoleType.Operator);
-    vm.stopPrank();
-  }
-
-  function _prepareTokens(address user, uint256 amount) private {
-    _mintTokens(user, amount);
-    _increaseAllowance(user, amount);
-  }
-
   function _createShaman(
     address creator,
     uint256 balance,
@@ -33,6 +22,7 @@ contract ShamanSystemTest is BaseTest {
     string memory metadata
   ) private returns (bytes32 shamanId) {
     vm.recordLogs();
+    _setMember(creator);
     vm.prank(creator);
     world.createShaman(balance, "TestShaman", spellIds, sourceIds, metadata);
     vm.stopPrank();
@@ -50,7 +40,6 @@ contract ShamanSystemTest is BaseTest {
   }
 
   function testCreateShaman() public {
-    _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
 
     bytes32[] memory spellIds = new bytes32[](1);
@@ -78,8 +67,6 @@ contract ShamanSystemTest is BaseTest {
   }
 
   function testCreateShamanWithoutBalance() public {
-    _setupOperator(creatorAlice);
-
     bytes32[] memory spellIds = new bytes32[](1);
     spellIds[0] = SPELL_ID;
 
@@ -99,7 +86,6 @@ contract ShamanSystemTest is BaseTest {
   }
 
   function testCreateShamanWithoutSpells() public {
-    _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
 
     bytes32[] memory spellIds = new bytes32[](0);
@@ -120,7 +106,6 @@ contract ShamanSystemTest is BaseTest {
   }
 
   function testCreateShamanWithoutSources() public {
-    _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
 
     bytes32[] memory spellIds = new bytes32[](1);
@@ -141,7 +126,6 @@ contract ShamanSystemTest is BaseTest {
   }
 
   function testUpdateShamanMetadata() public {
-    _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
 
     bytes32[] memory spellIds = new bytes32[](0);
@@ -166,7 +150,6 @@ contract ShamanSystemTest is BaseTest {
   }
 
   function testUpdateShamanMetadataNotCreator() public {
-    _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
 
     bytes32[] memory spellIds = new bytes32[](0);
@@ -192,7 +175,6 @@ contract ShamanSystemTest is BaseTest {
   }
 
   function testUpdateShamanMetadataEmptyMetadata() public {
-    _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
 
     bytes32[] memory spellIds = new bytes32[](0);
@@ -218,7 +200,6 @@ contract ShamanSystemTest is BaseTest {
   }
 
   function testUpdateShamanStatus() public {
-    _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
 
     bytes32[] memory abilityIds = new bytes32[](0);
@@ -250,7 +231,6 @@ contract ShamanSystemTest is BaseTest {
   }
 
   function testReactivateShaman() public {
-    _setupOperator(creatorAlice);
     _prepareTokens(creatorAlice, INITIAL_BALANCE);
 
     bytes32[] memory spellIds = new bytes32[](0);

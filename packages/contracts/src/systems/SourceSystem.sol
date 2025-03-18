@@ -9,7 +9,7 @@ contract SourceSystem is BaseSystem {
   function createSource(
     string memory name,
     string memory metadata
-  ) public onlyOperator {
+  ) public onlyAdmin {
     bytes memory nameBytes = bytes(name);
     require(nameBytes.length > 0, "Source name cannot be empty");
     require(nameBytes.length <= 20, "Source name too long");

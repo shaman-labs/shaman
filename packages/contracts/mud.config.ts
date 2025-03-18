@@ -2,8 +2,18 @@ import { defineWorld } from "@latticexyz/world";
 
 export default defineWorld({
   enums: {
-    LogType: ["Queue", "Start", "Completion", "Deposit", "Withdraw", "Refund"],
-    RoleType: ["None", "Operator"],
+    LogType: [
+      "Queue",
+      "Start",
+      "Completion",
+      "Deposit",
+      "Withdraw",
+      "Refund",
+      "Modification",
+      "Deactivation",
+      "Activation",
+    ],
+    RoleType: ["None", "Operator", "Member", "Admin"],
     JobState: ["Idle", "Queue", "InProgress", "Completed"],
   },
   tables: {
@@ -24,8 +34,8 @@ export default defineWorld({
         spellId: "bytes32",
         creator: "address",
         createdAt: "uint256",
-        shamanCount: "uint32",
-        version: "uint32", // latest version of the spell
+        shamanCount: "uint256",
+        version: "uint256", // latest version of the spell
         name: "string",
         metadata: "string", // latest metadata of the spell
       },
@@ -39,7 +49,7 @@ export default defineWorld({
       schema: {
         spellId: "bytes32",
         createdAt: "uint256",
-        version: "uint32",
+        version: "uint256",
         metadata: "string",
       },
       key: ["spellId", "version"],
@@ -55,8 +65,8 @@ export default defineWorld({
         createdAt: "uint256",
         active: "bool",
         balance: "uint256",
-        spellCount: "uint32",
-        sourceCount: "uint32",
+        spellCount: "uint256",
+        sourceCount: "uint256",
         name: "string",
         metadata: "string",
       },
@@ -86,7 +96,7 @@ export default defineWorld({
         sourceId: "bytes32",
         creator: "address",
         createdAt: "uint256",
-        shamanCount: "uint32",
+        shamanCount: "uint256",
         name: "string",
         metadata: "string",
       },
@@ -111,7 +121,7 @@ export default defineWorld({
         shamanId: "bytes32",
         spellId: "bytes32",
         createdAt: "uint256",
-        version: "uint32", // version of the spell
+        version: "uint256", // version of the spell
         state: "JobState", // state of the spell
         metadata: "string", // metadata of version of the spell
       },
@@ -135,7 +145,7 @@ export default defineWorld({
       },
       schema: {
         shamanId: "bytes32",
-        index: "uint32",
+        index: "uint256",
         spellId: "bytes32",
       },
       key: ["shamanId", "index"],
@@ -146,7 +156,7 @@ export default defineWorld({
       },
       schema: {
         shamanId: "bytes32",
-        index: "uint32",
+        index: "uint256",
         sourceId: "bytes32",
       },
       key: ["shamanId", "index"],
@@ -157,7 +167,7 @@ export default defineWorld({
       },
       schema: {
         spellId: "bytes32",
-        index: "uint32",
+        index: "uint256",
         shamanId: "bytes32",
       },
       key: ["spellId", "index"],
@@ -168,7 +178,7 @@ export default defineWorld({
       },
       schema: {
         sourceId: "bytes32",
-        index: "uint32",
+        index: "uint256",
         shamanId: "bytes32",
       },
       key: ["sourceId", "index"],

@@ -12,6 +12,16 @@ contract BaseSystem is System {
     _;
   }
 
+  modifier onlyAdmin() {
+    require(Roles.getRole(_msgSender()) == RoleType.Admin, "Not admin");
+    _;
+  }
+
+  modifier onlyMember() {
+    require(Roles.getRole(_msgSender()) == RoleType.Member, "Not member");
+    _;
+  }
+
   modifier onlySpellCreator(bytes32 spellId) {
     require(Spells.getCreator(spellId) == _msgSender(), "Not spell creator");
     _;

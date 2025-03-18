@@ -9,12 +9,17 @@ enum LogType {
   Completion,
   Deposit,
   Withdraw,
-  Refund
+  Refund,
+  Modification,
+  Deactivation,
+  Activation
 }
 
 enum RoleType {
   None,
-  Operator
+  Operator,
+  Member,
+  Admin
 }
 
 enum JobState {

@@ -6,7 +6,10 @@ import { Spells, SpellNames, SpellVersions } from "../codegen/index.sol";
 contract SpellSystem is BaseSystem {
   event SpellCreated(bytes32 indexed spellId, address indexed creator);
 
-  function createSpell(string memory name, string memory metadata) public {
+  function createSpell(
+    string memory name,
+    string memory metadata
+  ) public onlyMember {
     bytes memory nameBytes = bytes(name);
     require(nameBytes.length > 0, "Spell name cannot be empty");
     require(nameBytes.length <= 20, "Spell name too long");
@@ -45,7 +48,7 @@ contract SpellSystem is BaseSystem {
     require(bytes(metadata).length > 0, "Metadata cannot be empty");
 
     // Get current version and increment it
-    uint32 version = Spells.getVersion(spellId) + 1;
+    uint256 version = Spells.getVersion(spellId) + 1;
 
     // Update spell with new metadata and version
     Spells.setMetadata(spellId, metadata);
@@ -79,7 +82,7 @@ contract SpellSystem is BaseSystem {
 
   function getSpellVersionMetadata(
     bytes32 spellId,
-    uint32 version
+    uint256 version
   ) public view returns (string memory) {
     return SpellVersions.getMetadata(spellId, version);
   }
@@ -88,7 +91,7 @@ contract SpellSystem is BaseSystem {
     return Spells.getCreator(spellId);
   }
 
-  function getSpellVersion(bytes32 spellId) public view returns (uint32) {
+  function getSpellVersion(bytes32 spellId) public view returns (uint256) {
     return Spells.getVersion(spellId);
   }
 }
