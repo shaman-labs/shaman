@@ -289,6 +289,22 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
+  const updateSpellVersion = async (shamanId: Hex, spellId: Hex) => {
+    await worldContract.simulate.updateShamanSpellVersion([shamanId, spellId], {
+      account: account.address,
+    });
+
+    const hash = await worldContract.write.updateShamanSpellVersion(
+      [shamanId, spellId],
+      {
+        chain,
+        account,
+      }
+    );
+
+    return waitForTransaction(hash);
+  };
+
   // Source management
   const createSource = async (name: string, metadata: string) => {
     await worldContract.simulate.createSource([name, metadata], {
@@ -463,6 +479,7 @@ export function getSystemCalls({
     createSpell,
     updateSpellMetadata,
     updateSpellName,
+    updateSpellVersion,
     createSource,
     purchase,
     transferAsset,

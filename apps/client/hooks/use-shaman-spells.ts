@@ -67,7 +67,9 @@ export const useShamanSpells = (shamanId: string) => {
 
           return {
             spellId: spellId.spellId,
-            ...spell,
+            name: spell.name,
+            creator: spell.creator,
+            latestVersion: spell.version,
             ...shamanSpell,
             ...spellMetadata.data,
             code: atob(spellMetadata.data.code),
