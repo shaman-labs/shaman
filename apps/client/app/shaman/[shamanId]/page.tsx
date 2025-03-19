@@ -11,6 +11,7 @@ import {
   IconPlus,
   IconTrash,
   IconDotsVertical,
+  IconArrowBigUpLine,
 } from '@tabler/icons-react';
 
 import { useParams } from 'next/navigation';
@@ -208,6 +209,24 @@ export default function Page() {
         description: 'Spell removed from shaman.',
       });
       setSpellId(null);
+    } catch (error) {
+      handleError(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedSpell, mud, shamanId]);
+
+  const handleUpdateSpellVersion = useCallback(async () => {
+    try {
+      setLoading(true);
+      await mud?.calls.embedded?.systemCalls?.updateSpellVersion(
+        shamanId as Hex,
+        selectedSpell?.spellId as Hex
+      );
+      toast({
+        title: 'Success',
+        description: 'Spell version updated.',
+      });
     } catch (error) {
       handleError(error);
     } finally {
@@ -705,14 +724,26 @@ export default function Page() {
                                   </div>
                                 </div>
                                 {isShamanCreator && (
-                                  <Button
-                                    variant="destructive"
-                                    size="sm"
-                                    onClick={handleRemoveSpell}
-                                    disabled={loading}
-                                    className="self-start sm:self-auto">
-                                    <IconTrash className="h-4 w-4" />
-                                  </Button>
+                                  <div className="flex flex-row gap-2">
+                                    {selectedSpell?.latestVersion !==
+                                      selectedSpell?.version && (
+                                      <Button
+                                        variant="secondary"
+                                        size="sm"
+                                        disabled={loading}
+                                        onClick={handleUpdateSpellVersion}>
+                                        <IconArrowBigUpLine className="h-4 w-4" />
+                                      </Button>
+                                    )}
+                                    <Button
+                                      variant="destructive"
+                                      size="sm"
+                                      onClick={handleRemoveSpell}
+                                      disabled={loading}
+                                      className="self-start sm:self-auto">
+                                      <IconTrash className="h-4 w-4" />
+                                    </Button>
+                                  </div>
                                 )}
                               </div>
                             </CardHeader>
