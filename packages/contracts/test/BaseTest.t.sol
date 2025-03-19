@@ -48,19 +48,19 @@ contract BaseTest is MudTest, GasReporter {
 
   function _setMember(address member) internal virtual {
     vm.prank(signerAddress);
-    Roles.setRole(member, RoleType.Member);
+    Roles.setActive(member, RoleType.Member, true);
     vm.stopPrank();
   }
 
   function _setOperator(address operator) internal virtual {
     vm.prank(signerAddress);
-    Roles.setRole(operator, RoleType.Operator);
+    Roles.setActive(operator, RoleType.Operator, true);
     vm.stopPrank();
   }
 
   function _setAdmin(address admin) internal virtual {
     vm.prank(signerAddress);
-    Roles.setRole(admin, RoleType.Admin);
+    Roles.setActive(admin, RoleType.Admin, true);
     vm.stopPrank();
   }
 

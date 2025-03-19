@@ -60,7 +60,7 @@ contract SetMembers is Script {
     memberAddresses.push(0xd398adba3735F0466ae1630270aa306406580C86);
 
     for (uint256 i = 0; i < memberAddresses.length; i++) {
-      Roles.setRole(memberAddresses[i], RoleType.Member);
+      Roles.setActive(memberAddresses[i], RoleType.Member, true);
     }
 
     console.log("Members set");

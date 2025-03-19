@@ -8,17 +8,17 @@ import { RoleType, JobState } from "../codegen/common.sol";
 
 contract BaseSystem is System {
   modifier onlyOperator() {
-    require(Roles.getRole(_msgSender()) == RoleType.Operator, "Not operator");
+    require(Roles.getActive(_msgSender(), RoleType.Operator), "Not operator");
     _;
   }
 
   modifier onlyAdmin() {
-    require(Roles.getRole(_msgSender()) == RoleType.Admin, "Not admin");
+    require(Roles.getActive(_msgSender(), RoleType.Admin), "Not admin");
     _;
   }
 
   modifier onlyMember() {
-    require(Roles.getRole(_msgSender()) == RoleType.Member, "Not member");
+    require(Roles.getActive(_msgSender(), RoleType.Member), "Not member");
     _;
   }
 

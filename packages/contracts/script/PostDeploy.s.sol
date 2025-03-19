@@ -72,11 +72,11 @@ contract PostDeploy is Script {
     console.log("ShamanConfig token address set to:", address(zugToken));
 
     // Grant operator role to signer address
-    Roles.setRole(signerAddress, RoleType.Operator);
+    Roles.setActive(signerAddress, RoleType.Operator, true);
     console.log("Operator role granted to: %s", signerAddress);
 
     // Grant admin role to deployer address
-    Roles.setRole(deployerAddress, RoleType.Admin);
+    Roles.setActive(deployerAddress, RoleType.Admin, true);
     console.log("Admin role granted to: %s", deployerAddress);
 
     vm.stopBroadcast();
