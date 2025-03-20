@@ -107,10 +107,11 @@ export default defineWorld({
         dataStruct: false,
       },
       schema: {
+        active: "bool",
         sender: "address",
         role: "RoleType",
       },
-      key: ["sender"],
+      key: ["sender", "role"],
     },
     // pivot tables
     ShamanSpell: {

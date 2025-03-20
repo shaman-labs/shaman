@@ -10,13 +10,13 @@ contract ConfigSystem is BaseSystem {
   }
 
   function isMember(address member) public view returns (bool) {
-    return Roles.getRole(member) == RoleType.Member;
+    return Roles.getActive(member, RoleType.Member);
   }
 
   function setMembers(address[] calldata members) public onlyAdmin {
     uint256 memberCount = members.length;
     for (uint256 i = 0; i < memberCount; ) {
-      Roles.setRole(members[i], RoleType.Member);
+      Roles.setActive(members[i], RoleType.Member, true);
       unchecked {
         ++i;
       }

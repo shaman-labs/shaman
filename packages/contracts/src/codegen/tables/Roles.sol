@@ -26,18 +26,19 @@ library Roles {
   FieldLayout constant _fieldLayout =
     FieldLayout.wrap(0x0001010001000000000000000000000000000000000000000000000000000000);
 
-  // Hex-encoded key schema of (address)
-  Schema constant _keySchema = Schema.wrap(0x0014010061000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (uint8)
-  Schema constant _valueSchema = Schema.wrap(0x0001010000000000000000000000000000000000000000000000000000000000);
+  // Hex-encoded key schema of (address, uint8)
+  Schema constant _keySchema = Schema.wrap(0x0015020061000000000000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (bool)
+  Schema constant _valueSchema = Schema.wrap(0x0001010060000000000000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
    * @return keyNames An array of strings with the names of key fields.
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
-    keyNames = new string[](1);
+    keyNames = new string[](2);
     keyNames[0] = "sender";
+    keyNames[1] = "role";
   }
 
   /**
@@ -46,7 +47,7 @@ library Roles {
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](1);
-    fieldNames[0] = "role";
+    fieldNames[0] = "active";
   }
 
   /**
@@ -64,95 +65,104 @@ library Roles {
   }
 
   /**
-   * @notice Get role.
+   * @notice Get active.
    */
-  function getRole(address sender) internal view returns (RoleType role) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function getActive(address sender, RoleType role) internal view returns (bool active) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(sender)));
+    _keyTuple[1] = bytes32(uint256(uint8(role)));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return RoleType(uint8(bytes1(_blob)));
+    return (_toBool(uint8(bytes1(_blob))));
   }
 
   /**
-   * @notice Get role.
+   * @notice Get active.
    */
-  function _getRole(address sender) internal view returns (RoleType role) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function _getActive(address sender, RoleType role) internal view returns (bool active) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(sender)));
+    _keyTuple[1] = bytes32(uint256(uint8(role)));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return RoleType(uint8(bytes1(_blob)));
+    return (_toBool(uint8(bytes1(_blob))));
   }
 
   /**
-   * @notice Get role.
+   * @notice Get active.
    */
-  function get(address sender) internal view returns (RoleType role) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function get(address sender, RoleType role) internal view returns (bool active) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(sender)));
+    _keyTuple[1] = bytes32(uint256(uint8(role)));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return RoleType(uint8(bytes1(_blob)));
+    return (_toBool(uint8(bytes1(_blob))));
   }
 
   /**
-   * @notice Get role.
+   * @notice Get active.
    */
-  function _get(address sender) internal view returns (RoleType role) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function _get(address sender, RoleType role) internal view returns (bool active) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(sender)));
+    _keyTuple[1] = bytes32(uint256(uint8(role)));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return RoleType(uint8(bytes1(_blob)));
+    return (_toBool(uint8(bytes1(_blob))));
   }
 
   /**
-   * @notice Set role.
+   * @notice Set active.
    */
-  function setRole(address sender, RoleType role) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function setActive(address sender, RoleType role, bool active) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(sender)));
+    _keyTuple[1] = bytes32(uint256(uint8(role)));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked(uint8(role)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((active)), _fieldLayout);
   }
 
   /**
-   * @notice Set role.
+   * @notice Set active.
    */
-  function _setRole(address sender, RoleType role) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function _setActive(address sender, RoleType role, bool active) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(sender)));
+    _keyTuple[1] = bytes32(uint256(uint8(role)));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked(uint8(role)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((active)), _fieldLayout);
   }
 
   /**
-   * @notice Set role.
+   * @notice Set active.
    */
-  function set(address sender, RoleType role) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function set(address sender, RoleType role, bool active) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(sender)));
+    _keyTuple[1] = bytes32(uint256(uint8(role)));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked(uint8(role)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((active)), _fieldLayout);
   }
 
   /**
-   * @notice Set role.
+   * @notice Set active.
    */
-  function _set(address sender, RoleType role) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function _set(address sender, RoleType role, bool active) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(sender)));
+    _keyTuple[1] = bytes32(uint256(uint8(role)));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked(uint8(role)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((active)), _fieldLayout);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(address sender) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function deleteRecord(address sender, RoleType role) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(sender)));
+    _keyTuple[1] = bytes32(uint256(uint8(role)));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -160,9 +170,10 @@ library Roles {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(address sender) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function _deleteRecord(address sender, RoleType role) internal {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(sender)));
+    _keyTuple[1] = bytes32(uint256(uint8(role)));
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -171,8 +182,8 @@ library Roles {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(RoleType role) internal pure returns (bytes memory) {
-    return abi.encodePacked(role);
+  function encodeStatic(bool active) internal pure returns (bytes memory) {
+    return abi.encodePacked(active);
   }
 
   /**
@@ -181,8 +192,8 @@ library Roles {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(RoleType role) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(role);
+  function encode(bool active) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
+    bytes memory _staticData = encodeStatic(active);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;
@@ -193,10 +204,23 @@ library Roles {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(address sender) internal pure returns (bytes32[] memory) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
+  function encodeKeyTuple(address sender, RoleType role) internal pure returns (bytes32[] memory) {
+    bytes32[] memory _keyTuple = new bytes32[](2);
     _keyTuple[0] = bytes32(uint256(uint160(sender)));
+    _keyTuple[1] = bytes32(uint256(uint8(role)));
 
     return _keyTuple;
+  }
+}
+
+/**
+ * @notice Cast a value to a bool.
+ * @dev Boolean values are encoded as uint8 (1 = true, 0 = false), but Solidity doesn't allow casting between uint8 and bool.
+ * @param value The uint8 value to convert.
+ * @return result The boolean value.
+ */
+function _toBool(uint8 value) pure returns (bool result) {
+  assembly {
+    result := value
   }
 }
