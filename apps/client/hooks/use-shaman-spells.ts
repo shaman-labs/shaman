@@ -27,54 +27,57 @@ export const useShamanSpells = (shamanId: string) => {
       );
 
       const spells = await Promise.all(
-        Array.from(Array(shamanData.spellCount)).map(async (_, index) => {
-          const spellId = getComponentValueStrict(
-            mud.components.ShamanSpellIndex,
-            encodeEntity(
-              {
-                shamanId: 'bytes32',
-                index: 'uint32',
-              },
-              {
-                shamanId: shamanId as `0x${string}`,
-                index: index,
-              }
-            )
-          );
-          const shamanSpell = getComponentValueStrict(
-            mud.components.ShamanSpell,
-            encodeEntity(
-              { shamanId: 'bytes32', spellId: 'bytes32' },
-              {
-                shamanId: shamanId as `0x${string}`,
-                spellId: spellId.spellId as `0x${string}`,
-              }
-            )
-          );
+        Array.from({ length: Number(shamanData.spellCount) }).map(
+          async (_, index) => {
+            const spellId = getComponentValueStrict(
+              mud.components.ShamanSpellIndex,
+              encodeEntity(
+                {
+                  shamanId: 'bytes32',
+                  index: 'uint32',
+                },
+                {
+                  shamanId: shamanId as `0x${string}`,
+                  index: index,
+                }
+              )
+            );
 
-          const spell = getComponentValueStrict(
-            mud.components.Spells,
-            encodeEntity(
-              { spellId: 'bytes32' },
-              { spellId: spellId.spellId as `0x${string}` }
-            )
-          );
+            const shamanSpell = getComponentValueStrict(
+              mud.components.ShamanSpell,
+              encodeEntity(
+                { shamanId: 'bytes32', spellId: 'bytes32' },
+                {
+                  shamanId: shamanId as `0x${string}`,
+                  spellId: spellId.spellId as `0x${string}`,
+                }
+              )
+            );
 
-          const spellMetadata = await axios.get<{
-            code: string;
-            prompt: string;
-          }>(`https://gateway.shaman.fun/ipfs/${shamanSpell.metadata}`);
+            const spell = getComponentValueStrict(
+              mud.components.Spells,
+              encodeEntity(
+                { spellId: 'bytes32' },
+                { spellId: spellId.spellId as `0x${string}` }
+              )
+            );
 
-          return {
-            spellId: spellId.spellId,
-            name: spell.name,
-            creator: spell.creator,
-            latestVersion: spell.version,
-            ...shamanSpell,
-            ...spellMetadata.data,
-            code: atob(spellMetadata.data.code),
-          };
-        })
+            const spellMetadata = await axios.get<{
+              code: string;
+              prompt: string;
+            }>(`https://gateway.shaman.fun/ipfs/${shamanSpell.metadata}`);
+
+            return {
+              spellId: spellId.spellId,
+              name: spell.name,
+              creator: spell.creator,
+              latestVersion: spell.version,
+              ...shamanSpell,
+              ...spellMetadata.data,
+              code: atob(spellMetadata.data.code),
+            };
+          }
+        )
       );
 
       return spells;
