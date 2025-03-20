@@ -1,15 +1,11 @@
-import { generateObject, LanguageModelV1 } from 'ai';
+import { generateObject } from 'ai';
 import { v4 as uuidv4 } from 'uuid';
 import { z } from 'zod';
 import { cookies } from 'next/headers';
-import { createDeepSeek } from '@ai-sdk/deepseek';
+import { anthropic } from '@ai-sdk/anthropic';
 import { getSystemPrompt } from '@/prompts/system';
 import { objectManager } from '@/services/filebase';
 import privy from '@/services/privy';
-
-const deepSeek = createDeepSeek({
-  apiKey: process.env.DEEPSEEK_API_KEY,
-});
 
 interface SpellRequest {
   prompt: string;
@@ -30,7 +26,7 @@ export async function POST(req: Request) {
   const system = getSystemPrompt();
 
   const executable = await generateObject({
-    model: deepSeek('deepseek-chat') as LanguageModelV1,
+    model: anthropic('claude-3-7-sonnet-20250219'),
     system,
     prompt,
     schema: z.object({
