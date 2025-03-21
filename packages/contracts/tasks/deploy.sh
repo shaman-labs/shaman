@@ -12,6 +12,9 @@ function get_chain_id() {
         "arb-sepolia")
             echo "421614"
             ;;
+        "base")
+            echo "8453"
+            ;;
         *)
             echo ""
             ;;
@@ -90,6 +93,10 @@ case $NETWORK in
     "arb-sepolia")
         RPC_URL=$ARB_SEPOLIA_RPC_URL
         ETHERSCAN_KEY=$ARB_ETHERSCAN_KEY
+        ;;
+    "base")
+        RPC_URL=$BASE_RPC_URL
+        ETHERSCAN_KEY=$BASE_ETHERSCAN_KEY
         ;;
     *)
         echo "Unknown network: $NETWORK"
