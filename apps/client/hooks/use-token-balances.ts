@@ -1,7 +1,7 @@
 import { Hex } from 'viem';
 
 import { useQuery } from '@tanstack/react-query';
-import { arbitrumSepolia } from 'wagmi/chains';
+import { chain } from '@/mud/supportedChains';
 import goldrush from '@/services/goldrush';
 
 export const useTokenBalances = (walletAddress?: Hex) => {
@@ -13,7 +13,7 @@ export const useTokenBalances = (walletAddress?: Hex) => {
 
       const results =
         await goldrush.BalanceService.getTokenBalancesForWalletAddress(
-          arbitrumSepolia.id,
+          chain.id,
           walletAddress,
           {
             quoteCurrency: 'USD',
