@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { IconBook, IconBrandX } from '@tabler/icons-react';
+import { IconBrandX } from '@tabler/icons-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { NavSpells } from '@/components/nav-spells';
@@ -25,11 +25,11 @@ const data = {
       url: 'https://x.com/shamandotfun',
       icon: IconBrandX,
     },
-    {
-      title: 'Documentation',
-      url: 'https://shamandotfun.notion.site/',
-      icon: IconBook,
-    },
+    // {
+    //   title: 'Documentation',
+    //   url: 'https://shamandotfun.notion.site/',
+    //   icon: IconBook,
+    // },
   ],
 };
 
