@@ -1,9 +1,13 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import { useLogin } from '@privy-io/react-auth';
 import type { WalletWithMetadata, User } from '@privy-io/react-auth';
-import { useWallets, useHeadlessDelegatedActions } from '@privy-io/react-auth';
+import {
+  useWallets,
+  useHeadlessDelegatedActions,
+  useCreateWallet,
+  useLogin,
+} from '@privy-io/react-auth';
 
 // Configuration for retry mechanism
 const RETRY_CONFIG = {
@@ -20,6 +24,7 @@ export function useWalletDelegation() {
   // Privy hooks
   const { ready, wallets } = useWallets();
   const { delegateWallet } = useHeadlessDelegatedActions();
+  const { createWallet } = useCreateWallet();
 
   // Refs for managing retry state
   const retryCount = useRef<number>(0);
@@ -37,6 +42,10 @@ export function useWalletDelegation() {
         (wallet: { walletClientType: string }) =>
           wallet.walletClientType === 'privy'
       );
+
+      if (!privyWallet) {
+        await createWallet();
+      }
 
       // Exit if no wallet found
       if (!privyWallet) {

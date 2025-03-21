@@ -29,11 +29,13 @@ import { useEmbeddedWallet } from '@/hooks/use-embedded-wallet';
 
 export function NavSpells() {
   const { user, login } = usePrivy();
-  const { address } = useEmbeddedWallet();
+  const embeddedWallet = useEmbeddedWallet();
   const router = useRouter();
   const { isMobile } = useSidebar();
   const { data: spells } = useSpells();
-  const userSpells = spells.filter((spell) => spell.creator === address);
+  const userSpells = spells.filter(
+    (spell) => spell.creator === embeddedWallet?.address
+  );
   const { spellId } = useParams();
   const pathname = usePathname();
 

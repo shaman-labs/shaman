@@ -34,11 +34,13 @@ import { useEmbeddedWallet } from '@/hooks/use-embedded-wallet';
 
 export function NavShamans() {
   const { user, login } = usePrivy();
-  const { address } = useEmbeddedWallet();
+  const embeddedWallet = useEmbeddedWallet();
   const router = useRouter();
   const { isMobile } = useSidebar();
   const { data: shamans } = useShamans();
-  const userShamans = shamans.filter((shaman) => shaman.creator === address);
+  const userShamans = shamans.filter(
+    (shaman) => shaman.creator === embeddedWallet?.address
+  );
   const { shamanId } = useParams();
   const { openTrigger, openActivation } = useDialogContext();
   const pathname = usePathname();
