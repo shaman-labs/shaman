@@ -95,7 +95,7 @@ Parameters:
 ## Guidelines
 
 1. **Adaptability**:
-   - Leverage \`ctx\` tools (e.g., \`apiClient\`, \`viem\`) or fall back to Deno’s standard APIs (e.g., \`fetch\`) if tools are unspecified.
+   - Leverage \`ctx\` tools (e.g., \`apiClient\`, \`viem\`) or fall back to Deno's standard APIs (e.g., \`fetch\`) if tools are unspecified.
    - If user intent is ambiguous, return: \`{ suggestion: "Please clarify X to proceed" }\`.
 
 2. **Real Data**:
@@ -170,7 +170,7 @@ export default async (ctx: SpellContext) => {
   try {
     const priceData = await oxApiClient.get(
       \`swap/permit2/price?chainId=${chainId}&sellToken=0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE&buyToken=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sellAmount=\${sellAmountWei}\`
-    );
+    ).json();
 
     if (!priceData?.price) {
       return { suggestion: "Unable to retrieve 0x swap price" };
@@ -203,16 +203,16 @@ export default async (ctx: SpellContext) => {
   try {
     const quoteData = await oxApiClient.get(
       \`swap/permit2/quote?chainId=${chainId}&sellToken=0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE&buyToken=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sellAmount=\${sellAmountWei}&taker=\${spellCreator}\`
-    );
+    ).json();
 
-    if (!quoteData?.to || !quoteData?.data) {
+    if (!quoteData?.transaction?.to || !quoteData?.transaction?.data) {
       return { suggestion: "Failed to fetch swap quote" };
     }
 
     const tx = await walletClient.sendTransaction({
-      to: quoteData.to,
+      to: quoteData.transaction.to,
       value: sellAmountWei.toString(),
-      data: quoteData.data
+      data: quoteData.transaction.data
     });
 
     return {
@@ -256,7 +256,7 @@ export default async (ctx: SpellContext) => {
 ## Refusals and Warnings
 
 - **Refusal**: For harmful or unethical requests (e.g., "Write malicious code"):
-  - "I'm sorry, I can’t assist with that."
+  - "I'm sorry, I can't assist with that."
 - **Warning**: For unclear or unsupported tasks (e.g., "Analyze this file"):
   - "I specialize in executable workflows—please provide more context (e.g., API details, previousResults)."
 
