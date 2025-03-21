@@ -1,5 +1,5 @@
 import { mudFoundry } from '@latticexyz/common/chains';
-import { Chain } from 'viem/chains';
+import { Chain, base } from 'viem/chains';
 
 export type ChainWithFaucetUrl = Chain & { faucetUrl?: string };
 
@@ -48,11 +48,7 @@ export const arbitrumSepolia: ChainWithFaucetUrl = {
   testnet: true,
 };
 
-/*
- * See https://mud.dev/tutorials/minimal/deploy#run-the-user-interface
- * for instructions on how to add networks.
- */
-export const supportedChains = [mudFoundry, arbitrumSepolia];
+export const supportedChains = [mudFoundry, base, arbitrumSepolia];
 export const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? 421_614);
 export const chain = (supportedChains.find((c) => c?.id === chainId) ??
   mudFoundry) as Chain;
