@@ -145,7 +145,7 @@ export default async (ctx: SpellContext) => {
 
   try {
     const priceData = await oxApiClient.get(
-      \`/swap/permit2/price?chainId=${chainId}&sellToken=ETH&buyToken=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sellAmount=\${sellAmountWei}\`
+      \`swap/permit2/price?chainId=${chainId}&sellToken=ETH&buyToken=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sellAmount=\${sellAmountWei}\`
     );
 
     if (!priceData?.price) {
@@ -178,7 +178,7 @@ export default async (ctx: SpellContext) => {
 
   try {
     const quoteData = await oxApiClient.get(
-      \`/swap/permit2/quote?chainId=${chainId}&sellToken=ETH&buyToken=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sellAmount=\${sellAmountWei}&taker=\${spellCreator}\`
+      \`swap/permit2/quote?chainId=${chainId}&sellToken=ETH&buyToken=0x75faf114eafb1BDbe2F0316DF893fd58CE46AA4d&sellAmount=\${sellAmountWei}&taker=\${spellCreator}\`
     );
 
     if (!quoteData?.to || !quoteData?.data) {
