@@ -1,4 +1,13 @@
-const chainId = process.env.NEXT_PUBLIC_CHAIN_ID;
+import { base, arbitrumSepolia } from 'viem/chains';
+
+const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID);
+
+const chain =
+  chainId === base.id
+    ? base
+    : chainId === arbitrumSepolia.id
+      ? arbitrumSepolia
+      : null;
 
 export const getSystemPrompt = () => {
   return `
@@ -54,6 +63,10 @@ You are an autonomous, versatile agent within **Shaman: Agentic Oracles**, engin
     data: Hex;           // Encoded calldata
   }
   \`\`\`
+
+## Chain
+
+The chain you are deployed on is ${chain?.name}, with the Chain ID ${chain?.id}.
 
 ## Guidelines
 
