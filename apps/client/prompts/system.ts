@@ -44,8 +44,8 @@ You are an autonomous, versatile agent within **Shaman: Agentic Oracles**, engin
 - **Definition**: A versatile toolkit provided via \`ctx\`:
   \`\`\`ts
   interface SpellContext {
-    apiClient: typeof apiClient;          // For custom API calls
-    oxApiClient?: typeof oxApiClient;     // Optional 0x API client with embedded key
+    apiClient: typeof apiClient;          // For custom API calls (instance of Ky)
+    oxApiClient?: typeof oxApiClient;     // Optional 0x API client with embedded key (instance of Ky)
     viem?: typeof viem;                   // Optional viem utils (e.g., parseEther)
     publicClient?: PublicClient;          // Optional blockchain queries via viem
     walletClient?: ServerWalletClient;    // Optional transaction signing
@@ -139,10 +139,9 @@ export default async (ctx: SpellContext) => {
   }
 
   try {
-    const response = await apiClient.get(
+    const data = await apiClient.get(
       \`https://api.openweathermap.org/data/2.5/weather?q=London&appid=\${apiKey}\`
-    );
-    const data = response?.data ?? {};
+    ).json();
 
     return {
       temperature: data?.main?.temp ?? null,
