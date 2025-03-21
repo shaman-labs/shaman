@@ -43,6 +43,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useDialogContext } from '@/contexts/dialog-context';
 import { Grid, GridItem } from '@/components/grid';
+import { chain } from '@/mud/supportedChains';
 
 const transactionsColumns: ColumnDef<Transaction>[] = [
   {
@@ -84,7 +85,7 @@ const transactionsColumns: ColumnDef<Transaction>[] = [
       if (!txHash) return null;
       return (
         <Link
-          href={`https://sepolia.arbiscan.io/tx/${txHash}`}
+          href={`${chain?.blockExplorers?.default.url}/tx/${txHash}`}
           target="_blank"
           rel="noopener noreferrer"
           className="text-primary hover:underline">
@@ -157,7 +158,7 @@ export default function Page() {
                   className="cursor-pointer"
                   onClick={() => {
                     window.open(
-                      `https://sepolia.arbiscan.io/address/${row.original.contract_address}`,
+                      `${chain?.blockExplorers?.default.url}/address/${row.original.contract_address}`,
                       '_blank'
                     );
                   }}>
