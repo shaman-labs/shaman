@@ -50,7 +50,7 @@ export function NavUser() {
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
-          {user ? (
+          {user && address ? (
             <DropdownMenuTrigger asChild>
               <SidebarMenuButton
                 size="lg"
