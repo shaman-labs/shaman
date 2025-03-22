@@ -42,6 +42,9 @@ catalogs:
     tailwindcss:
       specifier: ^3.4.17
       version: 3.4.17
+    tailwindcss-animate:
+      specifier: ^1.0.7
+      version: 1.0.7
     viem:
       specifier: ^2.23.11
       version: 2.23.14
@@ -119,9 +122,6 @@ importers:
       tailwind-merge:
         specifier: 'catalog:'
         version: 3.0.2
-      tw-animate-css:
-        specifier: ^1.2.4
-        version: 1.2.4
       viem:
         specifier: 'catalog:'
         version: 2.23.14(bufferutil@4.0.9)(typescript@5.8.2)(utf-8-validate@5.0.10)(zod@3.24.2)
@@ -144,6 +144,9 @@ importers:
       tailwindcss:
         specifier: 'catalog:'
         version: 3.4.17
+      tailwindcss-animate:
+        specifier: 'catalog:'
+        version: 1.0.7(tailwindcss@3.4.17)
 
   apps/client:
     dependencies:
@@ -253,10 +256,10 @@ importers:
         specifier: ^1.11.2
         version: 1.11.2
       class-variance-authority:
-        specifier: ^0.7.1
+        specifier: 'catalog:'
         version: 0.7.1
       clsx:
-        specifier: ^2.1.1
+        specifier: 'catalog:'
         version: 2.1.1
       date-fns:
         specifier: ^4.1.0
@@ -295,7 +298,7 @@ importers:
         specifier: 'catalog:'
         version: 3.0.2
       tailwindcss-animate:
-        specifier: ^1.0.7
+        specifier: 'catalog:'
         version: 1.0.7(tailwindcss@3.4.17)
       uuid:
         specifier: ^11.1.0
@@ -6794,9 +6797,6 @@ packages:
     resolution: {integrity: sha512-4H8vUNGNjQ4V2EOoGw005+c+dGuPSnhpPBPHBtsZdGZBk/iJb4kguGlPWaZTZ3q5nMtFOEsY0nRDlh9PJyd6SQ==}
     engines: {node: '>=18.0.0'}
     hasBin: true
-
-  tw-animate-css@1.2.4:
-    resolution: {integrity: sha512-yt+HkJB41NAvOffe4NweJU6fLqAlVx/mBX6XmHRp15kq0JxTtOKaIw8pVSWM1Z+n2nXtyi7cW6C9f0WG/F/QAQ==}
 
   tweetnacl-util@0.15.1:
     resolution: {integrity: sha512-RKJBIj8lySrShN4w6i/BonWp2Z/uxwC3h4y7xsRrpP59ZboCd0GpEVsOnMDYLMmKBpYhb5TgHzZXy7wTfYFBRw==}
@@ -16807,8 +16807,6 @@ snapshots:
       get-tsconfig: 4.10.0
     optionalDependencies:
       fsevents: 2.3.3
-
-  tw-animate-css@1.2.4: {}
 
   tweetnacl-util@0.15.1: {}
 
