@@ -13,7 +13,8 @@ import { ADMIN_PRIVATE_KEY, CHAIN_ID, RPC_URL } from '@/lib/config';
 
 export const availableChains = [arbitrumSepolia, base];
 export const chain =
-  availableChains.find((chain) => chain.id === CHAIN_ID) ?? arbitrumSepolia;
+  availableChains.find((chain) => chain.id === Number(CHAIN_ID)) ??
+  arbitrumSepolia;
 
 export const world = worlds[CHAIN_ID as keyof typeof worlds] as unknown as {
   address?: string;

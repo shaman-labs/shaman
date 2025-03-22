@@ -9,7 +9,7 @@ export default function Dashboard() {
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Shaman Admin</h1>
         <Button asChild>
-          <Link href="/wallet">Add Members</Link>
+          <Link href="/members">Add Members</Link>
         </Button>
       </div>
     </div>

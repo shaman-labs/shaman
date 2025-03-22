@@ -20,7 +20,8 @@
     "sonner": "^2.0.1",
     "tailwind-merge": "catalog:",
     "viem": "catalog:",
-    "wagmi": "catalog:"
+    "wagmi": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:",
