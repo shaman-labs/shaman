@@ -65,6 +65,9 @@ export const useShamanSpells = (shamanId: string) => {
             const spellMetadata = await axios.get<{
               code: string;
               prompt: string;
+              secrets?: string[];
+              previousResults?: string[];
+              results?: string[];
             }>(`https://gateway.shaman.fun/ipfs/${shamanSpell.metadata}`);
 
             return {

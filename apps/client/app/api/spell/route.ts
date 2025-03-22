@@ -31,6 +31,15 @@ export async function POST(req: Request) {
     prompt,
     schema: z.object({
       code: z.string().describe('The code to be executed.'),
+      secrets: z
+        .array(z.string())
+        .describe('The secrets required in the code.'),
+      previousResults: z
+        .array(z.string())
+        .describe('The previousResults required in the code.'),
+      results: z
+        .array(z.string())
+        .describe('The results of the code execution.'),
     }),
   });
 
@@ -38,6 +47,9 @@ export async function POST(req: Request) {
     prompt,
     creatorId: verifiedClaims.userId,
     code: Buffer.from(executable.object.code, 'utf-8').toString('base64'),
+    secrets: executable.object.secrets,
+    previousResults: executable.object.previousResults,
+    results: executable.object.results,
     createdAt: new Date().toISOString(),
   };
 
@@ -50,6 +62,9 @@ export async function POST(req: Request) {
 
   return Response.json({
     code: executable.object.code,
+    secrets: executable.object.secrets,
+    previousResults: executable.object.previousResults,
+    results: executable.object.results,
     ipfs: upload.cid,
     metadata,
   });

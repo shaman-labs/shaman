@@ -8,6 +8,8 @@ import {
   IconLink,
   IconHash,
   IconActivity,
+  IconKey,
+  IconRowInsertBottom,
 } from '@tabler/icons-react';
 import { Highlight, themes } from 'prism-react-renderer';
 import { useParams } from 'next/navigation';
@@ -71,6 +73,44 @@ export default function Page() {
 
                     <RowItem icon={IconFileSmile} label="Version">
                       <p className="text-base font-mono">{spell?.version}</p>
+                    </RowItem>
+
+                    <RowItem icon={IconKey} label="Required Secrets">
+                      <div className="flex flex-wrap gap-2">
+                        {spell?.secrets?.map((secret, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center px-2 py-1 rounded-md bg-slate-800 text-xs font-mono">
+                            {secret}
+                          </span>
+                        ))}
+                      </div>
+                    </RowItem>
+
+                    <RowItem
+                      icon={IconRowInsertBottom}
+                      label="Required from Previous Results">
+                      <div className="flex flex-wrap gap-2">
+                        {spell?.previousResults?.map((result, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center px-2 py-1 rounded-md bg-slate-800 text-xs font-mono">
+                            {result}
+                          </span>
+                        ))}
+                      </div>
+                    </RowItem>
+
+                    <RowItem icon={IconRowInsertBottom} label="Output Results">
+                      <div className="flex flex-wrap gap-2">
+                        {spell?.results?.map((result, index) => (
+                          <span
+                            key={index}
+                            className="inline-flex items-center px-2 py-1 rounded-md bg-slate-800 text-xs font-mono">
+                            {result}
+                          </span>
+                        ))}
+                      </div>
                     </RowItem>
 
                     <RowItem icon={IconUser} label="Creator">
