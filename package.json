@@ -2,9 +2,8 @@
   "name": "shaman",
   "private": true,
   "scripts": {
-    "dev": "mprocs 'pnpm run dev:client' 'pnpm run dev:api'",
+    "dev": "mprocs 'pnpm run dev:client'",
     "dev:client": "pnpm --filter 'client' run dev",
-    "dev:api": "pnpm --filter 'api' run dev",
     "dev:contracts": "pnpm --filter 'contracts' run dev",
     "indexer:sqlite": "npx -y -p @latticexyz/store-indexer@latest sqlite-indexer",
     "build:all": "pnpm recursive run build",
