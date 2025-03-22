@@ -31,15 +31,13 @@ export async function POST(req: Request) {
     prompt,
     schema: z.object({
       code: z.string().describe('The code to be executed.'),
-      secrets: z
-        .array(z.string())
-        .describe('The secrets required in the code.'),
+      secrets: z.array(z.string()).describe('Secrets required in the code.'),
       previousResults: z
         .array(z.string())
-        .describe('The previousResults required in the code.'),
+        .describe('Previous results required in the code.'),
       results: z
         .array(z.string())
-        .describe('The results of the code execution.'),
+        .describe('Keys of the object returned by the code.'),
     }),
   });
 
