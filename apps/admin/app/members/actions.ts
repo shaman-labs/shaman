@@ -16,15 +16,15 @@ export async function setMembers(addresses: Hex[]) {
       rpcUrl: RPC_URL,
       account: adminAccount.address,
     });
-    console.log('Addming members:', addresses);
+    console.log('Adding members:', addresses);
 
     await worldContract.simulate.setMembers([addresses], {
-      account: adminAccount.address,
+      account: adminAccount,
     });
 
     const hash = await worldContract.write.setMembers([addresses], {
       chain,
-      account: adminAccount.address,
+      account: adminAccount,
     });
 
     console.log('Transaction hash:', hash);

@@ -22,6 +22,9 @@ export const world = worlds[CHAIN_ID as keyof typeof worlds] as unknown as {
 };
 export const worldAddress = world?.address;
 
+console.log('Using World Address', worldAddress);
+console.log('Using Chain ID', chain.id);
+
 if (!worldAddress) {
   throw new Error(
     `No world address found for chain ${CHAIN_ID}. Did you run \`mud deploy\`?`
