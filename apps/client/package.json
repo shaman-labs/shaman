@@ -47,28 +47,28 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "lucide-react": "^0.474.0",
-    "next": "15.1.0",
+    "lucide-react": "catalog:",
+    "next": "catalog:",
     "next-themes": "^0.4.6",
     "prism-react-renderer": "^2.4.1",
-    "react": "^19.0.0",
+    "react": "catalog:",
     "react-ascii-text": "^0.0.4",
-    "react-dom": "^19.0.0",
+    "react-dom": "catalog:",
     "react-hook-form": "^7.54.2",
     "recharts": "^2.15.1",
     "shiki": "^2.5.0",
-    "tailwind-merge": "^3.0.2",
+    "tailwind-merge": "catalog:",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
-    "viem": "^2.23.11",
-    "wagmi": "^2.14.13",
-    "zod": "^3.24.2"
+    "viem": "catalog:",
+    "wagmi": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/node": "^20.17.24",
-    "@types/react": "^19.0.10",
-    "@types/react-dom": "^19.0.4",
-    "postcss": "^8.5.3",
-    "tailwindcss": "^3.4.17"
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "postcss": "catalog:",
+    "tailwindcss": "catalog:"
   }
 }
