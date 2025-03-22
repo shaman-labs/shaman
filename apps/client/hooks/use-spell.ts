@@ -29,12 +29,18 @@ export const useSpell = (spellId: string) => {
       const spellMetadata = await axios.get<{
         code: string;
         prompt: string;
+        secrets?: string[];
+        previousResults?: string[];
+        results?: string[];
       }>(`https://gateway.shaman.fun/ipfs/${spellData.metadata}`);
 
       return {
         ...spellData,
         spellId,
         code: atob(spellMetadata.data.code),
+        secrets: spellMetadata.data.secrets,
+        previousResults: spellMetadata.data.previousResults,
+        results: spellMetadata.data.results,
         prompt: spellMetadata.data.prompt,
       };
     },
