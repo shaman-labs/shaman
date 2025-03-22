@@ -9,12 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.6",
+    "@radix-ui/react-slot": "^1.1.2",
     "class-variance-authority": "catalog:",
     "clsx": "catalog:",
     "lucide-react": "catalog:",
     "next": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
+    "sonner": "^2.0.1",
     "tailwind-merge": "catalog:",
     "viem": "catalog:",
     "wagmi": "catalog:"
