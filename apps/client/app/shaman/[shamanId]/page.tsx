@@ -1,5 +1,6 @@
 'use client';
 
+import { ReactFlow, Background, Position, MarkerType } from '@xyflow/react';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import {
   IconClock,
@@ -72,6 +73,8 @@ import { RowItem } from '@/components/row-item';
 import { LabelCreator } from '@/components/label-creator';
 import { LabelIPFS } from '@/components/label-ipfs';
 import { handleError } from '@/lib/errors';
+
+import '@xyflow/react/dist/style.css';
 
 type ChartDataPoint = {
   day: string;
@@ -175,8 +178,7 @@ export default function Page() {
   );
   const { openAddBalance, openWithdrawBalance, openViewLog, openAddSpell } =
     useDialogContext();
-  const { data: shamanSpells, isLoading: shamanSpellsLoading } =
-    useShamanSpells(shamanId as string);
+  const { data: shamanSpells } = useShamanSpells(shamanId as string);
   const selectedSpell = shamanSpells?.find(
     (spell) => spell.spellId === spellId
   );
@@ -488,7 +490,7 @@ export default function Page() {
           <Tabs defaultValue="shaman" className="w-full">
             <TabsList className="grid mb-5 w-full grid-cols-3">
               <TabsTrigger value="shaman">Shaman</TabsTrigger>
-              <TabsTrigger value="spells">Spells</TabsTrigger>
+              <TabsTrigger value="workflow">Workflow</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
             </TabsList>
             <TabsContent value="shaman">
@@ -648,59 +650,108 @@ export default function Page() {
                 </GridItem>
               </Grid>
             </TabsContent>
-            <TabsContent value="spells">
+            <TabsContent value="workflow">
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between">
-                  <CardTitle>Shaman Spells</CardTitle>
+                  <CardTitle>Workflow</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex flex-col md:grid md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {shamanSpells?.length > 0 || isShamanCreator ? (
-                      <div className="w-full md:col-span-1 border rounded-md overflow-hidden mb-4 md:mb-0">
-                        <div className="divide-y">
-                          {shamanSpellsLoading
-                            ? Array(3)
-                                .fill(0)
-                                .map((_, i) => (
-                                  <Skeleton key={i} className="h-12 w-full" />
-                                ))
-                            : shamanSpells?.map((spell) => (
-                                <div
-                                  key={spell.spellId}
-                                  className={`p-4 sm:p-5 cursor-pointer flex items-center justify-between ${
-                                    spellId === spell.spellId
-                                      ? 'bg-accent'
-                                      : 'hover:bg-accent/50'
-                                  }`}
-                                  onClick={() => setSpellId(spell.spellId)}>
-                                  <span className="truncate">{spell.name}</span>
+                  <div className="flex flex-col gap-4">
+                    <div className="w-full h-48">
+                      <ReactFlow
+                        colorMode="dark"
+                        fitView
+                        proOptions={{
+                          hideAttribution: true,
+                        }}
+                        onNodeClick={(event, node) => {
+                          if (node.id !== 'add-new-spell') {
+                            setSpellId(node.id);
+                          } else {
+                            openAddSpell(
+                              true,
+                              undefined,
+                              handleRefetch,
+                              shamanId as string
+                            );
+                          }
+                        }}
+                        nodes={[
+                          ...(shamanSpells?.map((spell, index) => ({
+                            id: spell.spellId,
+                            data: {
+                              label: (
+                                <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+                                  {spell.name}
                                 </div>
-                              ))}
-                          <div
-                            className={`p-4 sm:p-5 cursor-pointer hover:bg-accent/50 flex items-center justify-between`}
-                            onClick={() =>
-                              openAddSpell(
-                                true,
-                                undefined,
-                                handleRefetch,
-                                shamanId as string
-                              )
-                            }>
-                            <span className="flex items-center gap-2">
-                              <IconPlus className="h-4 w-4" /> Add Spell
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="w-full md:col-span-2 lg:col-span-3 space-y-4">
-                        <p className="text-muted-foreground">
-                          No spells found.
-                        </p>
-                      </div>
-                    )}
-
-                    <div className="w-full md:col-span-2 lg:col-span-3 space-y-4">
+                              ),
+                            },
+                            selected: spell.spellId === spellId,
+                            position: { x: index * 200, y: 0 },
+                            style: {
+                              borderRadius: '8px',
+                            },
+                            sourcePosition: Position.Right,
+                            targetPosition: Position.Left,
+                          })) || []),
+                          ...(isShamanCreator
+                            ? [
+                                {
+                                  id: 'add-new-spell',
+                                  data: {
+                                    label: (
+                                      <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+                                        <IconPlus className="h-4 w-4" /> Add
+                                        Spell
+                                      </div>
+                                    ),
+                                  },
+                                  position: {
+                                    x: (shamanSpells?.length || 0) * 200,
+                                    y: 0,
+                                  },
+                                  style: {
+                                    borderRadius: '8px',
+                                  },
+                                  selectable: false,
+                                  targetPosition: Position.Left,
+                                  sourcePosition: Position.Right,
+                                },
+                              ]
+                            : []),
+                        ]}
+                        edges={[
+                          ...(shamanSpells
+                            ?.slice(0, -1)
+                            .map((spell, index) => ({
+                              id: `edge-${spell.spellId}-${shamanSpells[index + 1].spellId}`,
+                              source: spell.spellId,
+                              target: shamanSpells[index + 1].spellId,
+                              type: 'default',
+                              animated: false,
+                              markerEnd: {
+                                type: MarkerType.Arrow,
+                              },
+                            })) || []),
+                          ...(shamanSpells?.length
+                            ? [
+                                {
+                                  id: `edge-last-to-add`,
+                                  source:
+                                    shamanSpells[shamanSpells.length - 1]
+                                      .spellId,
+                                  target: 'add-new-spell',
+                                  type: 'default',
+                                  animated: true,
+                                },
+                              ]
+                            : []),
+                        ]}
+                        nodesDraggable={false}>
+                        <Background />
+                      </ReactFlow>
+                    </div>
+                    <div className="w-full space-y-4">
                       {selectedSpell && (
                         <>
                           <Card>
