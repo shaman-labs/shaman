@@ -1,6 +1,12 @@
 'use client';
 
-import { ReactFlow, Background, Position, MarkerType } from '@xyflow/react';
+import {
+  ReactFlow,
+  Background,
+  Position,
+  MarkerType,
+  useReactFlow,
+} from '@xyflow/react';
 import {
   IconPlus,
   IconTrash,
@@ -60,12 +66,15 @@ export function WorkflowTab() {
     (log) => log.logType === ShamanLogType.COMPLETION
   );
   const isShamanCreator = embeddedWallet?.address === shaman?.creator;
+  const reactFlow = useReactFlow();
 
   useEffect(() => {
     if (shamanSpells?.length) {
-      setSpellId(shamanSpells[0].spellId);
+      setTimeout(() => {
+        reactFlow.fitView();
+      }, 10);
     }
-  }, [shamanSpells]);
+  }, [shamanSpells, reactFlow]);
 
   const handleRefetch = useCallback(() => {
     refetch();
@@ -215,6 +224,7 @@ export function WorkflowTab() {
               }}
               onNodeClick={(event, node) => {
                 if (node.id !== 'add-new-spell') {
+                  reactFlow.fitView();
                   setSpellId(node.id);
                 } else {
                   openAddSpell(
@@ -264,6 +274,7 @@ export function WorkflowTab() {
                         selectable: false,
                         targetPosition: Position.Left,
                         sourcePosition: Position.Right,
+                        type: 'output',
                       },
                     ]
                   : []),

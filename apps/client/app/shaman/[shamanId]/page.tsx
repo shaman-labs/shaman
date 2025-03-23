@@ -2,6 +2,7 @@
 
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { ReactFlowProvider } from '@xyflow/react';
 import { ShamanTab } from './components/tab-shaman';
 import { WorkflowTab } from './components/tab-workflow';
 import { LogsTab } from './components/tab-logs';
@@ -68,7 +69,9 @@ export default function Page() {
               <ShamanTab />
             </TabsContent>
             <TabsContent value="workflow">
-              <WorkflowTab />
+              <ReactFlowProvider>
+                <WorkflowTab />
+              </ReactFlowProvider>
             </TabsContent>
             <TabsContent value="logs" className="mt-2">
               <LogsTab />
