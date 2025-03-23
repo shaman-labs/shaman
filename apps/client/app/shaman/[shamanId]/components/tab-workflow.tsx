@@ -41,9 +41,16 @@ import { useShamanSpells } from '@/hooks/use-shaman-spells';
 import { useMUD } from '@/contexts/mud-context';
 import { toast } from '@/hooks/use-toast';
 import { LabelCreator } from '@/components/label-creator';
+import { useShamanSources } from '@/hooks/use-shaman-sources';
 import { handleError } from '@/lib/errors';
 
 import '@xyflow/react/dist/style.css';
+
+const sourceLabels: Record<string, string> = {
+  'interval-hourly': 'Interval (hr)',
+  'interval-daily': 'Interval (day)',
+  'interval-quarter-hourly': 'Interval (15 min)',
+};
 
 export function WorkflowTab() {
   const mud = useMUD();
@@ -56,6 +63,7 @@ export function WorkflowTab() {
   const { refetch: refetchZugBalance } = useZugBalance(
     embeddedWallet?.address as `0x${string}`
   );
+  const { data: shamanSources } = useShamanSources(shamanId as string);
   const { openViewLog, openAddSpell } = useDialogContext();
   const { data: shamanSpells } = useShamanSpells(shamanId as string);
   const selectedSpell = shamanSpells?.find(
@@ -69,12 +77,12 @@ export function WorkflowTab() {
   const reactFlow = useReactFlow();
 
   useEffect(() => {
-    if (shamanSpells?.length) {
+    if (shamanSpells?.length || shamanSources?.length) {
       setTimeout(() => {
         reactFlow.fitView();
-      }, 10);
+      }, 75);
     }
-  }, [shamanSpells, reactFlow]);
+  }, [shamanSpells, shamanSources, reactFlow]);
 
   const handleRefetch = useCallback(() => {
     refetch();
@@ -236,6 +244,23 @@ export function WorkflowTab() {
                 }
               }}
               nodes={[
+                ...(shamanSources?.map((source, index) => ({
+                  id: source.sourceId,
+                  data: {
+                    label: (
+                      <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+                        {sourceLabels[source.name]}
+                      </div>
+                    ),
+                  },
+                  position: { x: index * 200 - 200, y: 0 },
+                  style: {
+                    borderRadius: '8px',
+                  },
+                  type: 'input',
+                  sourcePosition: Position.Right,
+                  targetPosition: Position.Left,
+                })) || []),
                 ...(shamanSpells?.map((spell, index) => ({
                   id: spell.spellId,
                   data: {
@@ -280,6 +305,34 @@ export function WorkflowTab() {
                   : []),
               ]}
               edges={[
+                ...(shamanSources?.slice(0, -1).map((source, index) => ({
+                  id: `edge-${source.sourceId}-${shamanSources[index + 1].sourceId}`,
+                  source: source.sourceId,
+                  target: shamanSources[index + 1].sourceId,
+                  type: 'default',
+                  animated: false,
+                  markerEnd: {
+                    type: MarkerType.Arrow,
+                  },
+                })) || []),
+                ...(shamanSources?.length
+                  ? [
+                      {
+                        id: `edge-source-to-first-spell`,
+                        source:
+                          shamanSources[shamanSources.length - 1].sourceId,
+                        target:
+                          shamanSpells?.length > 0
+                            ? shamanSpells[0].spellId
+                            : 'add-new-spell',
+                        type: 'default',
+                        animated: true,
+                        markerEnd: {
+                          type: MarkerType.Arrow,
+                        },
+                      },
+                    ]
+                  : []),
                 ...(shamanSpells?.slice(0, -1).map((spell, index) => ({
                   id: `edge-${spell.spellId}-${shamanSpells[index + 1].spellId}`,
                   source: spell.spellId,
@@ -298,6 +351,9 @@ export function WorkflowTab() {
                         target: 'add-new-spell',
                         type: 'default',
                         animated: true,
+                        markerEnd: {
+                          type: MarkerType.Arrow,
+                        },
                       },
                     ]
                   : []),
