@@ -29,7 +29,7 @@ export function DialogBuyZug(props: DialogProps) {
   const handleClaimZug = async () => {
     setLoading(true);
     try {
-      await mud?.calls.embedded?.systemCalls?.claimZug(10n);
+      await mud?.calls.embedded?.systemCalls?.claimZug(500n);
 
       toast({
         title: 'Success',
