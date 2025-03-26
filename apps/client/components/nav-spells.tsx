@@ -5,7 +5,6 @@ import {
   IconEdit,
   IconPlus,
   IconActivity,
-  IconArrowBarRight,
 } from '@tabler/icons-react';
 import Link from 'next/link';
 import { usePrivy } from '@privy-io/react-auth';
@@ -47,7 +46,6 @@ export function NavSpells() {
           href="/spells"
           className="w-full text-primary pt-1 pb-1 pr-2 pl-2 rounded-md flex justify-between items-center hover:bg-primary hover:text-background">
           <span>Spells</span>
-          <IconArrowBarRight width={18} className="stroke-sidebar" />
         </Link>
       </SidebarGroupLabel>
       <SidebarMenu>
