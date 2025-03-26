@@ -50,7 +50,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">Shaman</span>
+                  <span className="truncate text-primary font-semibold">
+                    Shaman
+                  </span>
                   <span className="truncate text-xs">Agentic Oracles</span>
                 </div>
               </Link>
@@ -61,7 +63,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavShamans />
         <NavSpells />
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavSecondary
+          items={data.navSecondary}
+          className="mt-auto text-primary"
+        />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
