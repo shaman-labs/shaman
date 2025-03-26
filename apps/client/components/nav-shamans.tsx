@@ -8,6 +8,7 @@ import {
   IconBolt,
   IconPlus,
   IconDots,
+  IconArrowBarRight,
 } from '@tabler/icons-react';
 
 import Link from 'next/link';
@@ -47,9 +48,12 @@ export function NavShamans() {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel>
-        <Link href="/" className="text-muted-foreground">
-          Shamans
+      <SidebarGroupLabel className="p-0">
+        <Link
+          href="/"
+          className="w-full text-primary pt-1 pb-1 pr-2 pl-2 rounded-md flex justify-between items-center hover:bg-primary hover:text-background">
+          <span>Shamans</span>
+          <IconArrowBarRight width={18} className="stroke-sidebar" />
         </Link>
       </SidebarGroupLabel>
       <SidebarMenu>
