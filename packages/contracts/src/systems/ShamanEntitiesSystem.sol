@@ -2,29 +2,10 @@
 pragma solidity >=0.8.24;
 import { BaseSystem } from "./BaseSystem.sol";
 import { Shamans, Sources, ShamanSpell, ShamanSpellEdges, SourceShaman, SourceShamanLookup } from "../codegen/index.sol";
-import { ShamanEntitiesLib, SpellEdge } from "../lib/ShamanEntitiesLib.sol";
+import { SpellEdge } from "../lib/ShamanEntitiesLib.sol";
 import { JobState } from "../codegen/common.sol";
 
 contract ShamanEntitiesSystem is BaseSystem {
-  function updateShamanWorkflow(
-    bytes32 shamanId,
-    bytes32[] memory spellIds,
-    bytes32[] memory sourceIds,
-    SpellEdge[] memory spellEdges
-  )
-    public
-    onlyShamanCreator(shamanId)
-    onlyActiveShaman(shamanId)
-    onlyIdleShaman(shamanId)
-  {
-    ShamanEntitiesLib.updateShamanWorkflow(
-      shamanId,
-      spellIds,
-      sourceIds,
-      spellEdges
-    );
-  }
-
   function getShamanSpellIds(
     bytes32 shamanId
   ) public view returns (bytes32[] memory) {

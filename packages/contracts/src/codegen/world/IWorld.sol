@@ -12,6 +12,7 @@ import { IShamanEntitiesSystem } from "./IShamanEntitiesSystem.sol";
 import { IShamanInfoSystem } from "./IShamanInfoSystem.sol";
 import { IShamanJobsSystem } from "./IShamanJobsSystem.sol";
 import { IShamanOperationsSystem } from "./IShamanOperationsSystem.sol";
+import { IShamanWorkflowsSystem } from "./IShamanWorkflowsSystem.sol";
 import { ISourceSystem } from "./ISourceSystem.sol";
 import { ISpellJobsSystem } from "./ISpellJobsSystem.sol";
 import { ISpellSystem } from "./ISpellSystem.sol";
@@ -33,6 +34,7 @@ interface IWorld is
   IShamanInfoSystem,
   IShamanJobsSystem,
   IShamanOperationsSystem,
+  IShamanWorkflowsSystem,
   ISourceSystem,
   ISpellJobsSystem,
   ISpellSystem
