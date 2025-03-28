@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
 import { Shamans, Spells, ShamanSpell, Roles } from "../src/codegen/index.sol";
 import { JobState, RoleType, LogType } from "../src/codegen/common.sol";
+import { SpellEdge } from "../src/lib/ShamanEntitiesLib.sol";
 
 contract SpellJobsSystemTest is BaseTest {
   string constant INITIAL_METADATA = "QmShamanTest1";
@@ -23,13 +24,7 @@ contract SpellJobsSystemTest is BaseTest {
 
     vm.recordLogs();
     vm.prank(creator);
-    world.createShaman(
-      balance,
-      "TestShaman",
-      new bytes32[](0),
-      new bytes32[](0),
-      INITIAL_METADATA
-    );
+    world.createShaman("TestShaman", INITIAL_METADATA);
     vm.stopPrank();
 
     // Get the shaman ID from the logs
@@ -90,13 +85,7 @@ contract SpellJobsSystemTest is BaseTest {
 
     vm.recordLogs();
     vm.prank(creator);
-    world.createShaman(
-      balance,
-      "TestShaman",
-      spellIds,
-      new bytes32[](0),
-      INITIAL_METADATA
-    );
+    world.createShaman("TestShaman", INITIAL_METADATA);
     vm.stopPrank();
 
     // Get the shaman ID from the logs
@@ -109,6 +98,13 @@ contract SpellJobsSystemTest is BaseTest {
     }
 
     require(shamanId != bytes32(0), "Shaman creation failed");
+
+    // Add the spell to the shaman
+    bytes32[] memory sourceIds = new bytes32[](0);
+    SpellEdge[] memory spellEdges = new SpellEdge[](0);
+    vm.prank(creator);
+    world.updateShamanWorkflow(shamanId, spellIds, sourceIds, spellEdges);
+    vm.stopPrank();
 
     return (shamanId, spellId);
   }

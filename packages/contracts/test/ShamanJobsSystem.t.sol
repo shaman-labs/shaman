@@ -17,47 +17,12 @@ contract ShamanJobsSystemTest is BaseTest {
     address creator,
     uint256 balance
   ) private returns (bytes32 shamanId) {
-    _prepareTokens(creator, balance);
+    shamanId = _createShaman(creator, "TestShaman", INITIAL_METADATA);
 
-    _setMember(creator);
-    vm.recordLogs();
+    // deposit tokens
     vm.prank(creator);
-    world.createShaman(
-      balance,
-      "TestShaman",
-      new bytes32[](0),
-      new bytes32[](0),
-      INITIAL_METADATA
-    );
+    world.depositShamanBalance(shamanId, balance);
     vm.stopPrank();
-
-    // Get the shaman ID from the logs
-    Vm.Log[] memory entries = vm.getRecordedLogs();
-    for (uint256 i = 0; i < entries.length; i++) {
-      if (entries[i].topics[0] == keccak256("ShamanCreated(bytes32,address)")) {
-        shamanId = bytes32(entries[i].topics[1]);
-        break;
-      }
-    }
-
-    require(shamanId != bytes32(0), "Shaman creation failed");
-
-    // Verify the shaman was created correctly
-    assertEq(
-      Shamans.getCreator(shamanId),
-      creator,
-      "Creator not set correctly"
-    );
-    assertEq(
-      Shamans.getBalance(shamanId),
-      balance,
-      "Balance not set correctly"
-    );
-    assertEq(
-      Shamans.getMetadata(shamanId),
-      INITIAL_METADATA,
-      "Metadata not set correctly"
-    );
 
     return shamanId;
   }

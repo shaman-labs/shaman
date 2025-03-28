@@ -86,6 +86,7 @@ contract BaseTest is MudTest, GasReporter {
 
   function _createShaman(
     address creator,
+    string memory name,
     string memory metadata
   ) internal virtual returns (bytes32 shamanId) {
     vm.recordLogs();
@@ -93,13 +94,7 @@ contract BaseTest is MudTest, GasReporter {
     _setMember(creator);
 
     vm.prank(creator);
-    world.createShaman(
-      0,
-      "TestShaman",
-      new bytes32[](0),
-      new bytes32[](0),
-      metadata
-    );
+    world.createShaman(name, metadata);
     vm.stopPrank();
 
     // Get logs and find the ShamanCreated event
@@ -168,33 +163,5 @@ contract BaseTest is MudTest, GasReporter {
     }
 
     require(sourceId != bytes32(0), "Source creation failed");
-  }
-
-  function _createTestShaman(
-    string memory metadata
-  ) internal virtual returns (bytes32) {
-    vm.recordLogs();
-
-    _setMember(creatorAlice);
-
-    vm.prank(creatorAlice);
-    world.createShaman(
-      0,
-      "TestShaman",
-      new bytes32[](0),
-      new bytes32[](0),
-      metadata
-    );
-    vm.stopPrank();
-
-    // Get the shaman ID from the logs
-    Vm.Log[] memory entries = vm.getRecordedLogs();
-    for (uint256 i = 0; i < entries.length; i++) {
-      if (entries[i].topics[0] == keccak256("ShamanCreated(bytes32,address)")) {
-        return bytes32(entries[i].topics[1]);
-      }
-    }
-
-    revert("Shaman creation failed");
   }
 }
