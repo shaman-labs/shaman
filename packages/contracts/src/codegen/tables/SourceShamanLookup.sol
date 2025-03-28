@@ -16,9 +16,9 @@ import { Schema } from "@latticexyz/store/src/Schema.sol";
 import { EncodedLengths, EncodedLengthsLib } from "@latticexyz/store/src/EncodedLengths.sol";
 import { ResourceId } from "@latticexyz/store/src/ResourceId.sol";
 
-library ShamanSourceIndex {
-  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "ShamanSourceInde", typeId: RESOURCE_TABLE });`
-  ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e536f75726365496e6465);
+library SourceShamanLookup {
+  // Hex below is the result of `WorldResourceIdLib.encode({ namespace: "", name: "SourceShamanLook", typeId: RESOURCE_TABLE });`
+  ResourceId constant _tableId = ResourceId.wrap(0x74620000000000000000000000000000536f757263655368616d616e4c6f6f6b);
 
   FieldLayout constant _fieldLayout =
     FieldLayout.wrap(0x0020010020000000000000000000000000000000000000000000000000000000);
@@ -34,7 +34,7 @@ library ShamanSourceIndex {
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
     keyNames = new string[](2);
-    keyNames[0] = "shamanId";
+    keyNames[0] = "sourceId";
     keyNames[1] = "index";
   }
 
@@ -44,7 +44,7 @@ library ShamanSourceIndex {
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
     fieldNames = new string[](1);
-    fieldNames[0] = "sourceId";
+    fieldNames[0] = "shamanId";
   }
 
   /**
@@ -62,11 +62,11 @@ library ShamanSourceIndex {
   }
 
   /**
-   * @notice Get sourceId.
+   * @notice Get shamanId.
    */
-  function getSourceId(bytes32 shamanId, uint256 index) internal view returns (bytes32 sourceId) {
+  function getShamanId(bytes32 sourceId, uint256 index) internal view returns (bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
+    _keyTuple[0] = sourceId;
     _keyTuple[1] = bytes32(uint256(index));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
@@ -74,11 +74,11 @@ library ShamanSourceIndex {
   }
 
   /**
-   * @notice Get sourceId.
+   * @notice Get shamanId.
    */
-  function _getSourceId(bytes32 shamanId, uint256 index) internal view returns (bytes32 sourceId) {
+  function _getShamanId(bytes32 sourceId, uint256 index) internal view returns (bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
+    _keyTuple[0] = sourceId;
     _keyTuple[1] = bytes32(uint256(index));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
@@ -86,11 +86,11 @@ library ShamanSourceIndex {
   }
 
   /**
-   * @notice Get sourceId.
+   * @notice Get shamanId.
    */
-  function get(bytes32 shamanId, uint256 index) internal view returns (bytes32 sourceId) {
+  function get(bytes32 sourceId, uint256 index) internal view returns (bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
+    _keyTuple[0] = sourceId;
     _keyTuple[1] = bytes32(uint256(index));
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
@@ -98,11 +98,11 @@ library ShamanSourceIndex {
   }
 
   /**
-   * @notice Get sourceId.
+   * @notice Get shamanId.
    */
-  function _get(bytes32 shamanId, uint256 index) internal view returns (bytes32 sourceId) {
+  function _get(bytes32 sourceId, uint256 index) internal view returns (bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
+    _keyTuple[0] = sourceId;
     _keyTuple[1] = bytes32(uint256(index));
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
@@ -110,55 +110,55 @@ library ShamanSourceIndex {
   }
 
   /**
-   * @notice Set sourceId.
+   * @notice Set shamanId.
    */
-  function setSourceId(bytes32 shamanId, uint256 index, bytes32 sourceId) internal {
+  function setShamanId(bytes32 sourceId, uint256 index, bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
+    _keyTuple[0] = sourceId;
     _keyTuple[1] = bytes32(uint256(index));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((sourceId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((shamanId)), _fieldLayout);
   }
 
   /**
-   * @notice Set sourceId.
+   * @notice Set shamanId.
    */
-  function _setSourceId(bytes32 shamanId, uint256 index, bytes32 sourceId) internal {
+  function _setShamanId(bytes32 sourceId, uint256 index, bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
+    _keyTuple[0] = sourceId;
     _keyTuple[1] = bytes32(uint256(index));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((sourceId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((shamanId)), _fieldLayout);
   }
 
   /**
-   * @notice Set sourceId.
+   * @notice Set shamanId.
    */
-  function set(bytes32 shamanId, uint256 index, bytes32 sourceId) internal {
+  function set(bytes32 sourceId, uint256 index, bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
+    _keyTuple[0] = sourceId;
     _keyTuple[1] = bytes32(uint256(index));
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((sourceId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((shamanId)), _fieldLayout);
   }
 
   /**
-   * @notice Set sourceId.
+   * @notice Set shamanId.
    */
-  function _set(bytes32 shamanId, uint256 index, bytes32 sourceId) internal {
+  function _set(bytes32 sourceId, uint256 index, bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
+    _keyTuple[0] = sourceId;
     _keyTuple[1] = bytes32(uint256(index));
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((sourceId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((shamanId)), _fieldLayout);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(bytes32 shamanId, uint256 index) internal {
+  function deleteRecord(bytes32 sourceId, uint256 index) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
+    _keyTuple[0] = sourceId;
     _keyTuple[1] = bytes32(uint256(index));
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
@@ -167,9 +167,9 @@ library ShamanSourceIndex {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(bytes32 shamanId, uint256 index) internal {
+  function _deleteRecord(bytes32 sourceId, uint256 index) internal {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
+    _keyTuple[0] = sourceId;
     _keyTuple[1] = bytes32(uint256(index));
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
@@ -179,8 +179,8 @@ library ShamanSourceIndex {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(bytes32 sourceId) internal pure returns (bytes memory) {
-    return abi.encodePacked(sourceId);
+  function encodeStatic(bytes32 shamanId) internal pure returns (bytes memory) {
+    return abi.encodePacked(shamanId);
   }
 
   /**
@@ -189,8 +189,8 @@ library ShamanSourceIndex {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(bytes32 sourceId) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(sourceId);
+  function encode(bytes32 shamanId) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
+    bytes memory _staticData = encodeStatic(shamanId);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;
@@ -201,9 +201,9 @@ library ShamanSourceIndex {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(bytes32 shamanId, uint256 index) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(bytes32 sourceId, uint256 index) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](2);
-    _keyTuple[0] = shamanId;
+    _keyTuple[0] = sourceId;
     _keyTuple[1] = bytes32(uint256(index));
 
     return _keyTuple;

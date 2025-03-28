@@ -112,7 +112,6 @@ contract ShamanOperationsSystem is BaseSystem {
     );
 
     ShamanSpell.setVersion(shamanId, spellId, latestVersion);
-
     ShamanSpell.setMetadata(shamanId, spellId, Spells.getMetadata(spellId));
 
     ShamanLogsLib.logOperation(shamanId, 0, 0, true, LogType.Modification, "");

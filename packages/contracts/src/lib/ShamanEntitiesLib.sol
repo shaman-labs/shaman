@@ -1,131 +1,109 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 
-import { Sources, Shamans, Spells, SpellVersions, ShamanSpell, ShamanSource, ShamanSourceIndex, ShamanSpellIndex, SourceShamanIndex, SpellShamanIndex } from "../codegen/index.sol";
-import { LogType, JobState } from "../codegen/common.sol";
+import { Sources, Shamans, Spells, SpellVersions, ShamanSpell, ShamanSpellEdges, SourceShaman, SourceShamanLookup } from "../codegen/index.sol";
+
+struct SpellEdge {
+  bytes32 fromSpellId;
+  bytes32 toSpellId;
+  uint256 createdAt;
+  string metadata;
+}
 
 library ShamanEntitiesLib {
-  function addSpell(bytes32 shamanId, bytes32 spellId) internal {
-    // Check if the spell already exists in the shaman
-    require(
-      ShamanSpell.getCreatedAt(shamanId, spellId) == 0,
-      "Spell already exists in shaman"
-    );
+  function updateShamanWorkflow(
+    bytes32 shamanId,
+    bytes32[] memory spellIds,
+    bytes32[] memory sourceIds,
+    SpellEdge[] memory spellEdges
+  ) internal {
+    uint256 newSpellEdgeCount = spellEdges.length;
+    uint256 prevSpellEdgeCount = Shamans.lengthSpellEdgeIds(shamanId);
 
-    // Store the spell with latest version and metadata
-    ShamanSpell.set(
+    uint256 newSpellCount = spellIds.length;
+    uint256 prevSpellCount = Shamans.lengthSpellIds(shamanId);
+
+    uint256 newSourceCount = sourceIds.length;
+    uint256 prevSourceCount = Shamans.lengthSourceIds(shamanId);
+    // index starts at 0
+    uint256 lastSourceIndex = Sources.getShamanCount(shamanId);
+
+    if (lastSourceIndex > 0) {
+      lastSourceIndex--;
+    }
+
+    bytes32[] memory newSpellEdgeIds = new bytes32[](newSpellEdgeCount);
+
+    // remove previous spell edges
+    for (uint256 i = 0; i < prevSpellEdgeCount; i++) {
+      ShamanSpellEdges.deleteRecord(Shamans.getItemSpellEdgeIds(shamanId, i));
+    }
+
+    // add new spell edges
+    for (uint256 i = 0; i < newSpellEdgeCount; i++) {
+      SpellEdge memory spellEdge = spellEdges[i];
+      bytes32 edgeId = keccak256(
+        abi.encodePacked(
+          shamanId,
+          spellEdge.fromSpellId,
+          spellEdge.toSpellId,
+          i
+        )
+      );
+      newSpellEdgeIds[i] = edgeId;
+      ShamanSpellEdges.set(
+        edgeId,
+        shamanId,
+        spellEdge.fromSpellId,
+        spellEdge.toSpellId,
+        spellEdge.createdAt,
+        spellEdge.metadata
+      );
+    }
+
+    // remove previous source shaman lookups
+    for (uint256 i = 0; i < prevSourceCount; i++) {
+      bytes32 sourceId = Shamans.getItemSourceIds(shamanId, i);
+      // swap with last shaman
+      bytes32 lastShamanId = SourceShamanLookup.getShamanId(
+        sourceId,
+        lastSourceIndex
+      );
+      uint256 prevIndex = SourceShaman.getIndex(sourceId, shamanId);
+      SourceShamanLookup.set(sourceId, prevIndex, lastShamanId);
+      SourceShaman.setIndex(sourceId, lastShamanId, prevIndex);
+
+      // delete record
+      SourceShaman.deleteRecord(sourceId, shamanId);
+      // delete last shaman lookup
+      SourceShamanLookup.deleteRecord(sourceId, lastSourceIndex);
+      // decrement last source index
+      lastSourceIndex--;
+    }
+
+    // add new source shaman lookups
+    for (uint256 i = 0; i < newSourceCount; i++) {
+      bytes32 sourceId = sourceIds[i];
+      SourceShamanLookup.set(sourceId, lastSourceIndex, shamanId);
+      SourceShaman.set(sourceId, shamanId, lastSourceIndex, block.timestamp);
+      lastSourceIndex++;
+    }
+
+    // modify spell count
+    Spells.setShamanCount(
       shamanId,
-      spellId,
-      block.timestamp,
-      Spells.getVersion(spellId),
-      JobState.Idle,
-      Spells.getMetadata(spellId)
+      Spells.getShamanCount(shamanId) + newSpellCount - prevSpellCount
     );
 
-    uint256 shamanSpellCount = Shamans.getSpellCount(shamanId);
-    ShamanSpellIndex.set(shamanId, shamanSpellCount, spellId);
-    Shamans.setSpellCount(shamanId, shamanSpellCount + 1);
-
-    uint256 spellShamanCount = Spells.getShamanCount(spellId);
-    SpellShamanIndex.set(spellId, spellShamanCount, shamanId);
-    Spells.setShamanCount(spellId, spellShamanCount + 1);
-  }
-
-  function removeSpell(bytes32 shamanId, bytes32 spellId) internal {
-    // Check if the spell exists in the shaman
-    require(
-      ShamanSpell.getCreatedAt(shamanId, spellId) > 0,
-      "Spell does not exist in shaman"
+    // modify source count
+    Sources.setShamanCount(
+      shamanId,
+      Sources.getShamanCount(shamanId) + newSourceCount - prevSourceCount
     );
 
-    ShamanSpell.deleteRecord(shamanId, spellId);
-
-    uint256 shamanSpellCount = Shamans.getSpellCount(shamanId);
-    for (uint256 i = 0; i < shamanSpellCount; i++) {
-      if (ShamanSpellIndex.getSpellId(shamanId, i) == spellId) {
-        if (i != shamanSpellCount - 1) {
-          bytes32 lastSpellId = ShamanSpellIndex.getSpellId(
-            shamanId,
-            shamanSpellCount - 1
-          );
-          ShamanSpellIndex.set(shamanId, i, lastSpellId);
-        }
-        Shamans.setSpellCount(shamanId, shamanSpellCount - 1);
-        break;
-      }
-    }
-
-    uint256 spellShamanCount = Spells.getShamanCount(spellId);
-    for (uint256 i = 0; i < spellShamanCount; i++) {
-      if (SpellShamanIndex.getShamanId(spellId, i) == shamanId) {
-        if (i != spellShamanCount - 1) {
-          bytes32 lastShamanId = SpellShamanIndex.getShamanId(
-            spellId,
-            spellShamanCount - 1
-          );
-          SpellShamanIndex.set(spellId, i, lastShamanId);
-        }
-        Spells.setShamanCount(spellId, spellShamanCount - 1);
-        break;
-      }
-    }
-  }
-
-  function addSource(bytes32 shamanId, bytes32 sourceId) internal {
-    // Check if the source already exists in the shaman
-    require(
-      ShamanSource.getCreatedAt(shamanId, sourceId) == 0,
-      "Source already exists in shaman"
-    );
-
-    ShamanSource.set(shamanId, sourceId, block.timestamp);
-
-    uint256 shamanSourceCount = Shamans.getSourceCount(shamanId);
-    ShamanSourceIndex.set(shamanId, shamanSourceCount, sourceId);
-    Shamans.setSourceCount(shamanId, shamanSourceCount + 1);
-
-    uint256 sourceShamanCount = Sources.getShamanCount(sourceId);
-    SourceShamanIndex.set(sourceId, sourceShamanCount, shamanId);
-    Sources.setShamanCount(sourceId, sourceShamanCount + 1);
-  }
-
-  function removeSource(bytes32 shamanId, bytes32 sourceId) internal {
-    // Check if the source exists in the shaman
-    require(
-      ShamanSource.getCreatedAt(shamanId, sourceId) > 0,
-      "Source does not exist in shaman"
-    );
-
-    ShamanSource.deleteRecord(shamanId, sourceId);
-
-    uint256 shamanSourceCount = Shamans.getSourceCount(shamanId);
-    for (uint256 i = 0; i < shamanSourceCount; i++) {
-      if (ShamanSourceIndex.getSourceId(shamanId, i) == sourceId) {
-        if (i != shamanSourceCount - 1) {
-          bytes32 lastSourceId = ShamanSourceIndex.getSourceId(
-            shamanId,
-            shamanSourceCount - 1
-          );
-          ShamanSourceIndex.set(shamanId, i, lastSourceId);
-        }
-        Shamans.setSourceCount(shamanId, shamanSourceCount - 1);
-        break;
-      }
-    }
-
-    uint256 sourceShamanCount = Sources.getShamanCount(sourceId);
-    for (uint256 i = 0; i < sourceShamanCount; i++) {
-      if (SourceShamanIndex.getShamanId(sourceId, i) == shamanId) {
-        if (i != sourceShamanCount - 1) {
-          bytes32 lastShamanId = SourceShamanIndex.getShamanId(
-            sourceId,
-            sourceShamanCount - 1
-          );
-          SourceShamanIndex.set(sourceId, i, lastShamanId);
-        }
-        Sources.setShamanCount(sourceId, sourceShamanCount - 1);
-        break;
-      }
-    }
+    // finally, add new spells, souces and spell edges
+    Shamans.setSpellIds(shamanId, spellIds);
+    Shamans.setSourceIds(shamanId, sourceIds);
+    Shamans.setSpellEdgeIds(shamanId, newSpellEdgeIds);
   }
 }

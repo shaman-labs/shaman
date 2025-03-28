@@ -9,11 +9,5 @@ pragma solidity >=0.8.24;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface IShamanCreationSystem {
-  function createShaman(
-    uint256 balance,
-    string memory name,
-    bytes32[] memory spellIds,
-    bytes32[] memory sourceIds,
-    string memory metadata
-  ) external;
+  function createShaman(string memory name, string memory metadata) external;
 }

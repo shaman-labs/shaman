@@ -11,10 +11,7 @@ contract ShamanCreationSystem is BaseSystem {
   event ShamanCreated(bytes32 indexed shamanId, address indexed creator);
 
   function createShaman(
-    uint256 balance,
     string memory name,
-    bytes32[] memory spellIds,
-    bytes32[] memory sourceIds,
     string memory metadata
   ) public onlyMember {
     bytes memory nameBytes = bytes(name);
@@ -37,37 +34,13 @@ contract ShamanCreationSystem is BaseSystem {
       _msgSender(),
       block.timestamp,
       true,
-      balance,
-      0, // spellCount
-      0, // sourceCount
+      0, // balance
+      new bytes32[](0), // spell ids
+      new bytes32[](0), // source ids
+      new bytes32[](0), // spell edges ids
       name,
       metadata
     );
-
-    // add initial spells if provided
-    for (uint256 i = 0; i < spellIds.length; i++) {
-      ShamanEntitiesLib.addSpell(shamanId, spellIds[i]);
-    }
-
-    // add initial sources if provided
-    for (uint256 i = 0; i < sourceIds.length; i++) {
-      ShamanEntitiesLib.addSource(shamanId, sourceIds[i]);
-    }
-
-    // log initial deposit if balance provided
-    if (balance > 0) {
-      ShamanLogsLib.logOperation(
-        shamanId,
-        0,
-        balance,
-        true,
-        LogType.Deposit,
-        ""
-      );
-
-      // get funds tokens
-      _token().transferFrom(_msgSender(), address(this), balance);
-    }
 
     emit ShamanCreated(shamanId, _msgSender());
   }

@@ -11,6 +11,8 @@ pragma solidity >=0.8.24;
 interface IShamanJobsSystem {
   function enqueueShamanJob(bytes32 shamanId) external;
 
+  function cancelShamanJob(bytes32 shamanId) external;
+
   function startShamanJob(bytes32 shamanId) external;
 
   function completeShamanJob(bytes32 shamanId, bool success, string memory metadata) external;
