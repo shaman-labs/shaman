@@ -8,6 +8,8 @@ import { IWorld } from "../src/codegen/world/IWorld.sol";
 import { ShamanConfig, Shamans, Roles } from "../src/codegen/index.sol";
 import { RoleType } from "../src/codegen/common.sol";
 import { IZugToken } from "../src/IZugToken.sol";
+import { SpellEdge } from "../src/lib/ShamanEntitiesLib.sol";
+
 contract BaseTest is MudTest, GasReporter {
   // Load the private key from the `PRIVATE_KEY` environment variable (in .env)
   uint256 internal deployerPrivateKey = vm.envUint("PRIVATE_KEY");
@@ -163,5 +165,31 @@ contract BaseTest is MudTest, GasReporter {
     }
 
     require(sourceId != bytes32(0), "Source creation failed");
+  }
+
+  function _createSpellEdge(
+    bytes32 fromSpellId,
+    bytes32 toSpellId,
+    string memory metadata
+  ) internal virtual returns (SpellEdge memory) {
+    return
+      SpellEdge({
+        fromSpellId: fromSpellId,
+        toSpellId: toSpellId,
+        createdAt: block.timestamp,
+        metadata: metadata
+      });
+  }
+
+  function _updateShamanWorkflow(
+    address creator,
+    bytes32 shamanId,
+    bytes32[] memory spellIds,
+    bytes32[] memory sourceIds,
+    SpellEdge[] memory spellEdges
+  ) internal virtual {
+    vm.prank(creator);
+    world.updateShamanWorkflow(shamanId, spellIds, sourceIds, spellEdges);
+    vm.stopPrank();
   }
 }

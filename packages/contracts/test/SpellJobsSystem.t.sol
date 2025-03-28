@@ -71,48 +71,31 @@ contract SpellJobsSystemTest is BaseTest {
   }
 
   function _createTestShamanWithSpell(
-    address creator,
-    uint256 balance
-  ) private returns (bytes32 shamanId, bytes32 spellId) {
-    spellId = _createTestSpell(creator);
+    address creator
+  ) internal returns (bytes32 shamanId, bytes32 spellId) {
+    vm.recordLogs();
 
+    // Create the spell
+    spellId = _createSpell(creator, "TestSpell", INITIAL_METADATA);
+
+    // Prepare the arrays
     bytes32[] memory spellIds = new bytes32[](1);
     spellIds[0] = spellId;
 
-    _prepareTokens(creator, balance);
-
-    _setMember(creator);
-
-    vm.recordLogs();
-    vm.prank(creator);
-    world.createShaman("TestShaman", INITIAL_METADATA);
-    vm.stopPrank();
-
-    // Get the shaman ID from the logs
-    Vm.Log[] memory entries = vm.getRecordedLogs();
-    for (uint256 i = 0; i < entries.length; i++) {
-      if (entries[i].topics[0] == keccak256("ShamanCreated(bytes32,address)")) {
-        shamanId = bytes32(entries[i].topics[1]);
-        break;
-      }
-    }
-
-    require(shamanId != bytes32(0), "Shaman creation failed");
+    // Create a new shaman with the spell
+    shamanId = _createShaman(creator, "TestShaman", "Test Shaman metadata");
 
     // Add the spell to the shaman
     bytes32[] memory sourceIds = new bytes32[](0);
     SpellEdge[] memory spellEdges = new SpellEdge[](0);
-    vm.prank(creator);
-    world.updateShamanWorkflow(shamanId, spellIds, sourceIds, spellEdges);
-    vm.stopPrank();
+    _updateShamanWorkflow(creator, shamanId, spellIds, sourceIds, spellEdges);
 
     return (shamanId, spellId);
   }
 
   function testEnqueueSpellJob() public {
     (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
-      creatorAlice,
-      INITIAL_BALANCE
+      creatorAlice
     );
 
     _setOperator(creatorAlice);
@@ -156,8 +139,7 @@ contract SpellJobsSystemTest is BaseTest {
 
   function testStartSpellJob() public {
     (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
-      creatorAlice,
-      INITIAL_BALANCE
+      creatorAlice
     );
 
     _setOperator(creatorAlice);
@@ -199,8 +181,7 @@ contract SpellJobsSystemTest is BaseTest {
 
   function testCompleteSpellJob() public {
     (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
-      creatorAlice,
-      INITIAL_BALANCE
+      creatorAlice
     );
 
     _setOperator(creatorAlice);
