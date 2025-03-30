@@ -70,7 +70,7 @@ contract SpellJobsSystemTest is BaseTest {
     return spellId;
   }
 
-  function _createTestShamanWithSpell(
+  function _createTestShamanWithWorkflow(
     address creator
   ) internal returns (bytes32 shamanId, bytes32 spellId) {
     vm.recordLogs();
@@ -90,11 +90,19 @@ contract SpellJobsSystemTest is BaseTest {
     SpellEdge[] memory spellEdges = new SpellEdge[](0);
     _updateShamanWorkflow(creator, shamanId, spellIds, sourceIds, spellEdges);
 
+    // add balance to creator
+    _prepareTokens(creator, INITIAL_BALANCE);
+
+    // add balance to shaman
+    vm.prank(creator);
+    world.depositShamanBalance(shamanId, INITIAL_BALANCE);
+    vm.stopPrank();
+
     return (shamanId, spellId);
   }
 
   function testEnqueueSpellJob() public {
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
+    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithWorkflow(
       creatorAlice
     );
 
@@ -138,7 +146,7 @@ contract SpellJobsSystemTest is BaseTest {
   }
 
   function testStartSpellJob() public {
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
+    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithWorkflow(
       creatorAlice
     );
 
@@ -180,7 +188,7 @@ contract SpellJobsSystemTest is BaseTest {
   }
 
   function testCompleteSpellJob() public {
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
+    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithWorkflow(
       creatorAlice
     );
 

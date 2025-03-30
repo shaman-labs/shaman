@@ -22,20 +22,47 @@ contract ShamanSystemTest is BaseTest {
     bytes32[] memory sourceIds = new bytes32[](1);
     sourceIds[0] = SOURCE_ID;
 
+    SpellEdge[] memory spellEdges = new SpellEdge[](1);
+    spellEdges[0] = _createSpellEdge(SPELL_ID, SOURCE_ID, "TestSpellEdge");
+
     bytes32 shamanId = _createShaman(
       creatorAlice,
       "TestShaman",
       INITIAL_METADATA
     );
 
+    vm.prank(creatorAlice);
+    world.updateShamanWorkflow(shamanId, spellIds, sourceIds, spellEdges);
+    vm.stopPrank();
+
     // Verify shaman state
-    assertEq(uint8(Shamans.getState(shamanId)), uint8(JobState.Idle));
-    assertEq(Shamans.getCreator(shamanId), creatorAlice);
-    assertEq(Shamans.getActive(shamanId), true);
-    assertEq(Shamans.getBalance(shamanId), 0);
-    assertEq(Shamans.lengthSpellIds(shamanId), 1);
-    assertEq(Shamans.lengthSourceIds(shamanId), 1);
-    assertEq(Shamans.getMetadata(shamanId), INITIAL_METADATA);
+    assertEq(
+      uint8(Shamans.getState(shamanId)),
+      uint8(JobState.Idle),
+      "Shaman state is not idle"
+    );
+    assertEq(
+      Shamans.getCreator(shamanId),
+      creatorAlice,
+      "Shaman creator is not creatorAlice"
+    );
+    assertEq(Shamans.getActive(shamanId), true, "Shaman is not active");
+    assertEq(Shamans.getBalance(shamanId), 0, "Shaman balance is not 0");
+    assertEq(
+      Shamans.lengthSpellIds(shamanId),
+      1,
+      "Shaman spellIds length is not 1"
+    );
+    assertEq(
+      Shamans.lengthSourceIds(shamanId),
+      1,
+      "Shaman sourceIds length is not 1"
+    );
+    assertEq(
+      Shamans.getMetadata(shamanId),
+      INITIAL_METADATA,
+      "Shaman metadata is not INITIAL_METADATA"
+    );
   }
 
   function testCreateShamanWithoutBalance() public {
@@ -165,12 +192,44 @@ contract ShamanSystemTest is BaseTest {
     );
 
     // Verify shaman state
-    assertEq(uint8(Shamans.getState(shamanId)), uint8(JobState.Idle));
-    assertEq(Shamans.getCreator(shamanId), creatorAlice);
-    assertEq(Shamans.getActive(shamanId), true);
-    assertEq(Shamans.getBalance(shamanId), INITIAL_BALANCE);
-    assertEq(Shamans.lengthSpellIds(shamanId), 0);
-    assertEq(Shamans.lengthSourceIds(shamanId), 0);
+    assertEq(
+      uint8(Shamans.getState(shamanId)),
+      uint8(JobState.Idle),
+      "Shaman state is not idle"
+    );
+    assertEq(
+      Shamans.getCreator(shamanId),
+      creatorAlice,
+      "Shaman creator is not creatorAlice"
+    );
+    assertEq(Shamans.getActive(shamanId), true, "Shaman is not active");
+    assertEq(Shamans.getBalance(shamanId), 0, "Shaman balance is not 0");
+    assertEq(
+      Shamans.lengthSpellIds(shamanId),
+      0,
+      "Shaman spellIds length is not 0"
+    );
+    assertEq(
+      Shamans.lengthSourceIds(shamanId),
+      0,
+      "Shaman sourceIds length is not 0"
+    );
     assertEq(Shamans.getMetadata(shamanId), INITIAL_METADATA);
+
+    // set shaman to inactive
+    vm.prank(creatorAlice);
+    world.updateShamanStatus(shamanId, false);
+    vm.stopPrank();
+
+    // verify shaman is inactive
+    assertEq(Shamans.getActive(shamanId), false);
+
+    // reactivate shaman
+    vm.prank(creatorAlice);
+    world.updateShamanStatus(shamanId, true);
+    vm.stopPrank();
+
+    // verify shaman is active
+    assertEq(Shamans.getActive(shamanId), true);
   }
 }

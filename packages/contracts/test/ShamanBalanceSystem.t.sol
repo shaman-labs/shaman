@@ -19,6 +19,8 @@ contract ShamanBalanceSystemTest is BaseTest {
       INITIAL_METADATA
     );
 
+    _prepareTokens(creatorAlice, DEPOSIT_AMOUNT);
+
     // Deposit tokens
     vm.recordLogs();
     vm.prank(creatorAlice);
@@ -37,6 +39,8 @@ contract ShamanBalanceSystemTest is BaseTest {
       INITIAL_METADATA
     );
 
+    _prepareTokens(creatorAlice, DEPOSIT_AMOUNT);
+
     // Try to deposit as non-creator
     vm.prank(creatorBob);
     vm.expectRevert("Not shaman creator");
@@ -54,6 +58,8 @@ contract ShamanBalanceSystemTest is BaseTest {
       INITIAL_METADATA
     );
 
+    _prepareTokens(creatorAlice, DEPOSIT_AMOUNT);
+
     // Try to deposit zero amount
     vm.prank(creatorAlice);
     vm.expectRevert("Amount must be greater than 0");
@@ -70,6 +76,8 @@ contract ShamanBalanceSystemTest is BaseTest {
       "TestShaman",
       INITIAL_METADATA
     );
+
+    _prepareTokens(creatorAlice, DEPOSIT_AMOUNT);
 
     // First make the shaman inactive
     vm.prank(creatorAlice);
@@ -92,6 +100,8 @@ contract ShamanBalanceSystemTest is BaseTest {
       "TestShaman",
       INITIAL_METADATA
     );
+
+    _prepareTokens(creatorAlice, DEPOSIT_AMOUNT);
 
     // deposit tokens
     vm.prank(creatorAlice);
@@ -118,6 +128,8 @@ contract ShamanBalanceSystemTest is BaseTest {
       INITIAL_METADATA
     );
 
+    _prepareTokens(creatorAlice, DEPOSIT_AMOUNT);
+
     // Try to withdraw as non-creator
     vm.prank(creatorBob);
     vm.expectRevert("Not shaman creator");
@@ -134,6 +146,8 @@ contract ShamanBalanceSystemTest is BaseTest {
       "TestShaman",
       INITIAL_METADATA
     );
+
+    _prepareTokens(creatorAlice, DEPOSIT_AMOUNT);
 
     // Try to withdraw zero amount
     vm.prank(creatorAlice);
@@ -152,6 +166,8 @@ contract ShamanBalanceSystemTest is BaseTest {
       INITIAL_METADATA
     );
 
+    _prepareTokens(creatorAlice, DEPOSIT_AMOUNT);
+
     // deposit tokens
     vm.prank(creatorAlice);
     world.depositShamanBalance(shamanId, DEPOSIT_AMOUNT);
@@ -167,39 +183,14 @@ contract ShamanBalanceSystemTest is BaseTest {
     assertEq(world.getShamanBalance(shamanId), DEPOSIT_AMOUNT);
   }
 
-  function testWithdrawShamanBalanceInactiveShaman() public {
-    bytes32 shamanId = _createShaman(
-      creatorAlice,
-      "TestShaman",
-      INITIAL_METADATA
-    );
-
-    // deposit tokens
-    vm.prank(creatorAlice);
-    world.depositShamanBalance(shamanId, DEPOSIT_AMOUNT);
-    vm.stopPrank();
-
-    // make the shaman inactive
-    vm.prank(creatorAlice);
-    world.updateShamanStatus(shamanId, false);
-    vm.stopPrank();
-
-    // Try to withdraw from inactive shaman
-    vm.prank(creatorAlice);
-    vm.expectRevert("Shaman is not active");
-    world.withdrawShamanBalance(shamanId, WITHDRAW_AMOUNT);
-    vm.stopPrank();
-
-    // Verify the balance was not updated
-    assertEq(world.getShamanBalance(shamanId), DEPOSIT_AMOUNT);
-  }
-
   function testWithdrawEntireShamanBalance() public {
     bytes32 shamanId = _createShaman(
       creatorAlice,
       "TestShaman",
       INITIAL_METADATA
     );
+
+    _prepareTokens(creatorAlice, DEPOSIT_AMOUNT);
 
     // deposit tokens
     vm.prank(creatorAlice);

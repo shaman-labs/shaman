@@ -149,7 +149,7 @@ contract BaseTest is MudTest, GasReporter {
   ) internal virtual returns (bytes32 sourceId) {
     vm.recordLogs();
 
-    _setAdmin(creator);
+    _setMember(creator);
 
     vm.prank(creator);
     world.createSource(name, metadata);

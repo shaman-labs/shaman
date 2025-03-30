@@ -19,6 +19,8 @@ contract ShamanJobsSystemTest is BaseTest {
   ) private returns (bytes32 shamanId) {
     shamanId = _createShaman(creator, "TestShaman", INITIAL_METADATA);
 
+    _prepareTokens(creator, balance);
+
     // deposit tokens
     vm.prank(creator);
     world.depositShamanBalance(shamanId, balance);

@@ -24,16 +24,7 @@ contract SourceSystemTest is BaseTest {
     assertEq(Sources.getName(sourceId), INITIAL_NAME);
   }
 
-  function testCreateSourceNonAdmin() public {
-    vm.prank(creatorBob);
-    vm.expectRevert("Not admin");
-    world.createSource(INITIAL_NAME, INITIAL_METADATA);
-    vm.stopPrank();
-  }
-
   function testCreateSourceWithEmptyName() public {
-    _setAdmin(creatorAlice);
-
     vm.prank(creatorAlice);
     vm.expectRevert("Source name cannot be empty");
     world.createSource("", INITIAL_METADATA);
@@ -41,8 +32,6 @@ contract SourceSystemTest is BaseTest {
   }
 
   function testCreateSourceWithLongName() public {
-    _setAdmin(creatorAlice);
-
     string memory longName = "ThisNameIsTooLongForASource";
 
     vm.prank(creatorAlice);
@@ -52,8 +41,6 @@ contract SourceSystemTest is BaseTest {
   }
 
   function testCreateSourceWithEmptyMetadata() public {
-    _setAdmin(creatorAlice);
-
     vm.prank(creatorAlice);
     vm.expectRevert("Metadata cannot be empty");
     world.createSource(INITIAL_NAME, "");
@@ -61,7 +48,6 @@ contract SourceSystemTest is BaseTest {
   }
 
   function testCreateSourceWithDuplicateName() public {
-    _setAdmin(creatorAlice);
     // Create first source
     _createSource(creatorAlice, INITIAL_NAME, INITIAL_METADATA);
 

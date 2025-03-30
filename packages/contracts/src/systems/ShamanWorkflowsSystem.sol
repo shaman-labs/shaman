@@ -15,6 +15,10 @@ contract ShamanWorkflowsSystem is BaseSystem {
     onlyActiveShaman(shamanId)
     onlyIdleShaman(shamanId)
   {
+    require(spellIds.length > 0, "Spell ids must be provided");
+    require(sourceIds.length > 0, "Source ids must be provided");
+    require(spellEdges.length > 0, "Spell edges must be provided");
+
     ShamanEntitiesLib.updateShamanWorkflow(
       shamanId,
       spellIds,
