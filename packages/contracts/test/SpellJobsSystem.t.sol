@@ -73,22 +73,16 @@ contract SpellJobsSystemTest is BaseTest {
   function _createTestShamanWithWorkflow(
     address creator
   ) internal returns (bytes32 shamanId, bytes32 spellId) {
-    vm.recordLogs();
-
-    // Create the spell
-    spellId = _createSpell(creator, "TestSpell", INITIAL_METADATA);
-
-    // Prepare the arrays
-    bytes32[] memory spellIds = new bytes32[](1);
-    spellIds[0] = spellId;
-
-    // Create a new shaman with the spell
     shamanId = _createShaman(creator, "TestShaman", "Test Shaman metadata");
 
-    // Add the spell to the shaman
-    bytes32[] memory sourceIds = new bytes32[](0);
-    SpellEdge[] memory spellEdges = new SpellEdge[](0);
-    _updateShamanWorkflow(creator, shamanId, spellIds, sourceIds, spellEdges);
+    bytes32[] memory spellIds = new bytes32[](1);
+    spellIds[0] = _createSpell(creator, "TestSpell", INITIAL_METADATA);
+
+    bytes32[] memory sourceIds = new bytes32[](1);
+    sourceIds[0] = _createSource(creator, "TestSource", INITIAL_METADATA);
+
+    SpellEdge[] memory spellEdges = new SpellEdge[](1);
+    spellEdges[0] = _createSpellEdge(bytes32(0), spellId, "TestSpelleEdge");
 
     // add balance to creator
     _prepareTokens(creator, INITIAL_BALANCE);

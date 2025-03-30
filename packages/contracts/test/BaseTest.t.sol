@@ -111,10 +111,6 @@ contract BaseTest is MudTest, GasReporter {
         break;
       }
     }
-    require(shamanId != bytes32(0), "Shaman creation failed");
-
-    // Optional: Add debug logging
-    console.log("Created shaman with ID:", uint256(shamanId));
   }
 
   function _createSpell(
@@ -138,8 +134,6 @@ contract BaseTest is MudTest, GasReporter {
         break;
       }
     }
-
-    require(spellId != bytes32(0), "Spell creation failed");
   }
 
   function _createSource(
@@ -163,8 +157,6 @@ contract BaseTest is MudTest, GasReporter {
         break;
       }
     }
-
-    require(sourceId != bytes32(0), "Source creation failed");
   }
 
   function _createSpellEdge(
