@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import axios from 'axios';
+import { getSecrets } from '@/services/api';
 
 export const useSecrets = () => {
   return useQuery({
@@ -7,13 +7,12 @@ export const useSecrets = () => {
     initialData: [],
     queryFn: async () => {
       try {
-        const response = await axios.get<{ keys: string[] }>('/api/secret');
-        return (response.data.keys || []).sort();
+        const response = await getSecrets();
+        return (response.keys || []).sort();
       } catch (error) {
         console.error('Error fetching secrets:', error);
         return [];
       }
     },
-    refetchInterval: 5000,
   });
 };
