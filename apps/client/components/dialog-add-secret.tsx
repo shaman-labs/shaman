@@ -89,7 +89,7 @@ export function DialogAddSecret(props: DialogProps) {
               value={key}
               onChange={(e) => setKey(e.target.value)}
               className="col-span-3"
-              placeholder="API_KEY"
+              placeholder="secretKeyName"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">

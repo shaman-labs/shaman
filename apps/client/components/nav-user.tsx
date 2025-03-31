@@ -1,7 +1,6 @@
 'use client';
 
 import {
-  IconKey,
   IconWallet,
   IconMoneybag,
   IconLogout,
@@ -97,14 +96,6 @@ export function NavUser() {
               </div>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => router.push('/secrets')}>
-                <IconKey />
-                Shaman Secrets
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
             <DropdownMenuGroup>
               <DropdownMenuItem
                 className="cursor-pointer"

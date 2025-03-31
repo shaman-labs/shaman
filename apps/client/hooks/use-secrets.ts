@@ -7,8 +7,8 @@ export const useSecrets = () => {
     initialData: [],
     queryFn: async () => {
       try {
-        const response = await axios.get('/api/secret');
-        return response.data.keys || [];
+        const response = await axios.get<{ keys: string[] }>('/api/secret');
+        return (response.data.keys || []).sort();
       } catch (error) {
         console.error('Error fetching secrets:', error);
         return [];
