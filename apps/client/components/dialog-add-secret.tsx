@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
 import { DialogProps } from '@/contexts/dialog-context';
 import { Button } from '@/components/ui/button';
@@ -17,6 +16,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { handleError } from '@/lib/errors';
+import { createSecret } from '@/services/api';
 
 export function DialogAddSecret(props: DialogProps) {
   const [loading, setLoading] = useState(false);
@@ -45,7 +45,7 @@ export function DialogAddSecret(props: DialogProps) {
 
     setLoading(true);
     try {
-      await axios.post('/api/secret', { key, value });
+      await createSecret(key, value);
 
       toast({
         title: 'Success',

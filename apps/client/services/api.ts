@@ -1,28 +1,34 @@
-import axios from 'axios';
-
-const API_URL = process.env.NEXT_PUBLIC_SHAMAN_WORKER_API_URL;
+import api from './axios';
 
 export const triggerShaman = async (shamanId: string) => {
-  const token = document.cookie
-    .split('; ')
-    .find((row) => row.startsWith('privy-id-token='))
-    ?.split('=')[1];
+  const response = await api.post<{ ok: boolean }>(`/execute`, {
+    shamanId,
+  });
 
-  if (!token) {
-    throw new Error('No authentication token found');
-  }
+  return response.data;
+};
 
-  const response = await axios.post<{ ok: boolean }>(
-    `${API_URL}/execute`,
-    {
-      shamanId,
+export const getSecrets = async () => {
+  const response = await api.get<{ keys: string[] }>(`/secrets`);
+
+  return response.data;
+};
+
+export const createSecret = async (key: string, value: string) => {
+  const response = await api.post<{ success: boolean }>(`/secrets`, {
+    key,
+    value,
+  });
+
+  return response.data;
+};
+
+export const deleteSecret = async (key: string) => {
+  const response = await api.delete<{ success: boolean }>(`/secrets`, {
+    data: {
+      key,
     },
-    {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    }
-  );
+  });
+
   return response.data;
 };

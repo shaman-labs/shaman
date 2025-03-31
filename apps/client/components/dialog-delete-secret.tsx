@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import axios from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
 import { DialogProps } from '@/contexts/dialog-context';
 import { Button } from '@/components/ui/button';
@@ -15,6 +14,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { handleError } from '@/lib/errors';
+import { deleteSecret } from '@/services/api';
 
 interface DialogDeleteSecretProps extends DialogProps {
   secretKey: string;
@@ -28,7 +28,7 @@ export function DialogDeleteSecret(props: DialogDeleteSecretProps) {
   const handleDeleteSecret = async () => {
     setLoading(true);
     try {
-      await axios.delete('/api/secret', { data: { key: secretKey } });
+      await deleteSecret(secretKey);
 
       toast({
         title: 'Success',
