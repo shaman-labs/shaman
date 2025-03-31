@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { NavSpells } from '@/components/nav-spells';
 import { NavShamans } from '@/components/nav-shamans';
+import { NavSecrets } from '@/components/nav-secrets';
 import { NavSecondary } from '@/components/nav-secondary';
 import { NavUser } from '@/components/nav-user';
 import {
@@ -63,6 +64,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavShamans />
         <NavSpells />
+        <NavSecrets />
         <NavSecondary
           items={data.navSecondary}
           className="mt-auto text-primary"
