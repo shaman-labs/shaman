@@ -49,7 +49,7 @@ export function NavSecrets() {
         {secrets.map((item) => (
           <SidebarMenuItem key={item}>
             <SidebarMenuButton asChild>
-              <div>
+              <div className="flex items-center gap-2">
                 <IconKey />
                 <span>{item}</span>
               </div>
