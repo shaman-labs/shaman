@@ -48,7 +48,7 @@ export default function Page() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <Link href="/" className="text-muted-foreground">
+                  <Link href="/shamans" className="text-muted-foreground">
                     Shamans
                   </Link>
                 </BreadcrumbItem>
