@@ -8,7 +8,7 @@ import { IWorld } from "../src/codegen/world/IWorld.sol";
 import { ShamanConfig, Shamans, Roles } from "../src/codegen/index.sol";
 import { RoleType } from "../src/codegen/common.sol";
 import { IZugToken } from "../src/IZugToken.sol";
-import { SpellEdge } from "../src/lib/ShamanEntitiesLib.sol";
+import { SpellEdge } from "../src/lib/ShamanWorkflowsLib.sol";
 
 contract BaseTest is MudTest, GasReporter {
   // Load the private key from the `PRIVATE_KEY` environment variable (in .env)

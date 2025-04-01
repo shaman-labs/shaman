@@ -2,7 +2,7 @@
 pragma solidity >=0.8.24;
 import { BaseSystem } from "./BaseSystem.sol";
 import { Shamans, Sources, ShamanSpell, ShamanSpellEdges, SourceShaman, SourceShamanLookup } from "../codegen/index.sol";
-import { SpellEdge } from "../lib/ShamanEntitiesLib.sol";
+import { SpellEdge } from "../lib/ShamanWorkflowsLib.sol";
 import { JobState } from "../codegen/common.sol";
 
 contract ShamanEntitiesSystem is BaseSystem {

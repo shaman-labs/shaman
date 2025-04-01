@@ -3,9 +3,6 @@ pragma solidity >=0.8.24;
 import { Shamans, ShamanNames } from "../codegen/index.sol";
 import { JobState } from "../codegen/common.sol";
 import { BaseSystem } from "./BaseSystem.sol";
-import { LogType } from "../codegen/common.sol";
-import { ShamanLogsLib } from "../lib/ShamanLogsLib.sol";
-import { ShamanEntitiesLib } from "../lib/ShamanEntitiesLib.sol";
 
 contract ShamanCreationSystem is BaseSystem {
   event ShamanCreated(bytes32 indexed shamanId, address indexed creator);
