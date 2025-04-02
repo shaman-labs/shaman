@@ -21,12 +21,12 @@ library Sources {
   ResourceId constant _tableId = ResourceId.wrap(0x74620000000000000000000000000000536f7572636573000000000000000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0054030214202000000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0076060201201420012000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (address, uint256, uint256, string, string)
-  Schema constant _valueSchema = Schema.wrap(0x00540302611f1fc5c50000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (uint8, uint256, address, uint256, bool, uint256, string, string)
+  Schema constant _valueSchema = Schema.wrap(0x00760602001f611f601fc5c50000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -42,12 +42,15 @@ library Sources {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](5);
-    fieldNames[0] = "creator";
-    fieldNames[1] = "createdAt";
-    fieldNames[2] = "shamanCount";
-    fieldNames[3] = "name";
-    fieldNames[4] = "metadata";
+    fieldNames = new string[](8);
+    fieldNames[0] = "sourceType";
+    fieldNames[1] = "nonce";
+    fieldNames[2] = "creator";
+    fieldNames[3] = "createdAt";
+    fieldNames[4] = "active";
+    fieldNames[5] = "shamanCount";
+    fieldNames[6] = "name";
+    fieldNames[7] = "metadata";
   }
 
   /**
@@ -65,13 +68,97 @@ library Sources {
   }
 
   /**
+   * @notice Get sourceType.
+   */
+  function getSourceType(bytes32 sourceId) internal view returns (uint8 sourceType) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint8(bytes1(_blob)));
+  }
+
+  /**
+   * @notice Get sourceType.
+   */
+  function _getSourceType(bytes32 sourceId) internal view returns (uint8 sourceType) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    return (uint8(bytes1(_blob)));
+  }
+
+  /**
+   * @notice Set sourceType.
+   */
+  function setSourceType(bytes32 sourceId, uint8 sourceType) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((sourceType)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set sourceType.
+   */
+  function _setSourceType(bytes32 sourceId, uint8 sourceType) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((sourceType)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get nonce.
+   */
+  function getNonce(bytes32 sourceId) internal view returns (uint256 nonce) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (uint256(bytes32(_blob)));
+  }
+
+  /**
+   * @notice Get nonce.
+   */
+  function _getNonce(bytes32 sourceId) internal view returns (uint256 nonce) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (uint256(bytes32(_blob)));
+  }
+
+  /**
+   * @notice Set nonce.
+   */
+  function setNonce(bytes32 sourceId, uint256 nonce) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((nonce)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set nonce.
+   */
+  function _setNonce(bytes32 sourceId, uint256 nonce) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((nonce)), _fieldLayout);
+  }
+
+  /**
    * @notice Get creator.
    */
   function getCreator(bytes32 sourceId) internal view returns (address creator) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
     return (address(bytes20(_blob)));
   }
 
@@ -82,7 +169,7 @@ library Sources {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
     return (address(bytes20(_blob)));
   }
 
@@ -93,7 +180,7 @@ library Sources {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((creator)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((creator)), _fieldLayout);
   }
 
   /**
@@ -103,7 +190,7 @@ library Sources {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((creator)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((creator)), _fieldLayout);
   }
 
   /**
@@ -113,7 +200,7 @@ library Sources {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
     return (uint256(bytes32(_blob)));
   }
 
@@ -124,7 +211,7 @@ library Sources {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
     return (uint256(bytes32(_blob)));
   }
 
@@ -135,7 +222,7 @@ library Sources {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((createdAt)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((createdAt)), _fieldLayout);
   }
 
   /**
@@ -145,7 +232,49 @@ library Sources {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((createdAt)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((createdAt)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get active.
+   */
+  function getActive(bytes32 sourceId) internal view returns (bool active) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
+    return (_toBool(uint8(bytes1(_blob))));
+  }
+
+  /**
+   * @notice Get active.
+   */
+  function _getActive(bytes32 sourceId) internal view returns (bool active) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 4, _fieldLayout);
+    return (_toBool(uint8(bytes1(_blob))));
+  }
+
+  /**
+   * @notice Set active.
+   */
+  function setActive(bytes32 sourceId, bool active) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((active)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set active.
+   */
+  function _setActive(bytes32 sourceId, bool active) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = sourceId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((active)), _fieldLayout);
   }
 
   /**
@@ -155,7 +284,7 @@ library Sources {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
     return (uint256(bytes32(_blob)));
   }
 
@@ -166,7 +295,7 @@ library Sources {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
     return (uint256(bytes32(_blob)));
   }
 
@@ -177,7 +306,7 @@ library Sources {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((shamanCount)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((shamanCount)), _fieldLayout);
   }
 
   /**
@@ -187,7 +316,7 @@ library Sources {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((shamanCount)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((shamanCount)), _fieldLayout);
   }
 
   /**
@@ -522,7 +651,16 @@ library Sources {
   )
     internal
     view
-    returns (address creator, uint256 createdAt, uint256 shamanCount, string memory name, string memory metadata)
+    returns (
+      uint8 sourceType,
+      uint256 nonce,
+      address creator,
+      uint256 createdAt,
+      bool active,
+      uint256 shamanCount,
+      string memory name,
+      string memory metadata
+    )
   {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
@@ -543,7 +681,16 @@ library Sources {
   )
     internal
     view
-    returns (address creator, uint256 createdAt, uint256 shamanCount, string memory name, string memory metadata)
+    returns (
+      uint8 sourceType,
+      uint256 nonce,
+      address creator,
+      uint256 createdAt,
+      bool active,
+      uint256 shamanCount,
+      string memory name,
+      string memory metadata
+    )
   {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = sourceId;
@@ -561,13 +708,16 @@ library Sources {
    */
   function set(
     bytes32 sourceId,
+    uint8 sourceType,
+    uint256 nonce,
     address creator,
     uint256 createdAt,
+    bool active,
     uint256 shamanCount,
     string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(creator, createdAt, shamanCount);
+    bytes memory _staticData = encodeStatic(sourceType, nonce, creator, createdAt, active, shamanCount);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
@@ -583,13 +733,16 @@ library Sources {
    */
   function _set(
     bytes32 sourceId,
+    uint8 sourceType,
+    uint256 nonce,
     address creator,
     uint256 createdAt,
+    bool active,
     uint256 shamanCount,
     string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(creator, createdAt, shamanCount);
+    bytes memory _staticData = encodeStatic(sourceType, nonce, creator, createdAt, active, shamanCount);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
@@ -605,12 +758,22 @@ library Sources {
    */
   function decodeStatic(
     bytes memory _blob
-  ) internal pure returns (address creator, uint256 createdAt, uint256 shamanCount) {
-    creator = (address(Bytes.getBytes20(_blob, 0)));
+  )
+    internal
+    pure
+    returns (uint8 sourceType, uint256 nonce, address creator, uint256 createdAt, bool active, uint256 shamanCount)
+  {
+    sourceType = (uint8(Bytes.getBytes1(_blob, 0)));
 
-    createdAt = (uint256(Bytes.getBytes32(_blob, 20)));
+    nonce = (uint256(Bytes.getBytes32(_blob, 1)));
 
-    shamanCount = (uint256(Bytes.getBytes32(_blob, 52)));
+    creator = (address(Bytes.getBytes20(_blob, 33)));
+
+    createdAt = (uint256(Bytes.getBytes32(_blob, 53)));
+
+    active = (_toBool(uint8(Bytes.getBytes1(_blob, 85))));
+
+    shamanCount = (uint256(Bytes.getBytes32(_blob, 86)));
   }
 
   /**
@@ -647,9 +810,18 @@ library Sources {
   )
     internal
     pure
-    returns (address creator, uint256 createdAt, uint256 shamanCount, string memory name, string memory metadata)
+    returns (
+      uint8 sourceType,
+      uint256 nonce,
+      address creator,
+      uint256 createdAt,
+      bool active,
+      uint256 shamanCount,
+      string memory name,
+      string memory metadata
+    )
   {
-    (creator, createdAt, shamanCount) = decodeStatic(_staticData);
+    (sourceType, nonce, creator, createdAt, active, shamanCount) = decodeStatic(_staticData);
 
     (name, metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
@@ -678,8 +850,15 @@ library Sources {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(address creator, uint256 createdAt, uint256 shamanCount) internal pure returns (bytes memory) {
-    return abi.encodePacked(creator, createdAt, shamanCount);
+  function encodeStatic(
+    uint8 sourceType,
+    uint256 nonce,
+    address creator,
+    uint256 createdAt,
+    bool active,
+    uint256 shamanCount
+  ) internal pure returns (bytes memory) {
+    return abi.encodePacked(sourceType, nonce, creator, createdAt, active, shamanCount);
   }
 
   /**
@@ -711,13 +890,16 @@ library Sources {
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
   function encode(
+    uint8 sourceType,
+    uint256 nonce,
     address creator,
     uint256 createdAt,
+    bool active,
     uint256 shamanCount,
     string memory name,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(creator, createdAt, shamanCount);
+    bytes memory _staticData = encodeStatic(sourceType, nonce, creator, createdAt, active, shamanCount);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
@@ -733,5 +915,17 @@ library Sources {
     _keyTuple[0] = sourceId;
 
     return _keyTuple;
+  }
+}
+
+/**
+ * @notice Cast a value to a bool.
+ * @dev Boolean values are encoded as uint8 (1 = true, 0 = false), but Solidity doesn't allow casting between uint8 and bool.
+ * @param value The uint8 value to convert.
+ * @return result The boolean value.
+ */
+function _toBool(uint8 value) pure returns (bool result) {
+  assembly {
+    result := value
   }
 }

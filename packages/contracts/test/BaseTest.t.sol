@@ -146,7 +146,7 @@ contract BaseTest is MudTest, GasReporter {
     _setMember(creator);
 
     vm.prank(creator);
-    world.createSource(name, metadata);
+    world.createSource(1, name, metadata);
     vm.stopPrank();
 
     // Get the source ID from the logs

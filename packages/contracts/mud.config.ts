@@ -95,8 +95,11 @@ export default defineWorld({
       },
       schema: {
         sourceId: "bytes32",
+        sourceType: "uint8", // 0 = interval (system), 1 = trigger (external), 2 = contract event (external), .. open for extension
+        nonce: "uint256", // nonce for api calls
         creator: "address",
         createdAt: "uint256",
+        active: "bool",
         shamanCount: "uint256",
         name: "string",
         metadata: "string",

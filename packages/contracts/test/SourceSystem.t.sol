@@ -27,7 +27,7 @@ contract SourceSystemTest is BaseTest {
     _setMember(creatorAlice);
     vm.prank(creatorAlice);
     vm.expectRevert();
-    world.createSource("", INITIAL_METADATA);
+    world.createSource(1, "", INITIAL_METADATA);
     vm.stopPrank();
   }
 
@@ -36,7 +36,7 @@ contract SourceSystemTest is BaseTest {
     _setMember(creatorAlice);
     vm.prank(creatorAlice);
     vm.expectRevert();
-    world.createSource(longName, INITIAL_METADATA);
+    world.createSource(1, longName, INITIAL_METADATA);
     vm.stopPrank();
   }
 
@@ -44,7 +44,7 @@ contract SourceSystemTest is BaseTest {
     _setMember(creatorAlice);
     vm.prank(creatorAlice);
     vm.expectRevert();
-    world.createSource(INITIAL_NAME, "");
+    world.createSource(1, INITIAL_NAME, "");
     vm.stopPrank();
   }
 
@@ -54,7 +54,7 @@ contract SourceSystemTest is BaseTest {
     _setMember(creatorAlice);
     vm.prank(creatorAlice);
     vm.expectRevert();
-    world.createSource(INITIAL_NAME, INITIAL_METADATA);
+    world.createSource(1, INITIAL_NAME, INITIAL_METADATA);
     vm.stopPrank();
   }
 }
