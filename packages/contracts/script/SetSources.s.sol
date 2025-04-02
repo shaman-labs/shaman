@@ -20,8 +20,11 @@ contract SetSources is Script {
 
     Sources.set(
       keccak256("interval-hourly"),
+      0, // interval
+      0, // nonce
       signerAddress,
       block.timestamp,
+      true,
       0, // shamanCount
       "interval-hourly",
       ""
@@ -29,8 +32,11 @@ contract SetSources is Script {
 
     Sources.set(
       keccak256("interval-daily"),
+      0, // interval
+      0, // nonce
       signerAddress,
       block.timestamp,
+      true,
       0, // shamanCount
       "interval-daily",
       ""
@@ -38,8 +44,11 @@ contract SetSources is Script {
 
     Sources.set(
       keccak256("interval-quarter-hourly"),
+      0, // interval
+      0, // nonce
       signerAddress,
       block.timestamp,
+      true,
       0, // shamanCount
       "interval-quarter-hourly",
       ""

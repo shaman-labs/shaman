@@ -79,6 +79,10 @@ contract PostDeploy is Script {
     Roles.setActive(deployerAddress, RoleType.Admin, true);
     console.log("Admin role granted to: %s", deployerAddress);
 
+    // Grant member role to deployer address
+    Roles.setActive(deployerAddress, RoleType.Member, true);
+    console.log("Member role granted to: %s", deployerAddress);
+
     vm.stopBroadcast();
   }
 }

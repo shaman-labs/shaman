@@ -13,6 +13,12 @@ contract ShamanJobsSystem is BaseSystem {
     ShamanLogsLib.logOperation(shamanId, 0, 0, true, LogType.Queue, "");
   }
 
+  function cancelShamanJob(
+    bytes32 shamanId
+  ) public onlyOperator onlyActiveShaman(shamanId) {
+    Shamans.setState(shamanId, JobState.Idle);
+  }
+
   function startShamanJob(
     bytes32 shamanId
   ) public onlyOperator onlyActiveShaman(shamanId) {

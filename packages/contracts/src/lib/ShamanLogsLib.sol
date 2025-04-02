@@ -12,19 +12,20 @@ library ShamanLogsLib {
     bool success,
     LogType logType,
     string memory metadata
-  ) internal returns (bytes32) {
+  ) internal {
     bytes32 logId = keccak256(
       abi.encodePacked(shamanId, spellId, block.timestamp, block.prevrandao)
     );
 
-    ShamanLogs.setShamanId(logId, shamanId);
-    ShamanLogs.setSpellId(logId, spellId);
-    ShamanLogs.setCreatedAt(logId, block.timestamp);
-    ShamanLogs.setLogType(logId, logType);
-    ShamanLogs.setSuccess(logId, success);
-    ShamanLogs.setAmount(logId, amount);
-    ShamanLogs.setMetadata(logId, metadata);
-
-    return logId;
+    ShamanLogs.set(
+      logId,
+      logType,
+      shamanId,
+      spellId,
+      amount,
+      success,
+      block.timestamp,
+      metadata
+    );
   }
 }

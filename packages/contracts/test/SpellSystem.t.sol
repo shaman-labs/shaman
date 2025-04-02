@@ -12,7 +12,7 @@ contract SpellSystemTest is BaseTest {
 
   function testCreateSpell() public {
     string memory spellName = "TestSpell";
-    
+
     _setMember(creatorAlice);
 
     vm.recordLogs();
@@ -33,13 +33,25 @@ contract SpellSystemTest is BaseTest {
     require(spellId != bytes32(0), "Spell creation failed");
 
     // Verify the spell was created correctly
-    assertEq(Spells.getCreator(spellId), creatorAlice, "Creator not set correctly");
+    assertEq(
+      Spells.getCreator(spellId),
+      creatorAlice,
+      "Creator not set correctly"
+    );
     assertEq(Spells.getName(spellId), spellName, "Name not set correctly");
-    assertEq(Spells.getMetadata(spellId), INITIAL_METADATA, "Metadata not set correctly");
+    assertEq(
+      Spells.getMetadata(spellId),
+      INITIAL_METADATA,
+      "Metadata not set correctly"
+    );
     assertEq(Spells.getVersion(spellId), 1, "Version should be 1");
-    
+
     // Verify the version was recorded
-    assertEq(SpellVersions.getMetadata(spellId, 1), INITIAL_METADATA, "Version metadata not set correctly");
+    assertEq(
+      SpellVersions.getMetadata(spellId, 1),
+      INITIAL_METADATA,
+      "Version metadata not set correctly"
+    );
   }
 
   function testUpdateSpell() public {
@@ -63,19 +75,31 @@ contract SpellSystemTest is BaseTest {
     }
 
     require(spellId != bytes32(0), "Spell creation failed");
-    
+
     // Update the spell
     vm.prank(creatorAlice);
     world.updateSpellMetadata(spellId, UPDATED_METADATA);
     vm.stopPrank();
-    
+
     // Verify the update
-    assertEq(Spells.getMetadata(spellId), UPDATED_METADATA, "Metadata should be updated");
+    assertEq(
+      Spells.getMetadata(spellId),
+      UPDATED_METADATA,
+      "Metadata should be updated"
+    );
     assertEq(Spells.getVersion(spellId), 2, "Version should be 2");
-    
+
     // Verify both versions are stored
-    assertEq(SpellVersions.getMetadata(spellId, 1), INITIAL_METADATA, "Version 1 metadata not correct");
-    assertEq(SpellVersions.getMetadata(spellId, 2), UPDATED_METADATA, "Version 2 metadata not correct");
+    assertEq(
+      SpellVersions.getMetadata(spellId, 1),
+      INITIAL_METADATA,
+      "Version 1 metadata not correct"
+    );
+    assertEq(
+      SpellVersions.getMetadata(spellId, 2),
+      UPDATED_METADATA,
+      "Version 2 metadata not correct"
+    );
   }
 
   function testUpdateSpellNotCreator() public {
@@ -99,15 +123,19 @@ contract SpellSystemTest is BaseTest {
     }
 
     require(spellId != bytes32(0), "Spell creation failed");
-    
+
     // Try to update the spell as non-creator
     vm.prank(creatorBob);
     vm.expectRevert("Not spell creator");
     world.updateSpellMetadata(spellId, UPDATED_METADATA);
     vm.stopPrank();
-    
+
     // Verify the metadata and version didn't change
-    assertEq(Spells.getMetadata(spellId), INITIAL_METADATA, "Metadata should not be updated");
+    assertEq(
+      Spells.getMetadata(spellId),
+      INITIAL_METADATA,
+      "Metadata should not be updated"
+    );
     assertEq(Spells.getVersion(spellId), 1, "Version should still be 1");
   }
 
@@ -132,17 +160,25 @@ contract SpellSystemTest is BaseTest {
     }
 
     require(spellId != bytes32(0), "Spell creation failed");
-    
+
     // Update the spell to create version 2
     vm.prank(creatorAlice);
     world.updateSpellMetadata(spellId, UPDATED_METADATA);
     vm.stopPrank();
-    
+
     // Check the metadata for each version
     string memory v1Metadata = world.getSpellVersionMetadata(spellId, 1);
     string memory v2Metadata = world.getSpellVersionMetadata(spellId, 2);
-    
-    assertEq(v1Metadata, INITIAL_METADATA, "Version 1 metadata not retrieved correctly");
-    assertEq(v2Metadata, UPDATED_METADATA, "Version 2 metadata not retrieved correctly");
+
+    assertEq(
+      v1Metadata,
+      INITIAL_METADATA,
+      "Version 1 metadata not retrieved correctly"
+    );
+    assertEq(
+      v2Metadata,
+      UPDATED_METADATA,
+      "Version 2 metadata not retrieved correctly"
+    );
   }
 }

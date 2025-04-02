@@ -5,6 +5,7 @@ import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
 import { Shamans, Spells, ShamanSpell, Roles } from "../src/codegen/index.sol";
 import { JobState, RoleType, LogType } from "../src/codegen/common.sol";
+import { SpellEdge } from "../src/lib/ShamanWorkflowsLib.sol";
 
 contract SpellJobsSystemTest is BaseTest {
   string constant INITIAL_METADATA = "QmShamanTest1";
@@ -23,13 +24,7 @@ contract SpellJobsSystemTest is BaseTest {
 
     vm.recordLogs();
     vm.prank(creator);
-    world.createShaman(
-      balance,
-      "TestShaman",
-      new bytes32[](0),
-      new bytes32[](0),
-      INITIAL_METADATA
-    );
+    world.createShaman("TestShaman", INITIAL_METADATA);
     vm.stopPrank();
 
     // Get the shaman ID from the logs
@@ -75,48 +70,34 @@ contract SpellJobsSystemTest is BaseTest {
     return spellId;
   }
 
-  function _createTestShamanWithSpell(
-    address creator,
-    uint256 balance
-  ) private returns (bytes32 shamanId, bytes32 spellId) {
-    spellId = _createTestSpell(creator);
+  function _createTestShamanWithWorkflow(
+    address creator
+  ) internal returns (bytes32 shamanId, bytes32 spellId) {
+    shamanId = _createShaman(creator, "TestShaman", "Test Shaman metadata");
 
     bytes32[] memory spellIds = new bytes32[](1);
-    spellIds[0] = spellId;
+    spellIds[0] = _createSpell(creator, "TestSpell", INITIAL_METADATA);
 
-    _prepareTokens(creator, balance);
+    bytes32[] memory sourceIds = new bytes32[](1);
+    sourceIds[0] = _createSource(creator, "TestSource", INITIAL_METADATA);
 
-    _setMember(creator);
+    SpellEdge[] memory spellEdges = new SpellEdge[](1);
+    spellEdges[0] = _createSpellEdge(bytes32(0), spellId, "TestSpelleEdge");
 
-    vm.recordLogs();
+    // add balance to creator
+    _prepareTokens(creator, INITIAL_BALANCE);
+
+    // add balance to shaman
     vm.prank(creator);
-    world.createShaman(
-      balance,
-      "TestShaman",
-      spellIds,
-      new bytes32[](0),
-      INITIAL_METADATA
-    );
+    world.depositShamanBalance(shamanId, INITIAL_BALANCE);
     vm.stopPrank();
-
-    // Get the shaman ID from the logs
-    Vm.Log[] memory entries = vm.getRecordedLogs();
-    for (uint256 i = 0; i < entries.length; i++) {
-      if (entries[i].topics[0] == keccak256("ShamanCreated(bytes32,address)")) {
-        shamanId = bytes32(entries[i].topics[1]);
-        break;
-      }
-    }
-
-    require(shamanId != bytes32(0), "Shaman creation failed");
 
     return (shamanId, spellId);
   }
 
   function testEnqueueSpellJob() public {
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
-      creatorAlice,
-      INITIAL_BALANCE
+    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithWorkflow(
+      creatorAlice
     );
 
     _setOperator(creatorAlice);
@@ -159,9 +140,8 @@ contract SpellJobsSystemTest is BaseTest {
   }
 
   function testStartSpellJob() public {
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
-      creatorAlice,
-      INITIAL_BALANCE
+    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithWorkflow(
+      creatorAlice
     );
 
     _setOperator(creatorAlice);
@@ -202,9 +182,8 @@ contract SpellJobsSystemTest is BaseTest {
   }
 
   function testCompleteSpellJob() public {
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithSpell(
-      creatorAlice,
-      INITIAL_BALANCE
+    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithWorkflow(
+      creatorAlice
     );
 
     _setOperator(creatorAlice);

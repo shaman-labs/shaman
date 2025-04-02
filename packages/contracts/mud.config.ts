@@ -65,8 +65,9 @@ export default defineWorld({
         createdAt: "uint256",
         active: "bool",
         balance: "uint256",
-        spellCount: "uint256",
-        sourceCount: "uint256",
+        spellIds: "bytes32[]",
+        sourceIds: "bytes32[]",
+        spellEdgeIds: "bytes32[]",
         name: "string",
         metadata: "string",
       },
@@ -94,8 +95,11 @@ export default defineWorld({
       },
       schema: {
         sourceId: "bytes32",
+        sourceType: "uint8", // 0 = interval (system), 1 = trigger (external), 2 = contract event (external), .. open for extension
+        nonce: "uint256", // nonce for api calls
         creator: "address",
         createdAt: "uint256",
+        active: "bool",
         shamanCount: "uint256",
         name: "string",
         metadata: "string",
@@ -128,58 +132,40 @@ export default defineWorld({
       },
       key: ["shamanId", "spellId"],
     },
-    ShamanSource: {
+    ShamanSpellEdges: {
       codegen: {
         dataStruct: false,
       },
       schema: {
+        edgeId: "bytes32",
         shamanId: "bytes32",
+        fromSpellId: "bytes32",
+        toSpellId: "bytes32",
+        createdAt: "uint256",
+        metadata: "string",
+      },
+      key: ["edgeId"],
+    },
+    SourceShaman: {
+      codegen: {
+        dataStruct: false,
+      },
+      schema: {
         sourceId: "bytes32",
+        shamanId: "bytes32",
+        index: "uint256", // index of the shaman in the source
         createdAt: "uint256",
       },
-      key: ["shamanId", "sourceId"],
+      key: ["sourceId", "shamanId"],
     },
-    // index tables for efficient querying
-    ShamanSpellIndex: {
-      codegen: {
-        dataStruct: false,
-      },
-      schema: {
-        shamanId: "bytes32",
-        index: "uint256",
-        spellId: "bytes32",
-      },
-      key: ["shamanId", "index"],
-    },
-    ShamanSourceIndex: {
-      codegen: {
-        dataStruct: false,
-      },
-      schema: {
-        shamanId: "bytes32",
-        index: "uint256",
-        sourceId: "bytes32",
-      },
-      key: ["shamanId", "index"],
-    },
-    SpellShamanIndex: {
-      codegen: {
-        dataStruct: false,
-      },
-      schema: {
-        spellId: "bytes32",
-        index: "uint256",
-        shamanId: "bytes32",
-      },
-      key: ["spellId", "index"],
-    },
-    SourceShamanIndex: {
+    // lookup tables for querying
+    SourceShamanLookup: {
       codegen: {
         dataStruct: false,
       },
       schema: {
         sourceId: "bytes32",
-        index: "uint256",
+        index: "uint256", // index of the shaman in the source
         shamanId: "bytes32",
       },
       key: ["sourceId", "index"],

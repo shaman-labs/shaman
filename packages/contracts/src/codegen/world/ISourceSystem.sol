@@ -9,5 +9,27 @@ pragma solidity >=0.8.24;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface ISourceSystem {
-  function createSource(string memory name, string memory metadata) external;
+  function createSource(uint8 sourceType, string memory name, string memory metadata) external;
+
+  function setSourceActive(bytes32 sourceId, bool active) external;
+
+  function updateSourceMetadata(bytes32 sourceId, string memory metadata) external;
+
+  function updateSourceName(bytes32 sourceId, string memory name) external;
+
+  function rotateNonce(bytes32 sourceId) external;
+
+  function validateSignatureNonce(bytes32 sourceId, bytes memory signature) external view returns (bool);
+
+  function getSourceName(bytes32 sourceId) external view returns (string memory);
+
+  function getSourceMetadata(bytes32 sourceId) external view returns (string memory);
+
+  function getSourceNonce(bytes32 sourceId) external view returns (uint256);
+
+  function getSourceCreator(bytes32 sourceId) external view returns (address);
+
+  function getSourceActive(bytes32 sourceId) external view returns (bool);
+
+  function getSourceType(bytes32 sourceId) external view returns (uint8);
 }

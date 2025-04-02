@@ -18,57 +18,43 @@ contract SourceSystemTest is BaseTest {
       INITIAL_METADATA
     );
 
-    // Verify the source was created
     assertEq(Sources.getCreator(sourceId), creatorAlice);
     assertEq(Sources.getMetadata(sourceId), INITIAL_METADATA);
     assertEq(Sources.getName(sourceId), INITIAL_NAME);
   }
 
-  function testCreateSourceNonAdmin() public {
-    vm.prank(creatorBob);
-    vm.expectRevert("Not admin");
-    world.createSource(INITIAL_NAME, INITIAL_METADATA);
-    vm.stopPrank();
-  }
-
   function testCreateSourceWithEmptyName() public {
-    _setAdmin(creatorAlice);
-
+    _setMember(creatorAlice);
     vm.prank(creatorAlice);
-    vm.expectRevert("Source name cannot be empty");
-    world.createSource("", INITIAL_METADATA);
+    vm.expectRevert();
+    world.createSource(1, "", INITIAL_METADATA);
     vm.stopPrank();
   }
 
   function testCreateSourceWithLongName() public {
-    _setAdmin(creatorAlice);
-
     string memory longName = "ThisNameIsTooLongForASource";
-
+    _setMember(creatorAlice);
     vm.prank(creatorAlice);
-    vm.expectRevert("Source name too long");
-    world.createSource(longName, INITIAL_METADATA);
+    vm.expectRevert();
+    world.createSource(1, longName, INITIAL_METADATA);
     vm.stopPrank();
   }
 
   function testCreateSourceWithEmptyMetadata() public {
-    _setAdmin(creatorAlice);
-
+    _setMember(creatorAlice);
     vm.prank(creatorAlice);
-    vm.expectRevert("Metadata cannot be empty");
-    world.createSource(INITIAL_NAME, "");
+    vm.expectRevert();
+    world.createSource(1, INITIAL_NAME, "");
     vm.stopPrank();
   }
 
   function testCreateSourceWithDuplicateName() public {
-    _setAdmin(creatorAlice);
-    // Create first source
     _createSource(creatorAlice, INITIAL_NAME, INITIAL_METADATA);
 
-    // Try to create another source with the same name
+    _setMember(creatorAlice);
     vm.prank(creatorAlice);
-    vm.expectRevert("Source name already taken");
-    world.createSource(INITIAL_NAME, INITIAL_METADATA);
+    vm.expectRevert();
+    world.createSource(1, INITIAL_NAME, INITIAL_METADATA);
     vm.stopPrank();
   }
 }

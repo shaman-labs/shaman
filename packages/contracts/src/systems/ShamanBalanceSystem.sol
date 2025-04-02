@@ -21,7 +21,7 @@ contract ShamanBalanceSystem is BaseSystem {
   function withdrawShamanBalance(
     bytes32 shamanId,
     uint256 amount
-  ) public onlyShamanCreator(shamanId) onlyActiveShaman(shamanId) {
+  ) public onlyShamanCreator(shamanId) {
     require(amount > 0, "Amount must be greater than 0");
     require(Shamans.getBalance(shamanId) >= amount, "Insufficient balance");
 

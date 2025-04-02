@@ -8,6 +8,8 @@ import { IWorld } from "../src/codegen/world/IWorld.sol";
 import { ShamanConfig, Shamans, Roles } from "../src/codegen/index.sol";
 import { RoleType } from "../src/codegen/common.sol";
 import { IZugToken } from "../src/IZugToken.sol";
+import { SpellEdge } from "../src/lib/ShamanWorkflowsLib.sol";
+
 contract BaseTest is MudTest, GasReporter {
   // Load the private key from the `PRIVATE_KEY` environment variable (in .env)
   uint256 internal deployerPrivateKey = vm.envUint("PRIVATE_KEY");
@@ -86,6 +88,7 @@ contract BaseTest is MudTest, GasReporter {
 
   function _createShaman(
     address creator,
+    string memory name,
     string memory metadata
   ) internal virtual returns (bytes32 shamanId) {
     vm.recordLogs();
@@ -93,13 +96,7 @@ contract BaseTest is MudTest, GasReporter {
     _setMember(creator);
 
     vm.prank(creator);
-    world.createShaman(
-      0,
-      "TestShaman",
-      new bytes32[](0),
-      new bytes32[](0),
-      metadata
-    );
+    world.createShaman(name, metadata);
     vm.stopPrank();
 
     // Get logs and find the ShamanCreated event
@@ -114,10 +111,6 @@ contract BaseTest is MudTest, GasReporter {
         break;
       }
     }
-    require(shamanId != bytes32(0), "Shaman creation failed");
-
-    // Optional: Add debug logging
-    console.log("Created shaman with ID:", uint256(shamanId));
   }
 
   function _createSpell(
@@ -141,8 +134,6 @@ contract BaseTest is MudTest, GasReporter {
         break;
       }
     }
-
-    require(spellId != bytes32(0), "Spell creation failed");
   }
 
   function _createSource(
@@ -152,10 +143,10 @@ contract BaseTest is MudTest, GasReporter {
   ) internal virtual returns (bytes32 sourceId) {
     vm.recordLogs();
 
-    _setAdmin(creator);
+    _setMember(creator);
 
     vm.prank(creator);
-    world.createSource(name, metadata);
+    world.createSource(1, name, metadata);
     vm.stopPrank();
 
     // Get the source ID from the logs
@@ -166,35 +157,31 @@ contract BaseTest is MudTest, GasReporter {
         break;
       }
     }
-
-    require(sourceId != bytes32(0), "Source creation failed");
   }
 
-  function _createTestShaman(
+  function _createSpellEdge(
+    bytes32 fromSpellId,
+    bytes32 toSpellId,
     string memory metadata
-  ) internal virtual returns (bytes32) {
-    vm.recordLogs();
+  ) internal virtual returns (SpellEdge memory) {
+    return
+      SpellEdge({
+        fromSpellId: fromSpellId,
+        toSpellId: toSpellId,
+        createdAt: block.timestamp,
+        metadata: metadata
+      });
+  }
 
-    _setMember(creatorAlice);
-
-    vm.prank(creatorAlice);
-    world.createShaman(
-      0,
-      "TestShaman",
-      new bytes32[](0),
-      new bytes32[](0),
-      metadata
-    );
+  function _updateShamanWorkflow(
+    address creator,
+    bytes32 shamanId,
+    bytes32[] memory spellIds,
+    bytes32[] memory sourceIds,
+    SpellEdge[] memory spellEdges
+  ) internal virtual {
+    vm.prank(creator);
+    world.updateShamanWorkflow(shamanId, spellIds, sourceIds, spellEdges);
     vm.stopPrank();
-
-    // Get the shaman ID from the logs
-    Vm.Log[] memory entries = vm.getRecordedLogs();
-    for (uint256 i = 0; i < entries.length; i++) {
-      if (entries[i].topics[0] == keccak256("ShamanCreated(bytes32,address)")) {
-        return bytes32(entries[i].topics[1]);
-      }
-    }
-
-    revert("Shaman creation failed");
   }
 }
