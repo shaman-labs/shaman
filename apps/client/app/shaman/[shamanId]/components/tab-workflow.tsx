@@ -46,6 +46,17 @@ const sourceLabels: Record<string, string> = {
   'interval-quarter-hourly': 'Interval (15 min)',
 };
 
+type WorkflowAction = {
+  type: 'init' | 'addSpell';
+  payload?: WorkflowData;
+  spellId?: Hex;
+};
+
+type WorkflowState = {
+  data: WorkflowData | undefined;
+  isDirty: boolean;
+};
+
 type WorkflowData = {
   sourceIds: Hex[];
   spellIds: Hex[];
@@ -65,16 +76,28 @@ export function WorkflowTab() {
   const [spellId, setSpellId] = useState<string | null>(null);
   const [updateSpellLoading, setUpdateSpellLoading] = useState(false);
   const [workflowData, dispatch] = useReducer(
-    (
-      state: WorkflowData | null,
-      action: { type: string; payload: WorkflowData }
-    ) => {
+    (state: WorkflowState, action: WorkflowAction) => {
       if (action.type === 'init') {
-        return action.payload;
+        return {
+          data: action.payload,
+          isDirty: false,
+        };
       }
+
+      if (state.data && action.type === 'addSpell' && action.spellId) {
+        return {
+          ...state,
+          data: {
+            ...state.data,
+            spellIds: [...(state.data?.spellIds || []), action.spellId],
+          },
+          isDirty: true,
+        };
+      }
+
       return state;
     },
-    null
+    { data: undefined, isDirty: false }
   );
   const embeddedWallet = useEmbeddedWallet();
   const { refetch: refetchZugBalance } = useZugBalance(
@@ -183,9 +206,9 @@ export function WorkflowTab() {
   const handleSaveWorkflow = useCallback(() => {
     if (!shaman || !shamanId || !workflowData) return;
 
-    const sourceIds = workflowData.sourceIds || [];
-    const spellIds = workflowData.spellIds || [];
-    const spellEdges = workflowData.spellEdges || [];
+    const sourceIds = workflowData.data?.sourceIds || [];
+    const spellIds = workflowData.data?.spellIds || [];
+    const spellEdges = workflowData.data?.spellEdges || [];
 
     saveWorkflow({
       currentShamanId: shamanId as Hex,
@@ -286,7 +309,7 @@ export function WorkflowTab() {
 
   const nodes = useMemo(() => {
     const sourceNodes =
-      workflowData?.sourceIds?.map((sourceId, index) => ({
+      workflowData?.data?.sourceIds?.map((sourceId, index) => ({
         id: sourceId,
         data: {
           label: (
@@ -303,7 +326,7 @@ export function WorkflowTab() {
       })) || [];
 
     const spellNodes =
-      workflowData?.spellIds?.map((spellId, index) => ({
+      workflowData?.data?.spellIds?.map((spellId, index) => ({
         id: spellId,
         data: {
           label: (
@@ -350,7 +373,7 @@ export function WorkflowTab() {
     if (!workflowData) return [];
 
     const spellEdgesFromData =
-      workflowData.spellEdges?.map((edge) => ({
+      workflowData.data?.spellEdges?.map((edge) => ({
         id: `edge-${edge.fromSpellId}-${edge.toSpellId}`,
         source: edge.fromSpellId,
         target: edge.toSpellId,
@@ -360,16 +383,16 @@ export function WorkflowTab() {
       })) || [];
 
     const targetSpellIds = new Set(
-      workflowData.spellEdges?.map((edge) => edge.toSpellId)
+      workflowData.data?.spellEdges?.map((edge) => edge.toSpellId)
     );
 
     const entrySpellIds =
-      workflowData.spellIds
+      workflowData.data?.spellIds
         ?.filter((spellId) => !targetSpellIds.has(spellId))
         .map((spellId) => spellId) || [];
 
     const sourceEdges =
-      workflowData.sourceIds?.flatMap((sourceId) =>
+      workflowData.data?.sourceIds?.flatMap((sourceId) =>
         entrySpellIds.map((spellId) => ({
           id: `edge-${sourceId}-${spellId}`,
           source: sourceId,
