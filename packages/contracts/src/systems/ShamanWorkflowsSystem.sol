@@ -8,8 +8,8 @@ import { LogType } from "../codegen/common.sol";
 contract ShamanWorkflowsSystem is BaseSystem {
   function updateShamanWorkflow(
     bytes32 shamanId,
-    bytes32[] memory spellIds,
     bytes32[] memory sourceIds,
+    bytes32[] memory spellIds,
     SpellEdge[] memory spellEdges
   )
     public
@@ -22,8 +22,8 @@ contract ShamanWorkflowsSystem is BaseSystem {
 
     ShamanWorkflowsLib.updateShamanWorkflow(
       shamanId,
-      spellIds,
       sourceIds,
+      spellIds,
       spellEdges
     );
 
