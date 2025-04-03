@@ -10,7 +10,7 @@ import {
 } from '@tabler/icons-react';
 
 import { useParams } from 'next/navigation';
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useReducer, useEffect } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import { useMutation } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
@@ -46,6 +46,17 @@ const sourceLabels: Record<string, string> = {
   'interval-quarter-hourly': 'Interval (15 min)',
 };
 
+type WorkflowData = {
+  sourceIds: Hex[];
+  spellIds: Hex[];
+  spellEdges: {
+    fromSpellId: Hex;
+    toSpellId: Hex;
+    createdAt: bigint;
+    metadata: string;
+  }[];
+};
+
 export function WorkflowTab() {
   const mud = useMUD();
   const { shamanId } = useParams();
@@ -53,6 +64,18 @@ export function WorkflowTab() {
   const { data: shamanLogs } = useShamanLogs(shamanId as string);
   const [spellId, setSpellId] = useState<string | null>(null);
   const [updateSpellLoading, setUpdateSpellLoading] = useState(false);
+  const [workflowData, dispatch] = useReducer(
+    (
+      state: WorkflowData | null,
+      action: { type: string; payload: WorkflowData }
+    ) => {
+      if (action.type === 'init') {
+        return action.payload;
+      }
+      return state;
+    },
+    null
+  );
   const embeddedWallet = useEmbeddedWallet();
   const { refetch: refetchZugBalance } = useZugBalance(
     embeddedWallet?.address as `0x${string}`
@@ -66,6 +89,23 @@ export function WorkflowTab() {
     (log) => log.logType === ShamanLogType.COMPLETION
   );
   const isShamanCreator = embeddedWallet?.address === shaman?.creator;
+
+  useEffect(() => {
+    dispatch({
+      type: 'init',
+      payload: {
+        sourceIds: shaman?.sources?.map((s) => s.sourceId as Hex) || [],
+        spellIds: shaman?.spells?.map((s) => s.spellId as Hex) || [],
+        spellEdges:
+          shaman?.spellEdges?.map((e) => ({
+            fromSpellId: e.fromSpellId as Hex,
+            toSpellId: e.toSpellId as Hex,
+            createdAt: e.createdAt,
+            metadata: e.metadata,
+          })) || [],
+      },
+    });
+  }, [shaman]);
 
   const handleRefetch = useCallback(() => {
     refetch();
@@ -141,17 +181,11 @@ export function WorkflowTab() {
   });
 
   const handleSaveWorkflow = useCallback(() => {
-    if (!shaman || !shamanId) return;
+    if (!shaman || !shamanId || !workflowData) return;
 
-    const sourceIds = shaman.sources?.map((s) => s.sourceId as Hex) || [];
-    const spellIds = shaman.spells?.map((s) => s.spellId as Hex) || [];
-    const spellEdges =
-      shaman.spellEdges?.map((s) => ({
-        fromSpellId: s.fromSpellId as `0x${string}`,
-        toSpellId: s.toSpellId as `0x${string}`,
-        createdAt: s.createdAt,
-        metadata: s.metadata,
-      })) || [];
+    const sourceIds = workflowData.sourceIds || [];
+    const spellIds = workflowData.spellIds || [];
+    const spellEdges = workflowData.spellEdges || [];
 
     saveWorkflow({
       currentShamanId: shamanId as Hex,
@@ -159,7 +193,7 @@ export function WorkflowTab() {
       spellIds,
       spellEdges,
     });
-  }, [shaman, shamanId, saveWorkflow]);
+  }, [shaman, shamanId, saveWorkflow, workflowData]);
 
   const spellTableData: ShamanLogsTableData[] = useMemo(
     () =>
@@ -252,12 +286,12 @@ export function WorkflowTab() {
 
   const nodes = useMemo(() => {
     const sourceNodes =
-      shaman?.sources?.map((source, index) => ({
-        id: source.sourceId,
+      workflowData?.sourceIds?.map((sourceId, index) => ({
+        id: sourceId,
         data: {
           label: (
             <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {sourceLabels[source.name] || source.name}
+              {sourceLabels[sourceId] || sourceId}
             </div>
           ),
         },
@@ -269,16 +303,16 @@ export function WorkflowTab() {
       })) || [];
 
     const spellNodes =
-      shaman?.spells?.map((spell, index) => ({
-        id: spell.spellId,
+      workflowData?.spellIds?.map((spellId, index) => ({
+        id: spellId,
         data: {
           label: (
             <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {spell.name}
+              {spellId}
             </div>
           ),
         },
-        selected: spell.spellId === spellId,
+        selected: spellId === spellId,
         position: { x: (sourceNodes.length + index) * 200 - 200, y: 0 },
         style: { borderRadius: '8px' },
         sourcePosition: Position.Right,
@@ -310,13 +344,13 @@ export function WorkflowTab() {
       : [];
 
     return [...sourceNodes, ...spellNodes, ...addSpellNode];
-  }, [shaman?.sources, shaman?.spells, spellId, isShamanCreator]);
+  }, [workflowData, isShamanCreator]);
 
   const edges = useMemo(() => {
-    if (!shaman) return [];
+    if (!workflowData) return [];
 
     const spellEdgesFromData =
-      shaman.spellEdges?.map((edge) => ({
+      workflowData.spellEdges?.map((edge) => ({
         id: `edge-${edge.fromSpellId}-${edge.toSpellId}`,
         source: edge.fromSpellId,
         target: edge.toSpellId,
@@ -326,18 +360,19 @@ export function WorkflowTab() {
       })) || [];
 
     const targetSpellIds = new Set(
-      shaman.spellEdges?.map((edge) => edge.toSpellId)
+      workflowData.spellEdges?.map((edge) => edge.toSpellId)
     );
+
     const entrySpellIds =
-      shaman.spells
-        ?.filter((spell) => !targetSpellIds.has(spell.spellId))
-        .map((spell) => spell.spellId) || [];
+      workflowData.spellIds
+        ?.filter((spellId) => !targetSpellIds.has(spellId))
+        .map((spellId) => spellId) || [];
 
     const sourceEdges =
-      shaman.sources?.flatMap((source) =>
+      workflowData.sourceIds?.flatMap((sourceId) =>
         entrySpellIds.map((spellId) => ({
-          id: `edge-${source.sourceId}-${spellId}`,
-          source: source.sourceId,
+          id: `edge-${sourceId}-${spellId}`,
+          source: sourceId,
           target: spellId,
           type: 'default',
           animated: false,
@@ -345,12 +380,8 @@ export function WorkflowTab() {
         }))
       ) || [];
 
-    // Note: The edge connecting to 'add-new-spell' is removed
-    // as its source is ambiguous in a non-linear graph derived from spellEdges.
-    // The 'add-new-spell' node itself remains functional via onNodeClick.
-
     return [...sourceEdges, ...spellEdgesFromData];
-  }, [shaman]);
+  }, [workflowData]);
 
   return (
     <Card>
