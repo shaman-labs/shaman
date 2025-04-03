@@ -223,7 +223,7 @@ export function WorkflowTab() {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4">
-          <div className="w-full h-48">
+          <div className="w-full h-[420px]">
             <ReactFlow
               colorMode="dark"
               fitView

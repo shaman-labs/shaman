@@ -2,6 +2,7 @@ import { getComponentValueStrict } from '@latticexyz/recs';
 import { encodeEntity } from '@latticexyz/store-sync/recs';
 
 import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import { useMUD } from '@/contexts/mud-context';
 
 export const useShaman = (shamanId: string) => {
@@ -25,20 +26,67 @@ export const useShaman = (shamanId: string) => {
         )
       );
 
-      const metadata = await fetch(
-        `https://gateway.shaman.fun/ipfs/${shamanData.metadata}`
+      const shamanSpells = await Promise.all(
+        shamanData.spellIds.map(async (spellId) => {
+          const spell = getComponentValueStrict(
+            mud.components.ShamanSpell,
+            encodeEntity(
+              { shamanId: 'bytes32', spellId: 'bytes32' },
+              {
+                shamanId: shamanId as `0x${string}`,
+                spellId: spellId as `0x${string}`,
+              }
+            )
+          );
+
+          const metadata = await axios.get<{
+            name: string;
+            description: string;
+          }>(`https://gateway.shaman.fun/ipfs/${spell.metadata}`);
+
+          return {
+            ...spell,
+            name: metadata.data.name,
+            description: metadata.data.description,
+          };
+        })
       );
 
-      const metadataJson = (await metadata.json()) as {
+      const shamanSources = await Promise.all(
+        shamanData.sourceIds.map(async (sourceId) => {
+          const source = getComponentValueStrict(
+            mud.components.Sources,
+            encodeEntity(
+              { sourceId: 'bytes32' },
+              { sourceId: sourceId as `0x${string}` }
+            )
+          );
+
+          const metadata = await axios.get<{
+            name: string;
+            description: string;
+          }>(`https://gateway.shaman.fun/ipfs/${source.metadata}`);
+
+          return {
+            ...source,
+            name: metadata.data.name,
+            description: metadata.data.description,
+          };
+        })
+      );
+
+      const metadata = await axios.get<{
         name: string;
         description: string;
-      };
+      }>(`https://gateway.shaman.fun/ipfs/${shamanData.metadata}`);
 
       return {
         ...shamanData,
         shamanId,
-        name: metadataJson.name,
-        description: metadataJson.description,
+        spells: shamanSpells,
+        sources: shamanSources,
+        name: metadata.data.name,
+        description: metadata.data.description,
       };
     },
     refetchInterval: 2500,
