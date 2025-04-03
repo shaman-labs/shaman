@@ -19,14 +19,12 @@ contract ShamanCreationSystem is BaseSystem {
       ShamanNames.get(encodedName) == bytes32(0),
       "Shaman name already taken"
     );
-    bytes32 shamanId = keccak256(
-      abi.encodePacked(_msgSender(), block.timestamp, block.prevrandao)
-    );
 
-    ShamanNames.set(encodedName, shamanId);
+    ShamanNames.set(encodedName, encodedName);
 
+    // id will be encodedName, name can be changed after
     Shamans.set(
-      shamanId,
+      encodedName,
       JobState.Idle,
       _msgSender(),
       block.timestamp,
@@ -39,6 +37,6 @@ contract ShamanCreationSystem is BaseSystem {
       metadata
     );
 
-    emit ShamanCreated(shamanId, _msgSender());
+    emit ShamanCreated(encodedName, _msgSender());
   }
 }

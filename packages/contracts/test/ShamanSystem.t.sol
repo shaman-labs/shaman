@@ -32,7 +32,7 @@ contract ShamanSystemTest is BaseTest {
     );
 
     vm.prank(creatorAlice);
-    world.updateShamanWorkflow(shamanId, spellIds, sourceIds, spellEdges);
+    world.updateShamanWorkflow(shamanId, sourceIds, spellIds, spellEdges);
     vm.stopPrank();
 
     // Verify shaman state

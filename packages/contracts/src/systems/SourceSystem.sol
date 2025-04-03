@@ -28,12 +28,9 @@ contract SourceSystem is BaseSystem {
       "Source name already taken"
     );
 
-    bytes32 sourceId = keccak256(
-      abi.encodePacked(_msgSender(), block.timestamp, block.prevrandao)
-    );
-
+    // id will be encodedName, name can be changed after
     Sources.set(
-      sourceId,
+      encodedName,
       sourceType,
       0, // nonce
       _msgSender(),
@@ -44,9 +41,9 @@ contract SourceSystem is BaseSystem {
       metadata
     );
 
-    SourceNames.set(encodedName, sourceId);
+    SourceNames.set(encodedName, encodedName);
 
-    emit SourceCreated(sourceId, _msgSender());
+    emit SourceCreated(encodedName, _msgSender());
   }
 
   function setSourceActive(

@@ -13,8 +13,8 @@ struct SpellEdge {
 library ShamanWorkflowsLib {
   function updateShamanWorkflow(
     bytes32 shamanId,
-    bytes32[] memory spellIds,
     bytes32[] memory sourceIds,
+    bytes32[] memory spellIds,
     SpellEdge[] memory spellEdges
   ) internal {
     uint256 newSpellEdgeCount = spellEdges.length;
@@ -41,7 +41,9 @@ library ShamanWorkflowsLib {
           shamanId,
           spellEdge.fromSpellId,
           spellEdge.toSpellId,
-          i
+          i,
+          block.timestamp,
+          block.prevrandao
         )
       );
       newSpellEdgeIds[i] = edgeId;

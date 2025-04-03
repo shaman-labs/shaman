@@ -66,7 +66,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
           "test metadata"
         );
       }
-      _updateShamanWorkflow(creator, shamanId, spellIds, sourceIds, spellEdges);
+      _updateShamanWorkflow(creator, shamanId, sourceIds, spellIds, spellEdges);
     }
 
     return shamanId;
@@ -189,12 +189,12 @@ contract ShamanWorkflowsSystemTest is BaseTest {
 
     // Update first shaman with sourceId1
     vm.startPrank(creatorAlice);
-    world.updateShamanWorkflow(shamanId1, spellIds1, sourceIds1, edges1);
+    world.updateShamanWorkflow(shamanId1, sourceIds1, spellIds1, edges1);
     vm.stopPrank();
 
     // Update second shaman with sourceId2
     vm.startPrank(creatorAlice);
-    world.updateShamanWorkflow(shamanId2, spellIds2, sourceIds2, edges2);
+    world.updateShamanWorkflow(shamanId2, sourceIds2, spellIds2, edges2);
     vm.stopPrank();
 
     // Get shamans by source ID
@@ -270,7 +270,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
 
     // Update shaman workflow
     vm.startPrank(creatorAlice);
-    world.updateShamanWorkflow(shamanId, spellIds, sourceIds, spellEdges);
+    world.updateShamanWorkflow(shamanId, sourceIds, spellIds, spellEdges);
     vm.stopPrank();
 
     // Directly set the metadata using signerAddress
@@ -398,8 +398,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     _updateShamanWorkflow(
       creatorAlice,
       shamanId,
-      spellIds,
       sourceIds,
+      spellIds,
       spellEdges
     );
 
@@ -484,8 +484,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     vm.prank(creatorAlice);
     world.updateShamanWorkflow(
       vars.shamanId,
-      initialSpellIds,
       initialSourceIds,
+      initialSpellIds,
       initialEdges
     );
 
@@ -529,8 +529,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     vm.prank(creatorAlice);
     world.updateShamanWorkflow(
       vars.shamanId,
-      newSpellIds,
       newSourceIds,
+      newSpellIds,
       newEdges
     );
 
@@ -568,8 +568,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     vm.prank(creatorAlice);
     world.updateShamanWorkflow(
       vars.shamanId,
-      newSpellIds,
       newSourceIds,
+      newSpellIds,
       newEdges
     );
 
@@ -678,7 +678,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     // Try to update as non-creator, should revert
     vm.prank(creatorBob);
     vm.expectRevert("Not shaman creator");
-    world.updateShamanWorkflow(shamanId, spellIds, sourceIds, edges);
+    world.updateShamanWorkflow(shamanId, sourceIds, spellIds, edges);
   }
 
   struct MultiUpdateTestVars {
@@ -730,7 +730,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1");
 
     vm.prank(creatorAlice);
-    world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+    world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
 
     // Verify first update
     bytes32[] memory retrievedSpellIds = world.getShamanSpellIds(vars.shamanId);
@@ -769,7 +769,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1");
 
       vm.prank(creatorAlice);
-      world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+      world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
 
     // Second update
@@ -787,7 +787,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2, "edge 1-2");
 
       vm.prank(creatorAlice);
-      world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+      world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
 
     // Verify second update
@@ -831,7 +831,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1");
 
       vm.prank(creatorAlice);
-      world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+      world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
 
     // Second update
@@ -849,7 +849,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2, "edge 1-2");
 
       vm.prank(creatorAlice);
-      world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+      world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
 
     // Third update
@@ -870,7 +870,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       edges[2] = _createSpellEdge(vars.spellId3, vars.spellId1, "edge 3-1");
 
       vm.prank(creatorAlice);
-      world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+      world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
   }
 
@@ -889,7 +889,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1");
 
       vm.prank(creatorAlice);
-      world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+      world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
 
     // Second update
@@ -907,7 +907,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2, "edge 1-2");
 
       vm.prank(creatorAlice);
-      world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+      world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
 
     // Third update
@@ -928,7 +928,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       edges[2] = _createSpellEdge(vars.spellId3, vars.spellId1, "edge 3-1");
 
       vm.prank(creatorAlice);
-      world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+      world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
 
     // Verify final state
@@ -957,7 +957,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       SpellEdge[] memory edges = new SpellEdge[](1);
       edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1");
       vm.prank(creatorAlice);
-      world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+      world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
 
     {
@@ -971,7 +971,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1-1");
       edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2, "edge 1-2");
       vm.prank(creatorAlice);
-      world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+      world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
 
     {
@@ -988,7 +988,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       edges[1] = _createSpellEdge(vars.spellId2, vars.spellId3, "edge 2-3");
       edges[2] = _createSpellEdge(vars.spellId3, vars.spellId1, "edge 3-1");
       vm.prank(creatorAlice);
-      world.updateShamanWorkflow(vars.shamanId, spellIds, sourceIds, edges);
+      world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
 
     // Verify the edges specifically in a separate function
@@ -1046,8 +1046,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     vm.expectRevert("Spell ids must be provided");
     world.updateShamanWorkflow(
       shamanId,
-      emptySpellIds,
       emptySourceIds,
+      emptySpellIds,
       emptyEdges
     );
 
@@ -1058,6 +1058,6 @@ contract ShamanWorkflowsSystemTest is BaseTest {
 
     vm.prank(creatorAlice);
     vm.expectRevert("Source ids must be provided");
-    world.updateShamanWorkflow(shamanId, spellIds, emptySourceIds, emptyEdges);
+    world.updateShamanWorkflow(shamanId, emptySourceIds, spellIds, emptyEdges);
   }
 }

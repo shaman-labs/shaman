@@ -20,12 +20,9 @@ contract SpellSystem is BaseSystem {
       "Spell name already taken"
     );
 
-    bytes32 spellId = keccak256(
-      abi.encodePacked(_msgSender(), block.timestamp, block.prevrandao)
-    );
-
+    // id will be encodedName, name can be changed after
     Spells.set(
-      spellId,
+      encodedName,
       _msgSender(),
       block.timestamp,
       0, // shamanCount
@@ -34,11 +31,11 @@ contract SpellSystem is BaseSystem {
       metadata
     );
 
-    SpellVersions.set(spellId, 1, block.timestamp, metadata);
+    SpellVersions.set(encodedName, 1, block.timestamp, metadata);
 
-    SpellNames.set(encodedName, spellId);
+    SpellNames.set(encodedName, encodedName);
 
-    emit SpellCreated(spellId, _msgSender());
+    emit SpellCreated(encodedName, _msgSender());
   }
 
   function updateSpellMetadata(

@@ -13,8 +13,8 @@ import { SpellEdge } from "../../lib/ShamanWorkflowsLib.sol";
 interface IShamanWorkflowsSystem {
   function updateShamanWorkflow(
     bytes32 shamanId,
-    bytes32[] memory spellIds,
     bytes32[] memory sourceIds,
+    bytes32[] memory spellIds,
     SpellEdge[] memory spellEdges
   ) external;
 }

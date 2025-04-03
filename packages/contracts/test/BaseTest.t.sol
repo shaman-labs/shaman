@@ -176,12 +176,12 @@ contract BaseTest is MudTest, GasReporter {
   function _updateShamanWorkflow(
     address creator,
     bytes32 shamanId,
-    bytes32[] memory spellIds,
     bytes32[] memory sourceIds,
+    bytes32[] memory spellIds,
     SpellEdge[] memory spellEdges
   ) internal virtual {
     vm.prank(creator);
-    world.updateShamanWorkflow(shamanId, spellIds, sourceIds, spellEdges);
+    world.updateShamanWorkflow(shamanId, sourceIds, spellIds, spellEdges);
     vm.stopPrank();
   }
 }
