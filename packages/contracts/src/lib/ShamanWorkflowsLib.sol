@@ -41,7 +41,9 @@ library ShamanWorkflowsLib {
           shamanId,
           spellEdge.fromSpellId,
           spellEdge.toSpellId,
-          i
+          i,
+          block.timestamp,
+          block.prevrandao
         )
       );
       newSpellEdgeIds[i] = edgeId;
