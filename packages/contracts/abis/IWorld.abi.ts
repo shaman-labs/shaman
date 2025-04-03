@@ -2175,12 +2175,12 @@ export const IWorld = [
         "internalType": "bytes32"
       },
       {
-        "name": "spellIds",
+        "name": "sourceIds",
         "type": "bytes32[]",
         "internalType": "bytes32[]"
       },
       {
-        "name": "sourceIds",
+        "name": "spellIds",
         "type": "bytes32[]",
         "internalType": "bytes32[]"
       },
