@@ -2,11 +2,11 @@
 
 import { ReactFlow, Background, Position, MarkerType } from '@xyflow/react';
 import {
-  IconPlus,
   IconDotsVertical,
   IconArrowBigUpLine,
   IconDeviceFloppy,
   IconLoader2,
+  IconPlus,
 } from '@tabler/icons-react';
 
 import { useParams } from 'next/navigation';
@@ -39,17 +39,16 @@ import { LabelCreator } from '@/components/label-creator';
 import { handleError } from '@/lib/errors';
 
 import '@xyflow/react/dist/style.css';
-
-const sourceLabels: Record<string, string> = {
-  'interval-hourly': 'Interval (hr)',
-  'interval-daily': 'Interval (day)',
-  'interval-quarter-hourly': 'Interval (15 min)',
-};
+import { DialogAddSpell } from '@/components/dialog-add-spell';
+import { useSpells } from '@/hooks/use-spells';
+import { DialogAddSource } from '@/components/dialog-add-source';
+import { useSources } from '@/hooks/use-sources';
 
 type WorkflowAction = {
-  type: 'init' | 'addSpell';
+  type: 'init' | 'addSpell' | 'addSource';
   payload?: WorkflowData;
   spellId?: Hex;
+  sourceId?: Hex;
 };
 
 type WorkflowState = {
@@ -71,10 +70,14 @@ type WorkflowData = {
 export function WorkflowTab() {
   const mud = useMUD();
   const { shamanId } = useParams();
+  const { data: spells } = useSpells();
+  const { data: sources } = useSources();
   const { data: shaman, refetch } = useShaman(shamanId as string);
   const { data: shamanLogs } = useShamanLogs(shamanId as string);
   const [spellId, setSpellId] = useState<string | null>(null);
   const [updateSpellLoading, setUpdateSpellLoading] = useState(false);
+  const [addSpell, setAddSpell] = useState(false);
+  const [addSource, setAddSource] = useState(false);
   const [workflowData, dispatch] = useReducer(
     (state: WorkflowState, action: WorkflowAction) => {
       if (action.type === 'init') {
@@ -95,6 +98,17 @@ export function WorkflowTab() {
         };
       }
 
+      if (state.data && action.type === 'addSource' && action.sourceId) {
+        return {
+          ...state,
+          data: {
+            ...state.data,
+            sourceIds: [...(state.data?.sourceIds || []), action.sourceId],
+          },
+          isDirty: true,
+        };
+      }
+
       return state;
     },
     { data: undefined, isDirty: false }
@@ -103,7 +117,7 @@ export function WorkflowTab() {
   const { refetch: refetchZugBalance } = useZugBalance(
     embeddedWallet?.address as `0x${string}`
   );
-  const { openViewLog, openAddSpell } = useDialogContext();
+  const { openViewLog } = useDialogContext();
   const selectedSpell = shaman?.spells?.find(
     (spell) => spell.spellId === spellId
   );
@@ -218,6 +232,23 @@ export function WorkflowTab() {
     });
   }, [shaman, shamanId, saveWorkflow, workflowData]);
 
+  const handleAddSpell = useCallback(
+    (spellId: string) => {
+      dispatch({
+        type: 'addSpell',
+        spellId: spellId as Hex,
+      });
+    },
+    [dispatch]
+  );
+
+  const handleAddSource = useCallback(
+    (sourceId: string) => {
+      dispatch({ type: 'addSource', sourceId: sourceId as Hex });
+    },
+    [dispatch]
+  );
+
   const spellTableData: ShamanLogsTableData[] = useMemo(
     () =>
       spellLogs?.map((log) => ({
@@ -314,7 +345,8 @@ export function WorkflowTab() {
         data: {
           label: (
             <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {sourceLabels[sourceId] || sourceId}
+              {sources?.find((source) => source.sourceId === sourceId)?.name ||
+                sourceId}
             </div>
           ),
         },
@@ -331,7 +363,8 @@ export function WorkflowTab() {
         data: {
           label: (
             <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {spellId}
+              {spells?.find((spell) => spell.spellId === spellId)?.name ||
+                spellId}
             </div>
           ),
         },
@@ -342,32 +375,8 @@ export function WorkflowTab() {
         targetPosition: Position.Left,
       })) || [];
 
-    const addSpellNode = isShamanCreator
-      ? [
-          {
-            id: 'add-new-spell',
-            data: {
-              label: (
-                <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-                  <IconPlus className="h-4 w-4" /> Add Spell
-                </div>
-              ),
-            },
-            position: {
-              x: (sourceNodes.length + spellNodes.length) * 200 - 200,
-              y: 0,
-            },
-            style: { borderRadius: '8px' },
-            selectable: false,
-            targetPosition: Position.Left,
-            sourcePosition: Position.Right,
-            type: 'output',
-          },
-        ]
-      : [];
-
-    return [...sourceNodes, ...spellNodes, ...addSpellNode];
-  }, [workflowData, isShamanCreator]);
+    return [...sourceNodes, ...spellNodes];
+  }, [workflowData, spells, sources]);
 
   const edges = useMemo(() => {
     if (!workflowData) return [];
@@ -411,17 +420,33 @@ export function WorkflowTab() {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Workflow</CardTitle>
         {isShamanCreator && (
-          <Button
-            size="sm"
-            onClick={handleSaveWorkflow}
-            disabled={isSavingWorkflow}>
-            {isSavingWorkflow ? (
-              <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <IconDeviceFloppy className="mr-2 h-4 w-4" />
-            )}
-            Save Workflow
-          </Button>
+          <div className="flex flex-row gap-4">
+            <Button
+              onClick={() => setAddSource(true)}
+              size="sm"
+              variant="secondary">
+              <IconPlus className="mr-1 h-4 w-4" />
+              Add Source
+            </Button>
+            <Button
+              onClick={() => setAddSpell(true)}
+              size="sm"
+              variant="secondary">
+              <IconPlus className="mr-1 h-4 w-4" />
+              Add Spell
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleSaveWorkflow}
+              disabled={isSavingWorkflow}>
+              {isSavingWorkflow ? (
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <IconDeviceFloppy className="mr-1 h-4 w-4" />
+              )}
+              Save Workflow
+            </Button>
+          </div>
         )}
       </CardHeader>
       <CardContent>
@@ -434,16 +459,7 @@ export function WorkflowTab() {
                 hideAttribution: true,
               }}
               onNodeClick={(event, node) => {
-                if (node.id !== 'add-new-spell') {
-                  setSpellId(node.id);
-                } else {
-                  openAddSpell(
-                    true,
-                    undefined,
-                    handleRefetch,
-                    shamanId as string
-                  );
-                }
+                setSpellId(node.id as Hex);
               }}
               nodes={nodes}
               edges={edges}
@@ -474,8 +490,8 @@ export function WorkflowTab() {
                       </div>
                       {isShamanCreator && (
                         <div className="flex flex-row gap-2">
-                          {selectedSpell?.latestVersion !==
-                            selectedSpell?.version && (
+                          {selectedSpell?.version !==
+                            selectedSpell?.latestVersion && (
                             <Button
                               variant="secondary"
                               size="sm"
@@ -632,6 +648,16 @@ export function WorkflowTab() {
           </div>
         </div>
       </CardContent>
+      <DialogAddSpell
+        open={addSpell}
+        onOpenChange={setAddSpell}
+        onSelect={handleAddSpell}
+      />
+      <DialogAddSource
+        open={addSource}
+        onOpenChange={setAddSource}
+        onSelect={handleAddSource}
+      />
     </Card>
   );
 }

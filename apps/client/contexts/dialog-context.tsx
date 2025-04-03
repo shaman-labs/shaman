@@ -10,7 +10,6 @@ import { DialogDelete } from '@/components/dialog-delete';
 import { DialogTrigger } from '@/components/dialog-trigger';
 import { DialogTransferAsset } from '@/components/dialog-transfer-asset';
 import { DialogViewLog } from '@/components/dialog-view-log';
-import { DialogAddSpell } from '@/components/dialog-add-spell';
 import { ShamanLogsTableData } from '@/types/shaman';
 import { DialogActivation } from '@/components/dialog-activation';
 
@@ -32,7 +31,6 @@ export type Dialogs = {
   delete: boolean;
   trigger: boolean;
   viewLog: boolean;
-  addSpell: boolean;
   activation: boolean;
   openBuyZug: (
     open: boolean,
@@ -76,12 +74,6 @@ export type Dialogs = {
     onSuccess?: () => void,
     shamanLog?: ShamanLogsTableData
   ) => void;
-  openAddSpell: (
-    open: boolean,
-    redirect?: string,
-    onSuccess?: () => void,
-    shamanId?: string
-  ) => void;
   openActivation: (
     open: boolean,
     redirect?: string,
@@ -98,7 +90,6 @@ const DialogContext = createContext<Dialogs>({
   delete: false,
   trigger: false,
   viewLog: false,
-  addSpell: false,
   activation: false,
   openBuyZug: () => {},
   openAddBalance: () => {},
@@ -107,7 +98,6 @@ const DialogContext = createContext<Dialogs>({
   openTrigger: () => {},
   openTransferAsset: () => {},
   openViewLog: () => {},
-  openAddSpell: () => {},
   openActivation: () => {},
 });
 
@@ -122,7 +112,6 @@ export const DialogContextProvider = ({ children }: Props) => {
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [transferAsset, setTransferAsset] = useState(false);
   const [viewLog, setViewLog] = useState(false);
-  const [addSpell, setAddSpell] = useState(false);
   const [activation, setActivation] = useState(false);
   const [redirect, setRedirect] = useState<string | undefined>(undefined);
   const [onSuccess, setOnSuccess] = useState<() => void | undefined>();
@@ -246,21 +235,6 @@ export const DialogContextProvider = ({ children }: Props) => {
     setViewLog(open);
   };
 
-  const openAddSpell = (
-    open: boolean,
-    redirectOnClose?: string,
-    onSuccess?: () => void,
-    shamanId?: string
-  ) => {
-    if (open) {
-      setRedirect(redirectOnClose);
-      setOnSuccess(onSuccess);
-      setShamanId(shamanId);
-    }
-    handleDialogClose(open);
-    setAddSpell(open);
-  };
-
   const openActivation = (
     open: boolean,
     redirectOnClose?: string,
@@ -286,7 +260,6 @@ export const DialogContextProvider = ({ children }: Props) => {
         delete: deleteDialog,
         trigger: triggerDialog,
         viewLog,
-        addSpell,
         activation,
         openBuyZug,
         openAddBalance,
@@ -295,7 +268,6 @@ export const DialogContextProvider = ({ children }: Props) => {
         openTrigger,
         openTransferAsset,
         openViewLog,
-        openAddSpell,
         openActivation,
       }}>
       {children}
@@ -339,12 +311,6 @@ export const DialogContextProvider = ({ children }: Props) => {
         onOpenChange={openViewLog}
         onSuccess={onSuccess}
         shamanLog={shamanLog}
-      />
-      <DialogAddSpell
-        open={addSpell}
-        onOpenChange={openAddSpell}
-        onSuccess={onSuccess}
-        shamanId={shamanId}
       />
       <DialogActivation
         open={activation}
