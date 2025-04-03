@@ -87,6 +87,23 @@ export const useShaman = (shamanId: string) => {
         })
       );
 
+      const shamanEdges = shamanData.spellEdgeIds.map((edgeId) => {
+        const edge = getComponentValueStrict(
+          mud.components.ShamanSpellEdges,
+          encodeEntity(
+            { shamanId: 'bytes32', spellEdgeId: 'bytes32' },
+            {
+              shamanId: shamanId as `0x${string}`,
+              spellEdgeId: edgeId as `0x${string}`,
+            }
+          )
+        );
+
+        return {
+          ...edge,
+        };
+      });
+
       const metadata = await axios.get<{
         name: string;
         description: string;
@@ -97,6 +114,7 @@ export const useShaman = (shamanId: string) => {
         shamanId,
         spells: shamanSpells,
         sources: shamanSources,
+        spellEdges: shamanEdges,
         name: metadata.data.name,
         description: metadata.data.description,
       };

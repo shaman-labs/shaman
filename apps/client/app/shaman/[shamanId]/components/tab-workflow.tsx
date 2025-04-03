@@ -1,21 +1,18 @@
 'use client';
 
-import {
-  ReactFlow,
-  Background,
-  Position,
-  MarkerType,
-  useReactFlow,
-} from '@xyflow/react';
+import { ReactFlow, Background, Position, MarkerType } from '@xyflow/react';
 import {
   IconPlus,
   IconDotsVertical,
   IconArrowBigUpLine,
+  IconDeviceFloppy,
+  IconLoader2,
 } from '@tabler/icons-react';
 
 import { useParams } from 'next/navigation';
-import { useMemo, useCallback, useState, useEffect } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
+import { useMutation } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
 import { Hex } from 'viem';
 import { Highlight, themes } from 'prism-react-renderer';
@@ -55,7 +52,7 @@ export function WorkflowTab() {
   const { data: shaman, refetch } = useShaman(shamanId as string);
   const { data: shamanLogs } = useShamanLogs(shamanId as string);
   const [spellId, setSpellId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [updateSpellLoading, setUpdateSpellLoading] = useState(false);
   const embeddedWallet = useEmbeddedWallet();
   const { refetch: refetchZugBalance } = useZugBalance(
     embeddedWallet?.address as `0x${string}`
@@ -69,15 +66,6 @@ export function WorkflowTab() {
     (log) => log.logType === ShamanLogType.COMPLETION
   );
   const isShamanCreator = embeddedWallet?.address === shaman?.creator;
-  const reactFlow = useReactFlow();
-
-  useEffect(() => {
-    if (shaman?.spells?.length || shaman?.sources?.length) {
-      setTimeout(() => {
-        reactFlow.fitView();
-      }, 75);
-    }
-  }, [shaman?.spells, shaman?.sources, reactFlow]);
 
   const handleRefetch = useCallback(() => {
     refetch();
@@ -85,22 +73,93 @@ export function WorkflowTab() {
   }, [refetch, refetchZugBalance]);
 
   const handleUpdateSpellVersion = useCallback(async () => {
+    if (!selectedSpell?.spellId || !shamanId || !mud) return;
     try {
-      setLoading(true);
-      await mud?.calls.embedded?.systemCalls?.updateSpellVersion(
+      setUpdateSpellLoading(true);
+      await mud.calls.embedded?.systemCalls?.updateSpellVersion(
         shamanId as Hex,
-        selectedSpell?.spellId as Hex
+        selectedSpell.spellId as Hex
       );
       toast({
         title: 'Success',
         description: 'Spell version updated.',
       });
+      handleRefetch();
     } catch (error) {
       handleError(error);
     } finally {
-      setLoading(false);
+      setUpdateSpellLoading(false);
     }
-  }, [selectedSpell, mud, shamanId]);
+  }, [selectedSpell, mud, shamanId, handleRefetch]);
+
+  const { mutate: saveWorkflow, isPending: isSavingWorkflow } = useMutation({
+    mutationFn: async ({
+      currentShamanId,
+      sourceIds,
+      spellIds,
+      spellEdges,
+    }: {
+      currentShamanId: Hex;
+      sourceIds: Hex[];
+      spellIds: Hex[];
+      spellEdges: {
+        fromSpellId: Hex;
+        toSpellId: Hex;
+        createdAt: bigint;
+        metadata: string;
+      }[];
+    }) => {
+      if (!mud?.calls?.embedded?.systemCalls?.updateShamanWorkflow) {
+        throw new Error(
+          'updateShamanWorkflow system call not found. Please implement it.'
+        );
+      }
+
+      return await mud.calls.embedded.systemCalls.updateShamanWorkflow(
+        currentShamanId,
+        sourceIds,
+        spellIds,
+        spellEdges
+      );
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'Workflow saved successfully.',
+      });
+      handleRefetch();
+    },
+    onError: (error) => {
+      handleError(error);
+      toast({
+        title: 'Error Saving Workflow',
+        description:
+          error.message || 'An unexpected error occurred while saving.',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleSaveWorkflow = useCallback(() => {
+    if (!shaman || !shamanId) return;
+
+    const sourceIds = shaman.sources?.map((s) => s.sourceId as Hex) || [];
+    const spellIds = shaman.spells?.map((s) => s.spellId as Hex) || [];
+    const spellEdges =
+      shaman.spellEdges?.map((s) => ({
+        fromSpellId: s.fromSpellId as `0x${string}`,
+        toSpellId: s.toSpellId as `0x${string}`,
+        createdAt: s.createdAt,
+        metadata: s.metadata,
+      })) || [];
+
+    saveWorkflow({
+      currentShamanId: shamanId as Hex,
+      sourceIds,
+      spellIds,
+      spellEdges,
+    });
+  }, [shaman, shamanId, saveWorkflow]);
 
   const spellTableData: ShamanLogsTableData[] = useMemo(
     () =>
@@ -188,18 +247,132 @@ export function WorkflowTab() {
         },
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [openViewLog]
+    [openViewLog, handleRefetch]
   );
+
+  const nodes = useMemo(() => {
+    const sourceNodes =
+      shaman?.sources?.map((source, index) => ({
+        id: source.sourceId,
+        data: {
+          label: (
+            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+              {sourceLabels[source.name] || source.name}
+            </div>
+          ),
+        },
+        position: { x: index * 200 - 200, y: 0 },
+        style: { borderRadius: '8px' },
+        type: 'input',
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+      })) || [];
+
+    const spellNodes =
+      shaman?.spells?.map((spell, index) => ({
+        id: spell.spellId,
+        data: {
+          label: (
+            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+              {spell.name}
+            </div>
+          ),
+        },
+        selected: spell.spellId === spellId,
+        position: { x: (sourceNodes.length + index) * 200 - 200, y: 0 },
+        style: { borderRadius: '8px' },
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+      })) || [];
+
+    const addSpellNode = isShamanCreator
+      ? [
+          {
+            id: 'add-new-spell',
+            data: {
+              label: (
+                <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+                  <IconPlus className="h-4 w-4" /> Add Spell
+                </div>
+              ),
+            },
+            position: {
+              x: (sourceNodes.length + spellNodes.length) * 200 - 200,
+              y: 0,
+            },
+            style: { borderRadius: '8px' },
+            selectable: false,
+            targetPosition: Position.Left,
+            sourcePosition: Position.Right,
+            type: 'output',
+          },
+        ]
+      : [];
+
+    return [...sourceNodes, ...spellNodes, ...addSpellNode];
+  }, [shaman?.sources, shaman?.spells, spellId, isShamanCreator]);
+
+  const edges = useMemo(() => {
+    if (!shaman) return [];
+
+    const spellEdgesFromData =
+      shaman.spellEdges?.map((edge) => ({
+        id: `edge-${edge.fromSpellId}-${edge.toSpellId}`,
+        source: edge.fromSpellId,
+        target: edge.toSpellId,
+        type: 'default',
+        animated: false,
+        markerEnd: { type: MarkerType.Arrow },
+      })) || [];
+
+    const targetSpellIds = new Set(
+      shaman.spellEdges?.map((edge) => edge.toSpellId)
+    );
+    const entrySpellIds =
+      shaman.spells
+        ?.filter((spell) => !targetSpellIds.has(spell.spellId))
+        .map((spell) => spell.spellId) || [];
+
+    const sourceEdges =
+      shaman.sources?.flatMap((source) =>
+        entrySpellIds.map((spellId) => ({
+          id: `edge-${source.sourceId}-${spellId}`,
+          source: source.sourceId,
+          target: spellId,
+          type: 'default',
+          animated: false,
+          markerEnd: { type: MarkerType.Arrow },
+        }))
+      ) || [];
+
+    // Note: The edge connecting to 'add-new-spell' is removed
+    // as its source is ambiguous in a non-linear graph derived from spellEdges.
+    // The 'add-new-spell' node itself remains functional via onNodeClick.
+
+    return [...sourceEdges, ...spellEdgesFromData];
+  }, [shaman]);
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Workflow</CardTitle>
+        {isShamanCreator && (
+          <Button
+            size="sm"
+            onClick={handleSaveWorkflow}
+            disabled={isSavingWorkflow}>
+            {isSavingWorkflow ? (
+              <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <IconDeviceFloppy className="mr-2 h-4 w-4" />
+            )}
+            Save Workflow
+          </Button>
+        )}
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4">
-          <div className="w-full h-[420px]">
+          <div className="w-full h-[calc(100vh-250px)]">
             <ReactFlow
               colorMode="dark"
               fitView
@@ -208,7 +381,6 @@ export function WorkflowTab() {
               }}
               onNodeClick={(event, node) => {
                 if (node.id !== 'add-new-spell') {
-                  reactFlow.fitView();
                   setSpellId(node.id);
                 } else {
                   openAddSpell(
@@ -219,122 +391,8 @@ export function WorkflowTab() {
                   );
                 }
               }}
-              nodes={[
-                ...(shaman?.sources?.map((source, index) => ({
-                  id: source.sourceId,
-                  data: {
-                    label: (
-                      <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-                        {sourceLabels[source.name]}
-                      </div>
-                    ),
-                  },
-                  position: { x: index * 200 - 200, y: 0 },
-                  style: {
-                    borderRadius: '8px',
-                  },
-                  type: 'input',
-                  sourcePosition: Position.Right,
-                  targetPosition: Position.Left,
-                })) || []),
-                ...(shaman?.spells?.map((spell, index) => ({
-                  id: spell.spellId,
-                  data: {
-                    label: (
-                      <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-                        {spell.name}
-                      </div>
-                    ),
-                  },
-                  selected: spell.spellId === spellId,
-                  position: { x: index * 200, y: 0 },
-                  style: {
-                    borderRadius: '8px',
-                  },
-                  sourcePosition: Position.Right,
-                  targetPosition: Position.Left,
-                })) || []),
-                ...(isShamanCreator
-                  ? [
-                      {
-                        id: 'add-new-spell',
-                        data: {
-                          label: (
-                            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-                              <IconPlus className="h-4 w-4" /> Add Spell
-                            </div>
-                          ),
-                        },
-                        position: {
-                          x: (shaman?.spells?.length || 0) * 200,
-                          y: 0,
-                        },
-                        style: {
-                          borderRadius: '8px',
-                        },
-                        selectable: false,
-                        targetPosition: Position.Left,
-                        sourcePosition: Position.Right,
-                        type: 'output',
-                      },
-                    ]
-                  : []),
-              ]}
-              edges={[
-                ...(shaman?.sources?.slice(0, -1).map((source, index) => ({
-                  id: `edge-${source.sourceId}-${shaman?.sources[index + 1].sourceId}`,
-                  source: source.sourceId,
-                  target: shaman?.sources[index + 1].sourceId,
-                  type: 'default',
-                  animated: false,
-                  markerEnd: {
-                    type: MarkerType.Arrow,
-                  },
-                })) || []),
-                ...(shaman?.sources?.length
-                  ? [
-                      {
-                        id: `edge-source-to-first-spell`,
-                        source:
-                          shaman?.sources[shaman?.sources.length - 1].sourceId,
-                        target:
-                          shaman?.spells?.length > 0
-                            ? shaman?.spells[0].spellId
-                            : 'add-new-spell',
-                        type: 'default',
-                        animated: true,
-                        markerEnd: {
-                          type: MarkerType.Arrow,
-                        },
-                      },
-                    ]
-                  : []),
-                ...(shaman?.spells?.slice(0, -1).map((spell, index) => ({
-                  id: `edge-${spell.spellId}-${shaman?.spells[index + 1].spellId}`,
-                  source: spell.spellId,
-                  target: shaman?.spells[index + 1].spellId,
-                  type: 'default',
-                  animated: false,
-                  markerEnd: {
-                    type: MarkerType.Arrow,
-                  },
-                })) || []),
-                ...(shaman?.spells?.length
-                  ? [
-                      {
-                        id: `edge-last-to-add`,
-                        source:
-                          shaman?.spells[shaman?.spells.length - 1].spellId,
-                        target: 'add-new-spell',
-                        type: 'default',
-                        animated: true,
-                        markerEnd: {
-                          type: MarkerType.Arrow,
-                        },
-                      },
-                    ]
-                  : []),
-              ]}
+              nodes={nodes}
+              edges={edges}
               nodesDraggable={false}>
               <Background />
             </ReactFlow>
@@ -367,9 +425,13 @@ export function WorkflowTab() {
                             <Button
                               variant="secondary"
                               size="sm"
-                              disabled={loading}
+                              disabled={updateSpellLoading || isSavingWorkflow}
                               onClick={handleUpdateSpellVersion}>
-                              <IconArrowBigUpLine className="h-4 w-4" />
+                              {updateSpellLoading ? (
+                                <IconLoader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <IconArrowBigUpLine className="h-4 w-4" />
+                              )}
                             </Button>
                           )}
                         </div>
