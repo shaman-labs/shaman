@@ -4,6 +4,7 @@ import { encodeEntity } from '@latticexyz/store-sync/recs';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMUD } from '@/contexts/mud-context';
+import { SpellMetadata } from '@/types/shaman';
 
 export const useShaman = (shamanId: string) => {
   const mud = useMUD();
@@ -28,7 +29,7 @@ export const useShaman = (shamanId: string) => {
 
       const shamanSpells = await Promise.all(
         shamanData.spellIds.map(async (spellId) => {
-          const spell = getComponentValueStrict(
+          const shamanSpell = getComponentValueStrict(
             mud.components.ShamanSpell,
             encodeEntity(
               { shamanId: 'bytes32', spellId: 'bytes32' },
@@ -39,15 +40,25 @@ export const useShaman = (shamanId: string) => {
             )
           );
 
-          const metadata = await axios.get<{
-            name: string;
-            description: string;
-          }>(`https://gateway.shaman.fun/ipfs/${spell.metadata}`);
+          const spell = getComponentValueStrict(
+            mud.components.Spells,
+            encodeEntity(
+              { spellId: 'bytes32' },
+              { spellId: spellId as `0x${string}` }
+            )
+          );
+
+          const metadata = await axios.get<SpellMetadata>(
+            `https://gateway.shaman.fun/ipfs/${spell.metadata}`
+          );
 
           return {
             ...spell,
-            name: metadata.data.name,
-            description: metadata.data.description,
+            ...shamanSpell,
+            spellId,
+            ...metadata.data,
+            version: shamanSpell.version,
+            latestVersion: spell.version,
           };
         })
       );
@@ -69,6 +80,7 @@ export const useShaman = (shamanId: string) => {
 
           return {
             ...source,
+            sourceId,
             name: metadata.data.name,
             description: metadata.data.description,
           };

@@ -9,7 +9,6 @@ import {
 } from '@xyflow/react';
 import {
   IconPlus,
-  IconTrash,
   IconDotsVertical,
   IconArrowBigUpLine,
 } from '@tabler/icons-react';
@@ -37,11 +36,9 @@ import { useShaman } from '@/hooks/use-shaman';
 import { useShamanLogs } from '@/hooks/use-shaman-logs';
 import { ShamanLogType, ShamanLogsTableData } from '@/types/shaman';
 import { DataTable } from '@/components/data-table';
-import { useShamanSpells } from '@/hooks/use-shaman-spells';
 import { useMUD } from '@/contexts/mud-context';
 import { toast } from '@/hooks/use-toast';
 import { LabelCreator } from '@/components/label-creator';
-import { useShamanSources } from '@/hooks/use-shaman-sources';
 import { handleError } from '@/lib/errors';
 
 import '@xyflow/react/dist/style.css';
@@ -63,10 +60,8 @@ export function WorkflowTab() {
   const { refetch: refetchZugBalance } = useZugBalance(
     embeddedWallet?.address as `0x${string}`
   );
-  const { data: shamanSources } = useShamanSources(shamanId as string);
   const { openViewLog, openAddSpell } = useDialogContext();
-  const { data: shamanSpells } = useShamanSpells(shamanId as string);
-  const selectedSpell = shamanSpells?.find(
+  const selectedSpell = shaman?.spells?.find(
     (spell) => spell.spellId === spellId
   );
   const spellLogs = shamanLogs?.filter((log) => log.spellId === spellId);
@@ -77,36 +72,17 @@ export function WorkflowTab() {
   const reactFlow = useReactFlow();
 
   useEffect(() => {
-    if (shamanSpells?.length || shamanSources?.length) {
+    if (shaman?.spells?.length || shaman?.sources?.length) {
       setTimeout(() => {
         reactFlow.fitView();
       }, 75);
     }
-  }, [shamanSpells, shamanSources, reactFlow]);
+  }, [shaman?.spells, shaman?.sources, reactFlow]);
 
   const handleRefetch = useCallback(() => {
     refetch();
     refetchZugBalance();
   }, [refetch, refetchZugBalance]);
-
-  const handleRemoveSpell = useCallback(async () => {
-    try {
-      setLoading(true);
-      await mud?.calls.embedded?.systemCalls?.removeSpellFromShaman(
-        shamanId as Hex,
-        selectedSpell?.spellId as Hex
-      );
-      toast({
-        title: 'Success',
-        description: 'Spell removed from shaman.',
-      });
-      setSpellId(null);
-    } catch (error) {
-      handleError(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedSpell, mud, shamanId]);
 
   const handleUpdateSpellVersion = useCallback(async () => {
     try {
@@ -244,7 +220,7 @@ export function WorkflowTab() {
                 }
               }}
               nodes={[
-                ...(shamanSources?.map((source, index) => ({
+                ...(shaman?.sources?.map((source, index) => ({
                   id: source.sourceId,
                   data: {
                     label: (
@@ -261,7 +237,7 @@ export function WorkflowTab() {
                   sourcePosition: Position.Right,
                   targetPosition: Position.Left,
                 })) || []),
-                ...(shamanSpells?.map((spell, index) => ({
+                ...(shaman?.spells?.map((spell, index) => ({
                   id: spell.spellId,
                   data: {
                     label: (
@@ -290,7 +266,7 @@ export function WorkflowTab() {
                           ),
                         },
                         position: {
-                          x: (shamanSpells?.length || 0) * 200,
+                          x: (shaman?.spells?.length || 0) * 200,
                           y: 0,
                         },
                         style: {
@@ -305,25 +281,25 @@ export function WorkflowTab() {
                   : []),
               ]}
               edges={[
-                ...(shamanSources?.slice(0, -1).map((source, index) => ({
-                  id: `edge-${source.sourceId}-${shamanSources[index + 1].sourceId}`,
+                ...(shaman?.sources?.slice(0, -1).map((source, index) => ({
+                  id: `edge-${source.sourceId}-${shaman?.sources[index + 1].sourceId}`,
                   source: source.sourceId,
-                  target: shamanSources[index + 1].sourceId,
+                  target: shaman?.sources[index + 1].sourceId,
                   type: 'default',
                   animated: false,
                   markerEnd: {
                     type: MarkerType.Arrow,
                   },
                 })) || []),
-                ...(shamanSources?.length
+                ...(shaman?.sources?.length
                   ? [
                       {
                         id: `edge-source-to-first-spell`,
                         source:
-                          shamanSources[shamanSources.length - 1].sourceId,
+                          shaman?.sources[shaman?.sources.length - 1].sourceId,
                         target:
-                          shamanSpells?.length > 0
-                            ? shamanSpells[0].spellId
+                          shaman?.spells?.length > 0
+                            ? shaman?.spells[0].spellId
                             : 'add-new-spell',
                         type: 'default',
                         animated: true,
@@ -333,21 +309,22 @@ export function WorkflowTab() {
                       },
                     ]
                   : []),
-                ...(shamanSpells?.slice(0, -1).map((spell, index) => ({
-                  id: `edge-${spell.spellId}-${shamanSpells[index + 1].spellId}`,
+                ...(shaman?.spells?.slice(0, -1).map((spell, index) => ({
+                  id: `edge-${spell.spellId}-${shaman?.spells[index + 1].spellId}`,
                   source: spell.spellId,
-                  target: shamanSpells[index + 1].spellId,
+                  target: shaman?.spells[index + 1].spellId,
                   type: 'default',
                   animated: false,
                   markerEnd: {
                     type: MarkerType.Arrow,
                   },
                 })) || []),
-                ...(shamanSpells?.length
+                ...(shaman?.spells?.length
                   ? [
                       {
                         id: `edge-last-to-add`,
-                        source: shamanSpells[shamanSpells.length - 1].spellId,
+                        source:
+                          shaman?.spells[shaman?.spells.length - 1].spellId,
                         target: 'add-new-spell',
                         type: 'default',
                         animated: true,
@@ -395,14 +372,6 @@ export function WorkflowTab() {
                               <IconArrowBigUpLine className="h-4 w-4" />
                             </Button>
                           )}
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={handleRemoveSpell}
-                            disabled={loading}
-                            className="self-start sm:self-auto">
-                            <IconTrash className="h-4 w-4" />
-                          </Button>
                         </div>
                       )}
                     </div>

@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Hex } from 'viem';
 import { DialogProps } from '@/contexts/dialog-context';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
@@ -14,24 +13,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { useMUD } from '@/contexts/mud-context';
 import { useSpells } from '@/hooks/use-spells';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useShamanSpells } from '@/hooks/use-shaman-spells';
 import { handleError } from '@/lib/errors';
+import { useShaman } from '@/hooks/use-shaman';
 
 export function DialogAddSpell(props: DialogProps) {
-  const mud = useMUD();
   const [loading, setLoading] = useState(false);
   const [selectedSpellId, setSelectedSpellId] = useState<string | null>(null);
   const { data: spells, isLoading: spellsLoading } = useSpells();
-  const { data: shamanSpells, isLoading: shamanSpellsLoading } =
-    useShamanSpells(props.shamanId || '');
+
   const { shamanId: shamanIdParam } = useParams();
   const shamanId = props.shamanId || shamanIdParam;
 
+  const { data: shaman, isLoading: shamanLoading } = useShaman(
+    shamanId as string
+  );
+
   const isSpellAlreadyAdded = (spellId: string) => {
-    return shamanSpells?.some((spell) => spell.spellId === spellId) || false;
+    return shaman?.spells?.some((spell) => spell.spellId === spellId) || false;
   };
 
   const handleAddSpell = async () => {
@@ -55,10 +55,10 @@ export function DialogAddSpell(props: DialogProps) {
 
     setLoading(true);
     try {
-      await mud?.calls.embedded?.systemCalls?.addSpellToShaman(
-        shamanId as Hex,
-        selectedSpellId as Hex
-      );
+      // await mud?.calls.embedded?.systemCalls?.addSpellToShaman(
+      //   shamanId as Hex,
+      //   selectedSpellId as Hex
+      // );
 
       toast({
         title: 'Success',
@@ -88,7 +88,7 @@ export function DialogAddSpell(props: DialogProps) {
         <div className="grid gap-2 py-2">
           <div className="border rounded-md overflow-hidden max-h-[300px] overflow-y-auto">
             <div className="divide-y">
-              {spellsLoading || shamanSpellsLoading ? (
+              {spellsLoading || shamanLoading ? (
                 Array(5)
                   .fill(0)
                   .map((_, i) => <Skeleton key={i} className="h-12 w-full" />)

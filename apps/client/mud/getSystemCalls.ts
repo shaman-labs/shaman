@@ -34,28 +34,7 @@ export function getSystemCalls({
   const client = publicClient as PublicClient;
 
   // shaman functions
-  const createShaman = async (
-    balance: bigint,
-    name: string,
-    abilityIds: Hex[],
-    sourceIds: Hex[],
-    metadata: string
-  ): Promise<Hex> => {
-    await tokenContract.simulate.approve([worldContract.address, balance], {
-      chain,
-      account: account.address,
-    });
-
-    const approveTx = await tokenContract.write.approve(
-      [worldContract.address, balance],
-      {
-        chain,
-        account: account.address,
-      }
-    );
-
-    await waitForTransaction(approveTx);
-
+  const createShaman = async (name: string, metadata: string): Promise<Hex> => {
     await worldContract.simulate.createShaman([name, metadata], {
       account: account.address,
     });

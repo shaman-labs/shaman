@@ -20,8 +20,8 @@ import { useShamanLogs } from '@/hooks/use-shaman-logs';
 import { ShamanLogType, ShamanLogsTableData } from '@/types/shaman';
 import { DataTable } from '@/components/data-table';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useShamanSpells } from '@/hooks/use-shaman-spells';
 import { trimHash } from '@/lib/utils';
+import { useShaman } from '@/hooks/use-shaman';
 
 export function LogsTab() {
   const { shamanId } = useParams();
@@ -29,7 +29,7 @@ export function LogsTab() {
     shamanId as string
   );
   const { openViewLog } = useDialogContext();
-  const { data: shamanSpells } = useShamanSpells(shamanId as string);
+  const { data: shaman } = useShaman(shamanId as string);
 
   const tableData: ShamanLogsTableData[] = useMemo(
     () =>
@@ -67,7 +67,7 @@ export function LogsTab() {
         accessorKey: 'spellId',
         header: 'Spell',
         cell: ({ row }) => {
-          const spell = shamanSpells?.find(
+          const spell = shaman?.spells?.find(
             (spell) => spell.spellId === row.original.spellId
           );
           return (
@@ -141,7 +141,7 @@ export function LogsTab() {
       },
     ],
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [openViewLog, shamanSpells]
+    [openViewLog, shaman?.spells]
   );
 
   return (
