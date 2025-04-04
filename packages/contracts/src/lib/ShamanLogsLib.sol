@@ -7,21 +7,26 @@ import { LogType } from "../codegen/common.sol";
 library ShamanLogsLib {
   function logOperation(
     bytes32 shamanId,
-    bytes32 spellId,
+    bytes32 shamanSpellId,
     uint256 amount,
     bool success,
     LogType logType,
     string memory metadata
   ) internal {
     bytes32 logId = keccak256(
-      abi.encodePacked(shamanId, spellId, block.timestamp, block.prevrandao)
+      abi.encodePacked(
+        shamanId,
+        shamanSpellId,
+        block.timestamp,
+        block.prevrandao
+      )
     );
 
     ShamanLogs.set(
       logId,
       logType,
       shamanId,
-      spellId,
+      shamanSpellId,
       amount,
       success,
       block.timestamp,

@@ -1,13 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 
-import { Sources, Shamans, Spells, SpellVersions, ShamanSpell, ShamanSpellEdges, SourceShaman, SourceShamanLookup } from "../codegen/index.sol";
+import { Sources, Shamans, Spells, ShamanSpells, ShamanSpellEdges, ShamanSources, SourceShamanLookup } from "../codegen/index.sol";
+import { JobState } from "../codegen/common.sol";
 
 struct SpellEdge {
   bytes32 fromSpellId;
   bytes32 toSpellId;
-  uint256 createdAt;
-  string metadata;
 }
 
 library ShamanWorkflowsLib {
@@ -18,25 +17,65 @@ library ShamanWorkflowsLib {
     SpellEdge[] memory spellEdges
   ) internal {
     uint256 newSpellEdgeCount = spellEdges.length;
-    uint256 prevSpellEdgeCount = Shamans.lengthSpellEdgeIds(shamanId);
+    uint256 newSourceIdsCount = sourceIds.length;
+    uint256 newSpellIdsCount = spellIds.length;
 
-    uint256 newSpellCount = spellIds.length;
-    uint256 prevSpellCount = Shamans.lengthSpellIds(shamanId);
+    bytes32[] memory newShamanSpellEdgeIds = new bytes32[](newSpellEdgeCount);
+    bytes32[] memory newShamanSourceIds = new bytes32[](newSourceIdsCount);
+    bytes32[] memory newShamanSpellIds = new bytes32[](newSpellIdsCount);
 
-    uint256 newSourceCount = sourceIds.length;
-    uint256 prevSourceCount = Shamans.lengthSourceIds(shamanId);
+    // add new shaman sources
+    for (uint256 i = 0; i < newSourceIdsCount; i++) {
+      bytes32 sourceId = sourceIds[i];
+      bytes32 shamanSourceId = keccak256(
+        abi.encodePacked(
+          shamanId,
+          sourceId,
+          i,
+          block.timestamp,
+          block.prevrandao
+        )
+      );
 
-    bytes32[] memory newSpellEdgeIds = new bytes32[](newSpellEdgeCount);
+      newShamanSourceIds[i] = shamanSourceId;
+      ShamanSources.set(shamanSourceId, sourceId);
 
-    // remove previous spell edges
-    for (uint256 i = 0; i < prevSpellEdgeCount; i++) {
-      ShamanSpellEdges.deleteRecord(Shamans.getItemSpellEdgeIds(shamanId, i));
+      // increase shaman count
+      uint256 sourceShamanIndex = Sources.getShamanCount(sourceId);
+      SourceShamanLookup.set(sourceId, sourceShamanIndex, shamanId);
+      Sources.setShamanCount(sourceId, sourceShamanIndex + 1);
     }
 
-    // add new spell edges
+    // add new shaman spells
+    for (uint256 i = 0; i < newSpellIdsCount; i++) {
+      bytes32 spellId = spellIds[i];
+      bytes32 shamanSpellId = keccak256(
+        abi.encodePacked(
+          shamanId,
+          spellId,
+          i,
+          block.timestamp,
+          block.prevrandao
+        )
+      );
+
+      newShamanSpellIds[i] = shamanSpellId;
+      ShamanSpells.set(
+        shamanSpellId,
+        spellId,
+        Spells.getVersion(spellId),
+        JobState.Idle,
+        Spells.getMetadata(spellId)
+      );
+
+      // increase shaman count
+      Spells.setShamanCount(spellId, Spells.getShamanCount(spellId) + 1);
+    }
+
+    // add new shaman spell edges
     for (uint256 i = 0; i < newSpellEdgeCount; i++) {
       SpellEdge memory spellEdge = spellEdges[i];
-      bytes32 edgeId = keccak256(
+      bytes32 shamanSpellEdgeId = keccak256(
         abi.encodePacked(
           shamanId,
           spellEdge.fromSpellId,
@@ -46,79 +85,17 @@ library ShamanWorkflowsLib {
           block.prevrandao
         )
       );
-      newSpellEdgeIds[i] = edgeId;
+      newShamanSpellEdgeIds[i] = shamanSpellEdgeId;
       ShamanSpellEdges.set(
-        edgeId,
-        shamanId,
+        shamanSpellEdgeId,
         spellEdge.fromSpellId,
-        spellEdge.toSpellId,
-        spellEdge.createdAt,
-        spellEdge.metadata
+        spellEdge.toSpellId
       );
     }
 
-    // remove previous source shaman lookups
-    for (uint256 i = 0; i < prevSourceCount; i++) {
-      bytes32 sourceId = Shamans.getItemSourceIds(shamanId, i);
-      // get last source index
-      uint256 lastSourceIndex = Sources.getShamanCount(sourceId);
-
-      // index starts at 0
-      if (lastSourceIndex > 0) {
-        lastSourceIndex--;
-      }
-
-      // swap with last shaman
-      bytes32 lastShamanId = SourceShamanLookup.getShamanId(
-        sourceId,
-        lastSourceIndex
-      );
-      uint256 prevIndex = SourceShaman.getIndex(sourceId, shamanId);
-      SourceShamanLookup.set(sourceId, prevIndex, lastShamanId);
-      SourceShaman.setIndex(sourceId, lastShamanId, prevIndex);
-
-      // delete record
-      SourceShaman.deleteRecord(sourceId, shamanId);
-      // delete last shaman lookup
-      SourceShamanLookup.deleteRecord(sourceId, lastSourceIndex);
-
-      // update source shaman count (decrement)
-      Sources.setShamanCount(sourceId, lastSourceIndex);
-    }
-
-    // add new source shaman lookups
-    for (uint256 i = 0; i < newSourceCount; i++) {
-      bytes32 sourceId = sourceIds[i];
-      // get last source index
-      uint256 lastSourceIndex = Sources.getShamanCount(sourceId);
-
-      SourceShamanLookup.set(sourceId, lastSourceIndex, shamanId);
-      SourceShaman.set(sourceId, shamanId, lastSourceIndex, block.timestamp);
-
-      // update source shaman count (increment)
-      Sources.setShamanCount(sourceId, lastSourceIndex + 1);
-    }
-
-    // update spells shaman count
-
-    // prev spells will decrement shaman count
-    for (uint256 i = 0; i < prevSpellCount; i++) {
-      bytes32 spellId = Shamans.getItemSpellIds(shamanId, i);
-      uint256 lastSpellIndex = Spells.getShamanCount(spellId);
-      // assuming prevSpellCount is always greater than 0
-      Spells.setShamanCount(spellId, lastSpellIndex - 1);
-    }
-
-    // new spells will increment shaman count
-    for (uint256 i = 0; i < newSpellCount; i++) {
-      bytes32 spellId = spellIds[i];
-      uint256 lastSpellIndex = Spells.getShamanCount(spellId);
-      Spells.setShamanCount(spellId, lastSpellIndex + 1);
-    }
-
-    // finally, add new spells, sources and spell edges
-    Shamans.setSpellIds(shamanId, spellIds);
-    Shamans.setSourceIds(shamanId, sourceIds);
-    Shamans.setSpellEdgeIds(shamanId, newSpellEdgeIds);
+    // add new spells, sources and spell edges to shaman
+    Shamans.setShamanSpellIds(shamanId, newShamanSpellIds);
+    Shamans.setShamanSourceIds(shamanId, newShamanSourceIds);
+    Shamans.setShamanSpellEdgeIds(shamanId, newShamanSpellEdgeIds);
   }
 }

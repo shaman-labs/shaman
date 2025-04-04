@@ -65,9 +65,9 @@ export default defineWorld({
         createdAt: "uint256",
         active: "bool",
         balance: "uint256",
-        spellIds: "bytes32[]",
-        sourceIds: "bytes32[]",
-        spellEdgeIds: "bytes32[]",
+        shamanSpellIds: "bytes32[]",
+        shamanSourceIds: "bytes32[]",
+        shamanSpellEdgeIds: "bytes32[]",
         name: "string",
         metadata: "string",
       },
@@ -118,47 +118,41 @@ export default defineWorld({
       key: ["sender", "role"],
     },
     // pivot tables
-    ShamanSpell: {
+    ShamanSpells: {
       codegen: {
         dataStruct: false,
       },
       schema: {
-        shamanId: "bytes32",
+        shamanSpellId: "bytes32",
         spellId: "bytes32",
-        createdAt: "uint256",
         version: "uint256", // version of the spell
         state: "JobState", // state of the spell
         metadata: "string", // metadata of version of the spell
       },
-      key: ["shamanId", "spellId"],
+      key: ["shamanSpellId"],
     },
     ShamanSpellEdges: {
       codegen: {
         dataStruct: false,
       },
       schema: {
-        edgeId: "bytes32",
-        shamanId: "bytes32",
+        shamanSpellEdgeId: "bytes32",
         fromSpellId: "bytes32",
         toSpellId: "bytes32",
-        createdAt: "uint256",
-        metadata: "string",
       },
-      key: ["edgeId"],
+      key: ["shamanSpellEdgeId"],
     },
-    SourceShaman: {
+    ShamanSources: {
       codegen: {
         dataStruct: false,
       },
       schema: {
+        shamanSourceId: "bytes32",
         sourceId: "bytes32",
-        shamanId: "bytes32",
-        index: "uint256", // index of the shaman in the source
-        createdAt: "uint256",
       },
-      key: ["sourceId", "shamanId"],
+      key: ["shamanSourceId"],
     },
-    // lookup tables for querying
+    // lookup tables for querying shamans by source
     SourceShamanLookup: {
       codegen: {
         dataStruct: false,

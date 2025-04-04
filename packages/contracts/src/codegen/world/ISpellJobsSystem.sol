@@ -9,13 +9,13 @@ pragma solidity >=0.8.24;
  * @dev This interface is automatically generated from the corresponding system contract. Do not edit manually.
  */
 interface ISpellJobsSystem {
-  function enqueueSpellJob(bytes32 shamanId, bytes32 spellId, uint256 cost) external;
+  function enqueueSpellJob(bytes32 shamanId, bytes32 shamanSpellId, uint256 cost) external;
 
-  function startSpellJob(bytes32 shamanId, bytes32 spellId) external;
+  function startSpellJob(bytes32 shamanId, bytes32 shamanSpellId) external;
 
   function completeSpellJob(
     bytes32 shamanId,
-    bytes32 spellId,
+    bytes32 shamanSpellId,
     uint256 cost,
     bool success,
     string memory metadata

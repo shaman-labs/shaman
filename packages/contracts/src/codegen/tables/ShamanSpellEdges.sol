@@ -21,12 +21,12 @@ library ShamanSpellEdges {
   ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e5370656c6c4564676573);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0080040120202020000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0040020020200000000000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (bytes32, bytes32, bytes32, uint256, string)
-  Schema constant _valueSchema = Schema.wrap(0x008004015f5f5f1fc50000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (bytes32, bytes32)
+  Schema constant _valueSchema = Schema.wrap(0x004002005f5f0000000000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -34,7 +34,7 @@ library ShamanSpellEdges {
    */
   function getKeyNames() internal pure returns (string[] memory keyNames) {
     keyNames = new string[](1);
-    keyNames[0] = "edgeId";
+    keyNames[0] = "shamanSpellEdgeId";
   }
 
   /**
@@ -42,12 +42,9 @@ library ShamanSpellEdges {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](5);
-    fieldNames[0] = "shamanId";
-    fieldNames[1] = "fromSpellId";
-    fieldNames[2] = "toSpellId";
-    fieldNames[3] = "createdAt";
-    fieldNames[4] = "metadata";
+    fieldNames = new string[](2);
+    fieldNames[0] = "fromSpellId";
+    fieldNames[1] = "toSpellId";
   }
 
   /**
@@ -65,347 +62,95 @@ library ShamanSpellEdges {
   }
 
   /**
-   * @notice Get shamanId.
+   * @notice Get fromSpellId.
    */
-  function getShamanId(bytes32 edgeId) internal view returns (bytes32 shamanId) {
+  function getFromSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 fromSpellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (bytes32(_blob));
   }
 
   /**
-   * @notice Get shamanId.
+   * @notice Get fromSpellId.
    */
-  function _getShamanId(bytes32 edgeId) internal view returns (bytes32 shamanId) {
+  function _getFromSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 fromSpellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
     return (bytes32(_blob));
   }
 
   /**
-   * @notice Set shamanId.
+   * @notice Set fromSpellId.
    */
-  function setShamanId(bytes32 edgeId, bytes32 shamanId) internal {
+  function setFromSpellId(bytes32 shamanSpellEdgeId, bytes32 fromSpellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((shamanId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((fromSpellId)), _fieldLayout);
   }
 
   /**
-   * @notice Set shamanId.
+   * @notice Set fromSpellId.
    */
-  function _setShamanId(bytes32 edgeId, bytes32 shamanId) internal {
+  function _setFromSpellId(bytes32 shamanSpellEdgeId, bytes32 fromSpellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((shamanId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((fromSpellId)), _fieldLayout);
   }
 
   /**
-   * @notice Get fromSpellId.
+   * @notice Get toSpellId.
    */
-  function getFromSpellId(bytes32 edgeId) internal view returns (bytes32 fromSpellId) {
+  function getToSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 toSpellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
     bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
     return (bytes32(_blob));
   }
 
   /**
-   * @notice Get fromSpellId.
+   * @notice Get toSpellId.
    */
-  function _getFromSpellId(bytes32 edgeId) internal view returns (bytes32 fromSpellId) {
+  function _getToSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 toSpellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
     bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
     return (bytes32(_blob));
   }
 
   /**
-   * @notice Set fromSpellId.
+   * @notice Set toSpellId.
    */
-  function setFromSpellId(bytes32 edgeId, bytes32 fromSpellId) internal {
+  function setToSpellId(bytes32 shamanSpellEdgeId, bytes32 toSpellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((fromSpellId)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set fromSpellId.
-   */
-  function _setFromSpellId(bytes32 edgeId, bytes32 fromSpellId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((fromSpellId)), _fieldLayout);
-  }
-
-  /**
-   * @notice Get toSpellId.
-   */
-  function getToSpellId(bytes32 edgeId) internal view returns (bytes32 toSpellId) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
-    return (bytes32(_blob));
-  }
-
-  /**
-   * @notice Get toSpellId.
-   */
-  function _getToSpellId(bytes32 edgeId) internal view returns (bytes32 toSpellId) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
-    return (bytes32(_blob));
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((toSpellId)), _fieldLayout);
   }
 
   /**
    * @notice Set toSpellId.
    */
-  function setToSpellId(bytes32 edgeId, bytes32 toSpellId) internal {
+  function _setToSpellId(bytes32 shamanSpellEdgeId, bytes32 toSpellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((toSpellId)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set toSpellId.
-   */
-  function _setToSpellId(bytes32 edgeId, bytes32 toSpellId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((toSpellId)), _fieldLayout);
-  }
-
-  /**
-   * @notice Get createdAt.
-   */
-  function getCreatedAt(bytes32 edgeId) internal view returns (uint256 createdAt) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
-    return (uint256(bytes32(_blob)));
-  }
-
-  /**
-   * @notice Get createdAt.
-   */
-  function _getCreatedAt(bytes32 edgeId) internal view returns (uint256 createdAt) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
-    return (uint256(bytes32(_blob)));
-  }
-
-  /**
-   * @notice Set createdAt.
-   */
-  function setCreatedAt(bytes32 edgeId, uint256 createdAt) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((createdAt)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set createdAt.
-   */
-  function _setCreatedAt(bytes32 edgeId, uint256 createdAt) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked((createdAt)), _fieldLayout);
-  }
-
-  /**
-   * @notice Get metadata.
-   */
-  function getMetadata(bytes32 edgeId) internal view returns (string memory metadata) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
-    return (string(_blob));
-  }
-
-  /**
-   * @notice Get metadata.
-   */
-  function _getMetadata(bytes32 edgeId) internal view returns (string memory metadata) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
-    return (string(_blob));
-  }
-
-  /**
-   * @notice Set metadata.
-   */
-  function setMetadata(bytes32 edgeId, string memory metadata) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((metadata)));
-  }
-
-  /**
-   * @notice Set metadata.
-   */
-  function _setMetadata(bytes32 edgeId, string memory metadata) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((metadata)));
-  }
-
-  /**
-   * @notice Get the length of metadata.
-   */
-  function lengthMetadata(bytes32 edgeId) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
-    unchecked {
-      return _byteLength / 1;
-    }
-  }
-
-  /**
-   * @notice Get the length of metadata.
-   */
-  function _lengthMetadata(bytes32 edgeId) internal view returns (uint256) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
-    unchecked {
-      return _byteLength / 1;
-    }
-  }
-
-  /**
-   * @notice Get an item of metadata.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function getItemMetadata(bytes32 edgeId, uint256 _index) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    unchecked {
-      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (string(_blob));
-    }
-  }
-
-  /**
-   * @notice Get an item of metadata.
-   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
-   */
-  function _getItemMetadata(bytes32 edgeId, uint256 _index) internal view returns (string memory) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    unchecked {
-      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
-      return (string(_blob));
-    }
-  }
-
-  /**
-   * @notice Push a slice to metadata.
-   */
-  function pushMetadata(bytes32 edgeId, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
-  }
-
-  /**
-   * @notice Push a slice to metadata.
-   */
-  function _pushMetadata(bytes32 edgeId, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
-  }
-
-  /**
-   * @notice Pop a slice from metadata.
-   */
-  function popMetadata(bytes32 edgeId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Pop a slice from metadata.
-   */
-  function _popMetadata(bytes32 edgeId) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
-  }
-
-  /**
-   * @notice Update a slice of metadata at `_index`.
-   */
-  function updateMetadata(bytes32 edgeId, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    unchecked {
-      bytes memory _encoded = bytes((_slice));
-      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
-  }
-
-  /**
-   * @notice Update a slice of metadata at `_index`.
-   */
-  function _updateMetadata(bytes32 edgeId, uint256 _index, string memory _slice) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
-
-    unchecked {
-      bytes memory _encoded = bytes((_slice));
-      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
-    }
+    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((toSpellId)), _fieldLayout);
   }
 
   /**
    * @notice Get the full data.
    */
-  function get(
-    bytes32 edgeId
-  )
-    internal
-    view
-    returns (bytes32 shamanId, bytes32 fromSpellId, bytes32 toSpellId, uint256 createdAt, string memory metadata)
-  {
+  function get(bytes32 shamanSpellEdgeId) internal view returns (bytes32 fromSpellId, bytes32 toSpellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
     (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) = StoreSwitch.getRecord(
       _tableId,
@@ -418,15 +163,9 @@ library ShamanSpellEdges {
   /**
    * @notice Get the full data.
    */
-  function _get(
-    bytes32 edgeId
-  )
-    internal
-    view
-    returns (bytes32 shamanId, bytes32 fromSpellId, bytes32 toSpellId, uint256 createdAt, string memory metadata)
-  {
+  function _get(bytes32 shamanSpellEdgeId) internal view returns (bytes32 fromSpellId, bytes32 toSpellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
     (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) = StoreCore.getRecord(
       _tableId,
@@ -439,21 +178,14 @@ library ShamanSpellEdges {
   /**
    * @notice Set the full data using individual values.
    */
-  function set(
-    bytes32 edgeId,
-    bytes32 shamanId,
-    bytes32 fromSpellId,
-    bytes32 toSpellId,
-    uint256 createdAt,
-    string memory metadata
-  ) internal {
-    bytes memory _staticData = encodeStatic(shamanId, fromSpellId, toSpellId, createdAt);
+  function set(bytes32 shamanSpellEdgeId, bytes32 fromSpellId, bytes32 toSpellId) internal {
+    bytes memory _staticData = encodeStatic(fromSpellId, toSpellId);
 
-    EncodedLengths _encodedLengths = encodeLengths(metadata);
-    bytes memory _dynamicData = encodeDynamic(metadata);
+    EncodedLengths _encodedLengths;
+    bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
     StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
   }
@@ -461,21 +193,14 @@ library ShamanSpellEdges {
   /**
    * @notice Set the full data using individual values.
    */
-  function _set(
-    bytes32 edgeId,
-    bytes32 shamanId,
-    bytes32 fromSpellId,
-    bytes32 toSpellId,
-    uint256 createdAt,
-    string memory metadata
-  ) internal {
-    bytes memory _staticData = encodeStatic(shamanId, fromSpellId, toSpellId, createdAt);
+  function _set(bytes32 shamanSpellEdgeId, bytes32 fromSpellId, bytes32 toSpellId) internal {
+    bytes memory _staticData = encodeStatic(fromSpellId, toSpellId);
 
-    EncodedLengths _encodedLengths = encodeLengths(metadata);
-    bytes memory _dynamicData = encodeDynamic(metadata);
+    EncodedLengths _encodedLengths;
+    bytes memory _dynamicData;
 
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
     StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
   }
@@ -483,59 +208,32 @@ library ShamanSpellEdges {
   /**
    * @notice Decode the tightly packed blob of static data using this table's field layout.
    */
-  function decodeStatic(
-    bytes memory _blob
-  ) internal pure returns (bytes32 shamanId, bytes32 fromSpellId, bytes32 toSpellId, uint256 createdAt) {
-    shamanId = (Bytes.getBytes32(_blob, 0));
+  function decodeStatic(bytes memory _blob) internal pure returns (bytes32 fromSpellId, bytes32 toSpellId) {
+    fromSpellId = (Bytes.getBytes32(_blob, 0));
 
-    fromSpellId = (Bytes.getBytes32(_blob, 32));
-
-    toSpellId = (Bytes.getBytes32(_blob, 64));
-
-    createdAt = (uint256(Bytes.getBytes32(_blob, 96)));
-  }
-
-  /**
-   * @notice Decode the tightly packed blob of dynamic data using the encoded lengths.
-   */
-  function decodeDynamic(
-    EncodedLengths _encodedLengths,
-    bytes memory _blob
-  ) internal pure returns (string memory metadata) {
-    uint256 _start;
-    uint256 _end;
-    unchecked {
-      _end = _encodedLengths.atIndex(0);
-    }
-    metadata = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
+    toSpellId = (Bytes.getBytes32(_blob, 32));
   }
 
   /**
    * @notice Decode the tightly packed blobs using this table's field layout.
    * @param _staticData Tightly packed static fields.
-   * @param _encodedLengths Encoded lengths of dynamic fields.
-   * @param _dynamicData Tightly packed dynamic fields.
+   *
+   *
    */
   function decode(
     bytes memory _staticData,
-    EncodedLengths _encodedLengths,
-    bytes memory _dynamicData
-  )
-    internal
-    pure
-    returns (bytes32 shamanId, bytes32 fromSpellId, bytes32 toSpellId, uint256 createdAt, string memory metadata)
-  {
-    (shamanId, fromSpellId, toSpellId, createdAt) = decodeStatic(_staticData);
-
-    (metadata) = decodeDynamic(_encodedLengths, _dynamicData);
+    EncodedLengths,
+    bytes memory
+  ) internal pure returns (bytes32 fromSpellId, bytes32 toSpellId) {
+    (fromSpellId, toSpellId) = decodeStatic(_staticData);
   }
 
   /**
    * @notice Delete all data for given keys.
    */
-  function deleteRecord(bytes32 edgeId) internal {
+  function deleteRecord(bytes32 shamanSpellEdgeId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
     StoreSwitch.deleteRecord(_tableId, _keyTuple);
   }
@@ -543,9 +241,9 @@ library ShamanSpellEdges {
   /**
    * @notice Delete all data for given keys.
    */
-  function _deleteRecord(bytes32 edgeId) internal {
+  function _deleteRecord(bytes32 shamanSpellEdgeId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
     StoreCore.deleteRecord(_tableId, _keyTuple, _fieldLayout);
   }
@@ -554,32 +252,8 @@ library ShamanSpellEdges {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(
-    bytes32 shamanId,
-    bytes32 fromSpellId,
-    bytes32 toSpellId,
-    uint256 createdAt
-  ) internal pure returns (bytes memory) {
-    return abi.encodePacked(shamanId, fromSpellId, toSpellId, createdAt);
-  }
-
-  /**
-   * @notice Tightly pack dynamic data lengths using this table's schema.
-   * @return _encodedLengths The lengths of the dynamic fields (packed into a single bytes32 value).
-   */
-  function encodeLengths(string memory metadata) internal pure returns (EncodedLengths _encodedLengths) {
-    // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
-    unchecked {
-      _encodedLengths = EncodedLengthsLib.pack(bytes(metadata).length);
-    }
-  }
-
-  /**
-   * @notice Tightly pack dynamic (variable length) data using this table's schema.
-   * @return The dynamic data, encoded into a sequence of bytes.
-   */
-  function encodeDynamic(string memory metadata) internal pure returns (bytes memory) {
-    return abi.encodePacked(bytes((metadata)));
+  function encodeStatic(bytes32 fromSpellId, bytes32 toSpellId) internal pure returns (bytes memory) {
+    return abi.encodePacked(fromSpellId, toSpellId);
   }
 
   /**
@@ -589,16 +263,13 @@ library ShamanSpellEdges {
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
   function encode(
-    bytes32 shamanId,
     bytes32 fromSpellId,
-    bytes32 toSpellId,
-    uint256 createdAt,
-    string memory metadata
+    bytes32 toSpellId
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(shamanId, fromSpellId, toSpellId, createdAt);
+    bytes memory _staticData = encodeStatic(fromSpellId, toSpellId);
 
-    EncodedLengths _encodedLengths = encodeLengths(metadata);
-    bytes memory _dynamicData = encodeDynamic(metadata);
+    EncodedLengths _encodedLengths;
+    bytes memory _dynamicData;
 
     return (_staticData, _encodedLengths, _dynamicData);
   }
@@ -606,9 +277,9 @@ library ShamanSpellEdges {
   /**
    * @notice Encode keys as a bytes32 array using this table's field layout.
    */
-  function encodeKeyTuple(bytes32 edgeId) internal pure returns (bytes32[] memory) {
+  function encodeKeyTuple(bytes32 shamanSpellEdgeId) internal pure returns (bytes32[] memory) {
     bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = edgeId;
+    _keyTuple[0] = shamanSpellEdgeId;
 
     return _keyTuple;
   }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 import { BaseSystem } from "./BaseSystem.sol";
-import { Shamans, Sources, ShamanSpell, ShamanSpellEdges, SourceShaman, SourceShamanLookup } from "../codegen/index.sol";
+import { Shamans, Sources, ShamanSpells, ShamanSpellEdges, SourceShamanLookup } from "../codegen/index.sol";
 import { SpellEdge } from "../lib/ShamanWorkflowsLib.sol";
 import { JobState } from "../codegen/common.sol";
 
@@ -9,13 +9,13 @@ contract ShamanEntitiesSystem is BaseSystem {
   function getShamanSpellIds(
     bytes32 shamanId
   ) public view returns (bytes32[] memory) {
-    return Shamans.getSpellIds(shamanId);
+    return Shamans.getShamanSpellIds(shamanId);
   }
 
   function getShamanSourceIds(
     bytes32 shamanId
   ) public view returns (bytes32[] memory) {
-    return Shamans.getSourceIds(shamanId);
+    return Shamans.getShamanSourceIds(shamanId);
   }
 
   function getShamanIdsBySourceId(
@@ -32,39 +32,36 @@ contract ShamanEntitiesSystem is BaseSystem {
   }
 
   function getShamanSpellMetadata(
-    bytes32 shamanId,
-    bytes32 spellId
+    bytes32 shamanSpellId
   ) public view returns (string memory) {
-    return ShamanSpell.getMetadata(shamanId, spellId);
+    return ShamanSpells.getMetadata(shamanSpellId);
   }
 
   function getShamanSpellVersion(
-    bytes32 shamanId,
-    bytes32 spellId
+    bytes32 shamanSpellId
   ) public view returns (uint256) {
-    return ShamanSpell.getVersion(shamanId, spellId);
+    return ShamanSpells.getVersion(shamanSpellId);
   }
 
   function getShamanSpellState(
-    bytes32 shamanId,
-    bytes32 spellId
+    bytes32 shamanSpellId
   ) public view returns (JobState) {
-    return ShamanSpell.getState(shamanId, spellId);
+    return ShamanSpells.getState(shamanSpellId);
   }
 
   function getShamanSpellEdges(
     bytes32 shamanId
   ) public view returns (SpellEdge[] memory) {
-    bytes32[] memory spellEdgeIds = Shamans.getSpellEdgeIds(shamanId);
-    SpellEdge[] memory spellEdges = new SpellEdge[](spellEdgeIds.length);
+    bytes32[] memory shamanSpellEdgeIds = Shamans.getShamanSpellEdgeIds(
+      shamanId
+    );
+    SpellEdge[] memory spellEdges = new SpellEdge[](shamanSpellEdgeIds.length);
 
-    for (uint256 i = 0; i < spellEdgeIds.length; i++) {
-      bytes32 spellEdgeId = spellEdgeIds[i];
+    for (uint256 i = 0; i < shamanSpellEdgeIds.length; i++) {
+      bytes32 shamanSpellEdgeId = shamanSpellEdgeIds[i];
       SpellEdge memory spellEdge = SpellEdge({
-        fromSpellId: ShamanSpellEdges.getFromSpellId(spellEdgeId),
-        toSpellId: ShamanSpellEdges.getToSpellId(spellEdgeId),
-        createdAt: ShamanSpellEdges.getCreatedAt(spellEdgeId),
-        metadata: ShamanSpellEdges.getMetadata(spellEdgeId)
+        fromSpellId: ShamanSpellEdges.getFromSpellId(shamanSpellEdgeId),
+        toSpellId: ShamanSpellEdges.getToSpellId(shamanSpellEdgeId)
       });
       spellEdges[i] = spellEdge;
     }

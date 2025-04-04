@@ -51,9 +51,9 @@ library Shamans {
     fieldNames[2] = "createdAt";
     fieldNames[3] = "active";
     fieldNames[4] = "balance";
-    fieldNames[5] = "spellIds";
-    fieldNames[6] = "sourceIds";
-    fieldNames[7] = "spellEdgeIds";
+    fieldNames[5] = "shamanSpellIds";
+    fieldNames[6] = "shamanSourceIds";
+    fieldNames[7] = "shamanSpellEdgeIds";
     fieldNames[8] = "name";
     fieldNames[9] = "metadata";
   }
@@ -283,9 +283,9 @@ library Shamans {
   }
 
   /**
-   * @notice Get spellIds.
+   * @notice Get shamanSpellIds.
    */
-  function getSpellIds(bytes32 shamanId) internal view returns (bytes32[] memory spellIds) {
+  function getShamanSpellIds(bytes32 shamanId) internal view returns (bytes32[] memory shamanSpellIds) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -294,9 +294,9 @@ library Shamans {
   }
 
   /**
-   * @notice Get spellIds.
+   * @notice Get shamanSpellIds.
    */
-  function _getSpellIds(bytes32 shamanId) internal view returns (bytes32[] memory spellIds) {
+  function _getShamanSpellIds(bytes32 shamanId) internal view returns (bytes32[] memory shamanSpellIds) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -305,29 +305,29 @@ library Shamans {
   }
 
   /**
-   * @notice Set spellIds.
+   * @notice Set shamanSpellIds.
    */
-  function setSpellIds(bytes32 shamanId, bytes32[] memory spellIds) internal {
+  function setShamanSpellIds(bytes32 shamanId, bytes32[] memory shamanSpellIds) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, EncodeArray.encode((spellIds)));
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, EncodeArray.encode((shamanSpellIds)));
   }
 
   /**
-   * @notice Set spellIds.
+   * @notice Set shamanSpellIds.
    */
-  function _setSpellIds(bytes32 shamanId, bytes32[] memory spellIds) internal {
+  function _setShamanSpellIds(bytes32 shamanId, bytes32[] memory shamanSpellIds) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 0, EncodeArray.encode((spellIds)));
+    StoreCore.setDynamicField(_tableId, _keyTuple, 0, EncodeArray.encode((shamanSpellIds)));
   }
 
   /**
-   * @notice Get the length of spellIds.
+   * @notice Get the length of shamanSpellIds.
    */
-  function lengthSpellIds(bytes32 shamanId) internal view returns (uint256) {
+  function lengthShamanSpellIds(bytes32 shamanId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -338,9 +338,9 @@ library Shamans {
   }
 
   /**
-   * @notice Get the length of spellIds.
+   * @notice Get the length of shamanSpellIds.
    */
-  function _lengthSpellIds(bytes32 shamanId) internal view returns (uint256) {
+  function _lengthShamanSpellIds(bytes32 shamanId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -351,10 +351,10 @@ library Shamans {
   }
 
   /**
-   * @notice Get an item of spellIds.
+   * @notice Get an item of shamanSpellIds.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function getItemSpellIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
+  function getItemShamanSpellIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -365,10 +365,10 @@ library Shamans {
   }
 
   /**
-   * @notice Get an item of spellIds.
+   * @notice Get an item of shamanSpellIds.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _getItemSpellIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
+  function _getItemShamanSpellIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -379,9 +379,9 @@ library Shamans {
   }
 
   /**
-   * @notice Push an element to spellIds.
+   * @notice Push an element to shamanSpellIds.
    */
-  function pushSpellIds(bytes32 shamanId, bytes32 _element) internal {
+  function pushShamanSpellIds(bytes32 shamanId, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -389,9 +389,9 @@ library Shamans {
   }
 
   /**
-   * @notice Push an element to spellIds.
+   * @notice Push an element to shamanSpellIds.
    */
-  function _pushSpellIds(bytes32 shamanId, bytes32 _element) internal {
+  function _pushShamanSpellIds(bytes32 shamanId, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -399,9 +399,9 @@ library Shamans {
   }
 
   /**
-   * @notice Pop an element from spellIds.
+   * @notice Pop an element from shamanSpellIds.
    */
-  function popSpellIds(bytes32 shamanId) internal {
+  function popShamanSpellIds(bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -409,9 +409,9 @@ library Shamans {
   }
 
   /**
-   * @notice Pop an element from spellIds.
+   * @notice Pop an element from shamanSpellIds.
    */
-  function _popSpellIds(bytes32 shamanId) internal {
+  function _popShamanSpellIds(bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -419,9 +419,9 @@ library Shamans {
   }
 
   /**
-   * @notice Update an element of spellIds at `_index`.
+   * @notice Update an element of shamanSpellIds at `_index`.
    */
-  function updateSpellIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
+  function updateShamanSpellIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -432,9 +432,9 @@ library Shamans {
   }
 
   /**
-   * @notice Update an element of spellIds at `_index`.
+   * @notice Update an element of shamanSpellIds at `_index`.
    */
-  function _updateSpellIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
+  function _updateShamanSpellIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -445,9 +445,9 @@ library Shamans {
   }
 
   /**
-   * @notice Get sourceIds.
+   * @notice Get shamanSourceIds.
    */
-  function getSourceIds(bytes32 shamanId) internal view returns (bytes32[] memory sourceIds) {
+  function getShamanSourceIds(bytes32 shamanId) internal view returns (bytes32[] memory shamanSourceIds) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -456,9 +456,9 @@ library Shamans {
   }
 
   /**
-   * @notice Get sourceIds.
+   * @notice Get shamanSourceIds.
    */
-  function _getSourceIds(bytes32 shamanId) internal view returns (bytes32[] memory sourceIds) {
+  function _getShamanSourceIds(bytes32 shamanId) internal view returns (bytes32[] memory shamanSourceIds) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -467,29 +467,29 @@ library Shamans {
   }
 
   /**
-   * @notice Set sourceIds.
+   * @notice Set shamanSourceIds.
    */
-  function setSourceIds(bytes32 shamanId, bytes32[] memory sourceIds) internal {
+  function setShamanSourceIds(bytes32 shamanId, bytes32[] memory shamanSourceIds) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 1, EncodeArray.encode((sourceIds)));
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 1, EncodeArray.encode((shamanSourceIds)));
   }
 
   /**
-   * @notice Set sourceIds.
+   * @notice Set shamanSourceIds.
    */
-  function _setSourceIds(bytes32 shamanId, bytes32[] memory sourceIds) internal {
+  function _setShamanSourceIds(bytes32 shamanId, bytes32[] memory shamanSourceIds) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 1, EncodeArray.encode((sourceIds)));
+    StoreCore.setDynamicField(_tableId, _keyTuple, 1, EncodeArray.encode((shamanSourceIds)));
   }
 
   /**
-   * @notice Get the length of sourceIds.
+   * @notice Get the length of shamanSourceIds.
    */
-  function lengthSourceIds(bytes32 shamanId) internal view returns (uint256) {
+  function lengthShamanSourceIds(bytes32 shamanId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -500,9 +500,9 @@ library Shamans {
   }
 
   /**
-   * @notice Get the length of sourceIds.
+   * @notice Get the length of shamanSourceIds.
    */
-  function _lengthSourceIds(bytes32 shamanId) internal view returns (uint256) {
+  function _lengthShamanSourceIds(bytes32 shamanId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -513,10 +513,10 @@ library Shamans {
   }
 
   /**
-   * @notice Get an item of sourceIds.
+   * @notice Get an item of shamanSourceIds.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function getItemSourceIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
+  function getItemShamanSourceIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -527,10 +527,10 @@ library Shamans {
   }
 
   /**
-   * @notice Get an item of sourceIds.
+   * @notice Get an item of shamanSourceIds.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _getItemSourceIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
+  function _getItemShamanSourceIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -541,9 +541,9 @@ library Shamans {
   }
 
   /**
-   * @notice Push an element to sourceIds.
+   * @notice Push an element to shamanSourceIds.
    */
-  function pushSourceIds(bytes32 shamanId, bytes32 _element) internal {
+  function pushShamanSourceIds(bytes32 shamanId, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -551,9 +551,9 @@ library Shamans {
   }
 
   /**
-   * @notice Push an element to sourceIds.
+   * @notice Push an element to shamanSourceIds.
    */
-  function _pushSourceIds(bytes32 shamanId, bytes32 _element) internal {
+  function _pushShamanSourceIds(bytes32 shamanId, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -561,9 +561,9 @@ library Shamans {
   }
 
   /**
-   * @notice Pop an element from sourceIds.
+   * @notice Pop an element from shamanSourceIds.
    */
-  function popSourceIds(bytes32 shamanId) internal {
+  function popShamanSourceIds(bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -571,9 +571,9 @@ library Shamans {
   }
 
   /**
-   * @notice Pop an element from sourceIds.
+   * @notice Pop an element from shamanSourceIds.
    */
-  function _popSourceIds(bytes32 shamanId) internal {
+  function _popShamanSourceIds(bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -581,9 +581,9 @@ library Shamans {
   }
 
   /**
-   * @notice Update an element of sourceIds at `_index`.
+   * @notice Update an element of shamanSourceIds at `_index`.
    */
-  function updateSourceIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
+  function updateShamanSourceIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -594,9 +594,9 @@ library Shamans {
   }
 
   /**
-   * @notice Update an element of sourceIds at `_index`.
+   * @notice Update an element of shamanSourceIds at `_index`.
    */
-  function _updateSourceIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
+  function _updateShamanSourceIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -607,9 +607,9 @@ library Shamans {
   }
 
   /**
-   * @notice Get spellEdgeIds.
+   * @notice Get shamanSpellEdgeIds.
    */
-  function getSpellEdgeIds(bytes32 shamanId) internal view returns (bytes32[] memory spellEdgeIds) {
+  function getShamanSpellEdgeIds(bytes32 shamanId) internal view returns (bytes32[] memory shamanSpellEdgeIds) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -618,9 +618,9 @@ library Shamans {
   }
 
   /**
-   * @notice Get spellEdgeIds.
+   * @notice Get shamanSpellEdgeIds.
    */
-  function _getSpellEdgeIds(bytes32 shamanId) internal view returns (bytes32[] memory spellEdgeIds) {
+  function _getShamanSpellEdgeIds(bytes32 shamanId) internal view returns (bytes32[] memory shamanSpellEdgeIds) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -629,29 +629,29 @@ library Shamans {
   }
 
   /**
-   * @notice Set spellEdgeIds.
+   * @notice Set shamanSpellEdgeIds.
    */
-  function setSpellEdgeIds(bytes32 shamanId, bytes32[] memory spellEdgeIds) internal {
+  function setShamanSpellEdgeIds(bytes32 shamanId, bytes32[] memory shamanSpellEdgeIds) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 2, EncodeArray.encode((spellEdgeIds)));
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 2, EncodeArray.encode((shamanSpellEdgeIds)));
   }
 
   /**
-   * @notice Set spellEdgeIds.
+   * @notice Set shamanSpellEdgeIds.
    */
-  function _setSpellEdgeIds(bytes32 shamanId, bytes32[] memory spellEdgeIds) internal {
+  function _setShamanSpellEdgeIds(bytes32 shamanId, bytes32[] memory shamanSpellEdgeIds) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 2, EncodeArray.encode((spellEdgeIds)));
+    StoreCore.setDynamicField(_tableId, _keyTuple, 2, EncodeArray.encode((shamanSpellEdgeIds)));
   }
 
   /**
-   * @notice Get the length of spellEdgeIds.
+   * @notice Get the length of shamanSpellEdgeIds.
    */
-  function lengthSpellEdgeIds(bytes32 shamanId) internal view returns (uint256) {
+  function lengthShamanSpellEdgeIds(bytes32 shamanId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -662,9 +662,9 @@ library Shamans {
   }
 
   /**
-   * @notice Get the length of spellEdgeIds.
+   * @notice Get the length of shamanSpellEdgeIds.
    */
-  function _lengthSpellEdgeIds(bytes32 shamanId) internal view returns (uint256) {
+  function _lengthShamanSpellEdgeIds(bytes32 shamanId) internal view returns (uint256) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -675,10 +675,10 @@ library Shamans {
   }
 
   /**
-   * @notice Get an item of spellEdgeIds.
+   * @notice Get an item of shamanSpellEdgeIds.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function getItemSpellEdgeIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
+  function getItemShamanSpellEdgeIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -689,10 +689,10 @@ library Shamans {
   }
 
   /**
-   * @notice Get an item of spellEdgeIds.
+   * @notice Get an item of shamanSpellEdgeIds.
    * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
    */
-  function _getItemSpellEdgeIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
+  function _getItemShamanSpellEdgeIds(bytes32 shamanId, uint256 _index) internal view returns (bytes32) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -703,9 +703,9 @@ library Shamans {
   }
 
   /**
-   * @notice Push an element to spellEdgeIds.
+   * @notice Push an element to shamanSpellEdgeIds.
    */
-  function pushSpellEdgeIds(bytes32 shamanId, bytes32 _element) internal {
+  function pushShamanSpellEdgeIds(bytes32 shamanId, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -713,9 +713,9 @@ library Shamans {
   }
 
   /**
-   * @notice Push an element to spellEdgeIds.
+   * @notice Push an element to shamanSpellEdgeIds.
    */
-  function _pushSpellEdgeIds(bytes32 shamanId, bytes32 _element) internal {
+  function _pushShamanSpellEdgeIds(bytes32 shamanId, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -723,9 +723,9 @@ library Shamans {
   }
 
   /**
-   * @notice Pop an element from spellEdgeIds.
+   * @notice Pop an element from shamanSpellEdgeIds.
    */
-  function popSpellEdgeIds(bytes32 shamanId) internal {
+  function popShamanSpellEdgeIds(bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -733,9 +733,9 @@ library Shamans {
   }
 
   /**
-   * @notice Pop an element from spellEdgeIds.
+   * @notice Pop an element from shamanSpellEdgeIds.
    */
-  function _popSpellEdgeIds(bytes32 shamanId) internal {
+  function _popShamanSpellEdgeIds(bytes32 shamanId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -743,9 +743,9 @@ library Shamans {
   }
 
   /**
-   * @notice Update an element of spellEdgeIds at `_index`.
+   * @notice Update an element of shamanSpellEdgeIds at `_index`.
    */
-  function updateSpellEdgeIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
+  function updateShamanSpellEdgeIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -756,9 +756,9 @@ library Shamans {
   }
 
   /**
-   * @notice Update an element of spellEdgeIds at `_index`.
+   * @notice Update an element of shamanSpellEdgeIds at `_index`.
    */
-  function _updateSpellEdgeIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
+  function _updateShamanSpellEdgeIds(bytes32 shamanId, uint256 _index, bytes32 _element) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
 
@@ -1106,9 +1106,9 @@ library Shamans {
       uint256 createdAt,
       bool active,
       uint256 balance,
-      bytes32[] memory spellIds,
-      bytes32[] memory sourceIds,
-      bytes32[] memory spellEdgeIds,
+      bytes32[] memory shamanSpellIds,
+      bytes32[] memory shamanSourceIds,
+      bytes32[] memory shamanSpellEdgeIds,
       string memory name,
       string memory metadata
     )
@@ -1138,9 +1138,9 @@ library Shamans {
       uint256 createdAt,
       bool active,
       uint256 balance,
-      bytes32[] memory spellIds,
-      bytes32[] memory sourceIds,
-      bytes32[] memory spellEdgeIds,
+      bytes32[] memory shamanSpellIds,
+      bytes32[] memory shamanSourceIds,
+      bytes32[] memory shamanSpellEdgeIds,
       string memory name,
       string memory metadata
     )
@@ -1166,16 +1166,16 @@ library Shamans {
     uint256 createdAt,
     bool active,
     uint256 balance,
-    bytes32[] memory spellIds,
-    bytes32[] memory sourceIds,
-    bytes32[] memory spellEdgeIds,
+    bytes32[] memory shamanSpellIds,
+    bytes32[] memory shamanSourceIds,
+    bytes32[] memory shamanSpellEdgeIds,
     string memory name,
     string memory metadata
   ) internal {
     bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance);
 
-    EncodedLengths _encodedLengths = encodeLengths(spellIds, sourceIds, spellEdgeIds, name, metadata);
-    bytes memory _dynamicData = encodeDynamic(spellIds, sourceIds, spellEdgeIds, name, metadata);
+    EncodedLengths _encodedLengths = encodeLengths(shamanSpellIds, shamanSourceIds, shamanSpellEdgeIds, name, metadata);
+    bytes memory _dynamicData = encodeDynamic(shamanSpellIds, shamanSourceIds, shamanSpellEdgeIds, name, metadata);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
@@ -1193,16 +1193,16 @@ library Shamans {
     uint256 createdAt,
     bool active,
     uint256 balance,
-    bytes32[] memory spellIds,
-    bytes32[] memory sourceIds,
-    bytes32[] memory spellEdgeIds,
+    bytes32[] memory shamanSpellIds,
+    bytes32[] memory shamanSourceIds,
+    bytes32[] memory shamanSpellEdgeIds,
     string memory name,
     string memory metadata
   ) internal {
     bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance);
 
-    EncodedLengths _encodedLengths = encodeLengths(spellIds, sourceIds, spellEdgeIds, name, metadata);
-    bytes memory _dynamicData = encodeDynamic(spellIds, sourceIds, spellEdgeIds, name, metadata);
+    EncodedLengths _encodedLengths = encodeLengths(shamanSpellIds, shamanSourceIds, shamanSpellEdgeIds, name, metadata);
+    bytes memory _dynamicData = encodeDynamic(shamanSpellIds, shamanSourceIds, shamanSpellEdgeIds, name, metadata);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanId;
@@ -1237,9 +1237,9 @@ library Shamans {
     internal
     pure
     returns (
-      bytes32[] memory spellIds,
-      bytes32[] memory sourceIds,
-      bytes32[] memory spellEdgeIds,
+      bytes32[] memory shamanSpellIds,
+      bytes32[] memory shamanSourceIds,
+      bytes32[] memory shamanSpellEdgeIds,
       string memory name,
       string memory metadata
     )
@@ -1249,19 +1249,19 @@ library Shamans {
     unchecked {
       _end = _encodedLengths.atIndex(0);
     }
-    spellIds = (SliceLib.getSubslice(_blob, _start, _end).decodeArray_bytes32());
+    shamanSpellIds = (SliceLib.getSubslice(_blob, _start, _end).decodeArray_bytes32());
 
     _start = _end;
     unchecked {
       _end += _encodedLengths.atIndex(1);
     }
-    sourceIds = (SliceLib.getSubslice(_blob, _start, _end).decodeArray_bytes32());
+    shamanSourceIds = (SliceLib.getSubslice(_blob, _start, _end).decodeArray_bytes32());
 
     _start = _end;
     unchecked {
       _end += _encodedLengths.atIndex(2);
     }
-    spellEdgeIds = (SliceLib.getSubslice(_blob, _start, _end).decodeArray_bytes32());
+    shamanSpellEdgeIds = (SliceLib.getSubslice(_blob, _start, _end).decodeArray_bytes32());
 
     _start = _end;
     unchecked {
@@ -1295,16 +1295,19 @@ library Shamans {
       uint256 createdAt,
       bool active,
       uint256 balance,
-      bytes32[] memory spellIds,
-      bytes32[] memory sourceIds,
-      bytes32[] memory spellEdgeIds,
+      bytes32[] memory shamanSpellIds,
+      bytes32[] memory shamanSourceIds,
+      bytes32[] memory shamanSpellEdgeIds,
       string memory name,
       string memory metadata
     )
   {
     (state, creator, createdAt, active, balance) = decodeStatic(_staticData);
 
-    (spellIds, sourceIds, spellEdgeIds, name, metadata) = decodeDynamic(_encodedLengths, _dynamicData);
+    (shamanSpellIds, shamanSourceIds, shamanSpellEdgeIds, name, metadata) = decodeDynamic(
+      _encodedLengths,
+      _dynamicData
+    );
   }
 
   /**
@@ -1346,18 +1349,18 @@ library Shamans {
    * @return _encodedLengths The lengths of the dynamic fields (packed into a single bytes32 value).
    */
   function encodeLengths(
-    bytes32[] memory spellIds,
-    bytes32[] memory sourceIds,
-    bytes32[] memory spellEdgeIds,
+    bytes32[] memory shamanSpellIds,
+    bytes32[] memory shamanSourceIds,
+    bytes32[] memory shamanSpellEdgeIds,
     string memory name,
     string memory metadata
   ) internal pure returns (EncodedLengths _encodedLengths) {
     // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
     unchecked {
       _encodedLengths = EncodedLengthsLib.pack(
-        spellIds.length * 32,
-        sourceIds.length * 32,
-        spellEdgeIds.length * 32,
+        shamanSpellIds.length * 32,
+        shamanSourceIds.length * 32,
+        shamanSpellEdgeIds.length * 32,
         bytes(name).length,
         bytes(metadata).length
       );
@@ -1369,17 +1372,17 @@ library Shamans {
    * @return The dynamic data, encoded into a sequence of bytes.
    */
   function encodeDynamic(
-    bytes32[] memory spellIds,
-    bytes32[] memory sourceIds,
-    bytes32[] memory spellEdgeIds,
+    bytes32[] memory shamanSpellIds,
+    bytes32[] memory shamanSourceIds,
+    bytes32[] memory shamanSpellEdgeIds,
     string memory name,
     string memory metadata
   ) internal pure returns (bytes memory) {
     return
       abi.encodePacked(
-        EncodeArray.encode((spellIds)),
-        EncodeArray.encode((sourceIds)),
-        EncodeArray.encode((spellEdgeIds)),
+        EncodeArray.encode((shamanSpellIds)),
+        EncodeArray.encode((shamanSourceIds)),
+        EncodeArray.encode((shamanSpellEdgeIds)),
         bytes((name)),
         bytes((metadata))
       );
@@ -1397,16 +1400,16 @@ library Shamans {
     uint256 createdAt,
     bool active,
     uint256 balance,
-    bytes32[] memory spellIds,
-    bytes32[] memory sourceIds,
-    bytes32[] memory spellEdgeIds,
+    bytes32[] memory shamanSpellIds,
+    bytes32[] memory shamanSourceIds,
+    bytes32[] memory shamanSpellEdgeIds,
     string memory name,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
     bytes memory _staticData = encodeStatic(state, creator, createdAt, active, balance);
 
-    EncodedLengths _encodedLengths = encodeLengths(spellIds, sourceIds, spellEdgeIds, name, metadata);
-    bytes memory _dynamicData = encodeDynamic(spellIds, sourceIds, spellEdgeIds, name, metadata);
+    EncodedLengths _encodedLengths = encodeLengths(shamanSpellIds, shamanSourceIds, shamanSpellEdgeIds, name, metadata);
+    bytes memory _dynamicData = encodeDynamic(shamanSpellIds, shamanSourceIds, shamanSpellEdgeIds, name, metadata);
 
     return (_staticData, _encodedLengths, _dynamicData);
   }
