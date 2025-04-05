@@ -5,7 +5,7 @@ import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
 import { Shamans, Spells, ShamanSpells, Roles } from "../src/codegen/index.sol";
 import { JobState, RoleType, LogType } from "../src/codegen/common.sol";
-import { SpellEdge } from "../src/lib/ShamanWorkflowsLib.sol";
+import { NewSpellEdge } from "../src/lib/ShamanWorkflowsLib.sol";
 
 contract SpellJobsSystemTest is BaseTest {
   string constant INITIAL_METADATA = "QmShamanTest1";
@@ -81,8 +81,12 @@ contract SpellJobsSystemTest is BaseTest {
     bytes32[] memory sourceIds = new bytes32[](1);
     sourceIds[0] = _createSource(creator, "TestSource", INITIAL_METADATA);
 
-    SpellEdge[] memory spellEdges = new SpellEdge[](1);
+    NewSpellEdge[] memory spellEdges = new NewSpellEdge[](1);
     spellEdges[0] = _createSpellEdge(bytes32(0), spellIds[0]);
+
+    vm.prank(creator);
+    world.updateShamanWorkflow(shamanId, spellIds, sourceIds, spellEdges);
+    vm.stopPrank();
 
     // add balance to creator
     _prepareTokens(creator, INITIAL_BALANCE);
@@ -128,7 +132,7 @@ contract SpellJobsSystemTest is BaseTest {
 
     // Now we can enqueue the spell
     vm.prank(creatorAlice);
-    world.enqueueSpellJob(shamanId, shamanSpellIds[0], JOB_COST);
+    world.enqueueSpellJob(shamanSpellIds[0], JOB_COST);
     vm.stopPrank();
 
     // Verify the spell was enqueued
@@ -165,12 +169,12 @@ contract SpellJobsSystemTest is BaseTest {
 
     // Enqueue the spell
     vm.prank(creatorAlice);
-    world.enqueueSpellJob(shamanId, shamanSpellIds[0], JOB_COST);
+    world.enqueueSpellJob(shamanSpellIds[0], JOB_COST);
     vm.stopPrank();
 
     // Start the spell job
     vm.prank(creatorAlice);
-    world.startSpellJob(shamanId, shamanSpellIds[0]);
+    world.startSpellJob(shamanSpellIds[0]);
     vm.stopPrank();
 
     // Verify the spell job was started
@@ -214,7 +218,7 @@ contract SpellJobsSystemTest is BaseTest {
 
     // 3. Enqueue the spell job
     vm.prank(creatorAlice);
-    world.enqueueSpellJob(shamanId, shamanSpellIds[0], JOB_COST);
+    world.enqueueSpellJob(shamanSpellIds[0], JOB_COST);
     vm.stopPrank();
 
     // Verify the spell is in Queue state
@@ -226,7 +230,7 @@ contract SpellJobsSystemTest is BaseTest {
 
     // 4. Start the spell job
     vm.prank(creatorAlice);
-    world.startSpellJob(shamanId, shamanSpellIds[0]);
+    world.startSpellJob(shamanSpellIds[0]);
     vm.stopPrank();
 
     // Verify the spell is now in InProgress state
@@ -239,7 +243,6 @@ contract SpellJobsSystemTest is BaseTest {
     // 5. Complete the spell job
     vm.prank(creatorAlice);
     world.completeSpellJob(
-      shamanId,
       shamanSpellIds[0],
       JOB_COST,
       true,

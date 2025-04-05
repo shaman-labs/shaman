@@ -6,7 +6,7 @@ import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
 import { Shamans, Roles } from "../src/codegen/index.sol";
 import { JobState, RoleType } from "../src/codegen/common.sol";
-import { SpellEdge } from "../src/lib/ShamanWorkflowsLib.sol";
+import { NewSpellEdge } from "../src/lib/ShamanWorkflowsLib.sol";
 
 contract ShamanSystemTest is BaseTest {
   string constant INITIAL_METADATA = "QmShamanTest1";
@@ -22,7 +22,7 @@ contract ShamanSystemTest is BaseTest {
     bytes32[] memory sourceIds = new bytes32[](1);
     sourceIds[0] = SOURCE_ID;
 
-    SpellEdge[] memory spellEdges = new SpellEdge[](1);
+    NewSpellEdge[] memory spellEdges = new NewSpellEdge[](1);
     spellEdges[0] = _createSpellEdge(SPELL_ID, SOURCE_ID);
 
     bytes32 shamanId = _createShaman(
