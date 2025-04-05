@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
-import { Shamans, ShamanNames, ShamanSpell, SpellVersions, Spells } from "../codegen/index.sol";
+import { Shamans, ShamanNames, ShamanSpells, SpellVersions, Spells } from "../codegen/index.sol";
 import { ShamanLogsLib } from "../lib/ShamanLogsLib.sol";
 import { LogType } from "../codegen/common.sol";
 import { BaseSystem } from "./BaseSystem.sol";
@@ -62,7 +62,7 @@ contract ShamanOperationsSystem is BaseSystem {
 
   function setShamanSpellVersion(
     bytes32 shamanId,
-    bytes32 spellId,
+    bytes32 shamanSpellId,
     uint256 version
   )
     public
@@ -72,18 +72,17 @@ contract ShamanOperationsSystem is BaseSystem {
   {
     require(version > 0, "Version must be greater than 0");
     require(
-      ShamanSpell.getVersion(shamanId, spellId) > 0,
+      ShamanSpells.getVersion(shamanSpellId) > 0,
       "Spell not initialized"
     );
     require(
-      ShamanSpell.getVersion(shamanId, spellId) != version,
+      ShamanSpells.getVersion(shamanSpellId) != version,
       "Version already set"
     );
 
-    ShamanSpell.setVersion(shamanId, spellId, version);
-    ShamanSpell.setMetadata(
-      shamanId,
-      spellId,
+    ShamanSpells.setVersion(shamanSpellId, version);
+    ShamanSpells.setMetadata(
+      shamanSpellId,
       SpellVersions.getMetadata(shamanId, version)
     );
 
@@ -92,7 +91,7 @@ contract ShamanOperationsSystem is BaseSystem {
 
   function updateShamanSpellVersion(
     bytes32 shamanId,
-    bytes32 spellId
+    bytes32 shamanSpellId
   )
     public
     onlyShamanCreator(shamanId)
@@ -100,19 +99,24 @@ contract ShamanOperationsSystem is BaseSystem {
     onlyIdleShaman(shamanId)
   {
     require(
-      ShamanSpell.getVersion(shamanId, spellId) > 0,
+      ShamanSpells.getVersion(shamanSpellId) > 0,
       "Spell not initialized"
     );
 
-    uint256 latestVersion = Spells.getVersion(spellId);
+    uint256 latestVersion = Spells.getVersion(
+      ShamanSpells.getSpellId(shamanSpellId)
+    );
 
     require(
-      ShamanSpell.getVersion(shamanId, spellId) != latestVersion,
+      ShamanSpells.getVersion(shamanSpellId) != latestVersion,
       "Version already set"
     );
 
-    ShamanSpell.setVersion(shamanId, spellId, latestVersion);
-    ShamanSpell.setMetadata(shamanId, spellId, Spells.getMetadata(spellId));
+    ShamanSpells.setVersion(shamanSpellId, latestVersion);
+    ShamanSpells.setMetadata(
+      shamanSpellId,
+      Spells.getMetadata(ShamanSpells.getSpellId(shamanSpellId))
+    );
 
     ShamanLogsLib.logOperation(shamanId, 0, 0, true, LogType.Modification, "");
   }

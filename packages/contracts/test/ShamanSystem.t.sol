@@ -6,7 +6,7 @@ import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
 import { Shamans, Roles } from "../src/codegen/index.sol";
 import { JobState, RoleType } from "../src/codegen/common.sol";
-import { SpellEdge } from "../src/lib/ShamanWorkflowsLib.sol";
+import { NewSpellEdge } from "../src/lib/ShamanWorkflowsLib.sol";
 
 contract ShamanSystemTest is BaseTest {
   string constant INITIAL_METADATA = "QmShamanTest1";
@@ -22,8 +22,8 @@ contract ShamanSystemTest is BaseTest {
     bytes32[] memory sourceIds = new bytes32[](1);
     sourceIds[0] = SOURCE_ID;
 
-    SpellEdge[] memory spellEdges = new SpellEdge[](1);
-    spellEdges[0] = _createSpellEdge(SPELL_ID, SOURCE_ID, "TestSpellEdge");
+    NewSpellEdge[] memory spellEdges = new NewSpellEdge[](1);
+    spellEdges[0] = _createSpellEdge(SPELL_ID, SOURCE_ID);
 
     bytes32 shamanId = _createShaman(
       creatorAlice,
@@ -49,12 +49,12 @@ contract ShamanSystemTest is BaseTest {
     assertEq(Shamans.getActive(shamanId), true, "Shaman is not active");
     assertEq(Shamans.getBalance(shamanId), 0, "Shaman balance is not 0");
     assertEq(
-      Shamans.lengthSpellIds(shamanId),
+      Shamans.lengthShamanSpellIds(shamanId),
       1,
       "Shaman spellIds length is not 1"
     );
     assertEq(
-      Shamans.lengthSourceIds(shamanId),
+      Shamans.lengthShamanSourceIds(shamanId),
       1,
       "Shaman sourceIds length is not 1"
     );
@@ -93,7 +93,7 @@ contract ShamanSystemTest is BaseTest {
     );
 
     // Verify shaman state
-    assertEq(Shamans.lengthSpellIds(shamanId), 0);
+    assertEq(Shamans.lengthShamanSpellIds(shamanId), 0);
   }
 
   function testCreateShamanWithoutSources() public {
@@ -107,7 +107,7 @@ contract ShamanSystemTest is BaseTest {
     );
 
     // Verify shaman state
-    assertEq(Shamans.lengthSourceIds(shamanId), 0);
+    assertEq(Shamans.lengthShamanSourceIds(shamanId), 0);
   }
 
   function testUpdateShamanMetadata() public {
@@ -205,12 +205,12 @@ contract ShamanSystemTest is BaseTest {
     assertEq(Shamans.getActive(shamanId), true, "Shaman is not active");
     assertEq(Shamans.getBalance(shamanId), 0, "Shaman balance is not 0");
     assertEq(
-      Shamans.lengthSpellIds(shamanId),
+      Shamans.lengthShamanSpellIds(shamanId),
       0,
       "Shaman spellIds length is not 0"
     );
     assertEq(
-      Shamans.lengthSourceIds(shamanId),
+      Shamans.lengthShamanSourceIds(shamanId),
       0,
       "Shaman sourceIds length is not 0"
     );

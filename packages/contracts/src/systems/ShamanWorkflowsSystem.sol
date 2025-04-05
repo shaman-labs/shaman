@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
-import { ShamanWorkflowsLib, SpellEdge } from "../lib/ShamanWorkflowsLib.sol";
+import { ShamanWorkflowsLib, NewSpellEdge } from "../lib/ShamanWorkflowsLib.sol";
 import { ShamanLogsLib } from "../lib/ShamanLogsLib.sol";
 import { BaseSystem } from "./BaseSystem.sol";
 import { LogType } from "../codegen/common.sol";
@@ -10,7 +10,7 @@ contract ShamanWorkflowsSystem is BaseSystem {
     bytes32 shamanId,
     bytes32[] memory sourceIds,
     bytes32[] memory spellIds,
-    SpellEdge[] memory spellEdges
+    NewSpellEdge[] memory spellEdges
   )
     public
     onlyShamanCreator(shamanId)
