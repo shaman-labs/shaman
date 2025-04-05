@@ -10,6 +10,7 @@ contract ShamanWorkflowsSystem is BaseSystem {
     bytes32 shamanId,
     bytes32[] memory sourceIds,
     bytes32[] memory spellIds,
+    string[] memory spellChains,
     NewSpellEdge[] memory spellEdges
   )
     public
@@ -19,11 +20,17 @@ contract ShamanWorkflowsSystem is BaseSystem {
   {
     require(spellIds.length > 0, "Spell ids must be provided");
     require(sourceIds.length > 0, "Source ids must be provided");
+    require(spellChains.length > 0, "Spell chains must be provided");
+    require(
+      spellIds.length == spellChains.length,
+      "Spell ids and spell chains must be the same length"
+    );
 
     ShamanWorkflowsLib.updateShamanWorkflow(
       shamanId,
       sourceIds,
       spellIds,
+      spellChains,
       spellEdges
     );
 

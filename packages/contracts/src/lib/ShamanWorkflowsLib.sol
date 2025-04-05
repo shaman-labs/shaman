@@ -28,6 +28,7 @@ library ShamanWorkflowsLib {
     bytes32 shamanId,
     bytes32[] memory sourceIds,
     bytes32[] memory spellIds,
+    string[] memory spellChains,
     NewSpellEdge[] memory spellEdges
   ) internal {
     uint256 newSpellEdgeCount = spellEdges.length;
@@ -37,10 +38,6 @@ library ShamanWorkflowsLib {
     bytes32[] memory newShamanSpellEdgeIds = new bytes32[](newSpellEdgeCount);
     bytes32[] memory newShamanSourceIds = new bytes32[](newSourceIdsCount);
     bytes32[] memory newShamanSpellIds = new bytes32[](newSpellIdsCount);
-
-    // Arrays to store the mapping between original spellIds and shamanSpellIds
-    bytes32[] memory originalSpellIds = new bytes32[](newSpellIdsCount);
-    bytes32[] memory createdShamanSpellIds = new bytes32[](newSpellIdsCount);
 
     // add new shaman sources
     for (uint256 i = 0; i < newSourceIdsCount; i++) {
@@ -79,21 +76,15 @@ library ShamanWorkflowsLib {
 
       newShamanSpellIds[i] = shamanSpellId;
 
-      // store the mapping for lookup
-      originalSpellIds[i] = spellId;
-      createdShamanSpellIds[i] = shamanSpellId;
-
       ShamanSpells.set(
         shamanSpellId,
         spellId,
         shamanId,
         Spells.getVersion(spellId),
         JobState.Idle,
+        spellChains[i],
         Spells.getMetadata(spellId)
       );
-
-      // increase shaman count
-      Spells.setShamanCount(spellId, Spells.getShamanCount(spellId) + 1);
     }
 
     // add new shaman spell edges
@@ -104,12 +95,13 @@ library ShamanWorkflowsLib {
       bytes32 fromShamanSpellId;
       bytes32 toShamanSpellId;
 
+      // TODO: use indexes as edges, if we use edges (spell1, spell1) -> it will create (instance1, instance1) still
       for (uint256 j = 0; j < newSpellIdsCount; j++) {
-        if (originalSpellIds[j] == spellEdge.fromSpellId) {
-          fromShamanSpellId = createdShamanSpellIds[j];
+        if (spellIds[j] == spellEdge.fromSpellId) {
+          fromShamanSpellId = newShamanSpellIds[j];
         }
-        if (originalSpellIds[j] == spellEdge.toSpellId) {
-          toShamanSpellId = createdShamanSpellIds[j];
+        if (spellIds[j] == spellEdge.toSpellId) {
+          toShamanSpellId = newShamanSpellIds[j];
         }
       }
 
@@ -129,6 +121,8 @@ library ShamanWorkflowsLib {
         shamanSpellEdgeId,
         fromShamanSpellId,
         toShamanSpellId,
+        spellEdge.fromSpellId,
+        spellEdge.toSpellId,
         shamanId
       );
     }
