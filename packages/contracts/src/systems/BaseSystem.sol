@@ -51,15 +51,7 @@ contract BaseSystem is System {
     require(Shamans.getState(shamanId) == JobState.Idle, "Shaman is not idle");
     _;
   }
-
-  modifier onlyInProgressShaman(bytes32 shamanId) {
-    require(
-      Shamans.getState(shamanId) == JobState.InProgress,
-      "Shaman is not in progress"
-    );
-    _;
-  }
-
+  
   modifier onlyIdleSpell(bytes32 shamanSpellId) {
     require(
       ShamanSpells.getState(shamanSpellId) == JobState.Idle,

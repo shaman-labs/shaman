@@ -125,6 +125,7 @@ export default defineWorld({
       schema: {
         shamanSpellId: "bytes32",
         spellId: "bytes32",
+        shamanId: "bytes32",
         version: "uint256", // version of the spell
         state: "JobState", // state of the spell
         metadata: "string", // metadata of version of the spell
@@ -137,8 +138,9 @@ export default defineWorld({
       },
       schema: {
         shamanSpellEdgeId: "bytes32",
-        fromSpellId: "bytes32",
-        toSpellId: "bytes32",
+        fromShamanSpellId: "bytes32",
+        toShamanSpellId: "bytes32",
+        shamanId: "bytes32",
       },
       key: ["shamanSpellEdgeId"],
     },
@@ -149,6 +151,7 @@ export default defineWorld({
       schema: {
         shamanSourceId: "bytes32",
         sourceId: "bytes32",
+        shamanId: "bytes32",
       },
       key: ["shamanSourceId"],
     },

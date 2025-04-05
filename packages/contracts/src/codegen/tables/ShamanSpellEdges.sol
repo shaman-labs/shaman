@@ -21,12 +21,12 @@ library ShamanSpellEdges {
   ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e5370656c6c4564676573);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0040020020200000000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0060030020202000000000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (bytes32, bytes32)
-  Schema constant _valueSchema = Schema.wrap(0x004002005f5f0000000000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (bytes32, bytes32, bytes32)
+  Schema constant _valueSchema = Schema.wrap(0x006003005f5f5f00000000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -42,9 +42,10 @@ library ShamanSpellEdges {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](2);
-    fieldNames[0] = "fromSpellId";
-    fieldNames[1] = "toSpellId";
+    fieldNames = new string[](3);
+    fieldNames[0] = "fromShamanSpellId";
+    fieldNames[1] = "toShamanSpellId";
+    fieldNames[2] = "shamanId";
   }
 
   /**
@@ -62,9 +63,9 @@ library ShamanSpellEdges {
   }
 
   /**
-   * @notice Get fromSpellId.
+   * @notice Get fromShamanSpellId.
    */
-  function getFromSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 fromSpellId) {
+  function getFromShamanSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 fromShamanSpellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellEdgeId;
 
@@ -73,9 +74,9 @@ library ShamanSpellEdges {
   }
 
   /**
-   * @notice Get fromSpellId.
+   * @notice Get fromShamanSpellId.
    */
-  function _getFromSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 fromSpellId) {
+  function _getFromShamanSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 fromShamanSpellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellEdgeId;
 
@@ -84,29 +85,29 @@ library ShamanSpellEdges {
   }
 
   /**
-   * @notice Set fromSpellId.
+   * @notice Set fromShamanSpellId.
    */
-  function setFromSpellId(bytes32 shamanSpellEdgeId, bytes32 fromSpellId) internal {
+  function setFromShamanSpellId(bytes32 shamanSpellEdgeId, bytes32 fromShamanSpellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellEdgeId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((fromSpellId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((fromShamanSpellId)), _fieldLayout);
   }
 
   /**
-   * @notice Set fromSpellId.
+   * @notice Set fromShamanSpellId.
    */
-  function _setFromSpellId(bytes32 shamanSpellEdgeId, bytes32 fromSpellId) internal {
+  function _setFromShamanSpellId(bytes32 shamanSpellEdgeId, bytes32 fromShamanSpellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellEdgeId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((fromSpellId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((fromShamanSpellId)), _fieldLayout);
   }
 
   /**
-   * @notice Get toSpellId.
+   * @notice Get toShamanSpellId.
    */
-  function getToSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 toSpellId) {
+  function getToShamanSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 toShamanSpellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellEdgeId;
 
@@ -115,9 +116,9 @@ library ShamanSpellEdges {
   }
 
   /**
-   * @notice Get toSpellId.
+   * @notice Get toShamanSpellId.
    */
-  function _getToSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 toSpellId) {
+  function _getToShamanSpellId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 toShamanSpellId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellEdgeId;
 
@@ -126,29 +127,73 @@ library ShamanSpellEdges {
   }
 
   /**
-   * @notice Set toSpellId.
+   * @notice Set toShamanSpellId.
    */
-  function setToSpellId(bytes32 shamanSpellEdgeId, bytes32 toSpellId) internal {
+  function setToShamanSpellId(bytes32 shamanSpellEdgeId, bytes32 toShamanSpellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellEdgeId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((toSpellId)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((toShamanSpellId)), _fieldLayout);
   }
 
   /**
-   * @notice Set toSpellId.
+   * @notice Set toShamanSpellId.
    */
-  function _setToSpellId(bytes32 shamanSpellEdgeId, bytes32 toSpellId) internal {
+  function _setToShamanSpellId(bytes32 shamanSpellEdgeId, bytes32 toShamanSpellId) internal {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellEdgeId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((toSpellId)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((toShamanSpellId)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get shamanId.
+   */
+  function getShamanId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 shamanId) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellEdgeId;
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    return (bytes32(_blob));
+  }
+
+  /**
+   * @notice Get shamanId.
+   */
+  function _getShamanId(bytes32 shamanSpellEdgeId) internal view returns (bytes32 shamanId) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellEdgeId;
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    return (bytes32(_blob));
+  }
+
+  /**
+   * @notice Set shamanId.
+   */
+  function setShamanId(bytes32 shamanSpellEdgeId, bytes32 shamanId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellEdgeId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((shamanId)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set shamanId.
+   */
+  function _setShamanId(bytes32 shamanSpellEdgeId, bytes32 shamanId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellEdgeId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((shamanId)), _fieldLayout);
   }
 
   /**
    * @notice Get the full data.
    */
-  function get(bytes32 shamanSpellEdgeId) internal view returns (bytes32 fromSpellId, bytes32 toSpellId) {
+  function get(
+    bytes32 shamanSpellEdgeId
+  ) internal view returns (bytes32 fromShamanSpellId, bytes32 toShamanSpellId, bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellEdgeId;
 
@@ -163,7 +208,9 @@ library ShamanSpellEdges {
   /**
    * @notice Get the full data.
    */
-  function _get(bytes32 shamanSpellEdgeId) internal view returns (bytes32 fromSpellId, bytes32 toSpellId) {
+  function _get(
+    bytes32 shamanSpellEdgeId
+  ) internal view returns (bytes32 fromShamanSpellId, bytes32 toShamanSpellId, bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellEdgeId;
 
@@ -178,8 +225,13 @@ library ShamanSpellEdges {
   /**
    * @notice Set the full data using individual values.
    */
-  function set(bytes32 shamanSpellEdgeId, bytes32 fromSpellId, bytes32 toSpellId) internal {
-    bytes memory _staticData = encodeStatic(fromSpellId, toSpellId);
+  function set(
+    bytes32 shamanSpellEdgeId,
+    bytes32 fromShamanSpellId,
+    bytes32 toShamanSpellId,
+    bytes32 shamanId
+  ) internal {
+    bytes memory _staticData = encodeStatic(fromShamanSpellId, toShamanSpellId, shamanId);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;
@@ -193,8 +245,13 @@ library ShamanSpellEdges {
   /**
    * @notice Set the full data using individual values.
    */
-  function _set(bytes32 shamanSpellEdgeId, bytes32 fromSpellId, bytes32 toSpellId) internal {
-    bytes memory _staticData = encodeStatic(fromSpellId, toSpellId);
+  function _set(
+    bytes32 shamanSpellEdgeId,
+    bytes32 fromShamanSpellId,
+    bytes32 toShamanSpellId,
+    bytes32 shamanId
+  ) internal {
+    bytes memory _staticData = encodeStatic(fromShamanSpellId, toShamanSpellId, shamanId);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;
@@ -208,10 +265,14 @@ library ShamanSpellEdges {
   /**
    * @notice Decode the tightly packed blob of static data using this table's field layout.
    */
-  function decodeStatic(bytes memory _blob) internal pure returns (bytes32 fromSpellId, bytes32 toSpellId) {
-    fromSpellId = (Bytes.getBytes32(_blob, 0));
+  function decodeStatic(
+    bytes memory _blob
+  ) internal pure returns (bytes32 fromShamanSpellId, bytes32 toShamanSpellId, bytes32 shamanId) {
+    fromShamanSpellId = (Bytes.getBytes32(_blob, 0));
 
-    toSpellId = (Bytes.getBytes32(_blob, 32));
+    toShamanSpellId = (Bytes.getBytes32(_blob, 32));
+
+    shamanId = (Bytes.getBytes32(_blob, 64));
   }
 
   /**
@@ -224,8 +285,8 @@ library ShamanSpellEdges {
     bytes memory _staticData,
     EncodedLengths,
     bytes memory
-  ) internal pure returns (bytes32 fromSpellId, bytes32 toSpellId) {
-    (fromSpellId, toSpellId) = decodeStatic(_staticData);
+  ) internal pure returns (bytes32 fromShamanSpellId, bytes32 toShamanSpellId, bytes32 shamanId) {
+    (fromShamanSpellId, toShamanSpellId, shamanId) = decodeStatic(_staticData);
   }
 
   /**
@@ -252,8 +313,12 @@ library ShamanSpellEdges {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(bytes32 fromSpellId, bytes32 toSpellId) internal pure returns (bytes memory) {
-    return abi.encodePacked(fromSpellId, toSpellId);
+  function encodeStatic(
+    bytes32 fromShamanSpellId,
+    bytes32 toShamanSpellId,
+    bytes32 shamanId
+  ) internal pure returns (bytes memory) {
+    return abi.encodePacked(fromShamanSpellId, toShamanSpellId, shamanId);
   }
 
   /**
@@ -263,10 +328,11 @@ library ShamanSpellEdges {
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
   function encode(
-    bytes32 fromSpellId,
-    bytes32 toSpellId
+    bytes32 fromShamanSpellId,
+    bytes32 toShamanSpellId,
+    bytes32 shamanId
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(fromSpellId, toSpellId);
+    bytes memory _staticData = encodeStatic(fromShamanSpellId, toShamanSpellId, shamanId);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;

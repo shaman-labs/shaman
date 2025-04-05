@@ -38,7 +38,7 @@ library ShamanWorkflowsLib {
       );
 
       newShamanSourceIds[i] = shamanSourceId;
-      ShamanSources.set(shamanSourceId, sourceId);
+      ShamanSources.set(shamanSourceId, sourceId, shamanId);
 
       // increase shaman count
       uint256 sourceShamanIndex = Sources.getShamanCount(sourceId);
@@ -63,6 +63,7 @@ library ShamanWorkflowsLib {
       ShamanSpells.set(
         shamanSpellId,
         spellId,
+        shamanId,
         Spells.getVersion(spellId),
         JobState.Idle,
         Spells.getMetadata(spellId)
@@ -89,7 +90,8 @@ library ShamanWorkflowsLib {
       ShamanSpellEdges.set(
         shamanSpellEdgeId,
         spellEdge.fromSpellId,
-        spellEdge.toSpellId
+        spellEdge.toSpellId,
+        shamanId
       );
     }
 

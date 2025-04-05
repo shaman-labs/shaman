@@ -21,12 +21,12 @@ library ShamanSources {
   ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e536f7572636573000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0020010020000000000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0040020020200000000000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (bytes32)
-  Schema constant _valueSchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (bytes32, bytes32)
+  Schema constant _valueSchema = Schema.wrap(0x004002005f5f0000000000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -42,8 +42,9 @@ library ShamanSources {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](1);
+    fieldNames = new string[](2);
     fieldNames[0] = "sourceId";
+    fieldNames[1] = "shamanId";
   }
 
   /**
@@ -83,28 +84,6 @@ library ShamanSources {
   }
 
   /**
-   * @notice Get sourceId.
-   */
-  function get(bytes32 shamanSourceId) internal view returns (bytes32 sourceId) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = shamanSourceId;
-
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (bytes32(_blob));
-  }
-
-  /**
-   * @notice Get sourceId.
-   */
-  function _get(bytes32 shamanSourceId) internal view returns (bytes32 sourceId) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = shamanSourceId;
-
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 0, _fieldLayout);
-    return (bytes32(_blob));
-  }
-
-  /**
    * @notice Set sourceId.
    */
   function setSourceId(bytes32 shamanSourceId, bytes32 sourceId) internal {
@@ -125,23 +104,128 @@ library ShamanSources {
   }
 
   /**
-   * @notice Set sourceId.
+   * @notice Get shamanId.
    */
-  function set(bytes32 shamanSourceId, bytes32 sourceId) internal {
+  function getShamanId(bytes32 shamanSourceId) internal view returns (bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSourceId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((sourceId)), _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (bytes32(_blob));
   }
 
   /**
-   * @notice Set sourceId.
+   * @notice Get shamanId.
    */
-  function _set(bytes32 shamanSourceId, bytes32 sourceId) internal {
+  function _getShamanId(bytes32 shamanSourceId) internal view returns (bytes32 shamanId) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSourceId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 0, abi.encodePacked((sourceId)), _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (bytes32(_blob));
+  }
+
+  /**
+   * @notice Set shamanId.
+   */
+  function setShamanId(bytes32 shamanSourceId, bytes32 shamanId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSourceId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((shamanId)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set shamanId.
+   */
+  function _setShamanId(bytes32 shamanSourceId, bytes32 shamanId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSourceId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((shamanId)), _fieldLayout);
+  }
+
+  /**
+   * @notice Get the full data.
+   */
+  function get(bytes32 shamanSourceId) internal view returns (bytes32 sourceId, bytes32 shamanId) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSourceId;
+
+    (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) = StoreSwitch.getRecord(
+      _tableId,
+      _keyTuple,
+      _fieldLayout
+    );
+    return decode(_staticData, _encodedLengths, _dynamicData);
+  }
+
+  /**
+   * @notice Get the full data.
+   */
+  function _get(bytes32 shamanSourceId) internal view returns (bytes32 sourceId, bytes32 shamanId) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSourceId;
+
+    (bytes memory _staticData, EncodedLengths _encodedLengths, bytes memory _dynamicData) = StoreCore.getRecord(
+      _tableId,
+      _keyTuple,
+      _fieldLayout
+    );
+    return decode(_staticData, _encodedLengths, _dynamicData);
+  }
+
+  /**
+   * @notice Set the full data using individual values.
+   */
+  function set(bytes32 shamanSourceId, bytes32 sourceId, bytes32 shamanId) internal {
+    bytes memory _staticData = encodeStatic(sourceId, shamanId);
+
+    EncodedLengths _encodedLengths;
+    bytes memory _dynamicData;
+
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSourceId;
+
+    StoreSwitch.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData);
+  }
+
+  /**
+   * @notice Set the full data using individual values.
+   */
+  function _set(bytes32 shamanSourceId, bytes32 sourceId, bytes32 shamanId) internal {
+    bytes memory _staticData = encodeStatic(sourceId, shamanId);
+
+    EncodedLengths _encodedLengths;
+    bytes memory _dynamicData;
+
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSourceId;
+
+    StoreCore.setRecord(_tableId, _keyTuple, _staticData, _encodedLengths, _dynamicData, _fieldLayout);
+  }
+
+  /**
+   * @notice Decode the tightly packed blob of static data using this table's field layout.
+   */
+  function decodeStatic(bytes memory _blob) internal pure returns (bytes32 sourceId, bytes32 shamanId) {
+    sourceId = (Bytes.getBytes32(_blob, 0));
+
+    shamanId = (Bytes.getBytes32(_blob, 32));
+  }
+
+  /**
+   * @notice Decode the tightly packed blobs using this table's field layout.
+   * @param _staticData Tightly packed static fields.
+   *
+   *
+   */
+  function decode(
+    bytes memory _staticData,
+    EncodedLengths,
+    bytes memory
+  ) internal pure returns (bytes32 sourceId, bytes32 shamanId) {
+    (sourceId, shamanId) = decodeStatic(_staticData);
   }
 
   /**
@@ -168,8 +252,8 @@ library ShamanSources {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(bytes32 sourceId) internal pure returns (bytes memory) {
-    return abi.encodePacked(sourceId);
+  function encodeStatic(bytes32 sourceId, bytes32 shamanId) internal pure returns (bytes memory) {
+    return abi.encodePacked(sourceId, shamanId);
   }
 
   /**
@@ -178,8 +262,11 @@ library ShamanSources {
    * @return The lengths of the dynamic fields (packed into a single bytes32 value).
    * @return The dynamic (variable length) data, encoded into a sequence of bytes.
    */
-  function encode(bytes32 sourceId) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(sourceId);
+  function encode(
+    bytes32 sourceId,
+    bytes32 shamanId
+  ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
+    bytes memory _staticData = encodeStatic(sourceId, shamanId);
 
     EncodedLengths _encodedLengths;
     bytes memory _dynamicData;

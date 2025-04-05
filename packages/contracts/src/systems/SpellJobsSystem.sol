@@ -7,16 +7,18 @@ import { BaseSystem } from "./BaseSystem.sol";
 
 contract SpellJobsSystem is BaseSystem {
   function enqueueSpellJob(
-    bytes32 shamanId,
     bytes32 shamanSpellId,
     uint256 cost
-  )
-    public
-    onlyOperator
-    onlyActiveShaman(shamanId)
-    onlyInProgressShaman(shamanId)
-    onlyIdleSpell(shamanSpellId)
-  {
+  ) public onlyOperator onlyIdleSpell(shamanSpellId) {
+    bytes32 shamanId = ShamanSpells.getShamanId(shamanSpellId);
+
+    require(Shamans.getActive(shamanId), "Shaman is not active");
+
+    require(
+      Shamans.getState(shamanId) == JobState.InProgress,
+      "Shaman is not in progress"
+    );
+
     require(
       Shamans.getBalance(shamanId) >= cost,
       "Shaman has insufficient balance"
@@ -38,15 +40,15 @@ contract SpellJobsSystem is BaseSystem {
     );
   }
 
-  function startSpellJob(
-    bytes32 shamanId,
-    bytes32 shamanSpellId
-  )
-    public
-    onlyOperator
-    onlyActiveShaman(shamanId)
-    onlyInProgressShaman(shamanId)
-  {
+  function startSpellJob(bytes32 shamanSpellId) public onlyOperator {
+    bytes32 shamanId = ShamanSpells.getShamanId(shamanSpellId);
+
+    require(Shamans.getActive(shamanId), "Shaman is not active");
+
+    require(
+      Shamans.getState(shamanId) == JobState.InProgress,
+      "Shaman is not in progress"
+    );
     require(
       ShamanSpells.getState(shamanSpellId) == JobState.Queue,
       "Spell must be queued"
@@ -64,17 +66,19 @@ contract SpellJobsSystem is BaseSystem {
   }
 
   function completeSpellJob(
-    bytes32 shamanId,
     bytes32 shamanSpellId,
     uint256 cost,
     bool success,
     string memory metadata
-  )
-    public
-    onlyOperator
-    onlyActiveShaman(shamanId)
-    onlyInProgressShaman(shamanId)
-  {
+  ) public onlyOperator {
+    bytes32 shamanId = ShamanSpells.getShamanId(shamanSpellId);
+
+    require(Shamans.getActive(shamanId), "Shaman is not active");
+
+    require(
+      Shamans.getState(shamanId) == JobState.InProgress,
+      "Shaman is not in progress"
+    );
     require(
       ShamanSpells.getState(shamanSpellId) == JobState.InProgress,
       "Spell must be in progress"

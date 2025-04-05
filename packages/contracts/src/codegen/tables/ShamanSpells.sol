@@ -24,12 +24,12 @@ library ShamanSpells {
   ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e5370656c6c7300000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0041030120200100000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0061040120202001000000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (bytes32, uint256, uint8, string)
-  Schema constant _valueSchema = Schema.wrap(0x004103015f1f00c5000000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (bytes32, bytes32, uint256, uint8, string)
+  Schema constant _valueSchema = Schema.wrap(0x006104015f5f1f00c50000000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -45,11 +45,12 @@ library ShamanSpells {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](4);
+    fieldNames = new string[](5);
     fieldNames[0] = "spellId";
-    fieldNames[1] = "version";
-    fieldNames[2] = "state";
-    fieldNames[3] = "metadata";
+    fieldNames[1] = "shamanId";
+    fieldNames[2] = "version";
+    fieldNames[3] = "state";
+    fieldNames[4] = "metadata";
   }
 
   /**
@@ -109,13 +110,55 @@ library ShamanSpells {
   }
 
   /**
+   * @notice Get shamanId.
+   */
+  function getShamanId(bytes32 shamanSpellId) internal view returns (bytes32 shamanId) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (bytes32(_blob));
+  }
+
+  /**
+   * @notice Get shamanId.
+   */
+  function _getShamanId(bytes32 shamanSpellId) internal view returns (bytes32 shamanId) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    return (bytes32(_blob));
+  }
+
+  /**
+   * @notice Set shamanId.
+   */
+  function setShamanId(bytes32 shamanSpellId, bytes32 shamanId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((shamanId)), _fieldLayout);
+  }
+
+  /**
+   * @notice Set shamanId.
+   */
+  function _setShamanId(bytes32 shamanSpellId, bytes32 shamanId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((shamanId)), _fieldLayout);
+  }
+
+  /**
    * @notice Get version.
    */
   function getVersion(bytes32 shamanSpellId) internal view returns (uint256 version) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
     return (uint256(bytes32(_blob)));
   }
 
@@ -126,7 +169,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 1, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
     return (uint256(bytes32(_blob)));
   }
 
@@ -137,7 +180,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((version)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((version)), _fieldLayout);
   }
 
   /**
@@ -147,7 +190,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 1, abi.encodePacked((version)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked((version)), _fieldLayout);
   }
 
   /**
@@ -157,7 +200,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
     return JobState(uint8(bytes1(_blob)));
   }
 
@@ -168,7 +211,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 2, _fieldLayout);
+    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 3, _fieldLayout);
     return JobState(uint8(bytes1(_blob)));
   }
 
@@ -179,7 +222,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked(uint8(state)), _fieldLayout);
+    StoreSwitch.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked(uint8(state)), _fieldLayout);
   }
 
   /**
@@ -189,7 +232,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    StoreCore.setStaticField(_tableId, _keyTuple, 2, abi.encodePacked(uint8(state)), _fieldLayout);
+    StoreCore.setStaticField(_tableId, _keyTuple, 3, abi.encodePacked(uint8(state)), _fieldLayout);
   }
 
   /**
@@ -359,7 +402,7 @@ library ShamanSpells {
    */
   function get(
     bytes32 shamanSpellId
-  ) internal view returns (bytes32 spellId, uint256 version, JobState state, string memory metadata) {
+  ) internal view returns (bytes32 spellId, bytes32 shamanId, uint256 version, JobState state, string memory metadata) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
@@ -376,7 +419,7 @@ library ShamanSpells {
    */
   function _get(
     bytes32 shamanSpellId
-  ) internal view returns (bytes32 spellId, uint256 version, JobState state, string memory metadata) {
+  ) internal view returns (bytes32 spellId, bytes32 shamanId, uint256 version, JobState state, string memory metadata) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
@@ -394,11 +437,12 @@ library ShamanSpells {
   function set(
     bytes32 shamanSpellId,
     bytes32 spellId,
+    bytes32 shamanId,
     uint256 version,
     JobState state,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(spellId, version, state);
+    bytes memory _staticData = encodeStatic(spellId, shamanId, version, state);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);
@@ -415,11 +459,12 @@ library ShamanSpells {
   function _set(
     bytes32 shamanSpellId,
     bytes32 spellId,
+    bytes32 shamanId,
     uint256 version,
     JobState state,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(spellId, version, state);
+    bytes memory _staticData = encodeStatic(spellId, shamanId, version, state);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);
@@ -433,12 +478,16 @@ library ShamanSpells {
   /**
    * @notice Decode the tightly packed blob of static data using this table's field layout.
    */
-  function decodeStatic(bytes memory _blob) internal pure returns (bytes32 spellId, uint256 version, JobState state) {
+  function decodeStatic(
+    bytes memory _blob
+  ) internal pure returns (bytes32 spellId, bytes32 shamanId, uint256 version, JobState state) {
     spellId = (Bytes.getBytes32(_blob, 0));
 
-    version = (uint256(Bytes.getBytes32(_blob, 32)));
+    shamanId = (Bytes.getBytes32(_blob, 32));
 
-    state = JobState(uint8(Bytes.getBytes1(_blob, 64)));
+    version = (uint256(Bytes.getBytes32(_blob, 64)));
+
+    state = JobState(uint8(Bytes.getBytes1(_blob, 96)));
   }
 
   /**
@@ -466,8 +515,8 @@ library ShamanSpells {
     bytes memory _staticData,
     EncodedLengths _encodedLengths,
     bytes memory _dynamicData
-  ) internal pure returns (bytes32 spellId, uint256 version, JobState state, string memory metadata) {
-    (spellId, version, state) = decodeStatic(_staticData);
+  ) internal pure returns (bytes32 spellId, bytes32 shamanId, uint256 version, JobState state, string memory metadata) {
+    (spellId, shamanId, version, state) = decodeStatic(_staticData);
 
     (metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
@@ -496,8 +545,13 @@ library ShamanSpells {
    * @notice Tightly pack static (fixed length) data using this table's schema.
    * @return The static data, encoded into a sequence of bytes.
    */
-  function encodeStatic(bytes32 spellId, uint256 version, JobState state) internal pure returns (bytes memory) {
-    return abi.encodePacked(spellId, version, state);
+  function encodeStatic(
+    bytes32 spellId,
+    bytes32 shamanId,
+    uint256 version,
+    JobState state
+  ) internal pure returns (bytes memory) {
+    return abi.encodePacked(spellId, shamanId, version, state);
   }
 
   /**
@@ -527,11 +581,12 @@ library ShamanSpells {
    */
   function encode(
     bytes32 spellId,
+    bytes32 shamanId,
     uint256 version,
     JobState state,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(spellId, version, state);
+    bytes memory _staticData = encodeStatic(spellId, shamanId, version, state);
 
     EncodedLengths _encodedLengths = encodeLengths(metadata);
     bytes memory _dynamicData = encodeDynamic(metadata);
