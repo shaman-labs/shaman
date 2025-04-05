@@ -3,7 +3,7 @@ pragma solidity >=0.8.24;
 
 import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
-import { Shamans, Spells, ShamanSpell, Roles } from "../src/codegen/index.sol";
+import { Shamans, Spells, ShamanSpells, Roles } from "../src/codegen/index.sol";
 import { JobState, RoleType, LogType } from "../src/codegen/common.sol";
 import { SpellEdge } from "../src/lib/ShamanWorkflowsLib.sol";
 
@@ -82,7 +82,7 @@ contract SpellJobsSystemTest is BaseTest {
     sourceIds[0] = _createSource(creator, "TestSource", INITIAL_METADATA);
 
     SpellEdge[] memory spellEdges = new SpellEdge[](1);
-    spellEdges[0] = _createSpellEdge(bytes32(0), spellId, "TestSpelleEdge");
+    spellEdges[0] = _createSpellEdge(bytes32(0), spellIds[0]);
 
     // add balance to creator
     _prepareTokens(creator, INITIAL_BALANCE);
@@ -96,15 +96,15 @@ contract SpellJobsSystemTest is BaseTest {
   }
 
   function testEnqueueSpellJob() public {
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithWorkflow(
-      creatorAlice
-    );
+    (bytes32 shamanId, ) = _createTestShamanWithWorkflow(creatorAlice);
 
     _setOperator(creatorAlice);
 
+    bytes32[] memory shamanSpellIds = world.getShamanSpellIds(shamanId);
+
     // Verify initial state
     assertEq(
-      uint8(ShamanSpell.getState(shamanId, spellId)),
+      uint8(ShamanSpells.getState(shamanSpellIds[0])),
       uint8(JobState.Idle),
       "Initial spell state should be Idle"
     );
@@ -128,23 +128,23 @@ contract SpellJobsSystemTest is BaseTest {
 
     // Now we can enqueue the spell
     vm.prank(creatorAlice);
-    world.enqueueSpellJob(shamanId, spellId, JOB_COST);
+    world.enqueueSpellJob(shamanId, shamanSpellIds[0], JOB_COST);
     vm.stopPrank();
 
     // Verify the spell was enqueued
     assertEq(
-      uint8(ShamanSpell.getState(shamanId, spellId)),
+      uint8(ShamanSpells.getState(shamanSpellIds[0])),
       uint8(JobState.Queue),
       "Spell state should be Queue after enqueueing"
     );
   }
 
   function testStartSpellJob() public {
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithWorkflow(
-      creatorAlice
-    );
+    (bytes32 shamanId, ) = _createTestShamanWithWorkflow(creatorAlice);
 
     _setOperator(creatorAlice);
+
+    bytes32[] memory shamanSpellIds = world.getShamanSpellIds(shamanId);
 
     // First, enqueue the shaman job
     vm.prank(creatorAlice);
@@ -165,28 +165,28 @@ contract SpellJobsSystemTest is BaseTest {
 
     // Enqueue the spell
     vm.prank(creatorAlice);
-    world.enqueueSpellJob(shamanId, spellId, JOB_COST);
+    world.enqueueSpellJob(shamanId, shamanSpellIds[0], JOB_COST);
     vm.stopPrank();
 
     // Start the spell job
     vm.prank(creatorAlice);
-    world.startSpellJob(shamanId, spellId);
+    world.startSpellJob(shamanId, shamanSpellIds[0]);
     vm.stopPrank();
 
     // Verify the spell job was started
     assertEq(
-      uint8(ShamanSpell.getState(shamanId, spellId)),
+      uint8(ShamanSpells.getState(shamanSpellIds[0])),
       uint8(JobState.InProgress),
       "Spell state should be InProgress after starting"
     );
   }
 
   function testCompleteSpellJob() public {
-    (bytes32 shamanId, bytes32 spellId) = _createTestShamanWithWorkflow(
-      creatorAlice
-    );
+    (bytes32 shamanId, ) = _createTestShamanWithWorkflow(creatorAlice);
 
     _setOperator(creatorAlice);
+
+    bytes32[] memory shamanSpellIds = world.getShamanSpellIds(shamanId);
 
     // 1. Enqueue shaman job first
     vm.prank(creatorAlice);
@@ -214,24 +214,24 @@ contract SpellJobsSystemTest is BaseTest {
 
     // 3. Enqueue the spell job
     vm.prank(creatorAlice);
-    world.enqueueSpellJob(shamanId, spellId, JOB_COST);
+    world.enqueueSpellJob(shamanId, shamanSpellIds[0], JOB_COST);
     vm.stopPrank();
 
     // Verify the spell is in Queue state
     assertEq(
-      uint8(ShamanSpell.getState(shamanId, spellId)),
+      uint8(ShamanSpells.getState(shamanSpellIds[0])),
       uint8(JobState.Queue),
       "Spell should be in Queue state"
     );
 
     // 4. Start the spell job
     vm.prank(creatorAlice);
-    world.startSpellJob(shamanId, spellId);
+    world.startSpellJob(shamanId, shamanSpellIds[0]);
     vm.stopPrank();
 
     // Verify the spell is now in InProgress state
     assertEq(
-      uint8(ShamanSpell.getState(shamanId, spellId)),
+      uint8(ShamanSpells.getState(shamanSpellIds[0])),
       uint8(JobState.InProgress),
       "Spell should be in InProgress state"
     );
@@ -240,7 +240,7 @@ contract SpellJobsSystemTest is BaseTest {
     vm.prank(creatorAlice);
     world.completeSpellJob(
       shamanId,
-      spellId,
+      shamanSpellIds[0],
       JOB_COST,
       true,
       COMPLETION_METADATA
@@ -249,7 +249,7 @@ contract SpellJobsSystemTest is BaseTest {
 
     // Verify the spell job was completed
     assertEq(
-      uint8(ShamanSpell.getState(shamanId, spellId)),
+      uint8(ShamanSpells.getState(shamanSpellIds[0])),
       uint8(JobState.Idle),
       "Spell state should be Idle after completion"
     );

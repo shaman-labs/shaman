@@ -4,7 +4,7 @@ pragma solidity >=0.8.24;
 import "forge-std/console.sol";
 import "forge-std/Test.sol";
 import { BaseTest } from "./BaseTest.t.sol";
-import { Shamans, Spells, Sources, Roles, ShamanSpell, ShamanSpellEdges, SourceShaman, SourceShamanLookup, SpellVersions } from "../src/codegen/index.sol";
+import { Shamans, Spells, Sources, Roles, ShamanSpells, ShamanSpellEdges, ShamanSources, SourceShamanLookup, SpellVersions } from "../src/codegen/index.sol";
 import { JobState, RoleType } from "../src/codegen/common.sol";
 import { SpellEdge } from "../src/lib/ShamanWorkflowsLib.sol";
 
@@ -60,11 +60,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     if (spellIds.length > 0 && sourceIds.length > 0) {
       SpellEdge[] memory spellEdges = new SpellEdge[](spellIds.length);
       for (uint256 i = 0; i < spellIds.length; i++) {
-        spellEdges[i] = _createSpellEdge(
-          spellIds[i],
-          spellIds[i],
-          "test metadata"
-        );
+        spellEdges[i] = _createSpellEdge(spellIds[i], spellIds[i]);
       }
       _updateShamanWorkflow(creator, shamanId, sourceIds, spellIds, spellEdges);
     }
@@ -170,10 +166,10 @@ contract ShamanWorkflowsSystemTest is BaseTest {
 
     // Create spell edges for both shamans
     SpellEdge[] memory edges1 = new SpellEdge[](1);
-    edges1[0] = _createSpellEdge(spellId1, spellId1, "edge1");
+    edges1[0] = _createSpellEdge(spellId1, spellId1);
 
     SpellEdge[] memory edges2 = new SpellEdge[](1);
-    edges2[0] = _createSpellEdge(spellId2, spellId2, "edge2");
+    edges2[0] = _createSpellEdge(spellId2, spellId2);
 
     // Create shamans but DON'T use the helper function - manually do the steps
     bytes32 shamanId1 = _createShaman(
@@ -265,21 +261,23 @@ contract ShamanWorkflowsSystemTest is BaseTest {
 
     // Create spell edges
     SpellEdge[] memory spellEdges = new SpellEdge[](2);
-    spellEdges[0] = _createSpellEdge(spellId1, spellId2, "edge1 metadata");
-    spellEdges[1] = _createSpellEdge(spellId2, spellId1, "edge2 metadata");
+    spellEdges[0] = _createSpellEdge(spellId1, spellId2);
+    spellEdges[1] = _createSpellEdge(spellId2, spellId1);
 
     // Update shaman workflow
     vm.startPrank(creatorAlice);
     world.updateShamanWorkflow(shamanId, sourceIds, spellIds, spellEdges);
     vm.stopPrank();
 
+    bytes32[] memory shamanSpellIds = world.getShamanSpellIds(shamanId);
+
     // Directly set the metadata using signerAddress
     vm.startPrank(signerAddress);
-    ShamanSpell.setMetadata(shamanId, spellId1, "metadata1");
+    ShamanSpells.setMetadata(shamanSpellIds[0], "metadata1");
     vm.stopPrank();
 
     // Get the spell metadata
-    string memory metadata = world.getShamanSpellMetadata(shamanId, spellId1);
+    string memory metadata = world.getShamanSpellMetadata(shamanSpellIds[0]);
 
     // Verify the metadata
     assertEq(metadata, "metadata1", "Spell metadata should match");
@@ -312,13 +310,15 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds
     );
 
+    bytes32[] memory shamanSpellIds = world.getShamanSpellIds(shamanId);
+
     // Set spell version directly in ShamanSpell table
     vm.startPrank(signerAddress);
-    ShamanSpell.setVersion(shamanId, spellId1, 1);
+    ShamanSpells.setVersion(shamanSpellIds[0], 1);
     vm.stopPrank();
 
     // Get the spell version
-    uint256 version = world.getShamanSpellVersion(shamanId, spellId1);
+    uint256 version = world.getShamanSpellVersion(shamanSpellIds[0]);
 
     // Verify the version (should be 1 for a new spell)
     assertEq(version, 1, "Spell version should be 1");
@@ -351,13 +351,15 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds
     );
 
+    bytes32[] memory shamanSpellIds = world.getShamanSpellIds(shamanId);
+
     // Set spell state directly in ShamanSpell table
     vm.startPrank(signerAddress);
-    ShamanSpell.setState(shamanId, spellId1, JobState.Idle);
+    ShamanSpells.setState(shamanSpellIds[0], JobState.Idle);
     vm.stopPrank();
 
     // Get the spell state
-    JobState state = world.getShamanSpellState(shamanId, spellId1);
+    JobState state = world.getShamanSpellState(shamanSpellIds[0]);
 
     // Verify the state (should be Idle for a new spell)
     assertEq(uint8(state), uint8(JobState.Idle), "Spell state should be Idle");
@@ -384,8 +386,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
 
     // Create spell edges
     SpellEdge[] memory spellEdges = new SpellEdge[](2);
-    spellEdges[0] = _createSpellEdge(spellId1, spellId2, "edge1 metadata");
-    spellEdges[1] = _createSpellEdge(spellId2, spellId1, "edge2 metadata");
+    spellEdges[0] = _createSpellEdge(spellId1, spellId2);
+    spellEdges[1] = _createSpellEdge(spellId2, spellId1);
 
     // Create a shaman
     bytes32 shamanId = _createShaman(
@@ -419,11 +421,6 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       spellId2,
       "First edge toSpellId should match"
     );
-    assertEq(
-      retrievedEdges[0].metadata,
-      "edge1 metadata",
-      "First edge metadata should match"
-    );
 
     assertEq(
       retrievedEdges[1].fromSpellId,
@@ -434,11 +431,6 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       retrievedEdges[1].toSpellId,
       spellId1,
       "Second edge toSpellId should match"
-    );
-    assertEq(
-      retrievedEdges[1].metadata,
-      "edge2 metadata",
-      "Second edge metadata should match"
     );
   }
 
@@ -474,11 +466,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     initialSourceIds[0] = vars.sourceId1;
 
     SpellEdge[] memory initialEdges = new SpellEdge[](1);
-    initialEdges[0] = _createSpellEdge(
-      vars.spellId1,
-      vars.spellId1,
-      "initial edge"
-    );
+    initialEdges[0] = _createSpellEdge(vars.spellId1, vars.spellId1);
 
     // Update the workflow
     vm.prank(creatorAlice);
@@ -522,8 +510,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     newSourceIds[1] = vars.sourceId2;
 
     SpellEdge[] memory newEdges = new SpellEdge[](2);
-    newEdges[0] = _createSpellEdge(vars.spellId1, vars.spellId2, "new edge 1");
-    newEdges[1] = _createSpellEdge(vars.spellId2, vars.spellId1, "new edge 2");
+    newEdges[0] = _createSpellEdge(vars.spellId1, vars.spellId2);
+    newEdges[1] = _createSpellEdge(vars.spellId2, vars.spellId1);
 
     // Update the workflow again
     vm.prank(creatorAlice);
@@ -561,8 +549,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     newSourceIds[1] = vars.sourceId2;
 
     SpellEdge[] memory newEdges = new SpellEdge[](2);
-    newEdges[0] = _createSpellEdge(vars.spellId1, vars.spellId2, "new edge 1");
-    newEdges[1] = _createSpellEdge(vars.spellId2, vars.spellId1, "new edge 2");
+    newEdges[0] = _createSpellEdge(vars.spellId1, vars.spellId2);
+    newEdges[1] = _createSpellEdge(vars.spellId2, vars.spellId1);
 
     // Update the workflow again
     vm.prank(creatorAlice);
@@ -605,8 +593,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     newSourceIds[1] = vars.sourceId2;
 
     SpellEdge[] memory newEdges = new SpellEdge[](2);
-    newEdges[0] = _createSpellEdge(vars.spellId1, vars.spellId2, "new edge 1");
-    newEdges[1] = _createSpellEdge(vars.spellId2, vars.spellId1, "new edge 2");
+    newEdges[0] = _createSpellEdge(vars.spellId1, vars.spellId2);
+    newEdges[1] = _createSpellEdge(vars.spellId2, vars.spellId1);
 
     // Update the workflow again
     vm.prank(creatorAlice);
@@ -630,11 +618,6 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       vars.spellId2,
       "First edge toSpellId should match"
     );
-    assertEq(
-      updatedEdges[0].metadata,
-      "new edge 1",
-      "First edge metadata should match"
-    );
 
     assertEq(
       updatedEdges[1].fromSpellId,
@@ -645,11 +628,6 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       updatedEdges[1].toSpellId,
       vars.spellId1,
       "Second edge toSpellId should match"
-    );
-    assertEq(
-      updatedEdges[1].metadata,
-      "new edge 2",
-      "Second edge metadata should match"
     );
   }
 
@@ -673,7 +651,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     sourceIds[0] = sourceId1;
 
     SpellEdge[] memory edges = new SpellEdge[](1);
-    edges[0] = _createSpellEdge(spellId1, spellId1, "test edge");
+    edges[0] = _createSpellEdge(spellId1, spellId1);
 
     // Try to update as non-creator, should revert
     vm.prank(creatorBob);
@@ -727,7 +705,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     sourceIds[0] = vars.sourceId1;
 
     SpellEdge[] memory edges = new SpellEdge[](1);
-    edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1");
+    edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1);
 
     vm.prank(creatorAlice);
     world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
@@ -766,7 +744,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds[0] = vars.sourceId1;
 
       SpellEdge[] memory edges = new SpellEdge[](1);
-      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1");
+      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1);
 
       vm.prank(creatorAlice);
       world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
@@ -783,8 +761,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds[1] = vars.sourceId2;
 
       SpellEdge[] memory edges = new SpellEdge[](2);
-      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1-1");
-      edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2, "edge 1-2");
+      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1);
+      edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2);
 
       vm.prank(creatorAlice);
       world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
@@ -828,7 +806,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds[0] = vars.sourceId1;
 
       SpellEdge[] memory edges = new SpellEdge[](1);
-      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1");
+      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1);
 
       vm.prank(creatorAlice);
       world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
@@ -845,8 +823,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds[1] = vars.sourceId2;
 
       SpellEdge[] memory edges = new SpellEdge[](2);
-      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1-1");
-      edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2, "edge 1-2");
+      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1);
+      edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2);
 
       vm.prank(creatorAlice);
       world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
@@ -865,9 +843,9 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds[2] = vars.sourceId3;
 
       SpellEdge[] memory edges = new SpellEdge[](3);
-      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId2, "edge 1-2");
-      edges[1] = _createSpellEdge(vars.spellId2, vars.spellId3, "edge 2-3");
-      edges[2] = _createSpellEdge(vars.spellId3, vars.spellId1, "edge 3-1");
+      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId2);
+      edges[1] = _createSpellEdge(vars.spellId2, vars.spellId3);
+      edges[2] = _createSpellEdge(vars.spellId3, vars.spellId1);
 
       vm.prank(creatorAlice);
       world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
@@ -886,7 +864,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds[0] = vars.sourceId1;
 
       SpellEdge[] memory edges = new SpellEdge[](1);
-      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1");
+      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1);
 
       vm.prank(creatorAlice);
       world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
@@ -903,8 +881,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds[1] = vars.sourceId2;
 
       SpellEdge[] memory edges = new SpellEdge[](2);
-      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1-1");
-      edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2, "edge 1-2");
+      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1);
+      edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2);
 
       vm.prank(creatorAlice);
       world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
@@ -923,9 +901,9 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds[2] = vars.sourceId3;
 
       SpellEdge[] memory edges = new SpellEdge[](3);
-      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId2, "edge 1-2");
-      edges[1] = _createSpellEdge(vars.spellId2, vars.spellId3, "edge 2-3");
-      edges[2] = _createSpellEdge(vars.spellId3, vars.spellId1, "edge 3-1");
+      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId2);
+      edges[1] = _createSpellEdge(vars.spellId2, vars.spellId3);
+      edges[2] = _createSpellEdge(vars.spellId3, vars.spellId1);
 
       vm.prank(creatorAlice);
       world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
@@ -955,7 +933,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       bytes32[] memory sourceIds = new bytes32[](1);
       sourceIds[0] = vars.sourceId1;
       SpellEdge[] memory edges = new SpellEdge[](1);
-      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1");
+      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1);
       vm.prank(creatorAlice);
       world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
@@ -968,8 +946,8 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds[0] = vars.sourceId1;
       sourceIds[1] = vars.sourceId2;
       SpellEdge[] memory edges = new SpellEdge[](2);
-      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1, "edge 1-1");
-      edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2, "edge 1-2");
+      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId1);
+      edges[1] = _createSpellEdge(vars.spellId1, vars.spellId2);
       vm.prank(creatorAlice);
       world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }
@@ -984,9 +962,9 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       sourceIds[1] = vars.sourceId2;
       sourceIds[2] = vars.sourceId3;
       SpellEdge[] memory edges = new SpellEdge[](3);
-      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId2, "edge 1-2");
-      edges[1] = _createSpellEdge(vars.spellId2, vars.spellId3, "edge 2-3");
-      edges[2] = _createSpellEdge(vars.spellId3, vars.spellId1, "edge 3-1");
+      edges[0] = _createSpellEdge(vars.spellId1, vars.spellId2);
+      edges[1] = _createSpellEdge(vars.spellId2, vars.spellId3);
+      edges[2] = _createSpellEdge(vars.spellId3, vars.spellId1);
       vm.prank(creatorAlice);
       world.updateShamanWorkflow(vars.shamanId, sourceIds, spellIds, edges);
     }

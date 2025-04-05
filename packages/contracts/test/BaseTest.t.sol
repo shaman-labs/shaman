@@ -161,16 +161,9 @@ contract BaseTest is MudTest, GasReporter {
 
   function _createSpellEdge(
     bytes32 fromSpellId,
-    bytes32 toSpellId,
-    string memory metadata
+    bytes32 toSpellId
   ) internal virtual returns (SpellEdge memory) {
-    return
-      SpellEdge({
-        fromSpellId: fromSpellId,
-        toSpellId: toSpellId,
-        createdAt: block.timestamp,
-        metadata: metadata
-      });
+    return SpellEdge({ fromSpellId: fromSpellId, toSpellId: toSpellId });
   }
 
   function _updateShamanWorkflow(
