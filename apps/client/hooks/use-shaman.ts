@@ -27,24 +27,27 @@ export const useShaman = (shamanId: string) => {
         )
       );
 
+      // console.log(shamanData, mud.components);
+
       const shamanSpells = await Promise.all(
-        shamanData.spellIds.map(async (spellId) => {
+        shamanData.shamanSpellIds.map(async (spellId) => {
           const shamanSpell = getComponentValueStrict(
-            mud.components.ShamanSpell,
+            mud.components.ShamanSpells,
             encodeEntity(
-              { shamanId: 'bytes32', spellId: 'bytes32' },
+              { spellId: 'bytes32' },
               {
-                shamanId: shamanId as `0x${string}`,
                 spellId: spellId as `0x${string}`,
               }
             )
           );
 
+          console.log(shamanSpell);
+
           const spell = getComponentValueStrict(
             mud.components.Spells,
             encodeEntity(
               { spellId: 'bytes32' },
-              { spellId: spellId as `0x${string}` }
+              { spellId: shamanSpell.spellId as `0x${string}` }
             )
           );
 
@@ -55,7 +58,7 @@ export const useShaman = (shamanId: string) => {
           return {
             ...spell,
             ...shamanSpell,
-            spellId,
+            spellId: shamanSpell.spellId,
             ...metadata.data,
             version: shamanSpell.version,
             latestVersion: spell.version,
@@ -64,45 +67,59 @@ export const useShaman = (shamanId: string) => {
       );
 
       const shamanSources = await Promise.all(
-        shamanData.sourceIds.map(async (sourceId) => {
-          const source = getComponentValueStrict(
-            mud.components.Sources,
+        shamanData.shamanSourceIds.map(async (sourceId) => {
+          const shamanSource = getComponentValueStrict(
+            mud.components.ShamanSources,
             encodeEntity(
               { sourceId: 'bytes32' },
               { sourceId: sourceId as `0x${string}` }
             )
           );
 
-          const metadata = await axios.get<{
-            name: string;
-            description: string;
-          }>(`https://gateway.shaman.fun/ipfs/${source.metadata}`);
+          const source = getComponentValueStrict(
+            mud.components.Sources,
+            encodeEntity(
+              { sourceId: 'bytes32' },
+              { sourceId: shamanSource.sourceId as `0x${string}` }
+            )
+          );
+
+          const metadata = source.metadata
+            ? await axios.get<{
+                name: string;
+                description: string;
+              }>(`https://gateway.shaman.fun/ipfs/${source.metadata}`)
+            : null;
 
           return {
             ...source,
-            sourceId,
-            name: metadata.data.name,
-            description: metadata.data.description,
+            ...shamanSource,
+            sourceId: shamanSource.sourceId,
+            name: metadata?.data.name,
+            description: metadata?.data.description,
           };
         })
       );
 
-      const shamanEdges = shamanData.spellEdgeIds.map((edgeId) => {
-        const edge = getComponentValueStrict(
-          mud.components.ShamanSpellEdges,
-          encodeEntity(
-            { shamanId: 'bytes32', spellEdgeId: 'bytes32' },
-            {
-              shamanId: shamanId as `0x${string}`,
-              spellEdgeId: edgeId as `0x${string}`,
-            }
-          )
-        );
+      const shamanEdges = await Promise.all(
+        shamanData.shamanSpellEdgeIds.map(async (shamanSpellEdgeId) => {
+          const shamanSpellEdge = getComponentValueStrict(
+            mud.components.ShamanSpellEdges,
+            encodeEntity(
+              { shamanId: 'bytes32', shamanSpellEdgeId: 'bytes32' },
+              {
+                shamanId: shamanId as `0x${string}`,
+                shamanSpellEdgeId: shamanSpellEdgeId as `0x${string}`,
+              }
+            )
+          );
 
-        return {
-          ...edge,
-        };
-      });
+          return {
+            ...shamanSpellEdge,
+            shamanSpellEdgeId,
+          };
+        })
+      );
 
       const metadata = await axios.get<{
         name: string;

@@ -160,8 +160,6 @@ export function getSystemCalls({
     spellEdges: {
       fromSpellId: Hex;
       toSpellId: Hex;
-      createdAt: bigint;
-      metadata: string;
     }[]
   ) => {
     await worldContract.simulate.updateShamanWorkflow(

@@ -60,10 +60,9 @@ type WorkflowData = {
   sourceIds: Hex[];
   spellIds: Hex[];
   spellEdges: {
-    fromSpellId: Hex;
-    toSpellId: Hex;
-    createdAt: bigint;
-    metadata: string;
+    shamanSpellEdgeId: Hex;
+    fromShamanSpellId: Hex;
+    toShamanSpellId: Hex;
   }[];
 };
 
@@ -135,10 +134,9 @@ export function WorkflowTab() {
         spellIds: shaman?.spells?.map((s) => s.spellId as Hex) || [],
         spellEdges:
           shaman?.spellEdges?.map((e) => ({
-            fromSpellId: e.fromSpellId as Hex,
-            toSpellId: e.toSpellId as Hex,
-            createdAt: e.createdAt,
-            metadata: e.metadata,
+            shamanSpellEdgeId: e.shamanSpellEdgeId as Hex,
+            fromShamanSpellId: e.fromShamanSpellId as Hex,
+            toShamanSpellId: e.toShamanSpellId as Hex,
           })) || [],
       },
     });
@@ -182,8 +180,6 @@ export function WorkflowTab() {
       spellEdges: {
         fromSpellId: Hex;
         toSpellId: Hex;
-        createdAt: bigint;
-        metadata: string;
       }[];
     }) => {
       if (!mud?.calls?.embedded?.systemCalls?.updateShamanWorkflow) {
@@ -228,7 +224,10 @@ export function WorkflowTab() {
       currentShamanId: shamanId as Hex,
       sourceIds,
       spellIds,
-      spellEdges,
+      spellEdges: spellEdges.map((edge) => ({
+        fromSpellId: edge.fromShamanSpellId,
+        toSpellId: edge.toShamanSpellId,
+      })),
     });
   }, [shaman, shamanId, saveWorkflow, workflowData]);
 
@@ -383,16 +382,16 @@ export function WorkflowTab() {
 
     const spellEdgesFromData =
       workflowData.data?.spellEdges?.map((edge) => ({
-        id: `edge-${edge.fromSpellId}-${edge.toSpellId}`,
-        source: edge.fromSpellId,
-        target: edge.toSpellId,
+        id: edge.shamanSpellEdgeId,
+        source: edge.fromShamanSpellId,
+        target: edge.toShamanSpellId,
         type: 'default',
         animated: false,
         markerEnd: { type: MarkerType.Arrow },
       })) || [];
 
     const targetSpellIds = new Set(
-      workflowData.data?.spellEdges?.map((edge) => edge.toSpellId)
+      workflowData.data?.spellEdges?.map((edge) => edge.toShamanSpellId)
     );
 
     const entrySpellIds =
