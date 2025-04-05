@@ -58,7 +58,9 @@ type WorkflowState = {
 
 type WorkflowData = {
   sourceIds: Hex[];
+  newSourceIds: Hex[];
   spellIds: Hex[];
+  newSpellIds: Hex[];
   spellEdges: {
     shamanSpellEdgeId: Hex;
     fromShamanSpellId: Hex;
@@ -91,7 +93,7 @@ export function WorkflowTab() {
           ...state,
           data: {
             ...state.data,
-            spellIds: [...(state.data?.spellIds || []), action.spellId],
+            newSpellIds: [...(state.data?.newSpellIds || []), action.spellId],
           },
           isDirty: true,
         };
@@ -102,7 +104,10 @@ export function WorkflowTab() {
           ...state,
           data: {
             ...state.data,
-            sourceIds: [...(state.data?.sourceIds || []), action.sourceId],
+            newSourceIds: [
+              ...(state.data?.newSourceIds || []),
+              action.sourceId,
+            ],
           },
           isDirty: true,
         };
@@ -131,7 +136,9 @@ export function WorkflowTab() {
       type: 'init',
       payload: {
         sourceIds: shaman?.sources?.map((s) => s.sourceId as Hex) || [],
+        newSourceIds: [],
         spellIds: shaman?.spells?.map((s) => s.spellId as Hex) || [],
+        newSpellIds: [],
         spellEdges:
           shaman?.spellEdges?.map((e) => ({
             shamanSpellEdgeId: e.shamanSpellEdgeId as Hex,
@@ -356,6 +363,25 @@ export function WorkflowTab() {
         targetPosition: Position.Left,
       })) || [];
 
+    const newSourceNodes =
+      workflowData?.data?.newSourceIds?.map((sourceId, index) => ({
+        id: `new-${sourceId}-${index}`,
+        data: {
+          label: (
+            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+              {sources?.find((source) => source.sourceId === sourceId)?.name ||
+                sourceId}{' '}
+              (New)
+            </div>
+          ),
+        },
+        position: { x: index * 200 - 200, y: 150 },
+        style: { borderRadius: '8px', opacity: 0.7 },
+        type: 'input',
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+      })) || [];
+
     const spellNodes =
       workflowData?.data?.spellIds?.map((spellId, index) => ({
         id: spellId,
@@ -374,7 +400,25 @@ export function WorkflowTab() {
         targetPosition: Position.Left,
       })) || [];
 
-    return [...sourceNodes, ...spellNodes];
+    const newSpellNodes =
+      workflowData?.data?.newSpellIds?.map((spellId, index) => ({
+        id: `new-${spellId}-${index}`,
+        data: {
+          label: (
+            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+              {spells?.find((spell) => spell.spellId === spellId)?.name ||
+                spellId}{' '}
+              (New)
+            </div>
+          ),
+        },
+        position: { x: (sourceNodes.length + index) * 200 - 200, y: 150 },
+        style: { borderRadius: '8px', opacity: 0.7 },
+        sourcePosition: Position.Right,
+        targetPosition: Position.Left,
+      })) || [];
+
+    return [...sourceNodes, ...newSourceNodes, ...spellNodes, ...newSpellNodes];
   }, [workflowData, spells, sources]);
 
   const edges = useMemo(() => {
