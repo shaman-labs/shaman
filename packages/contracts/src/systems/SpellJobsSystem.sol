@@ -1,22 +1,24 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
-import { Shamans, ShamanSpell } from "../codegen/index.sol";
+import { Shamans, ShamanSpells } from "../codegen/index.sol";
 import { JobState, LogType, RoleType } from "../codegen/common.sol";
 import { ShamanLogsLib } from "../lib/ShamanLogsLib.sol";
 import { BaseSystem } from "./BaseSystem.sol";
 
 contract SpellJobsSystem is BaseSystem {
   function enqueueSpellJob(
-    bytes32 shamanId,
-    bytes32 spellId,
+    bytes32 shamanSpellId,
     uint256 cost
-  )
-    public
-    onlyOperator
-    onlyActiveShaman(shamanId)
-    onlyInProgressShaman(shamanId)
-    onlyIdleSpell(shamanId, spellId)
-  {
+  ) public onlyOperator onlyIdleSpell(shamanSpellId) {
+    bytes32 shamanId = ShamanSpells.getShamanId(shamanSpellId);
+
+    require(Shamans.getActive(shamanId), "Shaman is not active");
+
+    require(
+      Shamans.getState(shamanId) == JobState.InProgress,
+      "Shaman is not in progress"
+    );
+
     require(
       Shamans.getBalance(shamanId) >= cost,
       "Shaman has insufficient balance"
@@ -27,42 +29,58 @@ contract SpellJobsSystem is BaseSystem {
       "Operator has insufficient balance"
     );
 
-    ShamanSpell.setState(shamanId, spellId, JobState.Queue);
-    ShamanLogsLib.logOperation(shamanId, spellId, 0, true, LogType.Queue, "");
+    ShamanSpells.setState(shamanSpellId, JobState.Queue);
+    ShamanLogsLib.logOperation(
+      shamanId,
+      shamanSpellId,
+      0,
+      true,
+      LogType.Queue,
+      ""
+    );
   }
 
-  function startSpellJob(
-    bytes32 shamanId,
-    bytes32 spellId
-  )
-    public
-    onlyOperator
-    onlyActiveShaman(shamanId)
-    onlyInProgressShaman(shamanId)
-  {
+  function startSpellJob(bytes32 shamanSpellId) public onlyOperator {
+    bytes32 shamanId = ShamanSpells.getShamanId(shamanSpellId);
+
+    require(Shamans.getActive(shamanId), "Shaman is not active");
+
     require(
-      ShamanSpell.getState(shamanId, spellId) == JobState.Queue,
+      Shamans.getState(shamanId) == JobState.InProgress,
+      "Shaman is not in progress"
+    );
+    require(
+      ShamanSpells.getState(shamanSpellId) == JobState.Queue,
       "Spell must be queued"
     );
 
-    ShamanSpell.setState(shamanId, spellId, JobState.InProgress);
-    ShamanLogsLib.logOperation(shamanId, spellId, 0, true, LogType.Start, "");
+    ShamanSpells.setState(shamanSpellId, JobState.InProgress);
+    ShamanLogsLib.logOperation(
+      shamanId,
+      shamanSpellId,
+      0,
+      true,
+      LogType.Start,
+      ""
+    );
   }
 
   function completeSpellJob(
-    bytes32 shamanId,
-    bytes32 spellId,
+    bytes32 shamanSpellId,
     uint256 cost,
     bool success,
     string memory metadata
-  )
-    public
-    onlyOperator
-    onlyActiveShaman(shamanId)
-    onlyInProgressShaman(shamanId)
-  {
+  ) public onlyOperator {
+    bytes32 shamanId = ShamanSpells.getShamanId(shamanSpellId);
+
+    require(Shamans.getActive(shamanId), "Shaman is not active");
+
     require(
-      ShamanSpell.getState(shamanId, spellId) == JobState.InProgress,
+      Shamans.getState(shamanId) == JobState.InProgress,
+      "Shaman is not in progress"
+    );
+    require(
+      ShamanSpells.getState(shamanSpellId) == JobState.InProgress,
       "Spell must be in progress"
     );
     require(
@@ -75,12 +93,12 @@ contract SpellJobsSystem is BaseSystem {
       "Operator has insufficient balance"
     );
 
-    ShamanSpell.setState(shamanId, spellId, JobState.Idle);
+    ShamanSpells.setState(shamanSpellId, JobState.Idle);
     Shamans.setBalance(shamanId, Shamans.getBalance(shamanId) - cost);
 
     ShamanLogsLib.logOperation(
       shamanId,
-      spellId,
+      shamanSpellId,
       cost,
       success,
       LogType.Completion,

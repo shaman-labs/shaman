@@ -173,12 +173,7 @@ export const IWorld = [
     "name": "completeSpellJob",
     "inputs": [
       {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "spellId",
+        "name": "shamanSpellId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -327,12 +322,7 @@ export const IWorld = [
     "name": "enqueueSpellJob",
     "inputs": [
       {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "spellId",
+        "name": "shamanSpellId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -826,27 +816,22 @@ export const IWorld = [
       {
         "name": "",
         "type": "tuple[]",
-        "internalType": "struct SpellEdge[]",
+        "internalType": "struct ShamanSpellEdge[]",
         "components": [
           {
-            "name": "fromSpellId",
+            "name": "shamanSpellEdgeId",
             "type": "bytes32",
             "internalType": "bytes32"
           },
           {
-            "name": "toSpellId",
+            "name": "fromShamanSpellId",
             "type": "bytes32",
             "internalType": "bytes32"
           },
           {
-            "name": "createdAt",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "metadata",
-            "type": "string",
-            "internalType": "string"
+            "name": "toShamanSpellId",
+            "type": "bytes32",
+            "internalType": "bytes32"
           }
         ]
       }
@@ -877,12 +862,7 @@ export const IWorld = [
     "name": "getShamanSpellMetadata",
     "inputs": [
       {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "spellId",
+        "name": "shamanSpellId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -901,12 +881,7 @@ export const IWorld = [
     "name": "getShamanSpellState",
     "inputs": [
       {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "spellId",
+        "name": "shamanSpellId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -925,12 +900,7 @@ export const IWorld = [
     "name": "getShamanSpellVersion",
     "inputs": [
       {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "spellId",
+        "name": "shamanSpellId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -940,6 +910,57 @@ export const IWorld = [
         "name": "",
         "type": "uint256",
         "internalType": "uint256"
+      }
+    ],
+    "stateMutability": "view"
+  },
+  {
+    "type": "function",
+    "name": "getShamanSpells",
+    "inputs": [
+      {
+        "name": "shamanId",
+        "type": "bytes32",
+        "internalType": "bytes32"
+      }
+    ],
+    "outputs": [
+      {
+        "name": "",
+        "type": "tuple[]",
+        "internalType": "struct ShamanSpell[]",
+        "components": [
+          {
+            "name": "shamanSpellId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "spellId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "shamanId",
+            "type": "bytes32",
+            "internalType": "bytes32"
+          },
+          {
+            "name": "version",
+            "type": "uint256",
+            "internalType": "uint256"
+          },
+          {
+            "name": "metadata",
+            "type": "string",
+            "internalType": "string"
+          },
+          {
+            "name": "state",
+            "type": "uint8",
+            "internalType": "enum JobState"
+          }
+        ]
       }
     ],
     "stateMutability": "view"
@@ -1793,7 +1814,7 @@ export const IWorld = [
         "internalType": "bytes32"
       },
       {
-        "name": "spellId",
+        "name": "shamanSpellId",
         "type": "bytes32",
         "internalType": "bytes32"
       },
@@ -1941,12 +1962,7 @@ export const IWorld = [
     "name": "startSpellJob",
     "inputs": [
       {
-        "name": "shamanId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      },
-      {
-        "name": "spellId",
+        "name": "shamanSpellId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -2139,7 +2155,7 @@ export const IWorld = [
         "internalType": "bytes32"
       },
       {
-        "name": "spellId",
+        "name": "shamanSpellId",
         "type": "bytes32",
         "internalType": "bytes32"
       }
@@ -2187,7 +2203,7 @@ export const IWorld = [
       {
         "name": "spellEdges",
         "type": "tuple[]",
-        "internalType": "struct SpellEdge[]",
+        "internalType": "struct NewSpellEdge[]",
         "components": [
           {
             "name": "fromSpellId",
@@ -2198,16 +2214,6 @@ export const IWorld = [
             "name": "toSpellId",
             "type": "bytes32",
             "internalType": "bytes32"
-          },
-          {
-            "name": "createdAt",
-            "type": "uint256",
-            "internalType": "uint256"
-          },
-          {
-            "name": "metadata",
-            "type": "string",
-            "internalType": "string"
           }
         ]
       }
