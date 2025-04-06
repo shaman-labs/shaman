@@ -61,8 +61,8 @@ type WorkflowData = {
   spellIds: Hex[];
   spellChains: string[];
   spellEdges: {
-    fromShamanSpellIndex: bigint;
-    toShamanSpellIndex: bigint;
+    fromSpellIndex: bigint;
+    toSpellIndex: bigint;
   }[];
 };
 
@@ -133,11 +133,11 @@ export function WorkflowTab() {
         sourceIds: shaman?.sources?.map((s) => s.sourceId as Hex) || [],
         spellIds: shaman?.spells?.map((s) => s.spellId as Hex) || [],
         spellChains: shaman?.spells?.map((s) => s.chain) || [],
-        spellEdges: [],
-        // shaman?.spellEdges?.map((e) => ({
-        //   fromShamanSpellIndex: e.fromShamanSpellIndex,
-        //   toShamanSpellIndex: e.toShamanSpellIndex,
-        // })) || [],
+        spellEdges:
+          shaman?.spellEdges?.map((e) => ({
+            fromSpellIndex: e.fromSpellIndex,
+            toSpellIndex: e.toSpellIndex,
+          })) || [],
       },
     });
   }, [shaman]);
@@ -221,7 +221,7 @@ export function WorkflowTab() {
 
     const sourceIds = workflowData.data?.sourceIds || [];
     const spellIds = workflowData.data?.spellIds || [];
-    // const spellEdges = workflowData.data?.spellEdges || [];
+    const spellEdges = workflowData.data?.spellEdges || [];
     const spellChains = workflowData.data?.spellChains || [];
 
     saveWorkflow({
@@ -229,7 +229,7 @@ export function WorkflowTab() {
       sourceIds,
       spellIds,
       spellChains,
-      spellEdges: [],
+      spellEdges,
     });
   }, [shaman, shamanId, saveWorkflow, workflowData]);
 
