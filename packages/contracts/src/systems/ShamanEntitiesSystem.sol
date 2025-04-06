@@ -20,7 +20,7 @@ contract ShamanEntitiesSystem is BaseSystem {
   function getShamanIdsBySourceId(
     bytes32 sourceId
   ) public view returns (bytes32[] memory) {
-    uint256 count = Sources.getShamanCount(sourceId);
+    uint256 count = Sources.getShamanInstalls(sourceId);
     bytes32[] memory shamanIds = new bytes32[](count);
 
     for (uint256 i = 0; i < count; i++) {
