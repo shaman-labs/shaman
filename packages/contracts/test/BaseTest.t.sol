@@ -160,10 +160,14 @@ contract BaseTest is MudTest, GasReporter {
   }
 
   function _createSpellEdge(
-    bytes32 fromSpellId,
-    bytes32 toSpellId
+    uint256 fromSpellIndex,
+    uint256 toSpellIndex
   ) internal virtual returns (NewSpellEdge memory) {
-    return NewSpellEdge({ fromSpellId: fromSpellId, toSpellId: toSpellId });
+    return
+      NewSpellEdge({
+        fromSpellIndex: fromSpellIndex,
+        toSpellIndex: toSpellIndex
+      });
   }
 
   function _updateShamanWorkflow(
@@ -171,10 +175,17 @@ contract BaseTest is MudTest, GasReporter {
     bytes32 shamanId,
     bytes32[] memory sourceIds,
     bytes32[] memory spellIds,
+    string[] memory spellChains,
     NewSpellEdge[] memory spellEdges
   ) internal virtual {
     vm.prank(creator);
-    world.updateShamanWorkflow(shamanId, sourceIds, spellIds, spellEdges);
+    world.updateShamanWorkflow(
+      shamanId,
+      sourceIds,
+      spellIds,
+      spellChains,
+      spellEdges
+    );
     vm.stopPrank();
   }
 }

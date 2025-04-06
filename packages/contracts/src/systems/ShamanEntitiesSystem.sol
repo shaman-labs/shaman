@@ -3,7 +3,6 @@ pragma solidity >=0.8.24;
 import { BaseSystem } from "./BaseSystem.sol";
 import { Shamans, Sources, ShamanSpells, ShamanSpellEdges, SourceShamanLookup } from "../codegen/index.sol";
 import { ShamanSpell, ShamanSpellEdge } from "../lib/ShamanWorkflowsLib.sol";
-import { JobState } from "../codegen/common.sol";
 
 contract ShamanEntitiesSystem is BaseSystem {
   function getShamanSpellIds(
@@ -29,24 +28,6 @@ contract ShamanEntitiesSystem is BaseSystem {
     }
 
     return shamanIds;
-  }
-
-  function getShamanSpellMetadata(
-    bytes32 shamanSpellId
-  ) public view returns (string memory) {
-    return ShamanSpells.getMetadata(shamanSpellId);
-  }
-
-  function getShamanSpellVersion(
-    bytes32 shamanSpellId
-  ) public view returns (uint256) {
-    return ShamanSpells.getVersion(shamanSpellId);
-  }
-
-  function getShamanSpellState(
-    bytes32 shamanSpellId
-  ) public view returns (JobState) {
-    return ShamanSpells.getState(shamanSpellId);
   }
 
   function getShamanSpellEdges(
@@ -88,6 +69,7 @@ contract ShamanEntitiesSystem is BaseSystem {
         spellId: ShamanSpells.getSpellId(shamanSpellId),
         shamanId: ShamanSpells.getShamanId(shamanSpellId),
         version: ShamanSpells.getVersion(shamanSpellId),
+        chain: ShamanSpells.getChain(shamanSpellId),
         metadata: ShamanSpells.getMetadata(shamanSpellId),
         state: ShamanSpells.getState(shamanSpellId)
       });

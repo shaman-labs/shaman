@@ -34,7 +34,6 @@ export default defineWorld({
         spellId: "bytes32",
         creator: "address",
         createdAt: "uint256",
-        shamanCount: "uint256",
         version: "uint256", // latest version of the spell
         name: "string",
         metadata: "string", // latest metadata of the spell
@@ -128,6 +127,7 @@ export default defineWorld({
         shamanId: "bytes32",
         version: "uint256", // version of the spell
         state: "JobState", // state of the spell
+        chain: "string", // chain of the spell
         metadata: "string", // metadata of version of the spell
       },
       key: ["shamanSpellId"],
@@ -140,6 +140,8 @@ export default defineWorld({
         shamanSpellEdgeId: "bytes32",
         fromShamanSpellId: "bytes32",
         toShamanSpellId: "bytes32",
+        fromSpellId: "bytes32",
+        toSpellId: "bytes32",
         shamanId: "bytes32",
       },
       key: ["shamanSpellEdgeId"],

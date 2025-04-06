@@ -82,10 +82,19 @@ contract SpellJobsSystemTest is BaseTest {
     sourceIds[0] = _createSource(creator, "TestSource", INITIAL_METADATA);
 
     NewSpellEdge[] memory spellEdges = new NewSpellEdge[](1);
-    spellEdges[0] = _createSpellEdge(bytes32(0), spellIds[0]);
+    spellEdges[0] = _createSpellEdge(0, 0);
+
+    string[] memory spellChains = new string[](1);
+    spellChains[0] = "base";
 
     vm.prank(creator);
-    world.updateShamanWorkflow(shamanId, spellIds, sourceIds, spellEdges);
+    world.updateShamanWorkflow(
+      shamanId,
+      sourceIds,
+      spellIds,
+      spellChains,
+      spellEdges
+    );
     vm.stopPrank();
 
     // add balance to creator
