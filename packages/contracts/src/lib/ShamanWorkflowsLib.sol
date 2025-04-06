@@ -5,8 +5,8 @@ import { Sources, Shamans, Spells, ShamanSpells, ShamanSpellEdges, ShamanSources
 import { JobState } from "../codegen/common.sol";
 
 struct NewSpellEdge {
-  bytes32 fromSpellId;
-  bytes32 toSpellId;
+  uint256 fromSpellIndex;
+  uint256 toSpellIndex;
 }
 struct ShamanSpellEdge {
   bytes32 shamanSpellEdgeId;
@@ -19,6 +19,7 @@ struct ShamanSpell {
   bytes32 spellId;
   bytes32 shamanId;
   uint256 version;
+  string chain;
   string metadata;
   JobState state;
 }
@@ -91,19 +92,8 @@ library ShamanWorkflowsLib {
     for (uint256 i = 0; i < newSpellEdgeCount; i++) {
       NewSpellEdge memory spellEdge = spellEdges[i];
 
-      // look up the corresponding shamanSpellIds
-      bytes32 fromShamanSpellId;
-      bytes32 toShamanSpellId;
-
-      // TODO: use indexes as edges, if we use edges (spell1, spell1) -> it will create (instance1, instance1) still
-      for (uint256 j = 0; j < newSpellIdsCount; j++) {
-        if (spellIds[j] == spellEdge.fromSpellId) {
-          fromShamanSpellId = newShamanSpellIds[j];
-        }
-        if (spellIds[j] == spellEdge.toSpellId) {
-          toShamanSpellId = newShamanSpellIds[j];
-        }
-      }
+      bytes32 fromShamanSpellId = newShamanSpellIds[spellEdge.fromSpellIndex];
+      bytes32 toShamanSpellId = newShamanSpellIds[spellEdge.toSpellIndex];
 
       bytes32 shamanSpellEdgeId = keccak256(
         abi.encodePacked(
@@ -121,8 +111,8 @@ library ShamanWorkflowsLib {
         shamanSpellEdgeId,
         fromShamanSpellId,
         toShamanSpellId,
-        spellEdge.fromSpellId,
-        spellEdge.toSpellId,
+        spellIds[spellEdge.fromSpellIndex], // fromSpellId
+        spellIds[spellEdge.toSpellIndex], // toSpellId
         shamanId
       );
     }

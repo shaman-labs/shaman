@@ -859,63 +859,6 @@ declare const abi: [
   },
   {
     "type": "function",
-    "name": "getShamanSpellMetadata",
-    "inputs": [
-      {
-        "name": "shamanSpellId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "string",
-        "internalType": "string"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getShamanSpellState",
-    "inputs": [
-      {
-        "name": "shamanSpellId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint8",
-        "internalType": "enum JobState"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
-    "name": "getShamanSpellVersion",
-    "inputs": [
-      {
-        "name": "shamanSpellId",
-        "type": "bytes32",
-        "internalType": "bytes32"
-      }
-    ],
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256",
-        "internalType": "uint256"
-      }
-    ],
-    "stateMutability": "view"
-  },
-  {
-    "type": "function",
     "name": "getShamanSpells",
     "inputs": [
       {
@@ -949,6 +892,11 @@ declare const abi: [
             "name": "version",
             "type": "uint256",
             "internalType": "uint256"
+          },
+          {
+            "name": "chain",
+            "type": "string",
+            "internalType": "string"
           },
           {
             "name": "metadata",
@@ -2201,19 +2149,24 @@ declare const abi: [
         "internalType": "bytes32[]"
       },
       {
+        "name": "spellChains",
+        "type": "string[]",
+        "internalType": "string[]"
+      },
+      {
         "name": "spellEdges",
         "type": "tuple[]",
         "internalType": "struct NewSpellEdge[]",
         "components": [
           {
-            "name": "fromSpellId",
-            "type": "bytes32",
-            "internalType": "bytes32"
+            "name": "fromSpellIndex",
+            "type": "uint256",
+            "internalType": "uint256"
           },
           {
-            "name": "toSpellId",
-            "type": "bytes32",
-            "internalType": "bytes32"
+            "name": "toSpellIndex",
+            "type": "uint256",
+            "internalType": "uint256"
           }
         ]
       }

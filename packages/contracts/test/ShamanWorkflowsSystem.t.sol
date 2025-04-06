@@ -53,6 +53,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     address creator,
     string memory name,
     bytes32[] memory spellIds,
+    string[] memory spellChains,
     bytes32[] memory sourceIds
   ) internal returns (bytes32) {
     bytes32 shamanId = _createShaman(creator, name, "TestMetadata");
@@ -60,9 +61,16 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     if (spellIds.length > 0 && sourceIds.length > 0) {
       NewSpellEdge[] memory spellEdges = new NewSpellEdge[](spellIds.length);
       for (uint256 i = 0; i < spellIds.length; i++) {
-        spellEdges[i] = _createSpellEdge(spellIds[i], spellIds[i]);
+        spellEdges[i] = _createSpellEdge(i, i);
       }
-      _updateShamanWorkflow(creator, shamanId, sourceIds, spellIds, spellEdges);
+      _updateShamanWorkflow(
+        creator,
+        shamanId,
+        sourceIds,
+        spellIds,
+        spellChains,
+        spellEdges
+      );
     }
 
     return shamanId;
@@ -98,12 +106,18 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     bytes32[] memory sourceIds2 = new bytes32[](1);
     sourceIds2[0] = sourceId2;
 
+    string[] memory spellChains1 = new string[](1);
+    spellChains1[0] = "base";
+
+    string[] memory spellChains2 = new string[](1);
+    spellChains2[0] = "base";
+
     // Create spell edges for both shamans
     NewSpellEdge[] memory edges1 = new NewSpellEdge[](1);
-    edges1[0] = _createSpellEdge(spellId1, spellId1);
+    edges1[0] = _createSpellEdge(0, 0);
 
     NewSpellEdge[] memory edges2 = new NewSpellEdge[](1);
-    edges2[0] = _createSpellEdge(spellId2, spellId2);
+    edges2[0] = _createSpellEdge(0, 0);
 
     // Create shamans but DON'T use the helper function - manually do the steps
     bytes32 shamanId1 = _createShaman(
@@ -119,12 +133,24 @@ contract ShamanWorkflowsSystemTest is BaseTest {
 
     // Update first shaman with sourceId1
     vm.startPrank(creatorAlice);
-    world.updateShamanWorkflow(shamanId1, sourceIds1, spellIds1, edges1);
+    world.updateShamanWorkflow(
+      shamanId1,
+      sourceIds1,
+      spellIds1,
+      spellChains1,
+      edges1
+    );
     vm.stopPrank();
 
     // Update second shaman with sourceId2
     vm.startPrank(creatorAlice);
-    world.updateShamanWorkflow(shamanId2, sourceIds2, spellIds2, edges2);
+    world.updateShamanWorkflow(
+      shamanId2,
+      sourceIds2,
+      spellIds2,
+      spellChains2,
+      edges2
+    );
     vm.stopPrank();
 
     // Get shamans by source ID
@@ -151,154 +177,6 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     );
   }
 
-  function testGetShamanSpellMetadata() public {
-    // Create test spells with unique names
-    bytes32 spellId1 = _createSpell(
-      creatorAlice,
-      "SpellMetaTest1",
-      "metadata1"
-    );
-    bytes32 spellId2 = _createSpell(
-      creatorAlice,
-      "SpellMetaTest2",
-      "metadata2"
-    );
-
-    // Create array of spell IDs
-    bytes32[] memory spellIds = new bytes32[](2);
-    spellIds[0] = spellId1;
-    spellIds[1] = spellId2;
-
-    // Create sources with unique names
-    bytes32 sourceId1 = _createSource(
-      creatorAlice,
-      "SourceMetaTest1",
-      "metadata1"
-    );
-    bytes32 sourceId2 = _createSource(
-      creatorAlice,
-      "SourceMetaTest2",
-      "metadata2"
-    );
-
-    // Create array of source IDs
-    bytes32[] memory sourceIds = new bytes32[](2);
-    sourceIds[0] = sourceId1;
-    sourceIds[1] = sourceId2;
-
-    // Create a shaman
-    bytes32 shamanId = _createShaman(
-      creatorAlice,
-      "TestShamanMeta",
-      "TestMetadata"
-    );
-
-    // Create spell edges
-    NewSpellEdge[] memory spellEdges = new NewSpellEdge[](2);
-    spellEdges[0] = _createSpellEdge(spellId1, spellId2);
-    spellEdges[1] = _createSpellEdge(spellId2, spellId1);
-
-    // Update shaman workflow
-    vm.startPrank(creatorAlice);
-    world.updateShamanWorkflow(shamanId, sourceIds, spellIds, spellEdges);
-    vm.stopPrank();
-
-    bytes32[] memory shamanSpellIds = world.getShamanSpellIds(shamanId);
-
-    // Directly set the metadata using signerAddress
-    vm.startPrank(signerAddress);
-    ShamanSpells.setMetadata(shamanSpellIds[0], "metadata1");
-    vm.stopPrank();
-
-    // Get the spell metadata
-    string memory metadata = world.getShamanSpellMetadata(shamanSpellIds[0]);
-
-    // Verify the metadata
-    assertEq(metadata, "metadata1", "Spell metadata should match");
-  }
-
-  function testGetShamanSpellVersion() public {
-    // Create test spells
-    (bytes32 spellId1, bytes32 spellId2) = _createTestSpells(
-      creatorAlice,
-      "SpellVer"
-    );
-
-    // Create array of spell IDs
-    bytes32[] memory spellIds = new bytes32[](2);
-    spellIds[0] = spellId1;
-    spellIds[1] = spellId2;
-
-    // Create sources array
-    bytes32[] memory sourceIds = new bytes32[](2);
-    (sourceIds[0], sourceIds[1]) = _createTestSources(
-      creatorAlice,
-      "SourceVer"
-    );
-
-    // Create a shaman with the spells
-    bytes32 shamanId = _createTestShaman(
-      creatorAlice,
-      "TestShaman6",
-      spellIds,
-      sourceIds
-    );
-
-    bytes32[] memory shamanSpellIds = world.getShamanSpellIds(shamanId);
-
-    // Set spell version directly in ShamanSpell table
-    vm.startPrank(signerAddress);
-    ShamanSpells.setVersion(shamanSpellIds[0], 1);
-    vm.stopPrank();
-
-    // Get the spell version
-    uint256 version = world.getShamanSpellVersion(shamanSpellIds[0]);
-
-    // Verify the version (should be 1 for a new spell)
-    assertEq(version, 1, "Spell version should be 1");
-  }
-
-  function testGetShamanSpellState() public {
-    // Create test spells
-    (bytes32 spellId1, bytes32 spellId2) = _createTestSpells(
-      creatorAlice,
-      "SpellState"
-    );
-
-    // Create array of spell IDs
-    bytes32[] memory spellIds = new bytes32[](2);
-    spellIds[0] = spellId1;
-    spellIds[1] = spellId2;
-
-    // Create sources array
-    bytes32[] memory sourceIds = new bytes32[](2);
-    (sourceIds[0], sourceIds[1]) = _createTestSources(
-      creatorAlice,
-      "SourceState"
-    );
-
-    // Create a shaman with the spells
-    bytes32 shamanId = _createTestShaman(
-      creatorAlice,
-      "TestShaman7",
-      spellIds,
-      sourceIds
-    );
-
-    bytes32[] memory shamanSpellIds = world.getShamanSpellIds(shamanId);
-
-    // Set spell state directly in ShamanSpell table
-    vm.startPrank(signerAddress);
-    ShamanSpells.setState(shamanSpellIds[0], JobState.Idle);
-    vm.stopPrank();
-
-    // Get the spell state
-    JobState state = world.getShamanSpellState(shamanSpellIds[0]);
-
-    // Verify the state (should be Idle for a new spell)
-    assertEq(uint8(state), uint8(JobState.Idle), "Spell state should be Idle");
-  }
-
   function testGetShamanSpellEdges() public {
     // Create test spells
     (bytes32 spellId1, bytes32 spellId2) = _createTestSpells(
@@ -318,10 +196,14 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       "SourceEdges"
     );
 
+    string[] memory spellChains = new string[](2);
+    spellChains[0] = "base";
+    spellChains[1] = "base";
+
     // Create spell edges
     NewSpellEdge[] memory spellEdges = new NewSpellEdge[](2);
-    spellEdges[0] = _createSpellEdge(spellId1, spellId2);
-    spellEdges[1] = _createSpellEdge(spellId2, spellId1);
+    spellEdges[0] = _createSpellEdge(0, 1);
+    spellEdges[1] = _createSpellEdge(1, 0);
 
     // Create a shaman
     bytes32 shamanId = _createShaman(
@@ -336,6 +218,7 @@ contract ShamanWorkflowsSystemTest is BaseTest {
       shamanId,
       sourceIds,
       spellIds,
+      spellChains,
       spellEdges
     );
 
@@ -368,12 +251,21 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     sourceIds[0] = sourceId1;
 
     NewSpellEdge[] memory edges = new NewSpellEdge[](1);
-    edges[0] = _createSpellEdge(spellId1, spellId1);
+    edges[0] = _createSpellEdge(0, 0);
+
+    string[] memory spellChains = new string[](1);
+    spellChains[0] = "base";
 
     // Try to update as non-creator, should revert
     vm.prank(creatorBob);
     vm.expectRevert("Not shaman creator");
-    world.updateShamanWorkflow(shamanId, sourceIds, spellIds, edges);
+    world.updateShamanWorkflow(
+      shamanId,
+      sourceIds,
+      spellIds,
+      spellChains,
+      edges
+    );
   }
 
   function testUpdateWorkflowRequireSpellsAndSources() public {
@@ -389,12 +281,15 @@ contract ShamanWorkflowsSystemTest is BaseTest {
     bytes32[] memory emptySourceIds = new bytes32[](0);
     NewSpellEdge[] memory emptyEdges = new NewSpellEdge[](0);
 
+    string[] memory emptySpellChains = new string[](0);
+
     vm.prank(creatorAlice);
     vm.expectRevert("Spell ids must be provided");
     world.updateShamanWorkflow(
       shamanId,
       emptySourceIds,
       emptySpellIds,
+      emptySpellChains,
       emptyEdges
     );
 
@@ -405,6 +300,12 @@ contract ShamanWorkflowsSystemTest is BaseTest {
 
     vm.prank(creatorAlice);
     vm.expectRevert("Source ids must be provided");
-    world.updateShamanWorkflow(shamanId, emptySourceIds, spellIds, emptyEdges);
+    world.updateShamanWorkflow(
+      shamanId,
+      emptySourceIds,
+      spellIds,
+      emptySpellChains,
+      emptyEdges
+    );
   }
 }
