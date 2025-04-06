@@ -15,6 +15,7 @@ interface IShamanWorkflowsSystem {
     bytes32 shamanId,
     bytes32[] memory sourceIds,
     bytes32[] memory spellIds,
+    string[] memory spellChains,
     NewSpellEdge[] memory spellEdges
   ) external;
 }

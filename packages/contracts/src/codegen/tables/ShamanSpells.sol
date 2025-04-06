@@ -24,12 +24,12 @@ library ShamanSpells {
   ResourceId constant _tableId = ResourceId.wrap(0x746200000000000000000000000000005368616d616e5370656c6c7300000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0061040120202001000000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0061040220202001000000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (bytes32, bytes32, uint256, uint8, string)
-  Schema constant _valueSchema = Schema.wrap(0x006104015f5f1f00c50000000000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (bytes32, bytes32, uint256, uint8, string, string)
+  Schema constant _valueSchema = Schema.wrap(0x006104025f5f1f00c5c500000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -45,12 +45,13 @@ library ShamanSpells {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](5);
+    fieldNames = new string[](6);
     fieldNames[0] = "spellId";
     fieldNames[1] = "shamanId";
     fieldNames[2] = "version";
     fieldNames[3] = "state";
-    fieldNames[4] = "metadata";
+    fieldNames[4] = "chain";
+    fieldNames[5] = "metadata";
   }
 
   /**
@@ -236,13 +237,175 @@ library ShamanSpells {
   }
 
   /**
+   * @notice Get chain.
+   */
+  function getChain(bytes32 shamanSpellId) internal view returns (string memory chain) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
+  }
+
+  /**
+   * @notice Get chain.
+   */
+  function _getChain(bytes32 shamanSpellId) internal view returns (string memory chain) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
+    return (string(_blob));
+  }
+
+  /**
+   * @notice Set chain.
+   */
+  function setChain(bytes32 shamanSpellId, string memory chain) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((chain)));
+  }
+
+  /**
+   * @notice Set chain.
+   */
+  function _setChain(bytes32 shamanSpellId, string memory chain) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((chain)));
+  }
+
+  /**
+   * @notice Get the length of chain.
+   */
+  function lengthChain(bytes32 shamanSpellId) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get the length of chain.
+   */
+  function _lengthChain(bytes32 shamanSpellId) internal view returns (uint256) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    unchecked {
+      return _byteLength / 1;
+    }
+  }
+
+  /**
+   * @notice Get an item of chain.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function getItemChain(bytes32 shamanSpellId, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    unchecked {
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Get an item of chain.
+   * @dev Reverts with Store_IndexOutOfBounds if `_index` is out of bounds for the array.
+   */
+  function _getItemChain(bytes32 shamanSpellId, uint256 _index) internal view returns (string memory) {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    unchecked {
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      return (string(_blob));
+    }
+  }
+
+  /**
+   * @notice Push a slice to chain.
+   */
+  function pushChain(bytes32 shamanSpellId, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Push a slice to chain.
+   */
+  function _pushChain(bytes32 shamanSpellId, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+  }
+
+  /**
+   * @notice Pop a slice from chain.
+   */
+  function popChain(bytes32 shamanSpellId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Pop a slice from chain.
+   */
+  function _popChain(bytes32 shamanSpellId) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+  }
+
+  /**
+   * @notice Update a slice of chain at `_index`.
+   */
+  function updateChain(bytes32 shamanSpellId, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
+   * @notice Update a slice of chain at `_index`.
+   */
+  function _updateChain(bytes32 shamanSpellId, uint256 _index, string memory _slice) internal {
+    bytes32[] memory _keyTuple = new bytes32[](1);
+    _keyTuple[0] = shamanSpellId;
+
+    unchecked {
+      bytes memory _encoded = bytes((_slice));
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+    }
+  }
+
+  /**
    * @notice Get metadata.
    */
   function getMetadata(bytes32 shamanSpellId) internal view returns (string memory metadata) {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 0);
+    bytes memory _blob = StoreSwitch.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
   }
 
@@ -253,7 +416,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 0);
+    bytes memory _blob = StoreCore.getDynamicField(_tableId, _keyTuple, 1);
     return (string(_blob));
   }
 
@@ -264,7 +427,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    StoreSwitch.setDynamicField(_tableId, _keyTuple, 0, bytes((metadata)));
+    StoreSwitch.setDynamicField(_tableId, _keyTuple, 1, bytes((metadata)));
   }
 
   /**
@@ -274,7 +437,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    StoreCore.setDynamicField(_tableId, _keyTuple, 0, bytes((metadata)));
+    StoreCore.setDynamicField(_tableId, _keyTuple, 1, bytes((metadata)));
   }
 
   /**
@@ -284,7 +447,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    uint256 _byteLength = StoreSwitch.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
       return _byteLength / 1;
     }
@@ -297,7 +460,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 0);
+    uint256 _byteLength = StoreCore.getDynamicFieldLength(_tableId, _keyTuple, 1);
     unchecked {
       return _byteLength / 1;
     }
@@ -312,7 +475,7 @@ library ShamanSpells {
     _keyTuple[0] = shamanSpellId;
 
     unchecked {
-      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      bytes memory _blob = StoreSwitch.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
       return (string(_blob));
     }
   }
@@ -326,7 +489,7 @@ library ShamanSpells {
     _keyTuple[0] = shamanSpellId;
 
     unchecked {
-      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 0, _index * 1, (_index + 1) * 1);
+      bytes memory _blob = StoreCore.getDynamicFieldSlice(_tableId, _keyTuple, 1, _index * 1, (_index + 1) * 1);
       return (string(_blob));
     }
   }
@@ -338,7 +501,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+    StoreSwitch.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
 
   /**
@@ -348,7 +511,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    StoreCore.pushToDynamicField(_tableId, _keyTuple, 0, bytes((_slice)));
+    StoreCore.pushToDynamicField(_tableId, _keyTuple, 1, bytes((_slice)));
   }
 
   /**
@@ -358,7 +521,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+    StoreSwitch.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
 
   /**
@@ -368,7 +531,7 @@ library ShamanSpells {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
-    StoreCore.popFromDynamicField(_tableId, _keyTuple, 0, 1);
+    StoreCore.popFromDynamicField(_tableId, _keyTuple, 1, 1);
   }
 
   /**
@@ -380,7 +543,7 @@ library ShamanSpells {
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
-      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+      StoreSwitch.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
     }
   }
 
@@ -393,7 +556,7 @@ library ShamanSpells {
 
     unchecked {
       bytes memory _encoded = bytes((_slice));
-      StoreCore.spliceDynamicData(_tableId, _keyTuple, 0, uint40(_index * 1), uint40(_encoded.length), _encoded);
+      StoreCore.spliceDynamicData(_tableId, _keyTuple, 1, uint40(_index * 1), uint40(_encoded.length), _encoded);
     }
   }
 
@@ -402,7 +565,18 @@ library ShamanSpells {
    */
   function get(
     bytes32 shamanSpellId
-  ) internal view returns (bytes32 spellId, bytes32 shamanId, uint256 version, JobState state, string memory metadata) {
+  )
+    internal
+    view
+    returns (
+      bytes32 spellId,
+      bytes32 shamanId,
+      uint256 version,
+      JobState state,
+      string memory chain,
+      string memory metadata
+    )
+  {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
@@ -419,7 +593,18 @@ library ShamanSpells {
    */
   function _get(
     bytes32 shamanSpellId
-  ) internal view returns (bytes32 spellId, bytes32 shamanId, uint256 version, JobState state, string memory metadata) {
+  )
+    internal
+    view
+    returns (
+      bytes32 spellId,
+      bytes32 shamanId,
+      uint256 version,
+      JobState state,
+      string memory chain,
+      string memory metadata
+    )
+  {
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
 
@@ -440,12 +625,13 @@ library ShamanSpells {
     bytes32 shamanId,
     uint256 version,
     JobState state,
+    string memory chain,
     string memory metadata
   ) internal {
     bytes memory _staticData = encodeStatic(spellId, shamanId, version, state);
 
-    EncodedLengths _encodedLengths = encodeLengths(metadata);
-    bytes memory _dynamicData = encodeDynamic(metadata);
+    EncodedLengths _encodedLengths = encodeLengths(chain, metadata);
+    bytes memory _dynamicData = encodeDynamic(chain, metadata);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
@@ -462,12 +648,13 @@ library ShamanSpells {
     bytes32 shamanId,
     uint256 version,
     JobState state,
+    string memory chain,
     string memory metadata
   ) internal {
     bytes memory _staticData = encodeStatic(spellId, shamanId, version, state);
 
-    EncodedLengths _encodedLengths = encodeLengths(metadata);
-    bytes memory _dynamicData = encodeDynamic(metadata);
+    EncodedLengths _encodedLengths = encodeLengths(chain, metadata);
+    bytes memory _dynamicData = encodeDynamic(chain, metadata);
 
     bytes32[] memory _keyTuple = new bytes32[](1);
     _keyTuple[0] = shamanSpellId;
@@ -496,11 +683,17 @@ library ShamanSpells {
   function decodeDynamic(
     EncodedLengths _encodedLengths,
     bytes memory _blob
-  ) internal pure returns (string memory metadata) {
+  ) internal pure returns (string memory chain, string memory metadata) {
     uint256 _start;
     uint256 _end;
     unchecked {
       _end = _encodedLengths.atIndex(0);
+    }
+    chain = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
+
+    _start = _end;
+    unchecked {
+      _end += _encodedLengths.atIndex(1);
     }
     metadata = (string(SliceLib.getSubslice(_blob, _start, _end).toBytes()));
   }
@@ -515,10 +708,21 @@ library ShamanSpells {
     bytes memory _staticData,
     EncodedLengths _encodedLengths,
     bytes memory _dynamicData
-  ) internal pure returns (bytes32 spellId, bytes32 shamanId, uint256 version, JobState state, string memory metadata) {
+  )
+    internal
+    pure
+    returns (
+      bytes32 spellId,
+      bytes32 shamanId,
+      uint256 version,
+      JobState state,
+      string memory chain,
+      string memory metadata
+    )
+  {
     (spellId, shamanId, version, state) = decodeStatic(_staticData);
 
-    (metadata) = decodeDynamic(_encodedLengths, _dynamicData);
+    (chain, metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
 
   /**
@@ -558,10 +762,13 @@ library ShamanSpells {
    * @notice Tightly pack dynamic data lengths using this table's schema.
    * @return _encodedLengths The lengths of the dynamic fields (packed into a single bytes32 value).
    */
-  function encodeLengths(string memory metadata) internal pure returns (EncodedLengths _encodedLengths) {
+  function encodeLengths(
+    string memory chain,
+    string memory metadata
+  ) internal pure returns (EncodedLengths _encodedLengths) {
     // Lengths are effectively checked during copy by 2**40 bytes exceeding gas limits
     unchecked {
-      _encodedLengths = EncodedLengthsLib.pack(bytes(metadata).length);
+      _encodedLengths = EncodedLengthsLib.pack(bytes(chain).length, bytes(metadata).length);
     }
   }
 
@@ -569,8 +776,8 @@ library ShamanSpells {
    * @notice Tightly pack dynamic (variable length) data using this table's schema.
    * @return The dynamic data, encoded into a sequence of bytes.
    */
-  function encodeDynamic(string memory metadata) internal pure returns (bytes memory) {
-    return abi.encodePacked(bytes((metadata)));
+  function encodeDynamic(string memory chain, string memory metadata) internal pure returns (bytes memory) {
+    return abi.encodePacked(bytes((chain)), bytes((metadata)));
   }
 
   /**
@@ -584,12 +791,13 @@ library ShamanSpells {
     bytes32 shamanId,
     uint256 version,
     JobState state,
+    string memory chain,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
     bytes memory _staticData = encodeStatic(spellId, shamanId, version, state);
 
-    EncodedLengths _encodedLengths = encodeLengths(metadata);
-    bytes memory _dynamicData = encodeDynamic(metadata);
+    EncodedLengths _encodedLengths = encodeLengths(chain, metadata);
+    bytes memory _dynamicData = encodeDynamic(chain, metadata);
 
     return (_staticData, _encodedLengths, _dynamicData);
   }

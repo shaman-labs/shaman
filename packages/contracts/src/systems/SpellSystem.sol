@@ -25,7 +25,6 @@ contract SpellSystem is BaseSystem {
       encodedName,
       _msgSender(),
       block.timestamp,
-      0, // shamanCount
       1, // version
       name,
       metadata

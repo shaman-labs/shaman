@@ -22,8 +22,11 @@ contract ShamanSystemTest is BaseTest {
     bytes32[] memory sourceIds = new bytes32[](1);
     sourceIds[0] = SOURCE_ID;
 
+    string[] memory spellChains = new string[](1);
+    spellChains[0] = "base";
+
     NewSpellEdge[] memory spellEdges = new NewSpellEdge[](1);
-    spellEdges[0] = _createSpellEdge(SPELL_ID, SOURCE_ID);
+    spellEdges[0] = _createSpellEdge(0, 0);
 
     bytes32 shamanId = _createShaman(
       creatorAlice,
@@ -32,7 +35,13 @@ contract ShamanSystemTest is BaseTest {
     );
 
     vm.prank(creatorAlice);
-    world.updateShamanWorkflow(shamanId, sourceIds, spellIds, spellEdges);
+    world.updateShamanWorkflow(
+      shamanId,
+      sourceIds,
+      spellIds,
+      spellChains,
+      spellEdges
+    );
     vm.stopPrank();
 
     // Verify shaman state
