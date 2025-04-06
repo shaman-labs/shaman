@@ -157,20 +157,21 @@ export function getSystemCalls({
     shamanId: Hex,
     sourceIds: Hex[],
     spellIds: Hex[],
+    spellChains: string[],
     spellEdges: {
-      fromSpellId: Hex;
-      toSpellId: Hex;
+      fromSpellIndex: bigint;
+      toSpellIndex: bigint;
     }[]
   ) => {
     await worldContract.simulate.updateShamanWorkflow(
-      [shamanId, sourceIds, spellIds, spellEdges],
+      [shamanId, sourceIds, spellIds, spellChains, spellEdges],
       {
         account: account.address,
       }
     );
 
     const hash = await worldContract.write.updateShamanWorkflow(
-      [shamanId, sourceIds, spellIds, spellEdges],
+      [shamanId, sourceIds, spellIds, spellChains, spellEdges],
       {
         chain,
         account,

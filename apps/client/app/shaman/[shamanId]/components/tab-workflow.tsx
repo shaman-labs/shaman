@@ -58,13 +58,11 @@ type WorkflowState = {
 
 type WorkflowData = {
   sourceIds: Hex[];
-  newSourceIds: Hex[];
   spellIds: Hex[];
-  newSpellIds: Hex[];
+  spellChains: string[];
   spellEdges: {
-    shamanSpellEdgeId: Hex;
-    fromShamanSpellId: Hex;
-    toShamanSpellId: Hex;
+    fromShamanSpellIndex: bigint;
+    toShamanSpellIndex: bigint;
   }[];
 };
 
@@ -93,7 +91,7 @@ export function WorkflowTab() {
           ...state,
           data: {
             ...state.data,
-            newSpellIds: [...(state.data?.newSpellIds || []), action.spellId],
+            spellIds: [...(state.data?.spellIds || []), action.spellId],
           },
           isDirty: true,
         };
@@ -104,10 +102,7 @@ export function WorkflowTab() {
           ...state,
           data: {
             ...state.data,
-            newSourceIds: [
-              ...(state.data?.newSourceIds || []),
-              action.sourceId,
-            ],
+            sourceIds: [...(state.data?.sourceIds || []), action.sourceId],
           },
           isDirty: true,
         };
@@ -136,15 +131,13 @@ export function WorkflowTab() {
       type: 'init',
       payload: {
         sourceIds: shaman?.sources?.map((s) => s.sourceId as Hex) || [],
-        newSourceIds: [],
         spellIds: shaman?.spells?.map((s) => s.spellId as Hex) || [],
-        newSpellIds: [],
-        spellEdges:
-          shaman?.spellEdges?.map((e) => ({
-            shamanSpellEdgeId: e.shamanSpellEdgeId as Hex,
-            fromShamanSpellId: e.fromShamanSpellId as Hex,
-            toShamanSpellId: e.toShamanSpellId as Hex,
-          })) || [],
+        spellChains: shaman?.spells?.map((s) => s.chain) || [],
+        spellEdges: [],
+        // shaman?.spellEdges?.map((e) => ({
+        //   fromShamanSpellIndex: e.fromShamanSpellIndex,
+        //   toShamanSpellIndex: e.toShamanSpellIndex,
+        // })) || [],
       },
     });
   }, [shaman]);
@@ -179,14 +172,16 @@ export function WorkflowTab() {
       currentShamanId,
       sourceIds,
       spellIds,
+      spellChains,
       spellEdges,
     }: {
       currentShamanId: Hex;
       sourceIds: Hex[];
       spellIds: Hex[];
+      spellChains: string[];
       spellEdges: {
-        fromSpellId: Hex;
-        toSpellId: Hex;
+        fromSpellIndex: bigint;
+        toSpellIndex: bigint;
       }[];
     }) => {
       if (!mud?.calls?.embedded?.systemCalls?.updateShamanWorkflow) {
@@ -199,6 +194,7 @@ export function WorkflowTab() {
         currentShamanId,
         sourceIds,
         spellIds,
+        spellChains,
         spellEdges
       );
     },
@@ -225,16 +221,15 @@ export function WorkflowTab() {
 
     const sourceIds = workflowData.data?.sourceIds || [];
     const spellIds = workflowData.data?.spellIds || [];
-    const spellEdges = workflowData.data?.spellEdges || [];
+    // const spellEdges = workflowData.data?.spellEdges || [];
+    const spellChains = workflowData.data?.spellChains || [];
 
     saveWorkflow({
       currentShamanId: shamanId as Hex,
       sourceIds,
       spellIds,
-      spellEdges: spellEdges.map((edge) => ({
-        fromSpellId: edge.fromShamanSpellId,
-        toSpellId: edge.toShamanSpellId,
-      })),
+      spellChains,
+      spellEdges: [],
     });
   }, [shaman, shamanId, saveWorkflow, workflowData]);
 
@@ -345,117 +340,78 @@ export function WorkflowTab() {
   );
 
   const nodes = useMemo(() => {
+    const horizontalGap = 250;
+    const verticalGap = 100;
+
+    const sourceCount = workflowData?.data?.sourceIds?.length ?? 0;
+
     const sourceNodes =
       workflowData?.data?.sourceIds?.map((sourceId, index) => ({
-        id: sourceId,
+        id: `${sourceId}-${index}`,
         data: {
           label: (
             <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {sources?.find((source) => source.sourceId === sourceId)?.name ||
+              {sources?.find((src) => src.sourceId === sourceId)?.name ||
                 sourceId}
             </div>
           ),
         },
-        position: { x: index * 200 - 200, y: 0 },
+        position: {
+          x: (index - (sourceCount - 1) / 2) * horizontalGap,
+          y: 0,
+        },
         style: { borderRadius: '8px' },
         type: 'input',
-        sourcePosition: Position.Right,
-        targetPosition: Position.Left,
-      })) || [];
-
-    const newSourceNodes =
-      workflowData?.data?.newSourceIds?.map((sourceId, index) => ({
-        id: `new-${sourceId}-${index}`,
-        data: {
-          label: (
-            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {sources?.find((source) => source.sourceId === sourceId)?.name ||
-                sourceId}{' '}
-              (New)
-            </div>
-          ),
-        },
-        position: { x: index * 200 - 200, y: 150 },
-        style: { borderRadius: '8px', opacity: 0.7 },
-        type: 'input',
-        sourcePosition: Position.Right,
-        targetPosition: Position.Left,
+        sourcePosition: Position.Bottom,
+        targetPosition: Position.Top,
       })) || [];
 
     const spellNodes =
-      workflowData?.data?.spellIds?.map((spellId, index) => ({
-        id: spellId,
+      workflowData?.data?.spellIds?.map((id, index) => ({
+        id: `${id}-${index}`,
         data: {
           label: (
             <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {spells?.find((spell) => spell.spellId === spellId)?.name ||
-                spellId}
+              {spells?.find((spell) => spell.spellId === id)?.name || id}
             </div>
           ),
         },
-        selected: spellId === spellId,
-        position: { x: (sourceNodes.length + index) * 200 - 200, y: 0 },
+        selected: id === spellId,
+        position: { x: 0, y: (index + 1) * verticalGap },
         style: { borderRadius: '8px' },
-        sourcePosition: Position.Right,
-        targetPosition: Position.Left,
+        sourcePosition: Position.Bottom,
+        targetPosition: Position.Top,
       })) || [];
 
-    const newSpellNodes =
-      workflowData?.data?.newSpellIds?.map((spellId, index) => ({
-        id: `new-${spellId}-${index}`,
-        data: {
-          label: (
-            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {spells?.find((spell) => spell.spellId === spellId)?.name ||
-                spellId}{' '}
-              (New)
-            </div>
-          ),
-        },
-        position: { x: (sourceNodes.length + index) * 200 - 200, y: 150 },
-        style: { borderRadius: '8px', opacity: 0.7 },
-        sourcePosition: Position.Right,
-        targetPosition: Position.Left,
-      })) || [];
-
-    return [...sourceNodes, ...newSourceNodes, ...spellNodes, ...newSpellNodes];
-  }, [workflowData, spells, sources]);
+    return [...sourceNodes, ...spellNodes];
+  }, [workflowData, spells, sources, spellId]);
 
   const edges = useMemo(() => {
     if (!workflowData) return [];
+    const [firstSpellId] = workflowData.data?.spellIds ?? [];
+    if (!firstSpellId) return [];
 
-    const spellEdgesFromData =
-      workflowData.data?.spellEdges?.map((edge) => ({
-        id: edge.shamanSpellEdgeId,
-        source: edge.fromShamanSpellId,
-        target: edge.toShamanSpellId,
+    // const spellEdgesFromData =
+    //   workflowData.data?.spellEdges?.map((edge) => ({
+    //     id: edge.shamanSpellEdgeId,
+    //     source: edge.fromShamanSpellId,
+    //     target: edge.toShamanSpellId,
+    //     type: 'default',
+    //     animated: false,
+    //     markerEnd: { type: MarkerType.Arrow },
+    //   })) || [];
+
+    const sourceEdges =
+      workflowData.data?.sourceIds?.map((sourceId, index) => ({
+        id: `edge-${sourceId}-${firstSpellId}`,
+        source: `${sourceId}-${index}`,
+        target: `${firstSpellId}-0`,
         type: 'default',
-        animated: false,
+        animated: true,
         markerEnd: { type: MarkerType.Arrow },
       })) || [];
 
-    const targetSpellIds = new Set(
-      workflowData.data?.spellEdges?.map((edge) => edge.toShamanSpellId)
-    );
-
-    const entrySpellIds =
-      workflowData.data?.spellIds
-        ?.filter((spellId) => !targetSpellIds.has(spellId))
-        .map((spellId) => spellId) || [];
-
-    const sourceEdges =
-      workflowData.data?.sourceIds?.flatMap((sourceId) =>
-        entrySpellIds.map((spellId) => ({
-          id: `edge-${sourceId}-${spellId}`,
-          source: sourceId,
-          target: spellId,
-          type: 'default',
-          animated: false,
-          markerEnd: { type: MarkerType.Arrow },
-        }))
-      ) || [];
-
-    return [...sourceEdges, ...spellEdgesFromData];
+    return [...sourceEdges];
   }, [workflowData]);
 
   return (
