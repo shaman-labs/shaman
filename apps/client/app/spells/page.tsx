@@ -85,18 +85,6 @@ export default function Page() {
                     <div className="flex flex-col gap-2">
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-medium">
-                          Shaman Count:
-                        </span>
-                        <span className="text-sm">
-                          <code className="rounded-md bg-muted px-1 py-0.5 text-sm overflow-y-auto">
-                            <span className="font-mono">
-                              {spell.shamanCount}
-                            </span>
-                          </code>
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-medium">
                           Created{' '}
                           {formatDistance(
                             new Date(Number(spell.createdAt) * 1000),
