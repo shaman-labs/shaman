@@ -127,6 +127,7 @@ export function WorkflowTab() {
 
   useEffect(() => {
     if (!shaman) return;
+    if (isDirty) return;
 
     const horizontalGap = 250;
     const verticalGap = 100;
@@ -229,14 +230,7 @@ export function WorkflowTab() {
     setNodes([...sourceNodes, ...spellNodes]);
     setEdges(allEdges);
     setIsDirty(false);
-  }, [shaman, spells, sources, spellId, setNodes, setEdges]);
-
-  useEffect(() => {
-    if (shaman) {
-      setIsDirty(true);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes, edges]);
+  }, [shaman, spells, sources, spellId, setNodes, setEdges, isDirty]);
 
   const addSpellNode = useCallback(
     (newSpellId: Hex) => {
@@ -382,11 +376,9 @@ export function WorkflowTab() {
         return aIndex - bIndex;
       });
 
-    const sourceNodes = nodes.filter((node) => node.id.startsWith('source-'));
-
+    const sourceNodes = nodes.filter((node) => isSourceNode(node));
     const spellIds = spellNodes.map((node) => node.data.spellId as Hex);
     const spellChains = spellNodes.map((node) => node.data.chain || '');
-
     const sourceIds = sourceNodes.map((node) => node.data.sourceId as Hex);
 
     const spellEdges = edges
@@ -551,12 +543,15 @@ export function WorkflowTab() {
     setIsDirty(true);
   }, []);
 
-  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
-    if (node.id.startsWith('spell-')) {
-      const spellId = (node.data as any).spellId;
-      setSpellId(spellId);
-    } else {
+  const onSelectionChange = useCallback(({ nodes }: { nodes: Node[] }) => {
+    if (nodes.length === 0) {
       setSpellId(null);
+    } else {
+      if (isSpellNode(nodes[0])) {
+        setSpellId(nodes[0].data.spellId as Hex);
+      } else {
+        setSpellId(null);
+      }
     }
   }, []);
 
@@ -685,7 +680,7 @@ export function WorkflowTab() {
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4">
-          <div className="w-full h-[calc(100vh-250px)]">
+          <div className="w-full h-[calc(100vh-250px)] relative">
             <ReactFlow
               colorMode="dark"
               fitView
@@ -698,21 +693,20 @@ export function WorkflowTab() {
               onEdgesChange={onEdgesChange}
               onNodesDelete={onNodesDelete}
               onEdgesDelete={onEdgesDelete}
-              onNodeClick={onNodeClick}
               nodesConnectable={isShamanCreator}
               elementsSelectable={isShamanCreator}
               onConnect={onConnect}
+              onSelectionChange={onSelectionChange}
               connectionLineStyle={{ stroke: '#3b82f6' }}
               connectionLineType={ConnectionLineType.Bezier}
               selectionOnDrag={isShamanCreator}
               selectionMode={isShamanCreator ? SelectionMode.Full : undefined}>
               <Background />
             </ReactFlow>
-          </div>
-          <div className="w-full space-y-4">
+
             {selectedSpell && (
-              <>
-                <Card>
+              <div className="absolute bottom-4 right-4 w-96 max-w-[calc(100%-32px)] z-10">
+                <Card className="bg-background/95 backdrop-blur-sm shadow-lg border-2">
                   <CardHeader className="pb-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                       <div>
@@ -751,7 +745,7 @@ export function WorkflowTab() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <Tabs defaultValue="prompt" className="w-full mt-2 mb-8">
+                    <Tabs defaultValue="prompt" className="w-full mt-2 mb-4">
                       <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="prompt">Prompt</TabsTrigger>
                         <TabsTrigger value="code">Code</TabsTrigger>
@@ -864,28 +858,29 @@ export function WorkflowTab() {
                         </p>
                       </div>
                     </div>
+                    <div>
+                      <Card>
+                        <CardContent className="overflow-x-auto">
+                          {spellLogs && spellLogs.length > 0 ? (
+                            <div className="space-y-4">
+                              <DataTable
+                                columns={logColumns}
+                                data={spellTableData}
+                              />
+                            </div>
+                          ) : (
+                            <div className="text-center py-4">
+                              <p className="text-muted-foreground">
+                                No execution logs found for this spell
+                              </p>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    </div>
                   </CardContent>
                 </Card>
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Spell Execution Logs</CardTitle>
-                  </CardHeader>
-                  <CardContent className="overflow-x-auto">
-                    {spellLogs && spellLogs.length > 0 ? (
-                      <div className="space-y-4">
-                        <DataTable columns={logColumns} data={spellTableData} />
-                      </div>
-                    ) : (
-                      <div className="text-center py-8">
-                        <p className="text-muted-foreground">
-                          No execution logs found for this spell
-                        </p>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              </>
+              </div>
             )}
           </div>
         </div>
