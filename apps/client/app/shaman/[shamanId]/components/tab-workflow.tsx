@@ -53,12 +53,12 @@ import { useMUD } from '@/contexts/mud-context';
 import { toast } from '@/hooks/use-toast';
 import { LabelCreator } from '@/components/label-creator';
 import { handleError } from '@/lib/errors';
-
-import '@xyflow/react/dist/style.css';
 import { DialogAddSpell } from '@/components/dialog-add-spell';
 import { useSpells } from '@/hooks/use-spells';
 import { DialogAddSource } from '@/components/dialog-add-source';
 import { useSources } from '@/hooks/use-sources';
+
+import '@xyflow/react/dist/style.css';
 
 type WorkflowData = {
   sourceIds: Hex[];
