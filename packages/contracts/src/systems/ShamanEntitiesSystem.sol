@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 import { BaseSystem } from "./BaseSystem.sol";
-import { Shamans, Sources, ShamanSpells, ShamanSpellEdges, SourceShamanLookup } from "../codegen/index.sol";
+import { Shamans, Sources, ShamanSpells, ShamanSpellEdges, SourceShamanLookup, SourceShamanCounts } from "../codegen/index.sol";
 import { ShamanSpell, ShamanSpellEdge } from "../lib/ShamanWorkflowsLib.sol";
 
 contract ShamanEntitiesSystem is BaseSystem {
@@ -20,7 +20,7 @@ contract ShamanEntitiesSystem is BaseSystem {
   function getShamanIdsBySourceId(
     bytes32 sourceId
   ) public view returns (bytes32[] memory) {
-    uint256 count = Sources.getShamanInstalls(sourceId);
+    uint256 count = SourceShamanCounts.getShamanCount(sourceId);
     bytes32[] memory shamanIds = new bytes32[](count);
 
     for (uint256 i = 0; i < count; i++) {

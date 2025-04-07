@@ -25,7 +25,6 @@ contract SetSources is Script {
       signerAddress,
       block.timestamp,
       true,
-      0, // shamanCount
       "interval-hourly",
       ""
     );
@@ -37,7 +36,6 @@ contract SetSources is Script {
       signerAddress,
       block.timestamp,
       true,
-      0, // shamanCount
       "interval-daily",
       ""
     );
@@ -49,7 +47,6 @@ contract SetSources is Script {
       signerAddress,
       block.timestamp,
       true,
-      0, // shamanCount
       "interval-quarter-hourly",
       ""
     );

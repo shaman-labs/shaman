@@ -99,7 +99,6 @@ export default defineWorld({
         creator: "address",
         createdAt: "uint256",
         active: "bool",
-        shamanInstalls: "uint256",
         name: "string",
         metadata: "string",
       },
@@ -160,6 +159,19 @@ export default defineWorld({
       key: ["shamanSourceId"],
     },
     // lookup tables for querying shamans by source
+    // lookup table for reverse lookup
+    SourceShamanIndexes: {
+      codegen: {
+        dataStruct: false,
+      },
+      schema: {
+        sourceId: "bytes32",
+        shamanId: "bytes32",
+        index: "uint256", // index of the shaman in the source
+      },
+      key: ["sourceId", "shamanId"],
+    },
+    // shaman id lookup based on index
     SourceShamanLookup: {
       codegen: {
         dataStruct: false,
@@ -172,6 +184,7 @@ export default defineWorld({
       key: ["sourceId", "index"],
     },
     // utility tables
+    // names
     SourceNames: {
       codegen: {
         dataStruct: false,
@@ -201,6 +214,17 @@ export default defineWorld({
         shamanId: "bytes32",
       },
       key: ["name"],
+    },
+    // counts
+    SourceShamanCounts: {
+      codegen: {
+        dataStruct: false,
+      },
+      schema: {
+        sourceId: "bytes32",
+        shamanCount: "uint256",
+      },
+      key: ["sourceId"],
     },
   },
 });

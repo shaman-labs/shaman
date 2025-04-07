@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity >=0.8.24;
 
-import { Sources, Shamans, Spells, ShamanSpells, ShamanSpellEdges, ShamanSources, SourceShamanLookup } from "../codegen/index.sol";
+import { Sources, Shamans, Spells, ShamanSpells, ShamanSpellEdges, ShamanSources, SourceShamanLookup, SourceShamanCounts, SourceShamanIndexes } from "../codegen/index.sol";
 import { JobState } from "../codegen/common.sol";
 
 struct NewSpellEdge {
@@ -40,6 +40,32 @@ library ShamanWorkflowsLib {
     bytes32[] memory newShamanSourceIds = new bytes32[](newSourceIdsCount);
     bytes32[] memory newShamanSpellIds = new bytes32[](newSpellIdsCount);
 
+    // update shaman source lookups
+    for (uint256 i = 0; i < sourceIds.length; i++) {
+      bytes32 sourceId = sourceIds[i];
+      uint256 lastShamanIndex = SourceShamanCounts.getShamanCount(sourceId);
+      if (lastShamanIndex == 0) {
+        // no shaman installed
+        break;
+      }
+      lastShamanIndex--;
+      bytes32 lastShamanId = SourceShamanLookup.getShamanId(
+        sourceId,
+        lastShamanIndex
+      );
+      uint256 currentShamanIndex = SourceShamanIndexes.getIndex(
+        sourceId,
+        shamanId
+      );
+
+      // swap indexes
+      SourceShamanIndexes.setIndex(sourceId, shamanId, lastShamanIndex);
+      SourceShamanIndexes.setIndex(sourceId, lastShamanId, currentShamanIndex);
+
+      // decrease shaman count
+      SourceShamanCounts.setShamanCount(sourceId, lastShamanIndex);
+    }
+
     // add new shaman sources
     for (uint256 i = 0; i < newSourceIdsCount; i++) {
       bytes32 sourceId = sourceIds[i];
@@ -56,10 +82,11 @@ library ShamanWorkflowsLib {
       newShamanSourceIds[i] = shamanSourceId;
       ShamanSources.set(shamanSourceId, sourceId, shamanId);
 
-      // increase shaman count
-      uint256 sourceShamanIndex = Sources.getShamanInstalls(sourceId);
+      uint256 sourceShamanIndex = SourceShamanCounts.getShamanCount(sourceId);
+      // set shaman to last index
       SourceShamanLookup.set(sourceId, sourceShamanIndex, shamanId);
-      Sources.setShamanInstalls(sourceId, sourceShamanIndex + 1);
+      // increase shaman count
+      SourceShamanCounts.setShamanCount(sourceId, sourceShamanIndex + 1);
     }
 
     // add new shaman spells
