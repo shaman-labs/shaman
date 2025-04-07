@@ -1,6 +1,13 @@
 'use client';
 
-import { ReactFlow, Background, Position, MarkerType } from '@xyflow/react';
+import {
+  ReactFlow,
+  Background,
+  Position,
+  MarkerType,
+  Connection,
+  ConnectionLineType,
+} from '@xyflow/react';
 import {
   IconDotsVertical,
   IconArrowBigUpLine,
@@ -45,10 +52,14 @@ import { DialogAddSource } from '@/components/dialog-add-source';
 import { useSources } from '@/hooks/use-sources';
 
 type WorkflowAction = {
-  type: 'init' | 'addSpell' | 'addSource';
+  type: 'init' | 'addSpell' | 'addSource' | 'addEdge';
   payload?: WorkflowData;
   spellId?: Hex;
   sourceId?: Hex;
+  edge?: {
+    fromSpellIndex: bigint;
+    toSpellIndex: bigint;
+  };
 };
 
 type WorkflowState = {
@@ -108,6 +119,23 @@ export function WorkflowTab() {
         };
       }
 
+      if (state.data && action.type === 'addEdge' && action.edge) {
+        return {
+          ...state,
+          data: {
+            ...state.data,
+            spellEdges: [
+              ...(state.data?.spellEdges || []),
+              {
+                fromSpellIndex: action.edge.fromSpellIndex,
+                toSpellIndex: action.edge.toSpellIndex,
+              },
+            ],
+          },
+          isDirty: true,
+        };
+      }
+
       return state;
     },
     { data: undefined, isDirty: false }
@@ -125,6 +153,9 @@ export function WorkflowTab() {
     (log) => log.logType === ShamanLogType.COMPLETION
   );
   const isShamanCreator = embeddedWallet?.address === shaman?.creator;
+  const [nodePositions, setNodePositions] = useState<
+    Record<string, { x: number; y: number }>
+  >({});
 
   useEffect(() => {
     dispatch({
@@ -250,6 +281,19 @@ export function WorkflowTab() {
     [dispatch]
   );
 
+  const handleAddEdge = useCallback(
+    (fromSpellIndex: number, toSpellIndex: number) => {
+      dispatch({
+        type: 'addEdge',
+        edge: {
+          fromSpellIndex: BigInt(fromSpellIndex),
+          toSpellIndex: BigInt(toSpellIndex),
+        },
+      });
+    },
+    [dispatch]
+  );
+
   const spellTableData: ShamanLogsTableData[] = useMemo(
     () =>
       spellLogs?.map((log) => ({
@@ -339,6 +383,61 @@ export function WorkflowTab() {
     [openViewLog, handleRefetch]
   );
 
+  const onConnect = useCallback(
+    (connection: Connection) => {
+      // Extract node IDs and check if they are spell nodes
+      const { source, target } = connection;
+
+      // Skip if either node ID is missing
+      if (!source || !target) return;
+
+      // Extract information from node IDs
+      const sourceInfo = source.split('-');
+      const targetInfo = target.split('-');
+
+      // Check if both source and target are spell nodes by validating ID format
+      // Source IDs for spells follow the format: "spellId-index"
+      // We need at least 2 parts in the ID and the second part should be a number
+      const isSourceSpell =
+        sourceInfo.length >= 2 &&
+        !isNaN(Number(sourceInfo[sourceInfo.length - 1]));
+      const isTargetSpell =
+        targetInfo.length >= 2 &&
+        !isNaN(Number(targetInfo[targetInfo.length - 1]));
+
+      // Only allow spell-to-spell connections
+      if (!isSourceSpell || !isTargetSpell) {
+        toast({
+          title: 'Connection not allowed',
+          description: 'You can only connect between spells',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      // Get the indices from the node IDs
+      const fromSpellIndex = Number(sourceInfo[sourceInfo.length - 1]);
+      const toSpellIndex = Number(targetInfo[targetInfo.length - 1]);
+
+      // Add the edge
+      handleAddEdge(fromSpellIndex, toSpellIndex);
+    },
+    [handleAddEdge]
+  );
+
+  const onNodeDragStop = useCallback(
+    (
+      _: React.MouseEvent,
+      node: { id: string; position: { x: number; y: number } }
+    ) => {
+      setNodePositions((prev) => ({
+        ...prev,
+        [node.id]: node.position,
+      }));
+    },
+    []
+  );
+
   const nodes = useMemo(() => {
     const horizontalGap = 250;
     const verticalGap = 100;
@@ -346,64 +445,69 @@ export function WorkflowTab() {
     const sourceCount = workflowData?.data?.sourceIds?.length ?? 0;
 
     const sourceNodes =
-      workflowData?.data?.sourceIds?.map((sourceId, index) => ({
-        id: `${sourceId}-${index}`,
-        data: {
-          label: (
-            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {sources?.find((src) => src.sourceId === sourceId)?.name ||
-                sourceId}
-            </div>
-          ),
-        },
-        position: {
+      workflowData?.data?.sourceIds?.map((sourceId, index) => {
+        const savedPosition = nodePositions[`${sourceId}-${index}`];
+        const defaultPosition = {
           x: (index - (sourceCount - 1) / 2) * horizontalGap,
           y: 0,
-        },
-        style: { borderRadius: '8px' },
-        type: 'input',
-        sourcePosition: Position.Bottom,
-        targetPosition: Position.Top,
-      })) || [];
+        };
+
+        return {
+          id: `${sourceId}-${index}`,
+          data: {
+            label: (
+              <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+                {sources?.find((src) => src.sourceId === sourceId)?.name ||
+                  sourceId}
+              </div>
+            ),
+          },
+          position: savedPosition || defaultPosition,
+          style: { borderRadius: '8px' },
+          type: 'input',
+          sourcePosition: Position.Bottom,
+          targetPosition: Position.Top,
+          connectable: false, // Sources cannot be connected manually
+        };
+      }) || [];
 
     const spellNodes =
-      workflowData?.data?.spellIds?.map((id, index) => ({
-        id: `${id}-${index}`,
-        data: {
-          label: (
-            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {spells?.find((spell) => spell.spellId === id)?.name || id}
-            </div>
-          ),
-        },
-        selected: id === spellId,
-        position: { x: 0, y: (index + 1) * verticalGap },
-        style: { borderRadius: '8px' },
-        sourcePosition: Position.Bottom,
-        targetPosition: Position.Top,
-      })) || [];
+      workflowData?.data?.spellIds?.map((id, index) => {
+        const savedPosition = nodePositions[`${id}-${index}`];
+        const defaultPosition = { x: 0, y: (index + 1) * verticalGap };
+
+        return {
+          id: `${id}-${index}`,
+          data: {
+            label: (
+              <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+                {spells?.find((spell) => spell.spellId === id)?.name || id}
+              </div>
+            ),
+          },
+          selected: id === spellId,
+          position: savedPosition || defaultPosition,
+          style: { borderRadius: '8px' },
+          sourcePosition: Position.Bottom,
+          targetPosition: Position.Top,
+          connectable: true, // Spells can be connected
+        };
+      }) || [];
 
     return [...sourceNodes, ...spellNodes];
-  }, [workflowData, spells, sources, spellId]);
+  }, [workflowData, spells, sources, spellId, nodePositions]);
 
   const edges = useMemo(() => {
-    if (!workflowData) return [];
+    if (!workflowData?.data) return [];
+
+    // Create edges from sources to the first spell
     const [firstSpellId] = workflowData.data?.spellIds ?? [];
     if (!firstSpellId) return [];
 
-    // const spellEdgesFromData =
-    //   workflowData.data?.spellEdges?.map((edge) => ({
-    //     id: edge.shamanSpellEdgeId,
-    //     source: edge.fromShamanSpellId,
-    //     target: edge.toShamanSpellId,
-    //     type: 'default',
-    //     animated: false,
-    //     markerEnd: { type: MarkerType.Arrow },
-    //   })) || [];
-
+    // Create edges from source nodes to the first spell
     const sourceEdges =
       workflowData.data?.sourceIds?.map((sourceId, index) => ({
-        id: `edge-${sourceId}-${firstSpellId}`,
+        id: `edge-source-${sourceId}-${index}-to-spell-${firstSpellId}-0`,
         source: `${sourceId}-${index}`,
         target: `${firstSpellId}-0`,
         type: 'default',
@@ -411,7 +515,34 @@ export function WorkflowTab() {
         markerEnd: { type: MarkerType.Arrow },
       })) || [];
 
-    return [...sourceEdges];
+    // Create edges between spells based on spellEdges data
+    const spellEdges = [];
+
+    if (workflowData.data?.spellEdges && workflowData.data?.spellIds) {
+      for (const edge of workflowData.data.spellEdges) {
+        const fromIndex = Number(edge.fromSpellIndex);
+        const toIndex = Number(edge.toSpellIndex);
+
+        if (
+          fromIndex < workflowData.data.spellIds.length &&
+          toIndex < workflowData.data.spellIds.length
+        ) {
+          const fromSpellId = workflowData.data.spellIds[fromIndex];
+          const toSpellId = workflowData.data.spellIds[toIndex];
+
+          spellEdges.push({
+            id: `edge-spell-${fromSpellId}-${fromIndex}-to-${toSpellId}-${toIndex}`,
+            source: `${fromSpellId}-${fromIndex}`,
+            target: `${toSpellId}-${toIndex}`,
+            type: 'default',
+            animated: false,
+            markerEnd: { type: MarkerType.Arrow },
+          });
+        }
+      }
+    }
+
+    return [...sourceEdges, ...spellEdges];
   }, [workflowData]);
 
   return (
@@ -462,7 +593,11 @@ export function WorkflowTab() {
               }}
               nodes={nodes}
               edges={edges}
-              nodesDraggable={false}>
+              nodesDraggable={isShamanCreator}
+              onNodeDragStop={onNodeDragStop}
+              onConnect={onConnect}
+              connectionLineStyle={{ stroke: '#3b82f6' }}
+              connectionLineType={ConnectionLineType.Bezier}>
               <Background />
             </ReactFlow>
           </div>
