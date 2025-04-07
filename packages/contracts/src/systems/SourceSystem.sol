@@ -36,7 +36,6 @@ contract SourceSystem is BaseSystem {
       _msgSender(),
       block.timestamp,
       true,
-      0, // shamanCount
       name,
       metadata
     );

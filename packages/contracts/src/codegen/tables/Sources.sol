@@ -21,12 +21,12 @@ library Sources {
   ResourceId constant _tableId = ResourceId.wrap(0x74620000000000000000000000000000536f7572636573000000000000000000);
 
   FieldLayout constant _fieldLayout =
-    FieldLayout.wrap(0x0076060201201420012000000000000000000000000000000000000000000000);
+    FieldLayout.wrap(0x0056050201201420010000000000000000000000000000000000000000000000);
 
   // Hex-encoded key schema of (bytes32)
   Schema constant _keySchema = Schema.wrap(0x002001005f000000000000000000000000000000000000000000000000000000);
-  // Hex-encoded value schema of (uint8, uint256, address, uint256, bool, uint256, string, string)
-  Schema constant _valueSchema = Schema.wrap(0x00760602001f611f601fc5c50000000000000000000000000000000000000000);
+  // Hex-encoded value schema of (uint8, uint256, address, uint256, bool, string, string)
+  Schema constant _valueSchema = Schema.wrap(0x00560502001f611f60c5c5000000000000000000000000000000000000000000);
 
   /**
    * @notice Get the table's key field names.
@@ -42,15 +42,14 @@ library Sources {
    * @return fieldNames An array of strings with the names of value fields.
    */
   function getFieldNames() internal pure returns (string[] memory fieldNames) {
-    fieldNames = new string[](8);
+    fieldNames = new string[](7);
     fieldNames[0] = "sourceType";
     fieldNames[1] = "nonce";
     fieldNames[2] = "creator";
     fieldNames[3] = "createdAt";
     fieldNames[4] = "active";
-    fieldNames[5] = "shamanInstalls";
-    fieldNames[6] = "name";
-    fieldNames[7] = "metadata";
+    fieldNames[5] = "name";
+    fieldNames[6] = "metadata";
   }
 
   /**
@@ -275,48 +274,6 @@ library Sources {
     _keyTuple[0] = sourceId;
 
     StoreCore.setStaticField(_tableId, _keyTuple, 4, abi.encodePacked((active)), _fieldLayout);
-  }
-
-  /**
-   * @notice Get shamanInstalls.
-   */
-  function getShamanInstalls(bytes32 sourceId) internal view returns (uint256 shamanInstalls) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = sourceId;
-
-    bytes32 _blob = StoreSwitch.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
-    return (uint256(bytes32(_blob)));
-  }
-
-  /**
-   * @notice Get shamanInstalls.
-   */
-  function _getShamanInstalls(bytes32 sourceId) internal view returns (uint256 shamanInstalls) {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = sourceId;
-
-    bytes32 _blob = StoreCore.getStaticField(_tableId, _keyTuple, 5, _fieldLayout);
-    return (uint256(bytes32(_blob)));
-  }
-
-  /**
-   * @notice Set shamanInstalls.
-   */
-  function setShamanInstalls(bytes32 sourceId, uint256 shamanInstalls) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = sourceId;
-
-    StoreSwitch.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((shamanInstalls)), _fieldLayout);
-  }
-
-  /**
-   * @notice Set shamanInstalls.
-   */
-  function _setShamanInstalls(bytes32 sourceId, uint256 shamanInstalls) internal {
-    bytes32[] memory _keyTuple = new bytes32[](1);
-    _keyTuple[0] = sourceId;
-
-    StoreCore.setStaticField(_tableId, _keyTuple, 5, abi.encodePacked((shamanInstalls)), _fieldLayout);
   }
 
   /**
@@ -657,7 +614,6 @@ library Sources {
       address creator,
       uint256 createdAt,
       bool active,
-      uint256 shamanInstalls,
       string memory name,
       string memory metadata
     )
@@ -687,7 +643,6 @@ library Sources {
       address creator,
       uint256 createdAt,
       bool active,
-      uint256 shamanInstalls,
       string memory name,
       string memory metadata
     )
@@ -713,11 +668,10 @@ library Sources {
     address creator,
     uint256 createdAt,
     bool active,
-    uint256 shamanInstalls,
     string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(sourceType, nonce, creator, createdAt, active, shamanInstalls);
+    bytes memory _staticData = encodeStatic(sourceType, nonce, creator, createdAt, active);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
@@ -738,11 +692,10 @@ library Sources {
     address creator,
     uint256 createdAt,
     bool active,
-    uint256 shamanInstalls,
     string memory name,
     string memory metadata
   ) internal {
-    bytes memory _staticData = encodeStatic(sourceType, nonce, creator, createdAt, active, shamanInstalls);
+    bytes memory _staticData = encodeStatic(sourceType, nonce, creator, createdAt, active);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
@@ -758,11 +711,7 @@ library Sources {
    */
   function decodeStatic(
     bytes memory _blob
-  )
-    internal
-    pure
-    returns (uint8 sourceType, uint256 nonce, address creator, uint256 createdAt, bool active, uint256 shamanInstalls)
-  {
+  ) internal pure returns (uint8 sourceType, uint256 nonce, address creator, uint256 createdAt, bool active) {
     sourceType = (uint8(Bytes.getBytes1(_blob, 0)));
 
     nonce = (uint256(Bytes.getBytes32(_blob, 1)));
@@ -772,8 +721,6 @@ library Sources {
     createdAt = (uint256(Bytes.getBytes32(_blob, 53)));
 
     active = (_toBool(uint8(Bytes.getBytes1(_blob, 85))));
-
-    shamanInstalls = (uint256(Bytes.getBytes32(_blob, 86)));
   }
 
   /**
@@ -816,12 +763,11 @@ library Sources {
       address creator,
       uint256 createdAt,
       bool active,
-      uint256 shamanInstalls,
       string memory name,
       string memory metadata
     )
   {
-    (sourceType, nonce, creator, createdAt, active, shamanInstalls) = decodeStatic(_staticData);
+    (sourceType, nonce, creator, createdAt, active) = decodeStatic(_staticData);
 
     (name, metadata) = decodeDynamic(_encodedLengths, _dynamicData);
   }
@@ -855,10 +801,9 @@ library Sources {
     uint256 nonce,
     address creator,
     uint256 createdAt,
-    bool active,
-    uint256 shamanInstalls
+    bool active
   ) internal pure returns (bytes memory) {
-    return abi.encodePacked(sourceType, nonce, creator, createdAt, active, shamanInstalls);
+    return abi.encodePacked(sourceType, nonce, creator, createdAt, active);
   }
 
   /**
@@ -895,11 +840,10 @@ library Sources {
     address creator,
     uint256 createdAt,
     bool active,
-    uint256 shamanInstalls,
     string memory name,
     string memory metadata
   ) internal pure returns (bytes memory, EncodedLengths, bytes memory) {
-    bytes memory _staticData = encodeStatic(sourceType, nonce, creator, createdAt, active, shamanInstalls);
+    bytes memory _staticData = encodeStatic(sourceType, nonce, creator, createdAt, active);
 
     EncodedLengths _encodedLengths = encodeLengths(name, metadata);
     bytes memory _dynamicData = encodeDynamic(name, metadata);
