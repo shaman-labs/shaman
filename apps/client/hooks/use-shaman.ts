@@ -51,9 +51,13 @@ export const useShaman = (shamanId: string) => {
             )
           );
 
+          console.log(spell);
+
           const metadata = await axios.get<SpellMetadata>(
             `https://gateway.shaman.fun/ipfs/${spell.metadata}`
           );
+
+          console.log(metadata);
 
           return {
             ...spell,
@@ -84,19 +88,19 @@ export const useShaman = (shamanId: string) => {
             )
           );
 
-          const metadata = source.metadata
-            ? await axios.get<{
-                name: string;
-                description: string;
-              }>(`https://gateway.shaman.fun/ipfs/${source.metadata}`)
-            : null;
+          // const metadata = source.metadata
+          //   ? await axios.get<{
+          //       name: string;
+          //       description: string;
+          //     }>(`https://gateway.shaman.fun/ipfs/${source.metadata}`)
+          //   : null;
 
           return {
             ...source,
             ...shamanSource,
             sourceId: shamanSource.sourceId,
-            name: metadata?.data.name,
-            description: metadata?.data.description,
+            // name: metadata?.data.name,
+            // description: metadata?.data.description,
           };
         })
       );
