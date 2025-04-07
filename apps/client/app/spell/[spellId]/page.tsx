@@ -6,7 +6,6 @@ import {
   IconFileSmile,
   IconCoin,
   IconLink,
-  IconHash,
   IconActivity,
   IconKey,
   IconRowInsertBottom,
@@ -117,12 +116,6 @@ export default function Page() {
                       <div className="text-sm font-small">
                         <LabelCreator creator={spell?.creator} />
                       </div>
-                    </RowItem>
-
-                    <RowItem icon={IconHash} label="Shamans Count">
-                      <p className="text-sm font-medium">
-                        {spell?.shamanCount}
-                      </p>
                     </RowItem>
 
                     <RowItem icon={IconCoin} label="Commission Revenue">

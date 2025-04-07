@@ -59,19 +59,19 @@ export default function Page() {
           )}
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <Tabs defaultValue="shaman" className="w-full">
+          <Tabs defaultValue="workflow" className="w-full">
             <TabsList className="grid mb-5 w-full grid-cols-3">
-              <TabsTrigger value="shaman">Shaman</TabsTrigger>
               <TabsTrigger value="workflow">Workflow</TabsTrigger>
+              <TabsTrigger value="shaman">Shaman</TabsTrigger>
               <TabsTrigger value="logs">Logs</TabsTrigger>
             </TabsList>
-            <TabsContent value="shaman">
-              <ShamanTab />
-            </TabsContent>
             <TabsContent value="workflow">
               <ReactFlowProvider>
                 <WorkflowTab />
               </ReactFlowProvider>
+            </TabsContent>
+            <TabsContent value="shaman">
+              <ShamanTab />
             </TabsContent>
             <TabsContent value="logs" className="mt-2">
               <LogsTab />

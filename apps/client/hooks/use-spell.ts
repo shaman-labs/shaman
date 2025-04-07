@@ -4,6 +4,7 @@ import { encodeEntity } from '@latticexyz/store-sync/recs';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useMUD } from '@/contexts/mud-context';
+import { SpellMetadata } from '@/types/shaman';
 
 export const useSpell = (spellId: string) => {
   const mud = useMUD();
@@ -26,13 +27,9 @@ export const useSpell = (spellId: string) => {
         )
       );
 
-      const spellMetadata = await axios.get<{
-        code: string;
-        prompt: string;
-        secrets?: string[];
-        previousResults?: string[];
-        results?: string[];
-      }>(`https://gateway.shaman.fun/ipfs/${spellData.metadata}`);
+      const spellMetadata = await axios.get<SpellMetadata>(
+        `https://gateway.shaman.fun/ipfs/${spellData.metadata}`
+      );
 
       return {
         ...spellData,

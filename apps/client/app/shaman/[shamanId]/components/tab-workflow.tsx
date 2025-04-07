@@ -5,18 +5,30 @@ import {
   Background,
   Position,
   MarkerType,
-  useReactFlow,
+  Connection,
+  ConnectionLineType,
+  SelectionMode,
+  Edge,
+  Node,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+  getIncomers,
+  getOutgoers,
+  getConnectedEdges,
 } from '@xyflow/react';
 import {
-  IconPlus,
-  IconTrash,
   IconDotsVertical,
   IconArrowBigUpLine,
+  IconDeviceFloppy,
+  IconLoader2,
+  IconPlus,
 } from '@tabler/icons-react';
 
 import { useParams } from 'next/navigation';
 import { useMemo, useCallback, useState, useEffect } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
+import { useMutation } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
 import { Hex } from 'viem';
 import { Highlight, themes } from 'prism-react-renderer';
@@ -37,36 +49,74 @@ import { useShaman } from '@/hooks/use-shaman';
 import { useShamanLogs } from '@/hooks/use-shaman-logs';
 import { ShamanLogType, ShamanLogsTableData } from '@/types/shaman';
 import { DataTable } from '@/components/data-table';
-import { useShamanSpells } from '@/hooks/use-shaman-spells';
 import { useMUD } from '@/contexts/mud-context';
 import { toast } from '@/hooks/use-toast';
 import { LabelCreator } from '@/components/label-creator';
-import { useShamanSources } from '@/hooks/use-shaman-sources';
 import { handleError } from '@/lib/errors';
+import { DialogAddSpell } from '@/components/dialog-add-spell';
+import { useSpells } from '@/hooks/use-spells';
+import { DialogAddSource } from '@/components/dialog-add-source';
+import { useSources } from '@/hooks/use-sources';
 
 import '@xyflow/react/dist/style.css';
 
-const sourceLabels: Record<string, string> = {
-  'interval-hourly': 'Interval (hr)',
-  'interval-daily': 'Interval (day)',
-  'interval-quarter-hourly': 'Interval (15 min)',
+type WorkflowData = {
+  sourceIds: Hex[];
+  spellIds: Hex[];
+  spellChains: string[];
+  spellEdges: {
+    fromSpellIndex: bigint;
+    toSpellIndex: bigint;
+  }[];
 };
+
+type SourceNode = Node & {
+  data: {
+    sourceId: Hex;
+    label: React.ReactNode;
+  };
+  type: 'input';
+};
+
+type SpellNode = Node & {
+  data: {
+    spellId: Hex;
+    chain?: string;
+    label: React.ReactNode;
+  };
+};
+
+const isSourceNode = (node: Node): node is SourceNode =>
+  node.type === 'input' && 'sourceId' in node.data;
+
+const isSpellNode = (node: Node): node is SpellNode =>
+  !node.type && 'spellId' in node.data;
 
 export function WorkflowTab() {
   const mud = useMUD();
   const { shamanId } = useParams();
+  const { data: spells } = useSpells();
+  const { data: sources } = useSources();
   const { data: shaman, refetch } = useShaman(shamanId as string);
   const { data: shamanLogs } = useShamanLogs(shamanId as string);
   const [spellId, setSpellId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [updateSpellLoading, setUpdateSpellLoading] = useState(false);
+  const [addSpell, setAddSpell] = useState(false);
+  const [addSource, setAddSource] = useState(false);
+  const [isDirty, setIsDirty] = useState(false);
+
+  const initialNodes: Node[] = [];
+  const initialEdges: Edge[] = [];
+
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+
   const embeddedWallet = useEmbeddedWallet();
   const { refetch: refetchZugBalance } = useZugBalance(
     embeddedWallet?.address as `0x${string}`
   );
-  const { data: shamanSources } = useShamanSources(shamanId as string);
-  const { openViewLog, openAddSpell } = useDialogContext();
-  const { data: shamanSpells } = useShamanSpells(shamanId as string);
-  const selectedSpell = shamanSpells?.find(
+  const { openViewLog } = useDialogContext();
+  const selectedSpell = shaman?.spells?.find(
     (spell) => spell.spellId === spellId
   );
   const spellLogs = shamanLogs?.filter((log) => log.spellId === spellId);
@@ -74,57 +124,441 @@ export function WorkflowTab() {
     (log) => log.logType === ShamanLogType.COMPLETION
   );
   const isShamanCreator = embeddedWallet?.address === shaman?.creator;
-  const reactFlow = useReactFlow();
 
   useEffect(() => {
-    if (shamanSpells?.length || shamanSources?.length) {
-      setTimeout(() => {
-        reactFlow.fitView();
-      }, 75);
+    if (!shaman) return;
+
+    const horizontalGap = 250;
+    const verticalGap = 100;
+    const sourceCount = shaman.sources?.length ?? 0;
+
+    const sourceNodes: Node[] =
+      shaman.sources?.map((source, index) => {
+        const defaultPosition = {
+          x: (index - (sourceCount - 1) / 2) * horizontalGap,
+          y: 0,
+        };
+
+        return {
+          id: `source-${source.sourceId}-${index}`,
+          data: {
+            sourceId: source.sourceId as Hex,
+            label: (
+              <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+                {sources?.find((src) => src.sourceId === source.sourceId)
+                  ?.name || source.sourceId}
+              </div>
+            ),
+          },
+          position: defaultPosition,
+          style: { borderRadius: '8px' },
+          type: 'input',
+          sourcePosition: Position.Bottom,
+          targetPosition: Position.Top,
+          connectable: false, // Sources cannot be connected manually
+        };
+      }) || [];
+
+    const spellNodes: Node[] =
+      shaman.spells?.map((spell, index) => {
+        const defaultPosition = { x: 0, y: (index + 1) * verticalGap };
+
+        return {
+          id: `spell-${spell.spellId}-${index}`,
+          data: {
+            spellId: spell.spellId as Hex,
+            chain: spell.chain,
+            label: (
+              <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+                {spells?.find((s) => s.spellId === spell.spellId)?.name ||
+                  spell.spellId}
+              </div>
+            ),
+          },
+          selected: spell.spellId === spellId,
+          position: defaultPosition,
+          style: { borderRadius: '8px' },
+          sourcePosition: Position.Bottom,
+          targetPosition: Position.Top,
+          connectable: true, // Spells can be connected
+        };
+      }) || [];
+
+    const allEdges: Edge[] = [];
+    const firstSpellNode = spellNodes[0];
+
+    if (firstSpellNode) {
+      const sourceEdges: Edge[] = sourceNodes.map((sourceNode) => ({
+        id: `edge-${sourceNode.id}-to-${firstSpellNode.id}`,
+        source: sourceNode.id,
+        target: firstSpellNode.id,
+        type: 'default',
+        animated: true,
+        markerEnd: { type: MarkerType.Arrow },
+      }));
+
+      allEdges.push(...sourceEdges);
     }
-  }, [shamanSpells, shamanSources, reactFlow]);
+
+    if (shaman.spellEdges && shaman.spells) {
+      for (const edge of shaman.spellEdges) {
+        const fromIndex = Number(edge.fromSpellIndex);
+        const toIndex = Number(edge.toSpellIndex);
+
+        if (
+          fromIndex < shaman.spells.length &&
+          toIndex < shaman.spells.length
+        ) {
+          const fromSpellNode = spellNodes[fromIndex];
+          const toSpellNode = spellNodes[toIndex];
+
+          if (fromSpellNode && toSpellNode) {
+            allEdges.push({
+              id: `edge-${fromSpellNode.id}-to-${toSpellNode.id}`,
+              source: fromSpellNode.id,
+              target: toSpellNode.id,
+              type: 'default',
+              animated: false,
+              markerEnd: { type: MarkerType.Arrow },
+            });
+          }
+        }
+      }
+    }
+
+    setNodes([...sourceNodes, ...spellNodes]);
+    setEdges(allEdges);
+    setIsDirty(false);
+  }, [shaman, spells, sources, spellId, setNodes, setEdges]);
+
+  useEffect(() => {
+    if (shaman) {
+      setIsDirty(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [nodes, edges]);
+
+  const addSpellNode = useCallback(
+    (newSpellId: Hex) => {
+      const spellNodes = nodes.filter((node) => isSpellNode(node));
+      const sourceNodes = nodes.filter((node) => isSourceNode(node));
+      const isFirstSpell = spellNodes.length === 0;
+      const index = spellNodes.length;
+      const verticalGap = 100;
+
+      const newNode: Node = {
+        id: `spell-${newSpellId}-${index}`,
+        data: {
+          spellId: newSpellId,
+          label: (
+            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+              {spells?.find((spell) => spell.spellId === newSpellId)?.name ||
+                newSpellId}
+            </div>
+          ),
+        },
+        position: { x: 0, y: (index + 1) * verticalGap },
+        style: { borderRadius: '8px' },
+        sourcePosition: Position.Bottom,
+        targetPosition: Position.Top,
+      };
+
+      setNodes((nds) => [...nds, newNode]);
+
+      if (isFirstSpell && sourceNodes.length > 0) {
+        const newEdges = sourceNodes.map((sourceNode) => ({
+          id: `edge-${sourceNode.id}-to-spell-${newSpellId}-${index}`,
+          source: sourceNode.id,
+          target: `spell-${newSpellId}-${index}`,
+          type: 'default',
+          animated: true,
+          markerEnd: { type: MarkerType.Arrow },
+        }));
+
+        setEdges((eds) => [...eds, ...newEdges]);
+      }
+
+      setIsDirty(true);
+    },
+    [nodes, spells, setNodes, setEdges]
+  );
+
+  const addSourceNode = useCallback(
+    (newSourceId: Hex) => {
+      const sourceNodes = nodes.filter((node) => isSourceNode(node));
+      const index = sourceNodes.length;
+      const horizontalGap = 250;
+      const sourceCount = sourceNodes.length + 1;
+
+      const newNode: Node = {
+        id: `source-${newSourceId}-${index}`,
+        data: {
+          sourceId: newSourceId,
+          label: (
+            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
+              {sources?.find((src) => src.sourceId === newSourceId)?.name ||
+                newSourceId}
+            </div>
+          ),
+        },
+        position: {
+          x: (index - (sourceCount - 1) / 2) * horizontalGap,
+          y: 0,
+        },
+        style: { borderRadius: '8px' },
+        type: 'input',
+        sourcePosition: Position.Bottom,
+        targetPosition: Position.Top,
+        connectable: false,
+      };
+
+      const spellNodes = nodes.filter((node) => node.id.startsWith('spell-'));
+      const firstSpellNode = spellNodes[0];
+
+      setNodes((nds) => {
+        const allSourceNodes = [...sourceNodes, newNode];
+        const repositionedSourceNodes = allSourceNodes.map((node, idx) => ({
+          ...node,
+          position: {
+            x: (idx - (sourceCount - 1) / 2) * horizontalGap,
+            y: 0,
+          },
+        }));
+
+        const otherNodes = nds.filter((node) => !isSourceNode(node));
+
+        return [...repositionedSourceNodes, ...otherNodes];
+      });
+
+      if (firstSpellNode) {
+        const newEdge: Edge = {
+          id: `edge-source-${newSourceId}-${index}-to-${firstSpellNode.id}`,
+          source: `source-${newSourceId}-${index}`,
+          target: firstSpellNode.id,
+          type: 'default',
+          animated: true,
+          markerEnd: { type: MarkerType.Arrow },
+        };
+
+        setEdges((eds) => [...eds, newEdge]);
+      }
+
+      setIsDirty(true);
+    },
+    [nodes, sources, setNodes, setEdges]
+  );
 
   const handleRefetch = useCallback(() => {
     refetch();
     refetchZugBalance();
   }, [refetch, refetchZugBalance]);
 
-  const handleRemoveSpell = useCallback(async () => {
-    try {
-      setLoading(true);
-      await mud?.calls.embedded?.systemCalls?.removeSpellFromShaman(
-        shamanId as Hex,
-        selectedSpell?.spellId as Hex
-      );
-      toast({
-        title: 'Success',
-        description: 'Spell removed from shaman.',
-      });
-      setSpellId(null);
-    } catch (error) {
-      handleError(error);
-    } finally {
-      setLoading(false);
-    }
-  }, [selectedSpell, mud, shamanId]);
-
   const handleUpdateSpellVersion = useCallback(async () => {
+    if (!selectedSpell?.spellId || !shamanId || !mud) return;
     try {
-      setLoading(true);
-      await mud?.calls.embedded?.systemCalls?.updateSpellVersion(
+      setUpdateSpellLoading(true);
+      await mud.calls.embedded?.systemCalls?.updateSpellVersion(
         shamanId as Hex,
-        selectedSpell?.spellId as Hex
+        selectedSpell.spellId as Hex
       );
       toast({
         title: 'Success',
         description: 'Spell version updated.',
       });
+      handleRefetch();
     } catch (error) {
       handleError(error);
     } finally {
-      setLoading(false);
+      setUpdateSpellLoading(false);
     }
-  }, [selectedSpell, mud, shamanId]);
+  }, [selectedSpell, mud, shamanId, handleRefetch]);
+
+  const extractWorkflowData = useCallback((): WorkflowData => {
+    const spellNodes = nodes
+      .filter((node) => isSpellNode(node))
+      .sort((a, b) => {
+        const aIndex = parseInt(a.id.split('-')[2]);
+        const bIndex = parseInt(b.id.split('-')[2]);
+        return aIndex - bIndex;
+      });
+
+    const sourceNodes = nodes.filter((node) => node.id.startsWith('source-'));
+
+    const spellIds = spellNodes.map((node) => node.data.spellId as Hex);
+    const spellChains = spellNodes.map((node) => node.data.chain || '');
+
+    const sourceIds = sourceNodes.map((node) => node.data.sourceId as Hex);
+
+    const spellEdges = edges
+      .filter((edge) => {
+        const sourceId = edge.source;
+        const targetId = edge.target;
+        return sourceId.startsWith('spell-') && targetId.startsWith('spell-');
+      })
+      .map((edge) => {
+        const sourceIndex = parseInt(edge.source.split('-')[2]);
+        const targetIndex = parseInt(edge.target.split('-')[2]);
+
+        return {
+          fromSpellIndex: BigInt(sourceIndex),
+          toSpellIndex: BigInt(targetIndex),
+        };
+      });
+
+    return {
+      sourceIds,
+      spellIds,
+      spellChains,
+      spellEdges,
+    };
+  }, [nodes, edges]);
+
+  const { mutate: saveWorkflow, isPending: isSavingWorkflow } = useMutation({
+    mutationFn: async ({
+      currentShamanId,
+      sourceIds,
+      spellIds,
+      spellChains,
+      spellEdges,
+    }: {
+      currentShamanId: Hex;
+      sourceIds: Hex[];
+      spellIds: Hex[];
+      spellChains: string[];
+      spellEdges: {
+        fromSpellIndex: bigint;
+        toSpellIndex: bigint;
+      }[];
+    }) => {
+      if (!mud?.calls?.embedded?.systemCalls?.updateShamanWorkflow) {
+        throw new Error(
+          'updateShamanWorkflow system call not found. Please implement it.'
+        );
+      }
+
+      return await mud.calls.embedded.systemCalls.updateShamanWorkflow(
+        currentShamanId,
+        sourceIds,
+        spellIds,
+        spellChains,
+        spellEdges
+      );
+    },
+    onSuccess: () => {
+      toast({
+        title: 'Success',
+        description: 'Workflow saved successfully.',
+      });
+      handleRefetch();
+      setIsDirty(false);
+    },
+    onError: (error) => {
+      handleError(error);
+      toast({
+        title: 'Error Saving Workflow',
+        description:
+          error.message || 'An unexpected error occurred while saving.',
+        variant: 'destructive',
+      });
+    },
+  });
+
+  const handleSaveWorkflow = useCallback(() => {
+    if (!shamanId) return;
+
+    const workflowData = extractWorkflowData();
+
+    saveWorkflow({
+      currentShamanId: shamanId as Hex,
+      sourceIds: workflowData.sourceIds,
+      spellIds: workflowData.spellIds,
+      spellChains: workflowData.spellChains,
+      spellEdges: workflowData.spellEdges,
+    });
+  }, [shamanId, extractWorkflowData, saveWorkflow]);
+
+  const handleAddSpell = useCallback(
+    (spellId: string) => {
+      addSpellNode(spellId as Hex);
+    },
+    [addSpellNode]
+  );
+
+  const handleAddSource = useCallback(
+    (sourceId: string) => {
+      addSourceNode(sourceId as Hex);
+    },
+    [addSourceNode]
+  );
+
+  const onConnect = useCallback(
+    (connection: Connection) => {
+      const { source, target } = connection;
+
+      if (!source || !target) return;
+
+      const isSourceSpell = source.startsWith('spell-');
+      const isTargetSpell = target.startsWith('spell-');
+
+      if (!isSourceSpell || !isTargetSpell) {
+        toast({
+          title: 'Connection not allowed',
+          description: 'You can only connect between spells',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      setEdges((eds) => addEdge(connection, eds));
+      setIsDirty(true);
+    },
+    [setEdges]
+  );
+
+  const onNodesDelete = useCallback(
+    (deleted: Node[]) => {
+      setEdges((eds) => {
+        return deleted.reduce((acc, node) => {
+          const incomers = getIncomers(node, nodes, eds);
+          const outgoers = getOutgoers(node, nodes, eds);
+          const connectedEdges = getConnectedEdges([node], eds);
+
+          const remainingEdges = acc.filter(
+            (edge) => !connectedEdges.includes(edge)
+          );
+
+          const createdEdges = incomers.flatMap(({ id: source }) =>
+            outgoers.map(({ id: target }) => ({
+              id: `edge-${source}-to-${target}`,
+              source,
+              target,
+              type: 'default',
+              animated: false,
+              markerEnd: { type: MarkerType.Arrow },
+            }))
+          );
+
+          return [...remainingEdges, ...createdEdges];
+        }, eds);
+      });
+
+      setIsDirty(true);
+    },
+    [nodes, setEdges]
+  );
+
+  const onEdgesDelete = useCallback(() => {
+    setIsDirty(true);
+  }, []);
+
+  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+    if (node.id.startsWith('spell-')) {
+      const spellId = (node.data as any).spellId;
+      setSpellId(spellId);
+    } else {
+      setSpellId(null);
+    }
+  }, []);
 
   const spellTableData: ShamanLogsTableData[] = useMemo(
     () =>
@@ -212,153 +646,66 @@ export function WorkflowTab() {
         },
       },
     ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [openViewLog]
+    [openViewLog, handleRefetch]
   );
 
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Workflow</CardTitle>
+        {isShamanCreator && (
+          <div className="flex flex-row gap-4">
+            <Button
+              onClick={() => setAddSource(true)}
+              size="sm"
+              variant="secondary">
+              <IconPlus className="mr-1 h-4 w-4" />
+              Add Source
+            </Button>
+            <Button
+              onClick={() => setAddSpell(true)}
+              size="sm"
+              variant="secondary">
+              <IconPlus className="mr-1 h-4 w-4" />
+              Add Spell
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleSaveWorkflow}
+              disabled={isSavingWorkflow || !isDirty}>
+              {isSavingWorkflow ? (
+                <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <IconDeviceFloppy className="mr-1 h-4 w-4" />
+              )}
+              Save Workflow
+            </Button>
+          </div>
+        )}
       </CardHeader>
       <CardContent>
         <div className="flex flex-col gap-4">
-          <div className="w-full h-48">
+          <div className="w-full h-[calc(100vh-250px)]">
             <ReactFlow
               colorMode="dark"
               fitView
               proOptions={{
                 hideAttribution: true,
               }}
-              onNodeClick={(event, node) => {
-                if (node.id !== 'add-new-spell') {
-                  reactFlow.fitView();
-                  setSpellId(node.id);
-                } else {
-                  openAddSpell(
-                    true,
-                    undefined,
-                    handleRefetch,
-                    shamanId as string
-                  );
-                }
-              }}
-              nodes={[
-                ...(shamanSources?.map((source, index) => ({
-                  id: source.sourceId,
-                  data: {
-                    label: (
-                      <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-                        {sourceLabels[source.name]}
-                      </div>
-                    ),
-                  },
-                  position: { x: index * 200 - 200, y: 0 },
-                  style: {
-                    borderRadius: '8px',
-                  },
-                  type: 'input',
-                  sourcePosition: Position.Right,
-                  targetPosition: Position.Left,
-                })) || []),
-                ...(shamanSpells?.map((spell, index) => ({
-                  id: spell.spellId,
-                  data: {
-                    label: (
-                      <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-                        {spell.name}
-                      </div>
-                    ),
-                  },
-                  selected: spell.spellId === spellId,
-                  position: { x: index * 200, y: 0 },
-                  style: {
-                    borderRadius: '8px',
-                  },
-                  sourcePosition: Position.Right,
-                  targetPosition: Position.Left,
-                })) || []),
-                ...(isShamanCreator
-                  ? [
-                      {
-                        id: 'add-new-spell',
-                        data: {
-                          label: (
-                            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-                              <IconPlus className="h-4 w-4" /> Add Spell
-                            </div>
-                          ),
-                        },
-                        position: {
-                          x: (shamanSpells?.length || 0) * 200,
-                          y: 0,
-                        },
-                        style: {
-                          borderRadius: '8px',
-                        },
-                        selectable: false,
-                        targetPosition: Position.Left,
-                        sourcePosition: Position.Right,
-                        type: 'output',
-                      },
-                    ]
-                  : []),
-              ]}
-              edges={[
-                ...(shamanSources?.slice(0, -1).map((source, index) => ({
-                  id: `edge-${source.sourceId}-${shamanSources[index + 1].sourceId}`,
-                  source: source.sourceId,
-                  target: shamanSources[index + 1].sourceId,
-                  type: 'default',
-                  animated: false,
-                  markerEnd: {
-                    type: MarkerType.Arrow,
-                  },
-                })) || []),
-                ...(shamanSources?.length
-                  ? [
-                      {
-                        id: `edge-source-to-first-spell`,
-                        source:
-                          shamanSources[shamanSources.length - 1].sourceId,
-                        target:
-                          shamanSpells?.length > 0
-                            ? shamanSpells[0].spellId
-                            : 'add-new-spell',
-                        type: 'default',
-                        animated: true,
-                        markerEnd: {
-                          type: MarkerType.Arrow,
-                        },
-                      },
-                    ]
-                  : []),
-                ...(shamanSpells?.slice(0, -1).map((spell, index) => ({
-                  id: `edge-${spell.spellId}-${shamanSpells[index + 1].spellId}`,
-                  source: spell.spellId,
-                  target: shamanSpells[index + 1].spellId,
-                  type: 'default',
-                  animated: false,
-                  markerEnd: {
-                    type: MarkerType.Arrow,
-                  },
-                })) || []),
-                ...(shamanSpells?.length
-                  ? [
-                      {
-                        id: `edge-last-to-add`,
-                        source: shamanSpells[shamanSpells.length - 1].spellId,
-                        target: 'add-new-spell',
-                        type: 'default',
-                        animated: true,
-                        markerEnd: {
-                          type: MarkerType.Arrow,
-                        },
-                      },
-                    ]
-                  : []),
-              ]}
-              nodesDraggable={false}>
+              nodes={nodes}
+              edges={edges}
+              onNodesChange={onNodesChange}
+              onEdgesChange={onEdgesChange}
+              onNodesDelete={onNodesDelete}
+              onEdgesDelete={onEdgesDelete}
+              onNodeClick={onNodeClick}
+              nodesConnectable={isShamanCreator}
+              elementsSelectable={isShamanCreator}
+              onConnect={onConnect}
+              connectionLineStyle={{ stroke: '#3b82f6' }}
+              connectionLineType={ConnectionLineType.Bezier}
+              selectionOnDrag={isShamanCreator}
+              selectionMode={isShamanCreator ? SelectionMode.Full : undefined}>
               <Background />
             </ReactFlow>
           </div>
@@ -385,24 +732,20 @@ export function WorkflowTab() {
                       </div>
                       {isShamanCreator && (
                         <div className="flex flex-row gap-2">
-                          {selectedSpell?.latestVersion !==
-                            selectedSpell?.version && (
+                          {selectedSpell?.version !==
+                            selectedSpell?.latestVersion && (
                             <Button
                               variant="secondary"
                               size="sm"
-                              disabled={loading}
+                              disabled={updateSpellLoading || isSavingWorkflow}
                               onClick={handleUpdateSpellVersion}>
-                              <IconArrowBigUpLine className="h-4 w-4" />
+                              {updateSpellLoading ? (
+                                <IconLoader2 className="h-4 w-4 animate-spin" />
+                              ) : (
+                                <IconArrowBigUpLine className="h-4 w-4" />
+                              )}
                             </Button>
                           )}
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={handleRemoveSpell}
-                            disabled={loading}
-                            className="self-start sm:self-auto">
-                            <IconTrash className="h-4 w-4" />
-                          </Button>
                         </div>
                       )}
                     </div>
@@ -547,6 +890,16 @@ export function WorkflowTab() {
           </div>
         </div>
       </CardContent>
+      <DialogAddSpell
+        open={addSpell}
+        onOpenChange={setAddSpell}
+        onSelect={handleAddSpell}
+      />
+      <DialogAddSource
+        open={addSource}
+        onOpenChange={setAddSource}
+        onSelect={handleAddSource}
+      />
     </Card>
   );
 }

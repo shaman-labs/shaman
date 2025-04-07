@@ -142,3 +142,11 @@ export type ShamanLogsTableData = {
   metadata: string;
   spellId: string;
 };
+
+export type SpellMetadata = {
+  code: string;
+  prompt: string;
+  secrets?: string[];
+  previousResults?: string[];
+  results?: string[];
+};

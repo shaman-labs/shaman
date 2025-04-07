@@ -34,42 +34,15 @@ export function getSystemCalls({
   const client = publicClient as PublicClient;
 
   // shaman functions
-  const createShaman = async (
-    balance: bigint,
-    name: string,
-    abilityIds: Hex[],
-    sourceIds: Hex[],
-    metadata: string
-  ): Promise<Hex> => {
-    await tokenContract.simulate.approve([worldContract.address, balance], {
-      chain,
+  const createShaman = async (name: string, metadata: string): Promise<Hex> => {
+    await worldContract.simulate.createShaman([name, metadata], {
       account: account.address,
     });
 
-    const approveTx = await tokenContract.write.approve(
-      [worldContract.address, balance],
-      {
-        chain,
-        account: account.address,
-      }
-    );
-
-    await waitForTransaction(approveTx);
-
-    await worldContract.simulate.createShaman(
-      [balance, name, abilityIds, sourceIds, metadata],
-      {
-        account: account.address,
-      }
-    );
-
-    const hash = await worldContract.write.createShaman(
-      [balance, name, abilityIds, sourceIds, metadata],
-      {
-        chain,
-        account,
-      }
-    );
+    const hash = await worldContract.write.createShaman([name, metadata], {
+      chain,
+      account,
+    });
 
     const receipt = await client.getTransactionReceipt({
       hash: hash,
@@ -180,63 +153,25 @@ export function getSystemCalls({
     return waitForTransaction(hash);
   };
 
-  // Shaman spell management
-  const addSpellToShaman = async (shamanId: Hex, spellId: Hex) => {
-    await worldContract.simulate.addSpellToShaman([shamanId, spellId], {
-      account: account.address,
-    });
-
-    const hash = await worldContract.write.addSpellToShaman(
-      [shamanId, spellId],
+  const updateShamanWorkflow = async (
+    shamanId: Hex,
+    sourceIds: Hex[],
+    spellIds: Hex[],
+    spellChains: string[],
+    spellEdges: {
+      fromSpellIndex: bigint;
+      toSpellIndex: bigint;
+    }[]
+  ) => {
+    await worldContract.simulate.updateShamanWorkflow(
+      [shamanId, sourceIds, spellIds, spellChains, spellEdges],
       {
-        chain,
-        account,
+        account: account.address,
       }
     );
 
-    return waitForTransaction(hash);
-  };
-
-  const removeSpellFromShaman = async (shamanId: Hex, spellId: Hex) => {
-    await worldContract.simulate.removeSpellFromShaman([shamanId, spellId], {
-      account: account.address,
-    });
-
-    const hash = await worldContract.write.removeSpellFromShaman(
-      [shamanId, spellId],
-      {
-        chain,
-        account,
-      }
-    );
-
-    return waitForTransaction(hash);
-  };
-
-  // Shaman source management
-  const addSourceToShaman = async (shamanId: Hex, sourceId: Hex) => {
-    await worldContract.simulate.addSourceToShaman([shamanId, sourceId], {
-      account: account.address,
-    });
-
-    const hash = await worldContract.write.addSourceToShaman(
-      [shamanId, sourceId],
-      {
-        chain,
-        account,
-      }
-    );
-
-    return waitForTransaction(hash);
-  };
-
-  const removeSourceFromShaman = async (shamanId: Hex, sourceId: Hex) => {
-    await worldContract.simulate.removeSourceFromShaman([shamanId, sourceId], {
-      account: account.address,
-    });
-
-    const hash = await worldContract.write.removeSourceFromShaman(
-      [shamanId, sourceId],
+    const hash = await worldContract.write.updateShamanWorkflow(
+      [shamanId, sourceIds, spellIds, spellChains, spellEdges],
       {
         chain,
         account,
@@ -306,15 +241,22 @@ export function getSystemCalls({
   };
 
   // Source management
-  const createSource = async (name: string, metadata: string) => {
-    await worldContract.simulate.createSource([name, metadata], {
+  const createSource = async (
+    sourceType: number,
+    name: string,
+    metadata: string
+  ) => {
+    await worldContract.simulate.createSource([sourceType, name, metadata], {
       account: account.address,
     });
 
-    const hash = await worldContract.write.createSource([name, metadata], {
-      chain,
-      account,
-    });
+    const hash = await worldContract.write.createSource(
+      [sourceType, name, metadata],
+      {
+        chain,
+        account,
+      }
+    );
 
     return waitForTransaction(hash);
   };
@@ -472,10 +414,7 @@ export function getSystemCalls({
     updateShamanStatus,
     depositShamanBalance,
     withdrawShamanBalance,
-    addSpellToShaman,
-    removeSpellFromShaman,
-    addSourceToShaman,
-    removeSourceFromShaman,
+    updateShamanWorkflow,
     createSpell,
     updateSpellMetadata,
     updateSpellName,
