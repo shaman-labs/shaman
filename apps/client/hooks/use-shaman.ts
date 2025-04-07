@@ -27,8 +27,6 @@ export const useShaman = (shamanId: string) => {
         )
       );
 
-      // console.log(shamanData, mud.components);
-
       const shamanSpells = await Promise.all(
         shamanData.shamanSpellIds.map(async (spellId) => {
           const shamanSpell = getComponentValueStrict(
@@ -41,8 +39,6 @@ export const useShaman = (shamanId: string) => {
             )
           );
 
-          console.log(shamanSpell);
-
           const spell = getComponentValueStrict(
             mud.components.Spells,
             encodeEntity(
@@ -51,13 +47,9 @@ export const useShaman = (shamanId: string) => {
             )
           );
 
-          console.log(spell);
-
           const metadata = await axios.get<SpellMetadata>(
             `https://gateway.shaman.fun/ipfs/${spell.metadata}`
           );
-
-          console.log(metadata);
 
           return {
             ...spell,
@@ -88,19 +80,19 @@ export const useShaman = (shamanId: string) => {
             )
           );
 
-          // const metadata = source.metadata
-          //   ? await axios.get<{
-          //       name: string;
-          //       description: string;
-          //     }>(`https://gateway.shaman.fun/ipfs/${source.metadata}`)
-          //   : null;
+          const metadata = source.metadata
+            ? await axios.get<{
+                name: string;
+                description: string;
+              }>(`https://gateway.shaman.fun/ipfs/${source.metadata}`)
+            : null;
 
           return {
             ...source,
             ...shamanSource,
             sourceId: shamanSource.sourceId,
-            // name: metadata?.data.name,
-            // description: metadata?.data.description,
+            name: metadata?.data.name,
+            description: metadata?.data.description,
           };
         })
       );
@@ -110,9 +102,8 @@ export const useShaman = (shamanId: string) => {
           const shamanSpellEdge = getComponentValueStrict(
             mud.components.ShamanSpellEdges,
             encodeEntity(
-              { shamanId: 'bytes32', shamanSpellEdgeId: 'bytes32' },
+              { shamanSpellEdgeId: 'bytes32' },
               {
-                shamanId: shamanId as `0x${string}`,
                 shamanSpellEdgeId: shamanSpellEdgeId as `0x${string}`,
               }
             )
