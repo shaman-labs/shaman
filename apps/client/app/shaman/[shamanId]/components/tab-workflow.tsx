@@ -99,7 +99,7 @@ export function WorkflowTab() {
   const { data: sources } = useSources();
   const { data: shaman, refetch } = useShaman(shamanId as string);
   const { data: shamanLogs } = useShamanLogs(shamanId as string);
-  const [spellId, setSpellId] = useState<string | null>(null);
+  const [selectedNode, setSelectedNode] = useState<Node | null>(null);
   const [updateSpellLoading, setUpdateSpellLoading] = useState(false);
   const [addSpell, setAddSpell] = useState(false);
   const [addSource, setAddSource] = useState(false);
@@ -117,9 +117,11 @@ export function WorkflowTab() {
   );
   const { openViewLog } = useDialogContext();
   const selectedSpell = shaman?.spells?.find(
-    (spell) => spell.spellId === spellId
+    (spell) => spell.spellId === selectedNode?.data.spellId
   );
-  const spellLogs = shamanLogs?.filter((log) => log.spellId === spellId);
+  const spellLogs = shamanLogs?.filter(
+    (log) => log.spellId === selectedNode?.data.spellId
+  );
   const spellExecutionLogs = spellLogs?.filter(
     (log) => log.logType === ShamanLogType.COMPLETION
   );
@@ -176,7 +178,6 @@ export function WorkflowTab() {
               </div>
             ),
           },
-          selected: spell.spellId === spellId,
           position: defaultPosition,
           style: { borderRadius: '8px' },
           sourcePosition: Position.Bottom,
@@ -230,7 +231,7 @@ export function WorkflowTab() {
     setNodes([...sourceNodes, ...spellNodes]);
     setEdges(allEdges);
     setIsDirty(false);
-  }, [shaman, spells, sources, spellId, setNodes, setEdges, isDirty]);
+  }, [shaman, spells, sources, setNodes, setEdges, isDirty]);
 
   const addSpellNode = useCallback(
     (newSpellId: Hex) => {
@@ -545,13 +546,15 @@ export function WorkflowTab() {
 
   const onSelectionChange = useCallback(({ nodes }: { nodes: Node[] }) => {
     if (nodes.length === 0) {
-      setSpellId(null);
+      setSelectedNode(null);
+    }
+  }, []);
+
+  const handleNodeClick = useCallback((_: unknown, node: Node) => {
+    if (isSpellNode(node)) {
+      setSelectedNode(node);
     } else {
-      if (isSpellNode(nodes[0])) {
-        setSpellId(nodes[0].data.spellId as Hex);
-      } else {
-        setSpellId(null);
-      }
+      setSelectedNode(null);
     }
   }, []);
 
@@ -693,6 +696,7 @@ export function WorkflowTab() {
               onEdgesChange={onEdgesChange}
               onNodesDelete={onNodesDelete}
               onEdgesDelete={onEdgesDelete}
+              onNodeClick={handleNodeClick}
               nodesConnectable={isShamanCreator}
               elementsSelectable={isShamanCreator}
               onConnect={onConnect}
