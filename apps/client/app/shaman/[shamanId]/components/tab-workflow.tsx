@@ -16,6 +16,8 @@ import {
   getIncomers,
   getOutgoers,
   getConnectedEdges,
+  NodeProps,
+  Handle,
 } from '@xyflow/react';
 import {
   IconDotsVertical,
@@ -32,6 +34,7 @@ import { useMutation } from '@tanstack/react-query';
 import { formatDistanceToNow } from 'date-fns';
 import { Hex } from 'viem';
 import { Highlight, themes } from 'prism-react-renderer';
+import { Chain } from 'viem/chains';
 import { logTypes } from '../constants';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -57,6 +60,7 @@ import { DialogAddSpell } from '@/components/dialog-add-spell';
 import { useSpells } from '@/hooks/use-spells';
 import { DialogAddSource } from '@/components/dialog-add-source';
 import { useSources } from '@/hooks/use-sources';
+import { spellChains } from '@/mud/supportedChains';
 
 import '@xyflow/react/dist/style.css';
 
@@ -75,7 +79,6 @@ type SourceNode = Node & {
     sourceId: Hex;
     label: React.ReactNode;
   };
-  type: 'input';
 };
 
 type SpellNode = Node & {
@@ -87,10 +90,83 @@ type SpellNode = Node & {
 };
 
 const isSourceNode = (node: Node): node is SourceNode =>
-  node.type === 'input' && 'sourceId' in node.data;
+  node.type === 'shamanNode' && 'sourceId' in node.data;
 
 const isSpellNode = (node: Node): node is SpellNode =>
-  !node.type && 'spellId' in node.data;
+  node.type === 'shamanNode' && 'spellId' in node.data;
+
+const chainColors: Record<string, string> = {
+  '1': '#29B6AF', // Ethereum
+  '10': '#FF0000', // Optimism
+  '137': '#8247E5', // Polygon
+  '42161': '#28A0F0', // Arbitrum
+  '8453': '#0052FF', // Base
+  default: '#3b82f6', // Default blue color
+};
+
+const getChainColor = (chainId?: string) => {
+  return chainId && chainColors[chainId]
+    ? chainColors[chainId]
+    : chainColors.default;
+};
+
+type ShamanNodeData = {
+  label: string;
+  sourceId?: Hex;
+  spellId?: Hex;
+  chain?: string;
+};
+
+function ShamanNode({ data, isConnectable }: NodeProps) {
+  const nodeData = data as ShamanNodeData;
+  const isSource = nodeData.sourceId !== undefined;
+  const nodeChainId = nodeData.chain ? nodeData.chain.toString() : 'default';
+  const nodeChainColor = getChainColor(nodeChainId);
+  const nodeChainName = nodeData.chain
+    ? spellChains.find((c) => c.id === Number(nodeData.chain))?.name
+    : undefined;
+
+  return (
+    <div
+      className={`px-4 py-2 shadow-md rounded-lg border-2 bg-background ${isSource ? '' : 'border-solid'}`}
+      style={{ borderColor: isSource ? 'transparent' : nodeChainColor }}>
+      <div className="flex items-center">
+        <div className="text-sm text-muted-foreground hover:text-foreground">
+          {nodeData.label}
+          {nodeChainName && (
+            <div className="absolute top-1 right-2 text-xs px-1.5 py-0.5 rounded-sm font-mono opacity-80">
+              {nodeChainName}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {isSource ? (
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          isConnectable={isConnectable}
+          className="w-2 h-2"
+        />
+      ) : (
+        <>
+          <Handle
+            type="target"
+            position={Position.Top}
+            isConnectable={isConnectable}
+            className="w-2 h-2"
+          />
+          <Handle
+            type="source"
+            position={Position.Bottom}
+            isConnectable={isConnectable}
+            className="w-2 h-2"
+          />
+        </>
+      )}
+    </div>
+  );
+}
 
 export function WorkflowTab() {
   const mud = useMUD();
@@ -146,16 +222,12 @@ export function WorkflowTab() {
           id: `source-${source.sourceId}-${index}`,
           data: {
             sourceId: source.sourceId as Hex,
-            label: (
-              <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-                {sources?.find((src) => src.sourceId === source.sourceId)
-                  ?.name || source.sourceId}
-              </div>
-            ),
+            label:
+              sources?.find((src) => src.sourceId === source.sourceId)?.name ||
+              source.sourceId,
           },
           position: defaultPosition,
-          style: { borderRadius: '8px' },
-          type: 'input',
+          type: 'shamanNode',
           sourcePosition: Position.Bottom,
           targetPosition: Position.Top,
           connectable: false, // Sources cannot be connected manually
@@ -171,15 +243,12 @@ export function WorkflowTab() {
           data: {
             spellId: spell.spellId as Hex,
             chain: spell.chain,
-            label: (
-              <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-                {spells?.find((s) => s.spellId === spell.spellId)?.name ||
-                  spell.spellId}
-              </div>
-            ),
+            label:
+              spells?.find((s) => s.spellId === spell.spellId)?.name ||
+              spell.spellId,
           },
           position: defaultPosition,
-          style: { borderRadius: '8px' },
+          type: 'shamanNode',
           sourcePosition: Position.Bottom,
           targetPosition: Position.Top,
           connectable: true, // Spells can be connected
@@ -234,7 +303,7 @@ export function WorkflowTab() {
   }, [shaman, spells, sources, setNodes, setEdges, isDirty]);
 
   const addSpellNode = useCallback(
-    (newSpellId: Hex) => {
+    (newSpellId: Hex, chain?: Chain) => {
       const spellNodes = nodes.filter((node) => isSpellNode(node));
       const sourceNodes = nodes.filter((node) => isSourceNode(node));
       const isFirstSpell = spellNodes.length === 0;
@@ -245,15 +314,13 @@ export function WorkflowTab() {
         id: `spell-${newSpellId}-${index}`,
         data: {
           spellId: newSpellId,
-          label: (
-            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {spells?.find((spell) => spell.spellId === newSpellId)?.name ||
-                newSpellId}
-            </div>
-          ),
+          chain: chain?.id,
+          label:
+            spells?.find((spell) => spell.spellId === newSpellId)?.name ||
+            newSpellId,
         },
         position: { x: 0, y: (index + 1) * verticalGap },
-        style: { borderRadius: '8px' },
+        type: 'shamanNode',
         sourcePosition: Position.Bottom,
         targetPosition: Position.Top,
       };
@@ -289,19 +356,15 @@ export function WorkflowTab() {
         id: `source-${newSourceId}-${index}`,
         data: {
           sourceId: newSourceId,
-          label: (
-            <div className="flex items-center cursor-pointer text-muted-foreground hover:text-foreground">
-              {sources?.find((src) => src.sourceId === newSourceId)?.name ||
-                newSourceId}
-            </div>
-          ),
+          label:
+            sources?.find((src) => src.sourceId === newSourceId)?.name ||
+            newSourceId,
         },
         position: {
           x: (index - (sourceCount - 1) / 2) * horizontalGap,
           y: 0,
         },
-        style: { borderRadius: '8px' },
-        type: 'input',
+        type: 'shamanNode',
         sourcePosition: Position.Bottom,
         targetPosition: Position.Top,
         connectable: false,
@@ -471,8 +534,8 @@ export function WorkflowTab() {
   }, [shamanId, extractWorkflowData, saveWorkflow]);
 
   const handleAddSpell = useCallback(
-    (spellId: string) => {
-      addSpellNode(spellId as Hex);
+    (spellId: string, chain: Chain) => {
+      addSpellNode(spellId as Hex, chain);
     },
     [addSpellNode]
   );
@@ -692,6 +755,9 @@ export function WorkflowTab() {
               }}
               nodes={nodes}
               edges={edges}
+              nodeTypes={{
+                shamanNode: ShamanNode,
+              }}
               onNodesChange={onNodesChange}
               onEdgesChange={onEdgesChange}
               onNodesDelete={onNodesDelete}
