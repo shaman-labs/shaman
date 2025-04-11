@@ -101,7 +101,7 @@ const chainColors: Record<string, string> = {
   '137': '#8247E5', // Polygon
   '42161': '#28A0F0', // Arbitrum
   '8453': '#0052FF', // Base
-  default: '#3b82f6', // Default blue color
+  default: '#a3f7bf', // Default color
 };
 
 const getChainColor = (chainId?: string) => {
@@ -128,18 +128,16 @@ function ShamanNode({ data, isConnectable }: NodeProps) {
 
   return (
     <div
-      className={`px-4 py-2 shadow-md rounded-lg border-2 bg-background ${isSource ? '' : 'border-solid'}`}
-      style={{ borderColor: isSource ? 'transparent' : nodeChainColor }}>
-      <div className="flex items-center">
-        <div className="text-sm text-muted-foreground hover:text-foreground">
-          {nodeData.label}
-          {nodeChainName && (
-            <div className="absolute top-1 right-2 text-xs px-1.5 py-0.5 rounded-sm font-mono opacity-80">
-              {nodeChainName}
-            </div>
-          )}
-        </div>
+      className="w-[200px] h-[60px] shadow-md rounded-xl border-2 bg-background relative flex items-center justify-center"
+      style={{ borderColor: isSource ? chainColors.default : nodeChainColor }}>
+      <div className="text-sm text-muted-foreground hover:text-foreground text-center px-3 py-2">
+        {nodeData.label}
       </div>
+      {nodeChainName && (
+        <div className="absolute top-1 right-2 text-xs font-mono opacity-50">
+          {nodeChainName}
+        </div>
+      )}
 
       {isSource ? (
         <Handle
@@ -207,8 +205,8 @@ export function WorkflowTab() {
     if (!shaman) return;
     if (isDirty) return;
 
-    const horizontalGap = 250;
-    const verticalGap = 100;
+    const horizontalGap = 300;
+    const verticalGap = 150;
     const sourceCount = shaman.sources?.length ?? 0;
 
     const sourceNodes: Node[] =
@@ -308,7 +306,7 @@ export function WorkflowTab() {
       const sourceNodes = nodes.filter((node) => isSourceNode(node));
       const isFirstSpell = spellNodes.length === 0;
       const index = spellNodes.length;
-      const verticalGap = 100;
+      const verticalGap = 150;
 
       const newNode: Node = {
         id: `spell-${newSpellId}-${index}`,
@@ -349,7 +347,7 @@ export function WorkflowTab() {
     (newSourceId: Hex) => {
       const sourceNodes = nodes.filter((node) => isSourceNode(node));
       const index = sourceNodes.length;
-      const horizontalGap = 250;
+      const horizontalGap = 300;
       const sourceCount = sourceNodes.length + 1;
 
       const newNode: Node = {
