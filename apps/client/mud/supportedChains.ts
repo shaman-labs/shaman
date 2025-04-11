@@ -1,5 +1,5 @@
 import { mudFoundry } from '@latticexyz/common/chains';
-import { Chain, base, mainnet, optimism, arbitrum } from 'viem/chains';
+import { Chain, base, polygon, mainnet, optimism, arbitrum } from 'viem/chains';
 
 export type ChainWithFaucetUrl = Chain & { faucetUrl?: string };
 
@@ -52,5 +52,4 @@ export const supportedChains = [mudFoundry, base, arbitrumSepolia];
 export const chainId = Number(process.env.NEXT_PUBLIC_CHAIN_ID ?? 421_614);
 export const chain = (supportedChains.find((c) => c?.id === chainId) ??
   mudFoundry) as Chain;
-
-export const spellChains = [base, mainnet, optimism, arbitrum];
+export const spellChains = [base, polygon, mainnet, optimism, arbitrum];

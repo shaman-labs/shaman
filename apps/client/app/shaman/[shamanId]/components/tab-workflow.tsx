@@ -60,7 +60,7 @@ import { DialogAddSpell } from '@/components/dialog-add-spell';
 import { useSpells } from '@/hooks/use-spells';
 import { DialogAddSource } from '@/components/dialog-add-source';
 import { useSources } from '@/hooks/use-sources';
-import { spellChains } from '@/mud/supportedChains';
+import { chain, spellChains } from '@/mud/supportedChains';
 
 import '@xyflow/react/dist/style.css';
 
@@ -120,10 +120,10 @@ type ShamanNodeData = {
 function ShamanNode({ data, isConnectable }: NodeProps) {
   const nodeData = data as ShamanNodeData;
   const isSource = nodeData.sourceId !== undefined;
-  const nodeChainId = nodeData.chain ? nodeData.chain.toString() : 'default';
+  const nodeChainId = nodeData.chain ? nodeData.chain : chain.id.toString();
   const nodeChainColor = getChainColor(nodeChainId);
-  const nodeChainName = nodeData.chain
-    ? spellChains.find((c) => c.id === Number(nodeData.chain))?.name
+  const nodeChainName = nodeChainId
+    ? spellChains.find((c) => c.id === Number(nodeChainId))?.name
     : undefined;
 
   return (
@@ -196,6 +196,7 @@ export function WorkflowTab() {
   const spellLogs = shamanLogs?.filter(
     (log) => log.spellId === selectedNode?.data.spellId
   );
+  const selectedSpellData = selectedNode?.data as ShamanNodeData;
   const spellExecutionLogs = spellLogs?.filter(
     (log) => log.logType === ShamanLogType.COMPLETION
   );
@@ -778,8 +779,19 @@ export function WorkflowTab() {
                   <CardHeader className="pb-4">
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                       <div>
-                        <CardTitle className="break-words">
+                        <CardTitle className="break-words flex items-center justify-between">
                           {selectedSpell.name}
+                          {selectedSpellData.chain && (
+                            <span
+                              className="text-xs font-medium rounded-full bg-muted ml-2"
+                              style={{
+                                color: getChainColor(selectedSpellData.chain),
+                              }}>
+                              {spellChains.find(
+                                (c) => c.id === Number(selectedSpellData.chain)
+                              )?.name || selectedSpellData.chain}
+                            </span>
+                          )}
                         </CardTitle>
                         <div className="text-sm text-muted-foreground mt-1">
                           Created by{' '}

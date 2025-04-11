@@ -58,6 +58,7 @@ export const useShaman = (shamanId: string) => {
             ...metadata.data,
             version: shamanSpell.version,
             latestVersion: spell.version,
+            code: atob(metadata.data.code),
           };
         })
       );
