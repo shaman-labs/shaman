@@ -47,13 +47,7 @@ export function NavShamans() {
 
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-      <SidebarGroupLabel className="p-0">
-        <Link
-          href="/shamans"
-          className="w-full text-primary pt-1 pb-1 pr-2 pl-2 rounded-md flex justify-between items-center hover:bg-primary hover:text-background">
-          <span>Shamans</span>
-        </Link>
-      </SidebarGroupLabel>
+      <SidebarGroupLabel className="p-0">Shamans</SidebarGroupLabel>
       <SidebarMenu>
         {userShamans.map((item) => (
           <SidebarMenuItem key={item.shamanId}>
