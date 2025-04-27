@@ -17,7 +17,7 @@ contract SourceSystem is BaseSystem {
     uint8 sourceType,
     string memory name,
     string memory metadata
-  ) public onlyMember onlyValidSourceType(sourceType) {
+  ) public onlyValidSourceType(sourceType) {
     bytes memory nameBytes = bytes(name);
     require(nameBytes.length > 0, "Source name cannot be empty");
     require(nameBytes.length <= 20, "Source name too long");

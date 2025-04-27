@@ -7,10 +7,7 @@ import { BaseSystem } from "./BaseSystem.sol";
 contract ShamanCreationSystem is BaseSystem {
   event ShamanCreated(bytes32 indexed shamanId, address indexed creator);
 
-  function createShaman(
-    string memory name,
-    string memory metadata
-  ) public onlyMember {
+  function createShaman(string memory name, string memory metadata) public {
     bytes memory nameBytes = bytes(name);
     require(nameBytes.length > 0, "Shaman name cannot be empty");
     require(nameBytes.length <= 20, "Shaman name too long");

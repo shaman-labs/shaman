@@ -6,10 +6,7 @@ import { Spells, SpellNames, SpellVersions } from "../codegen/index.sol";
 contract SpellSystem is BaseSystem {
   event SpellCreated(bytes32 indexed spellId, address indexed creator);
 
-  function createSpell(
-    string memory name,
-    string memory metadata
-  ) public onlyMember {
+  function createSpell(string memory name, string memory metadata) public {
     bytes memory nameBytes = bytes(name);
     require(nameBytes.length > 0, "Spell name cannot be empty");
     require(nameBytes.length <= 20, "Spell name too long");

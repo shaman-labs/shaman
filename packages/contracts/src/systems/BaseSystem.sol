@@ -17,11 +17,6 @@ contract BaseSystem is System {
     _;
   }
 
-  modifier onlyMember() {
-    require(Roles.getActive(_msgSender(), RoleType.Member), "Not member");
-    _;
-  }
-
   modifier onlySpellCreator(bytes32 spellId) {
     require(Spells.getCreator(spellId) == _msgSender(), "Not spell creator");
     _;
@@ -51,7 +46,7 @@ contract BaseSystem is System {
     require(Shamans.getState(shamanId) == JobState.Idle, "Shaman is not idle");
     _;
   }
-  
+
   modifier onlyIdleSpell(bytes32 shamanSpellId) {
     require(
       ShamanSpells.getState(shamanSpellId) == JobState.Idle,
