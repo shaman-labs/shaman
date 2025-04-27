@@ -54,7 +54,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <span className="truncate text-primary font-semibold">
                     Shaman
                   </span>
-                  <span className="truncate text-xs">Agentic Oracles</span>
+                  <span className="truncate text-xs">v0.69 beta</span>
                 </div>
               </Link>
             </SidebarMenuButton>

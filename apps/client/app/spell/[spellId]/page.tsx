@@ -4,7 +4,6 @@ import {
   IconUser,
   IconCalendarWeek,
   IconFileSmile,
-  IconCoin,
   IconLink,
   IconActivity,
   IconKey,
@@ -12,7 +11,6 @@ import {
 } from '@tabler/icons-react';
 import { Highlight, themes } from 'prism-react-renderer';
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import { Card, CardContent } from '@/components/ui/card';
@@ -48,11 +46,6 @@ export default function Page() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem>
-                  <Link href="/spells" className="text-muted-foreground">
-                    Spells
-                  </Link>
-                </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbPage>{spell?.name || spellId}</BreadcrumbPage>
                 </BreadcrumbItem>
@@ -116,10 +109,6 @@ export default function Page() {
                       <div className="text-sm font-small">
                         <LabelCreator creator={spell?.creator} />
                       </div>
-                    </RowItem>
-
-                    <RowItem icon={IconCoin} label="Commission Revenue">
-                      <p className="text-sm font-medium">0 ZUG</p>
                     </RowItem>
 
                     <RowItem icon={IconLink} label="IPFS Link">
