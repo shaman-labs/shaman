@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Shaman',
-  description: 'Automate your onchain workflows with agentic intelligence.',
+  description: 'Automate your onchain workflows with shaman.',
 };
 
 export default function RootLayout({

@@ -36,7 +36,7 @@ export default function Page() {
                 ref={asciiTextRef as React.RefObject<HTMLPreElement>}></pre>
             </div>
             <p className="mt-6 text-center">
-              Automate your onchain workflows with agentic intelligence.
+              Automate your onchain workflows with shaman.
             </p>
             <Button
               onClick={user ? () => router.push('/shamans') : login}
