@@ -11,7 +11,6 @@ import {
   IconFileDescription,
 } from '@tabler/icons-react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 import { AppSidebar } from '@/components/app-sidebar';
 import { Separator } from '@/components/ui/separator';
 import {
@@ -103,11 +102,6 @@ export default function Page() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem>
-                  <Link href="/shamans" className="text-muted-foreground">
-                    Shamans
-                  </Link>
-                </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbPage>New Shaman</BreadcrumbPage>
                 </BreadcrumbItem>

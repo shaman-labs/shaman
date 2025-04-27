@@ -53,7 +53,7 @@ export function DialogBuyZug(props: DialogProps) {
           <DialogDescription>
             <span className="block mt-1 mb-2">
               ZUG is a utility token used to purchase Units of Work in our
-              ecosystem. For beta testing, ZUGs are free to claim.
+              ecosystem. For beta, ZUGs are free to claim.
             </span>
             <span className="block mb-4">
               ZUG Contract Address:{' '}

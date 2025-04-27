@@ -1,7 +1,6 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import Link from 'next/link';
 import { ReactFlowProvider } from '@xyflow/react';
 import { ShamanTab } from './components/tab-shaman';
 import { WorkflowTab } from './components/tab-workflow';
@@ -38,11 +37,6 @@ export default function Page() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem>
-                  <Link href="/shamans" className="text-muted-foreground">
-                    Shamans
-                  </Link>
-                </BreadcrumbItem>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbPage>
                     {shamanLoading ? 'Loading...' : shaman?.name || shamanId}
